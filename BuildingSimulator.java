@@ -1,23 +1,15 @@
 package buildingsimulator;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.bullet.control.VehicleControl;
 import com.jme3.input.KeyInput;
-import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
-import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Box;
-import com.jme3.terrain.geomipmap.TerrainLodControl;
 
 /**
  * test
@@ -35,7 +27,7 @@ public class BuildingSimulator extends SimpleApplication{
     @Override
     public void simpleInitApp() {
         Spatial scene = assetManager.loadModel("Scenes/gameMap.j3o");
-        scene.setLocalTranslation(0, -5, 0);
+        scene.setLocalTranslation(0, -0.5f, 0);
         flyCam.setMoveSpeed(100);
         RigidBodyControl rgb = new RigidBodyControl(0.0f);
         scene.addControl(rgb);

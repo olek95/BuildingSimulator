@@ -3,7 +3,6 @@ package buildingsimulator;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.bullet.control.VehicleControl;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
@@ -42,19 +41,7 @@ public class BuildingSimulator extends SimpleApplication{
 
     @Override
     public void simpleUpdate(float tpf) {
-        VehicleControl control = player.getControl();
-        boolean forward = player.getForward(), pressed = player.getPressed();
-        if(!forward && pressed && control.getCurrentVehicleSpeedKmHour() <= 0){
-            control.brake(0f);
-            control.accelerate(-player.getBrakeForce());
-        }else if(!pressed && control.getCurrentVehicleSpeedKmHour() < 1 && control.getCurrentVehicleSpeedKmHour() > -1){
-                player.setForward(true);
-                player.setPressed(true);
-                control.accelerate(0f);
-                control.brake(0f);
-                control.setLinearVelocity(Vector3f.ZERO);
-                control.setAngularVelocity(Vector3f.ZERO);
-            }
+        player.updateState();
     }
 
     @Override

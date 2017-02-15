@@ -13,42 +13,44 @@ import com.jme3.texture.Texture;
 import java.util.List;
 public class MobileCrane implements ActionListener{
     private BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-    private Spatial crane = game.getAssetManager().loadModel("Models/dzwig/dzwig.j3o");
-    private VehicleControl control;
+    private Spatial craneSpatial = game.getAssetManager().loadModel("Models/dzwig/dzwig.j3o");
+    private VehicleControl crane;
+    private CraneCabin cabin;
     private final float accelerationForce = 100.0f, brakeForce = 20.0f, frictionForce = 10.0f;
     private float steeringValue = 0f;
-    private boolean pressed = true, forward = true;
+    private String key = "";
     public MobileCrane(){
-        control = crane.getControl(VehicleControl.class);
-        crane.setLocalTranslation(0, 100, 0);
-        game.getRootNode().attachChild(crane);
+        crane = craneSpatial.getControl(VehicleControl.class);
+        craneSpatial.setLocalTranslation(0, 100, 0);
+        game.getRootNode().attachChild(craneSpatial);
         scaleTiresTexture();
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
-        physics.add(control);
+        physics.add(crane);
+        cabin = new CraneCabin(craneSpatial);
     }
     public void onAction(String name, boolean isPressed, float tpf) {
         switch(name){
             case "Up":
                 if(isPressed){
-                    forward = true;
-                    pressed = true;
-                    control.accelerate(accelerationForce);
+                    key = name;
+                    crane.accelerate(0f);
+                    crane.brake(brakeForce);
                 }else{
-                    pressed = false;
-                    control.accelerate(-frictionForce);
+                    key = null;
+                    if(crane.getCurrentVehicleSpeedKmHour() > 0) crane.accelerate(-frictionForce);
+                    else crane.accelerate(frictionForce);
                 }
                 break;
             case "Down":
                 if(isPressed){
-                    forward = false;
-                    pressed = true;
-                    control.accelerate(0f);
-                    control.brake(brakeForce);
+                    key = name;
+                    crane.accelerate(0f);
+                    crane.brake(brakeForce);
                 }else{
-                    pressed = false;
-                    control.brake(0f);
-                    if(control.getCurrentVehicleSpeedKmHour() < 0) control.accelerate(frictionForce);
-                    else control.accelerate(-frictionForce);
+                    key = null;
+                    crane.brake(0f);
+                    if(crane.getCurrentVehicleSpeedKmHour() < 0) crane.accelerate(frictionForce);
+                    else crane.accelerate(-frictionForce);
                 }
                 break;
             case "Left":
@@ -57,7 +59,7 @@ public class MobileCrane implements ActionListener{
                 }else{
                     steeringValue -= 0.5f;
                 }
-                control.steer(steeringValue);
+                crane.steer(steeringValue);
                 break;
             case "Right":
                 if(isPressed){
@@ -65,18 +67,30 @@ public class MobileCrane implements ActionListener{
                 }else{
                     steeringValue += 0.5f;
                 }
-                control.steer(steeringValue);
+                crane.steer(steeringValue);
         }
     }
     public void updateState(){
-        if(!forward && pressed && control.getCurrentVehicleSpeedKmHour() <= 0){
-            control.brake(0f);
-            control.accelerate(-brakeForce);
-        }else if(!pressed && control.getCurrentVehicleSpeedKmHour() < 1 && control.getCurrentVehicleSpeedKmHour() > -1)
+        if(key == null){
+            if(crane.getCurrentVehicleSpeedKmHour() < 1 && crane.getCurrentVehicleSpeedKmHour() > -1)
                 stop();
+        }else if(!key.equals(""))
+            if(key.equals("Down") && crane.getCurrentVehicleSpeedKmHour() < 0){
+                crane.brake(0f);
+                crane.accelerate(-accelerationForce * 0.5f); // prędkość w tył jest mniejsza 
+            }else{
+                if(key.equals("Up") && Math.ceil(crane.getCurrentVehicleSpeedKmHour()) >= 0){
+                    crane.brake(0f);
+                    crane.accelerate(accelerationForce);
+                }
+            }
+        
+    }
+    public CraneCabin getCabin(){
+        return cabin;
     }
     private void scaleTiresTexture(){
-        List<Spatial> craneElements = ((Node)crane).getChildren();
+        List<Spatial> craneElements = ((Node)craneSpatial).getChildren();
         Texture tireTexture = null;
         for(Spatial element : craneElements)
             if(element.getName().startsWith("wheel")){
@@ -90,12 +104,9 @@ public class MobileCrane implements ActionListener{
             }
     }
     private void stop(){
-        forward = true;
-        pressed = true;
-        control.accelerate(0f);
-        control.brake(0f);
-        control.setLinearVelocity(Vector3f.ZERO);
-        control.setAngularVelocity(Vector3f.ZERO);
+        key = "";
+        crane.accelerate(0f);
+        crane.brake(0f);
+        crane.setLinearVelocity(Vector3f.ZERO); // jeśli jeszcze jest jakaś mała prędkość, to zeruje
     }
 }
-

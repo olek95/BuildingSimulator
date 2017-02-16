@@ -19,6 +19,7 @@ public class MobileCrane implements ActionListener{
     private final float accelerationForce = 100.0f, brakeForce = 20.0f, frictionForce = 10.0f;
     private float steeringValue = 0f;
     private String key = "";
+    boolean using = true;
     public MobileCrane(){
         crane = craneSpatial.getControl(VehicleControl.class);
         craneSpatial.setLocalTranslation(0, 100, 0);

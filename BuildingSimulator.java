@@ -1,113 +1,94 @@
 package buildingsimulator;
 
-import com.jme3.scene.Spatial;
-import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.control.VehicleControl;
+import com.jme3.app.SimpleApplication;
+import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
-import com.jme3.material.Material;
-import com.jme3.math.Vector2f;
+import com.jme3.input.controls.KeyTrigger;
+import com.jme3.light.DirectionalLight;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
-import com.jme3.texture.Texture;
-import java.util.List;
-public class MobileCrane implements ActionListener{
-    private BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-    private Spatial craneSpatial = game.getAssetManager().loadModel("Models/dzwig/dzwig.j3o");
-    private VehicleControl crane;
-    private CraneCabin cabin;
-    private final float accelerationForce = 100.0f, brakeForce = 20.0f, frictionForce = 10.0f;
-    private float steeringValue = 0f;
-    private String key = "";
-    boolean using = true;
-    public MobileCrane(){
-        crane = craneSpatial.getControl(VehicleControl.class);
-        craneSpatial.setLocalTranslation(0, 100, 0);
-        game.getRootNode().attachChild(craneSpatial);
-        scaleTiresTexture();
-        PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
-        physics.add(crane);
-        cabin = new CraneCabin(craneSpatial);
+import com.jme3.renderer.RenderManager;
+import com.jme3.scene.Spatial;
+
+public class BuildingSimulator extends SimpleApplication implements ActionListener{
+    private static BuildingSimulator game;
+    private BulletAppState bulletAppState = new BulletAppState();
+    private MobileCrane player;
+    public static void main(String[] args) {
+        game = new BuildingSimulator();
+        game.start();
     }
-    public void onAction(String name, boolean isPressed, float tpf) {
-        switch(name){
-            case "Up":
-                if(isPressed){
-                    key = name;
-                    crane.accelerate(0f);
-                    crane.brake(brakeForce);
-                }else{
-                    key = null;
-                    if(crane.getCurrentVehicleSpeedKmHour() > 0) crane.accelerate(-frictionForce);
-                    else crane.accelerate(frictionForce);
-                }
-                break;
-            case "Down":
-                if(isPressed){
-                    key = name;
-                    crane.accelerate(0f);
-                    crane.brake(brakeForce);
-                }else{
-                    key = null;
-                    crane.brake(0f);
-                    if(crane.getCurrentVehicleSpeedKmHour() < 0) crane.accelerate(frictionForce);
-                    else crane.accelerate(-frictionForce);
-                }
-                break;
-            case "Left":
-                if(isPressed){
-                    steeringValue += 0.5f;
-                }else{
-                    steeringValue -= 0.5f;
-                }
-                crane.steer(steeringValue);
-                break;
-            case "Right":
-                if(isPressed){
-                    steeringValue -= 0.5f;
-                }else{
-                    steeringValue += 0.5f;
-                }
-                crane.steer(steeringValue);
+
+    @Override
+    public void simpleInitApp() {
+        Spatial scene = assetManager.loadModel("Scenes/gameMap.j3o");
+        scene.setLocalTranslation(0, -3f, 0);
+        flyCam.setMoveSpeed(100);
+        RigidBodyControl rgb = new RigidBodyControl(0.0f);
+        scene.addControl(rgb);
+        rootNode.attachChild(scene);
+        stateManager.attach(bulletAppState);
+        bulletAppState.getPhysicsSpace().add(rgb);
+        //bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+        player = new MobileCrane();
+        setupKeys(player);
+        setupKeys(this);
+        DirectionalLight sun = new DirectionalLight();
+        sun.setColor(ColorRGBA.White);
+        sun.setDirection(new Vector3f(-.5f,-.5f,-.5f).normalizeLocal());
+        rootNode.addLight(sun);
+    }
+
+    @Override
+    public void simpleUpdate(float tpf) {
+        player.updateState();
+    }
+
+    @Override
+    public void simpleRender(RenderManager rm) {
+        //TODO: add render code
+    }
+    public static BuildingSimulator getBuildingSimulator(){
+        return game;
+    }
+    public BulletAppState getBulletAppState(){
+        return bulletAppState;
+    }
+    private void setupKeys(Object o){
+        if(!inputManager.hasMapping("Left")){
+            inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_H));
+            inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_K));
+            inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_U));
+            inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_J));
+            inputManager.addMapping("Action", new KeyTrigger(KeyInput.KEY_F));
+        }
+        if(o instanceof MobileCrane){
+            inputManager.addListener((MobileCrane)o, "Left");
+            inputManager.addListener((MobileCrane)o, "Right");
+            inputManager.addListener((MobileCrane)o, "Up");
+            inputManager.addListener((MobileCrane)o, "Down");
+        }else{
+            if(o instanceof CraneCabin){
+                inputManager.addListener((CraneCabin)o, "Left");
+                inputManager.addListener((CraneCabin)o, "Right");
+            }else{
+                inputManager.addListener(this, "Action");
+            }
         }
     }
-    public void updateState(){
-        if(key == null){
-            if(crane.getCurrentVehicleSpeedKmHour() < 1 && crane.getCurrentVehicleSpeedKmHour() > -1)
-                stop();
-        }else if(!key.equals(""))
-            if(key.equals("Down") && crane.getCurrentVehicleSpeedKmHour() < 0){
-                crane.brake(0f);
-                crane.accelerate(-accelerationForce * 0.5f); // prędkość w tył jest mniejsza 
-            }else{
-                if(key.equals("Up") && Math.ceil(crane.getCurrentVehicleSpeedKmHour()) >= 0){
-                    crane.brake(0f);
-                    crane.accelerate(accelerationForce);
-                }
+    public void onAction(String name, boolean isPressed, float tpf){
+        if(isPressed && name.equals("Action")){
+            if(player.using){
+                inputManager.removeListener(player);
+                setupKeys(player.getCabin());
             }
-        
-    }
-    public CraneCabin getCabin(){
-        return cabin;
-    }
-    private void scaleTiresTexture(){
-        List<Spatial> craneElements = ((Node)craneSpatial).getChildren();
-        Texture tireTexture = null;
-        for(Spatial element : craneElements)
-            if(element.getName().startsWith("wheel")){
-                Geometry tire = ((Geometry)((Node)((Node)element).getChild(0)).getChild(0));
-                Material tireMaterial = tire.getMaterial();
-                if(tireTexture == null){
-                    tireTexture = (Texture)tireMaterial.getTextureParam("DiffuseMap").getValue();
-                    tireTexture.setWrap(Texture.WrapMode.Repeat);
-                    tire.getMesh().scaleTextureCoordinates(new Vector2f(1,6f));
-                }else tireMaterial.setTexture("DiffuseMap", tireTexture);
+            else{
+                inputManager.removeListener(player.getCabin());
+                setupKeys(player);
             }
-    }
-    private void stop(){
-        key = "";
-        crane.accelerate(0f);
-        crane.brake(0f);
-        crane.setLinearVelocity(Vector3f.ZERO); // jeśli jeszcze jest jakaś mała prędkość, to zeruje
+            player.using = !player.using;
+        }
     }
 }

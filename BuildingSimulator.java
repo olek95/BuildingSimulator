@@ -25,7 +25,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     public void simpleInitApp() {
         Spatial scene = assetManager.loadModel("Scenes/gameMap.j3o");
         scene.setLocalTranslation(0, -3f, 0);
-        flyCam.setMoveSpeed(100);
+        flyCam.setMoveSpeed(5);
         RigidBodyControl rgb = new RigidBodyControl(0.0f);
         scene.addControl(rgb);
         rootNode.attachChild(scene);
@@ -43,7 +43,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
 
     @Override
     public void simpleUpdate(float tpf) {
-        player.updateState();
+        //player.updateState();
     }
 
     @Override
@@ -73,6 +73,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             if(o instanceof CraneCabin){
                 inputManager.addListener((CraneCabin)o, "Left");
                 inputManager.addListener((CraneCabin)o, "Right");
+                inputManager.addListener((CraneCabin)o, "Up");
+                inputManager.addListener((CraneCabin)o, "Down");
             }else{
                 inputManager.addListener(this, "Action");
             }

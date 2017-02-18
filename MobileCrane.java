@@ -10,10 +10,11 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.texture.Texture;
+import com.jme3.water.SimpleWaterProcessor;
 import java.util.List;
 public class MobileCrane implements ActionListener{
     private BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-    private Spatial craneSpatial = game.getAssetManager().loadModel("Models/dzwig/dzwig.j3o");
+    private Spatial craneSpatial = game.getAssetManager().loadModel("Models/dzwig9/dzwig9.j3o");
     private VehicleControl crane;
     private CraneCabin cabin;
     private final float accelerationForce = 100.0f, brakeForce = 20.0f, frictionForce = 10.0f;
@@ -22,12 +23,13 @@ public class MobileCrane implements ActionListener{
     boolean using = true;
     public MobileCrane(){
         crane = craneSpatial.getControl(VehicleControl.class);
-        craneSpatial.setLocalTranslation(0, 100, 0);
+        craneSpatial.setLocalTranslation(0, 10, 0); // 100
         game.getRootNode().attachChild(craneSpatial);
-        scaleTiresTexture();
-        PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
-        physics.add(crane);
-        cabin = new CraneCabin(craneSpatial);
+        //scaleTiresTexture();
+        createMirrors();
+        //PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
+        //physics.add(crane);
+        //cabin = new CraneCabin(craneSpatial);
     }
     public void onAction(String name, boolean isPressed, float tpf) {
         switch(name){
@@ -104,6 +106,25 @@ public class MobileCrane implements ActionListener{
                 }else tireMaterial.setTexture("DiffuseMap", tireTexture);
             }
     }
+    private void createMirrors(){
+        Geometry g;
+        float x = 0.2f;
+        Node craneNode = (Node)craneSpatial;
+        for(int i = 0; i < 2; i++){
+            if(i == 0) g = (Geometry)craneNode.getChild("Circle.0024");
+            else g = (Geometry)craneNode.getChild("Circle.0003");
+            SimpleWaterProcessor waterProcessor = new SimpleWaterProcessor(game.getAssetManager());
+            waterProcessor.setReflectionScene(game.getRootNode());
+            waterProcessor.setDistortionScale(0.0f);
+            waterProcessor.setWaveSpeed(0.0f);
+            waterProcessor.setWaterDepth(0f);
+            if(i == 1) x = -x;
+            waterProcessor.setPlane(new Vector3f(0f, 0f, 0f),new Vector3f(x, 0f, 1f));
+            game.getViewPort().addProcessor(waterProcessor);
+            Material mat = waterProcessor.getMaterial();
+            g.setMaterial(mat);
+        }
+    }
     private void stop(){
         key = "";
         crane.accelerate(0f);
@@ -111,3 +132,4 @@ public class MobileCrane implements ActionListener{
         crane.setLinearVelocity(Vector3f.ZERO); // jeśli jeszcze jest jakaś mała prędkość, to zeruje
     }
 }
+

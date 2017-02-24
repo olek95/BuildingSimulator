@@ -2,34 +2,81 @@ package buildingsimulator;
 
 import com.jme3.scene.Spatial;
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
+import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.control.VehicleControl;
+import com.jme3.bullet.joints.HingeJoint;
+import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.material.Material;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.control.Control;
 import com.jme3.texture.Texture;
 import com.jme3.water.SimpleWaterProcessor;
 import java.util.List;
 public class MobileCrane implements ActionListener{
     private BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-    private Spatial craneSpatial = game.getAssetManager().loadModel("Models/dzwig9/dzwig9.j3o");
-    private VehicleControl crane;
+    private Spatial craneSpatial = game.getAssetManager().loadModel("Models/dzwig/dzwig.j3o");
+    private VehicleControl crane = craneSpatial.getControl(VehicleControl.class);
     private CraneCabin cabin;
     private final float accelerationForce = 100.0f, brakeForce = 20.0f, frictionForce = 10.0f;
     private float steeringValue = 0f;
     private String key = "";
     boolean using = true;
     public MobileCrane(){
-        crane = craneSpatial.getControl(VehicleControl.class);
-        craneSpatial.setLocalTranslation(0, 10, 0); // 100
-        game.getRootNode().attachChild(craneSpatial);
-        //scaleTiresTexture();
+        craneSpatial.setLocalTranslation(0, 1.15f, 0); // 100
+        Geometry driverCabin = (Geometry)((Node)craneSpatial).getChild("Cube.0001");
+        CollisionShape driverCabinCollisionShape = CollisionShapeFactory.createDynamicMeshShape(driverCabin);
+        driverCabinCollisionShape.setScale(driverCabin.getWorldScale());
+        ((CompoundCollisionShape)crane.getCollisionShape()).addChildShape(driverCabinCollisionShape, 
+                new Vector3f(0,0,0));
+        scaleTiresTexture();
         createMirrors();
-        //PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
-        //physics.add(crane);
-        //cabin = new CraneCabin(craneSpatial);
+        game.getRootNode().attachChild(craneSpatial);
+        PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
+        physics.add(crane);
+        
+        Node n1 = (Node)((Node)craneSpatial).getChild("crane");
+        Geometry g1  = (Geometry)((Node)craneSpatial).getChild("Circle.0033");
+        CollisionShape c1 = CollisionShapeFactory.createDynamicMeshShape(g1);
+        c1.setScale(g1.getWorldScale());
+        
+        Node n2 = (Node)((Node)craneSpatial).getChild("crane");
+        Geometry g2  = (Geometry)((Node)craneSpatial).getChild("Circle.0031");
+        CollisionShape c2 = CollisionShapeFactory.createDynamicMeshShape(g2);
+        c2.setScale(g2.getWorldScale());
+        
+        Node n3 = (Node)((Node)craneSpatial).getChild("lift");
+        Control c3 = n3.getControl(0);
+        CompoundCollisionShape com = new CompoundCollisionShape();
+        com.addChildShape(c1, Vector3f.ZERO);
+        com.addChildShape(c2, Vector3f.ZERO);
+        RigidBodyControl rgb = new RigidBodyControl(com, 1f);
+        rgb.setKinematic(true);
+        rgb.setCollisionGroup(3);
+        n1.addControl(rgb);
+        physics.add(rgb);
+        cabin = new CraneCabin(craneSpatial);
+       /* HingeJoint hj = new HingeJoint(rgb, (PhysicsRigidBody)c3, new Vector3f(0f,2,0f), new Vector3f(0f,0f,0f),
+                Vector3f.ZERO, Vector3f.ZERO);
+        //hj.enableMotor(true, 0.1f, 0.1f);
+        physics.add(hj);
+        physics.add(c3);*/
+        physics.add(c3);
+        /*Control c = ((Node)craneSpatial).getChild("crane").getControl(0);
+        ((RigidBodyControl)c).setKinematic(true);
+        Node n3 = (Node)((Node)craneSpatial).getChild("crane");
+        cabin = new CraneCabin(craneSpatial, (RigidBodyControl)c);
+        HingeJoint hj = new HingeJoint((PhysicsRigidBody)crane, (PhysicsRigidBody)c, n3.getLocalTranslation(), new Vector3f(0f,0f,0f),
+                Vector3f.ZERO, Vector3f.ZERO);
+        //hj.enableMotor(true, 0.1f, 0.1f);
+        physics.add(hj);
+        physics.add(((Node)craneSpatial).getChild("crane").getControl(0));*/
     }
     public void onAction(String name, boolean isPressed, float tpf) {
         switch(name){
@@ -132,4 +179,3 @@ public class MobileCrane implements ActionListener{
         crane.setLinearVelocity(Vector3f.ZERO); // jeśli jeszcze jest jakaś mała prędkość, to zeruje
     }
 }
-

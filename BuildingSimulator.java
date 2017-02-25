@@ -2,9 +2,7 @@ package buildingsimulator;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.bullet.joints.HingeJoint;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
@@ -21,6 +19,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     private static BuildingSimulator game;
     private BulletAppState bulletAppState = new BulletAppState();
     private MobileCrane player;
+    private boolean debug = false;
     public static void main(String[] args) {
         game = new BuildingSimulator();
         game.start();
@@ -30,13 +29,13 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     public void simpleInitApp() {
         Spatial scene = assetManager.loadModel("Scenes/gameMap.j3o");
         scene.setLocalTranslation(0, -3f, 0);
-        flyCam.setMoveSpeed(5);
+        flyCam.setMoveSpeed(100);
         RigidBodyControl rgb = new RigidBodyControl(0.0f);
         scene.addControl(rgb);
         rootNode.attachChild(scene);
         stateManager.attach(bulletAppState);
         bulletAppState.getPhysicsSpace().add(rgb);
-        bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+        //bulletAppState.getPhysicsSpace().enableDebug(assetManager);
         player = new MobileCrane();
         setupKeys(player);
         setupKeys(this);
@@ -45,6 +44,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         sun.setDirection(new Vector3f(-.5f,-.5f,-.5f).normalizeLocal());
         rootNode.addLight(sun);
         
+        // KOD DLA TESTU!!
         Box b = new Box(1, 1, 1); // create cube shape
         Geometry geom = new Geometry("Box", b);  // create cube geometry from the shape
         geom.setLocalTranslation(0, 0, 20);
@@ -67,21 +67,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         RigidBodyControl rg2 = new RigidBodyControl(10f);
         geom2.addControl(rg2);
         bulletAppState.getPhysicsSpace().add(rg2);
-        /*Box b2 = new Box(1, 1, 1); // create cube shape
-        Geometry geom2 = new Geometry("Box", b2);  // create cube geometry from the shape
-        geom2.setLocalTranslation(0, 0, 10);
-        Material mat2 = new Material(assetManager,
-          "Common/MatDefs/Misc/Unshaded.j3md");  // create a simple material
-        mat2.setColor("Color", ColorRGBA.Blue);   // set color of material to blue
-        geom2.setMaterial(mat2);                   // set the cube's material
-        rootNode.attachChild(geom2);              // make the cube appear in the scene
-        RigidBodyControl rg2 = new RigidBodyControl(10f);
-        geom2.addControl(rg2);
-        bulletAppState.getPhysicsSpace().add(rg2);
-        HingeJoint hj = new HingeJoint(rg, rg2, Vector3f.ZERO, new Vector3f(0f,-1,0f),
-                Vector3f.ZERO, Vector3f.ZERO);
-        hj.enableMotor(true, 0.1f, 0.1f);
-        bulletAppState.getPhysicsSpace().add(hj);*/
+        // KONIEC KODU DLA TESTU 
     }
 
     @Override
@@ -106,6 +92,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_U));
             inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_J));
             inputManager.addMapping("Action", new KeyTrigger(KeyInput.KEY_F));
+            inputManager.addMapping("Pull out", new KeyTrigger(KeyInput.KEY_E));
+            inputManager.addMapping("Physics", new KeyTrigger(KeyInput.KEY_P));
         }
         if(o instanceof MobileCrane){
             inputManager.addListener((MobileCrane)o, "Left");
@@ -118,8 +106,10 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                 inputManager.addListener((CraneCabin)o, "Right");
                 inputManager.addListener((CraneCabin)o, "Up");
                 inputManager.addListener((CraneCabin)o, "Down");
+                inputManager.addListener((CraneCabin)o, "Pull out");
             }else{
                 inputManager.addListener(this, "Action");
+                inputManager.addListener(this, "Physics");
             }
         }
     }
@@ -134,6 +124,12 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                 setupKeys(player);
             }
             player.using = !player.using;
+        }else{
+            if(isPressed && name.equals("Physics")){
+                if(!debug) bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+                else bulletAppState.getPhysicsSpace().disableDebug();
+                debug = !debug;
+            }
         }
     }
 }

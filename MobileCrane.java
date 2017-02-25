@@ -4,10 +4,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
-import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.control.VehicleControl;
-import com.jme3.bullet.joints.HingeJoint;
-import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.material.Material;
@@ -15,13 +12,12 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.control.Control;
 import com.jme3.texture.Texture;
 import com.jme3.water.SimpleWaterProcessor;
 import java.util.List;
 public class MobileCrane implements ActionListener{
     private BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-    private Spatial craneSpatial = game.getAssetManager().loadModel("Models/dzwig/dzwig.j3o");
+    private Node craneSpatial = (Node)game.getAssetManager().loadModel("Models/dzwig/dzwig.j3o");
     private VehicleControl crane = craneSpatial.getControl(VehicleControl.class);
     private CraneCabin cabin;
     private final float accelerationForce = 100.0f, brakeForce = 20.0f, frictionForce = 10.0f;
@@ -30,53 +26,13 @@ public class MobileCrane implements ActionListener{
     boolean using = true;
     public MobileCrane(){
         craneSpatial.setLocalTranslation(0, 1.15f, 0); // 100
-        Geometry driverCabin = (Geometry)((Node)craneSpatial).getChild("Cube.0001");
-        CollisionShape driverCabinCollisionShape = CollisionShapeFactory.createDynamicMeshShape(driverCabin);
-        driverCabinCollisionShape.setScale(driverCabin.getWorldScale());
-        ((CompoundCollisionShape)crane.getCollisionShape()).addChildShape(driverCabinCollisionShape, 
-                new Vector3f(0,0,0));
+        createMobileCranePhysics();
         scaleTiresTexture();
         createMirrors();
         game.getRootNode().attachChild(craneSpatial);
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
         physics.add(crane);
-        
-        Node n1 = (Node)((Node)craneSpatial).getChild("crane");
-        Geometry g1  = (Geometry)((Node)craneSpatial).getChild("Circle.0033");
-        CollisionShape c1 = CollisionShapeFactory.createDynamicMeshShape(g1);
-        c1.setScale(g1.getWorldScale());
-        
-        Node n2 = (Node)((Node)craneSpatial).getChild("crane");
-        Geometry g2  = (Geometry)((Node)craneSpatial).getChild("Circle.0031");
-        CollisionShape c2 = CollisionShapeFactory.createDynamicMeshShape(g2);
-        c2.setScale(g2.getWorldScale());
-        
-        Node n3 = (Node)((Node)craneSpatial).getChild("lift");
-        Control c3 = n3.getControl(0);
-        CompoundCollisionShape com = new CompoundCollisionShape();
-        com.addChildShape(c1, Vector3f.ZERO);
-        com.addChildShape(c2, Vector3f.ZERO);
-        RigidBodyControl rgb = new RigidBodyControl(com, 1f);
-        rgb.setKinematic(true);
-        rgb.setCollisionGroup(3);
-        n1.addControl(rgb);
-        physics.add(rgb);
         cabin = new CraneCabin(craneSpatial);
-       /* HingeJoint hj = new HingeJoint(rgb, (PhysicsRigidBody)c3, new Vector3f(0f,2,0f), new Vector3f(0f,0f,0f),
-                Vector3f.ZERO, Vector3f.ZERO);
-        //hj.enableMotor(true, 0.1f, 0.1f);
-        physics.add(hj);
-        physics.add(c3);*/
-        physics.add(c3);
-        /*Control c = ((Node)craneSpatial).getChild("crane").getControl(0);
-        ((RigidBodyControl)c).setKinematic(true);
-        Node n3 = (Node)((Node)craneSpatial).getChild("crane");
-        cabin = new CraneCabin(craneSpatial, (RigidBodyControl)c);
-        HingeJoint hj = new HingeJoint((PhysicsRigidBody)crane, (PhysicsRigidBody)c, n3.getLocalTranslation(), new Vector3f(0f,0f,0f),
-                Vector3f.ZERO, Vector3f.ZERO);
-        //hj.enableMotor(true, 0.1f, 0.1f);
-        physics.add(hj);
-        physics.add(((Node)craneSpatial).getChild("crane").getControl(0));*/
     }
     public void onAction(String name, boolean isPressed, float tpf) {
         switch(name){
@@ -139,8 +95,14 @@ public class MobileCrane implements ActionListener{
     public CraneCabin getCabin(){
         return cabin;
     }
+    private void stop(){
+        key = "";
+        crane.accelerate(0f);
+        crane.brake(0f);
+        crane.setLinearVelocity(Vector3f.ZERO); // jeśli jeszcze jest jakaś mała prędkość, to zeruje
+    }
     private void scaleTiresTexture(){
-        List<Spatial> craneElements = ((Node)craneSpatial).getChildren();
+        List<Spatial> craneElements = craneSpatial.getChildren();
         Texture tireTexture = null;
         for(Spatial element : craneElements)
             if(element.getName().startsWith("wheel")){
@@ -154,28 +116,33 @@ public class MobileCrane implements ActionListener{
             }
     }
     private void createMirrors(){
-        Geometry g;
+        Geometry mirror;
         float x = 0.2f;
-        Node craneNode = (Node)craneSpatial;
         for(int i = 0; i < 2; i++){
-            if(i == 0) g = (Geometry)craneNode.getChild("Circle.0024");
-            else g = (Geometry)craneNode.getChild("Circle.0003");
-            SimpleWaterProcessor waterProcessor = new SimpleWaterProcessor(game.getAssetManager());
-            waterProcessor.setReflectionScene(game.getRootNode());
-            waterProcessor.setDistortionScale(0.0f);
-            waterProcessor.setWaveSpeed(0.0f);
-            waterProcessor.setWaterDepth(0f);
+            if(i == 0) mirror = (Geometry)craneSpatial.getChild("leftMirror");
+            else mirror = (Geometry)craneSpatial.getChild("rightMirror");
+            SimpleWaterProcessor mirrorProcessor = new SimpleWaterProcessor(game.getAssetManager());
+            mirrorProcessor.setReflectionScene(game.getRootNode());
+            mirrorProcessor.setDistortionScale(0.0f);
+            mirrorProcessor.setWaveSpeed(0.0f);
+            mirrorProcessor.setWaterDepth(0f);
             if(i == 1) x = -x;
-            waterProcessor.setPlane(new Vector3f(0f, 0f, 0f),new Vector3f(x, 0f, 1f));
-            game.getViewPort().addProcessor(waterProcessor);
-            Material mat = waterProcessor.getMaterial();
-            g.setMaterial(mat);
+            mirrorProcessor.setPlane(new Vector3f(0f, 0f, 0f),new Vector3f(x, 0f, 1f));
+            game.getViewPort().addProcessor(mirrorProcessor);
+            Material mirrorMaterial = mirrorProcessor.getMaterial();
+            mirror.setMaterial(mirrorMaterial);
         }
     }
-    private void stop(){
-        key = "";
-        crane.accelerate(0f);
-        crane.brake(0f);
-        crane.setLinearVelocity(Vector3f.ZERO); // jeśli jeszcze jest jakaś mała prędkość, to zeruje
+    private void createMobileCranePhysics(){
+        String[] mobileCraneElements = {"outsideMobileCraneCabin", "bollardsShape"};
+        CompoundCollisionShape mobileCraneCollision = (CompoundCollisionShape)crane.getCollisionShape();
+        for(int i = 0; i < mobileCraneElements.length; i++){
+            Geometry elementGeometry = (Geometry)craneSpatial.getChild(mobileCraneElements[i]);
+            CollisionShape elementCollision = CollisionShapeFactory
+                    .createDynamicMeshShape(elementGeometry);
+            elementCollision.setScale(elementGeometry.getWorldScale());
+            mobileCraneCollision.addChildShape(elementCollision, Vector3f.ZERO);
+        }
     }
 }
+

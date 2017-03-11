@@ -17,8 +17,10 @@ import com.jme3.scene.Spatial;
 public class CraneCabin implements AnalogListener{
     private Node craneCabin, lift, rectractableCranePart;
     private Node mobileCrane;
-    private float yCraneOffset = 0f, liftingSpeed = 0.04f, stretchingOut = 1f;
+    private float yCraneOffset = 0f, stretchingOut = 1f;
     private Vector3f displacement = new Vector3f();
+    private static final float MAX_PROTRUSION = 9.5f, MIN_PROTRUSION = 1f,
+            LIFTING_SPEED = 0.04f;
     public CraneCabin(Spatial craneSpatial){
         mobileCrane = (Node)craneSpatial;
         craneCabin = (Node)mobileCrane.getChild("crane");
@@ -36,30 +38,36 @@ public class CraneCabin implements AnalogListener{
                 craneCabin.rotate(0, tpf, 0);
                 break;
             case "Up":
-                if(yCraneOffset + liftingSpeed < 0.6f){
-                    yCraneOffset += liftingSpeed;
-                    lift.rotate(-liftingSpeed, 0, 0);
+                if(yCraneOffset + LIFTING_SPEED < 0.6f){
+                    yCraneOffset += LIFTING_SPEED;
+                    lift.rotate(-LIFTING_SPEED, 0, 0);
                 }
                 break;
             case "Down":
-                if(yCraneOffset - liftingSpeed >= 0f){
-                    yCraneOffset -= liftingSpeed;
-                    lift.rotate(liftingSpeed, 0, 0);
+                if(yCraneOffset - LIFTING_SPEED >= 0f){
+                    yCraneOffset -= LIFTING_SPEED;
+                    lift.rotate(LIFTING_SPEED, 0, 0);
                 }
                 break;
             case "Pull out":
-                stretchingOut += 0.1f;
-                ((Geometry)rectractableCranePart.getChild(0)).setLocalScale(1, 1, stretchingOut);
-                lift.getChild("hookHandle").getLocalTranslation().z += displacement.z;
-                lift.getChild("hookHandle").getLocalTranslation().y += displacement.y;
-                createRectractableCranePartPhysics();
+                if(stretchingOut <= MAX_PROTRUSION){
+                    stretchingOut += 0.1f;
+                    ((Geometry)rectractableCranePart.getChild(0)).setLocalScale(1, 1, stretchingOut);
+                    Vector3f localTranslatin = lift.getChild("hookHandle").getLocalTranslation();
+                    localTranslatin.z += displacement.z;
+                    localTranslatin.y += displacement.y;
+                    createRectractableCranePartPhysics();
+                }
                 break;
             case "Pull in":
-                stretchingOut -= 0.1f;
-                ((Geometry)rectractableCranePart.getChild(0)).setLocalScale(1, 1, stretchingOut);
-                lift.getChild("hookHandle").getLocalTranslation().z -= displacement.z;
-                lift.getChild("hookHandle").getLocalTranslation().y -= displacement.y;
-                createRectractableCranePartPhysics();
+                if(stretchingOut > MIN_PROTRUSION){
+                    stretchingOut -= 0.1f;
+                    ((Geometry)rectractableCranePart.getChild(0)).setLocalScale(1, 1, stretchingOut);
+                    Vector3f localTranslatin = lift.getChild("hookHandle").getLocalTranslation();
+                    localTranslatin.z -= displacement.z;
+                    localTranslatin.y -= displacement.y;
+                    createRectractableCranePartPhysics();
+                }
         }
     }
     private void createCranePhysics(){
@@ -72,7 +80,6 @@ public class CraneCabin implements AnalogListener{
                 (RigidBodyControl)craneCabin.getControl(0), craneCabin.getLocalTranslation(), Vector3f.ZERO,
                 Vector3f.ZERO, Vector3f.ZERO);
         physics.add(cabinAndMobilecraneJoin);
-        
         createObjectPhysics(lift, null, "longCraneElementGeometry");
         createRectractableCranePartPhysics();
         createObjectPhysics(lift, lift.getChild("hookHandle"), "hookHandleGeometry0",

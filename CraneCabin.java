@@ -20,35 +20,23 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Line;
 
 public class CraneCabin implements AnalogListener{
-    private Spatial craneCabin, lift, rectractableCranePart;
+    private Node craneCabin, lift, rectractableCranePart;
     private Node mobileCrane;
-    private float yCraneOffset = 0f, liftingSpeed = 0.04f, scale = 1f;
-    private Vector3f beforeZ = new Vector3f();
-    RigidBodyControl r,r2;
+    private float yCraneOffset = 0f, liftingSpeed = 0.04f, stretchingOut = 1f;
+    private Vector3f displacement = new Vector3f();
     public CraneCabin(Spatial craneSpatial){
         mobileCrane = (Node)craneSpatial;
-        craneCabin = mobileCrane.getChild("crane");
-        lift = ((Node)craneCabin).getChild("lift");
-        rectractableCranePart = ((Node)lift).getChild("retractableCranePart");
-        //System.out.println(rectractableCranePart.getLocalScale());
-        //rectractableCranePart.getLocalScale().z = 10f;
+        craneCabin = (Node)mobileCrane.getChild("crane");
+        lift = (Node)craneCabin.getChild("lift");
+        rectractableCranePart = (Node)lift.getChild("retractableCranePart");
         createCranePhysics();
-        Geometry g = (Geometry)((Node)mobileCrane.getChild("Cube.0071").getParent().clone())
-                .getChild("Cube.0071");
-        ((BoundingBox)g.getWorldBound()).getExtent(beforeZ);
-        System.out.println(beforeZ);
-        g.setLocalScale(1, 1, 1.1f);
-        Vector3f actual = ((BoundingBox)g.getWorldBound()).getExtent(null);
-        System.out.println(beforeZ);
-        System.out.println(actual);
-        System.out.println(actual.z - beforeZ.z);
-        beforeZ.z = actual.z - beforeZ.z;
-        beforeZ.y = actual.y - beforeZ.y;
-        //((BoundingBox)((Geometry)mobileCrane.getChild("Cube.0071")).getParent()
-        //        .getWorldBound()).getExtent(beforeZ);
-        //System.out.println(beforeZ);
+        calculateDisplacement();
     }
     public void onAnalog(String name, float value, float tpf) {
+        Geometry g1;
+        CollisionShape c1;
+        CompoundCollisionShape com;
+        RigidBodyControl rgc;
         switch(name){
             case "Right":
                 craneCabin.rotate(0, -tpf, 0);
@@ -56,7 +44,7 @@ public class CraneCabin implements AnalogListener{
             case "Left": 
                 craneCabin.rotate(0, tpf, 0);
                 break;
-           case "Up":
+            case "Up":
                 if(yCraneOffset + liftingSpeed < 0.6f){
                     yCraneOffset += liftingSpeed;
                     lift.rotate(-liftingSpeed, 0, 0);
@@ -69,28 +57,24 @@ public class CraneCabin implements AnalogListener{
                 }
                 break;
             case "Pull out":
-                Geometry g1 = ((Geometry)mobileCrane.getChild("Cube.0071"));
-                g1.getLocalScale().z += 0.1f;
-                Vector3f actual = new Vector3f();
-                ((BoundingBox)g1.getParent().getWorldBound()).getExtent(actual);
-                actual.z -= beforeZ.z;
-                actual.y -= beforeZ.y;
-                actual.x -= beforeZ.x;
-                mobileCrane.getChild("hookHandle").getLocalTranslation().z += beforeZ.z;
-                mobileCrane.getChild("hookHandle").getLocalTranslation().y += beforeZ.y;
-                //mobileCrane.getChild("hookHandle").getLocalTranslation().x += actual.x;
-                CollisionShape c1 = CollisionShapeFactory.createDynamicMeshShape(g1);
-        c1.setScale(g1.getWorldScale());
-        CompoundCollisionShape com = new CompoundCollisionShape(); 
-        com.addChildShape(c1, Vector3f.ZERO);
-        BuildingSimulator.getBuildingSimulator()
-                .getBulletAppState().getPhysicsSpace().remove(g1.getControl(0));
-        g1.removeControl(RigidBodyControl.class);
-        RigidBodyControl rgc = new RigidBodyControl(com, 1f);
-        rgc.setKinematic(true);
-        g1.addControl(rgc);
-        BuildingSimulator.getBuildingSimulator()
+                g1 = ((Geometry)mobileCrane.getChild("Cube.0071"));
+                stretchingOut += 0.1f;
+                g1.setLocalScale(1, 1, stretchingOut);
+                mobileCrane.getChild("hookHandle").getLocalTranslation().z += displacement.z;
+                mobileCrane.getChild("hookHandle").getLocalTranslation().y += displacement.y;
+                c1 = CollisionShapeFactory.createDynamicMeshShape(g1);
+                c1.setScale(g1.getWorldScale());
+                com = new CompoundCollisionShape(); 
+                com.addChildShape(c1, Vector3f.ZERO);
+                BuildingSimulator.getBuildingSimulator()
+                        .getBulletAppState().getPhysicsSpace().remove(g1.getControl(0));
+                g1.removeControl(RigidBodyControl.class);
+                rgc = new RigidBodyControl(com, 1f);
+                rgc.setKinematic(true);
+                g1.addControl(rgc);
+                BuildingSimulator.getBuildingSimulator()
                 .getBulletAppState().getPhysicsSpace().add(rgc); 
+                break;
                 //((BoundingBox)g1.getParent().getWorldBound()).getExtent(beforeZ);
                 //Point2PointJoint hj = new Point2PointJoint(r2,
                 //r, Vector3f.ZERO, new Vector3f(0,0,-2));
@@ -101,6 +85,24 @@ public class CraneCabin implements AnalogListener{
                 Vector3f.ZERO, Vector3f.ZERO);
                 BuildingSimulator.getBuildingSimulator()
                 .getBulletAppState().getPhysicsSpace().add(hj);*/
+            case "Pull in":
+                g1 = ((Geometry)mobileCrane.getChild("Cube.0071"));
+                stretchingOut -= 0.1f;
+                g1.setLocalScale(1, 1, stretchingOut);
+                mobileCrane.getChild("hookHandle").getLocalTranslation().z -= displacement.z;
+                mobileCrane.getChild("hookHandle").getLocalTranslation().y -= displacement.y;
+                c1 = CollisionShapeFactory.createDynamicMeshShape(g1);
+                c1.setScale(g1.getWorldScale());
+                com = new CompoundCollisionShape(); 
+                com.addChildShape(c1, Vector3f.ZERO);
+                BuildingSimulator.getBuildingSimulator()
+                        .getBulletAppState().getPhysicsSpace().remove(g1.getControl(0));
+                g1.removeControl(RigidBodyControl.class);
+                rgc = new RigidBodyControl(com, 1f);
+                rgc.setKinematic(true);
+                g1.addControl(rgc);
+                BuildingSimulator.getBuildingSimulator()
+                .getBulletAppState().getPhysicsSpace().add(rgc); 
         }
     }
     private void createCranePhysics(){
@@ -171,8 +173,8 @@ public class CraneCabin implements AnalogListener{
         mobileCrane.getChild("hookHandle").addControl(rgc3);
         physics.add(rgc3);
         //rgc3.setGravity(Vector3f.ZERO);
-        r = rgc3;
-        r2 =rgc2;
+        //r = rgc3;
+        //r2 =rgc2;
         //Vector3f actual = new Vector3f();
         //((BoundingBox)g3.getParent().getWorldBound()).getExtent(actual);
         //Point2PointJoint hj = new Point2PointJoint(r2,
@@ -188,5 +190,14 @@ public class CraneCabin implements AnalogListener{
         //       Vector3f.ZERO, false);
         //physics.add(sdj);
         //physics.add(((Node)mobileCrane.getChild("lift")).getControl(0));
+    }
+    private void calculateDisplacement(){
+        Geometry g = (Geometry)((Node)lift.getChild("retractableCranePart").clone())
+                .getChild(0);
+        Vector3f initialSize  = ((BoundingBox)g.getWorldBound()).getExtent(null);
+        g.setLocalScale(1, 1, 1.1f);
+        ((BoundingBox)g.getWorldBound()).getExtent(displacement);
+        displacement.z -= initialSize.z;
+        displacement.y -= initialSize.y;
     }
 }

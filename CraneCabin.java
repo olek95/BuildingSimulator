@@ -28,10 +28,6 @@ public class CraneCabin implements AnalogListener{
         calculateDisplacement();
     }
     public void onAnalog(String name, float value, float tpf) {
-        Geometry g1;
-        CollisionShape c1;
-        CompoundCollisionShape com;
-        RigidBodyControl rgc;
         switch(name){
             case "Right":
                 craneCabin.rotate(0, -tpf, 0);
@@ -52,17 +48,15 @@ public class CraneCabin implements AnalogListener{
                 }
                 break;
             case "Pull out":
-                g1 = ((Geometry)rectractableCranePart.getChild(0));
                 stretchingOut += 0.1f;
-                g1.setLocalScale(1, 1, stretchingOut);
+                ((Geometry)rectractableCranePart.getChild(0)).setLocalScale(1, 1, stretchingOut);
                 lift.getChild("hookHandle").getLocalTranslation().z += displacement.z;
                 lift.getChild("hookHandle").getLocalTranslation().y += displacement.y;
                 createRectractableCranePartPhysics();
                 break;
             case "Pull in":
-                g1 = ((Geometry)rectractableCranePart.getChild(0));
                 stretchingOut -= 0.1f;
-                g1.setLocalScale(1, 1, stretchingOut);
+                ((Geometry)rectractableCranePart.getChild(0)).setLocalScale(1, 1, stretchingOut);
                 lift.getChild("hookHandle").getLocalTranslation().z -= displacement.z;
                 lift.getChild("hookHandle").getLocalTranslation().y -= displacement.y;
                 createRectractableCranePartPhysics();
@@ -72,27 +66,17 @@ public class CraneCabin implements AnalogListener{
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
                 .getBulletAppState().getPhysicsSpace();
         physics.remove(craneCabin.getControl(RigidBodyControl.class));
-        String[] cabinElements = {"outsideCabin", "turntable"};
-        CompoundCollisionShape cabinCollision = new CompoundCollisionShape();
-        for(int i = 0; i < cabinElements.length; i++){
-            Geometry elementGeometry = (Geometry)mobileCrane.getChild(cabinElements[i]);
-            CollisionShape elementCollision = CollisionShapeFactory.createDynamicMeshShape(elementGeometry);
-            elementCollision.setScale(elementGeometry.getWorldScale());
-            cabinCollision.addChildShape(elementCollision, Vector3f.ZERO);
-        }
-        RigidBodyControl cabinControl = new RigidBodyControl(cabinCollision, 1f);
-        cabinControl.setKinematic(true);
-        cabinControl.setCollisionGroup(2);
-        craneCabin.addControl(cabinControl);
-        physics.add(cabinControl);
+        craneCabin.removeControl(RigidBodyControl.class);
+        createObjectPhysics(craneCabin, craneCabin, "outsideCabin", "turntable");
         HingeJoint cabinAndMobilecraneJoin = new HingeJoint(mobileCrane.getControl(VehicleControl.class),
-                cabinControl, craneCabin.getLocalTranslation(), Vector3f.ZERO,
+                (RigidBodyControl)craneCabin.getControl(0), craneCabin.getLocalTranslation(), Vector3f.ZERO,
                 Vector3f.ZERO, Vector3f.ZERO);
         physics.add(cabinAndMobilecraneJoin);
         
-        createObjectPhysics(lift, null, "Cube.0041");
+        createObjectPhysics(lift, null, "longCraneElementGeometry");
         createRectractableCranePartPhysics();
-        createObjectPhysics(lift, "hookHandle", "Cube.0081", "Cube.0082", "Cube.0083");
+        createObjectPhysics(lift, lift.getChild("hookHandle"), "hookHandleGeometry0",
+                "hookHandleGeometry1", "hookHandleGeometry2");
     }
     private void calculateDisplacement(){
         Geometry g = (Geometry)((Node)rectractableCranePart.clone())
@@ -114,13 +98,13 @@ public class CraneCabin implements AnalogListener{
                             .getBulletAppState().getPhysicsSpace().remove(g.getControl(0));
             g.removeControl(RigidBodyControl.class);
         }
-        RigidBodyControl rgc = new RigidBodyControl(com, 0f);
+        RigidBodyControl rgc = new RigidBodyControl(com, 1f);
         rgc.setKinematic(true);
         g.addControl(rgc);
         BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
                 .add(rgc);
     }
-    private void createObjectPhysics(Node parent, String controlOwner, String... children){
+    private void createObjectPhysics(Node parent, Spatial controlOwner, String... children){
         CompoundCollisionShape com = new CompoundCollisionShape(); 
         Geometry g = new Geometry();
         for(int i = 0; i < children.length; i++){
@@ -132,7 +116,7 @@ public class CraneCabin implements AnalogListener{
         RigidBodyControl rgc = new RigidBodyControl(com, 1f);
         rgc.setKinematic(true);
         if(controlOwner == null) g.addControl(rgc);
-        else parent.getChild(controlOwner).addControl(rgc);
+        else controlOwner.addControl(rgc);
         BuildingSimulator.getBuildingSimulator().getBulletAppState()
                 .getPhysicsSpace().add(rgc);
     }

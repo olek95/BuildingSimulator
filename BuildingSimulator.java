@@ -2,6 +2,7 @@ package buildingsimulator;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.shapes.PlaneCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -30,6 +31,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         Spatial scene = assetManager.loadModel("Scenes/gameMap.j3o");
         scene.setLocalTranslation(0, -3f, 0);
         flyCam.setMoveSpeed(100);
+        PlaneCollisionShape plane = new PlaneCollisionShape();
         RigidBodyControl rgb = new RigidBodyControl(0.0f);
         scene.addControl(rgb);
         rootNode.attachChild(scene);
@@ -93,6 +95,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_J));
             inputManager.addMapping("Action", new KeyTrigger(KeyInput.KEY_F));
             inputManager.addMapping("Pull out", new KeyTrigger(KeyInput.KEY_E));
+            inputManager.addMapping("Pull in", new KeyTrigger(KeyInput.KEY_SPACE));
             inputManager.addMapping("Physics", new KeyTrigger(KeyInput.KEY_P));
         }
         if(o instanceof MobileCrane){
@@ -107,6 +110,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                 inputManager.addListener((CraneCabin)o, "Up");
                 inputManager.addListener((CraneCabin)o, "Down");
                 inputManager.addListener((CraneCabin)o, "Pull out");
+                inputManager.addListener((CraneCabin)o, "Pull in");
             }else{
                 inputManager.addListener(this, "Action");
                 inputManager.addListener(this, "Physics");

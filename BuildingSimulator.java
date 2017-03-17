@@ -55,7 +55,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         mat.setColor("Color", ColorRGBA.Blue);   // set color of material to blue
         geom.setMaterial(mat);                   // set the cube's material
         rootNode.attachChild(geom);              // make the cube appear in the scene
-        RigidBodyControl rg = new RigidBodyControl(10f);
+        RigidBodyControl rg = new RigidBodyControl(1f);
         geom.addControl(rg);
         bulletAppState.getPhysicsSpace().add(rg);
         Box b2 = new Box(1, 1, 1); // create cube shape
@@ -66,7 +66,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         mat2.setColor("Color", ColorRGBA.Blue);   // set color of material to blue
         geom2.setMaterial(mat2);                   // set the cube's material
         rootNode.attachChild(geom2);              // make the cube appear in the scene
-        RigidBodyControl rg2 = new RigidBodyControl(10f);
+        RigidBodyControl rg2 = new RigidBodyControl(1f);
         geom2.addControl(rg2);
         bulletAppState.getPhysicsSpace().add(rg2);
         // KONIEC KODU DLA TESTU 
@@ -96,6 +96,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             inputManager.addMapping("Action", new KeyTrigger(KeyInput.KEY_F));
             inputManager.addMapping("Pull out", new KeyTrigger(KeyInput.KEY_E));
             inputManager.addMapping("Pull in", new KeyTrigger(KeyInput.KEY_SPACE));
+            inputManager.addMapping("Lower hook", new KeyTrigger(KeyInput.KEY_R));
             inputManager.addMapping("Physics", new KeyTrigger(KeyInput.KEY_P));
         }
         if(o instanceof MobileCrane){
@@ -111,6 +112,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                 inputManager.addListener((CraneCabin)o, "Down");
                 inputManager.addListener((CraneCabin)o, "Pull out");
                 inputManager.addListener((CraneCabin)o, "Pull in");
+                inputManager.addListener((CraneCabin)o, "Lower hook");
             }else{
                 inputManager.addListener(this, "Action");
                 inputManager.addListener(this, "Physics");

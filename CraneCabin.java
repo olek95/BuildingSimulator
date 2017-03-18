@@ -18,7 +18,8 @@ public class CraneCabin implements AnalogListener{
     private Node craneCabin, lift, rectractableCranePart;
     private Node mobileCrane;
     private float yCraneOffset = 0f, stretchingOut = 1f, loweringHeight = 1f;
-    private Vector3f displacement = new Vector3f(), hookDisplacement = new Vector3f();
+    private Vector3f hookHandleDisplacement = new Vector3f(),
+            hookDisplacement = new Vector3f();
     private static final float MAX_PROTRUSION = 9.5f, MIN_PROTRUSION = 1f,
             LIFTING_SPEED = 0.04f;
     private HingeJoint lineAndHookHandleJoint;
@@ -28,20 +29,18 @@ public class CraneCabin implements AnalogListener{
         lift = (Node)craneCabin.getChild("lift");
         rectractableCranePart = (Node)lift.getChild("retractableCranePart");
         createCranePhysics();
-        calculateDisplacement();
-        Geometry g = (Geometry)((Node)mobileCrane.getChild("rope").clone()).getChild("Cylinder.0021");
-        Vector3f initialSize = ((BoundingBox)g.getWorldBound()).getExtent(null);
-        g.setLocalScale(1f, 1.05f, 1f);
-        ((BoundingBox)g.getWorldBound()).getExtent(hookDisplacement);
-        hookDisplacement.y -= initialSize.y;
+        hookHandleDisplacement = calculateDisplacement(rectractableCranePart, 
+                new Vector3f(1f, 1f, 1.1f), false, true, true);
+        hookDisplacement = calculateDisplacement((Node)mobileCrane.getChild("rope"), 
+                new Vector3f(1f, 1.05f, 1f), false, true, false);
     }
     public void onAnalog(String name, float value, float tpf) {
         switch(name){
             case "Right":
-                craneCabin.rotate(0, -tpf, 0);
+                craneCabin.rotate(0, -tpf / 4, 0);
                 break;
             case "Left": 
-                craneCabin.rotate(0, tpf, 0);
+                craneCabin.rotate(0, tpf / 4, 0);
                 break;
             case "Up":
                 if(yCraneOffset + LIFTING_SPEED < 0.6f){
@@ -60,8 +59,8 @@ public class CraneCabin implements AnalogListener{
                     stretchingOut += 0.1f;
                     ((Geometry)rectractableCranePart.getChild(0)).setLocalScale(1, 1, stretchingOut);
                     Vector3f localTranslation = lift.getChild("hookHandle").getLocalTranslation();
-                    localTranslation.z += displacement.z;
-                    localTranslation.y += displacement.y;
+                    localTranslation.z += hookHandleDisplacement.z;
+                    localTranslation.y += hookHandleDisplacement.y;
                     createScaledPartPhysics(rectractableCranePart, true, 1f);
                 }
                 break;
@@ -70,8 +69,8 @@ public class CraneCabin implements AnalogListener{
                     stretchingOut -= 0.1f;
                     ((Geometry)rectractableCranePart.getChild(0)).setLocalScale(1, 1, stretchingOut);
                     Vector3f localTranslation = lift.getChild("hookHandle").getLocalTranslation();
-                    localTranslation.z -= displacement.z;
-                    localTranslation.y -= displacement.y;
+                    localTranslation.z -= hookHandleDisplacement.z;
+                    localTranslation.y -= hookHandleDisplacement.y;
                     createScaledPartPhysics(rectractableCranePart, true, 1f);
                 }
                 break;
@@ -130,14 +129,18 @@ public class CraneCabin implements AnalogListener{
         //        mobileCrane.getChild("hook").getControl(RigidBodyControl.class),
         //        Vector3f.ZERO, new Vector3f(0f, 1f, 0f), Vector3f.ZERO, Vector3f.ZERO));
     }
-    private void calculateDisplacement(){
-        Geometry g = (Geometry)((Node)rectractableCranePart.clone())
+    private Vector3f calculateDisplacement(Node parent, 
+            Vector3f scale, boolean x, boolean y, boolean z){
+        Geometry g = (Geometry)((Node)parent.clone())
                 .getChild(0);
-        Vector3f initialSize  = ((BoundingBox)g.getWorldBound()).getExtent(null);
-        g.setLocalScale(1, 1, 1.1f);
+        Vector3f displacement = new Vector3f(),
+                initialSize  = ((BoundingBox)g.getWorldBound()).getExtent(null);
+        g.setLocalScale(scale);
         ((BoundingBox)g.getWorldBound()).getExtent(displacement);
-        displacement.z -= initialSize.z;
-        displacement.y -= initialSize.y;
+        if(x) displacement.x -= initialSize.z;
+        if(y) displacement.y -= initialSize.y;
+        if(z) displacement.z -= initialSize.z;
+        return displacement;
     }
     private void createScaledPartPhysics(Node parent, boolean kinematic, float mass){
         Geometry g = (Geometry)parent.getChild(0);
@@ -224,4 +227,3 @@ public class CraneCabin implements AnalogListener{
                 .getPhysicsSpace().add(rgc);
     }
 }
-

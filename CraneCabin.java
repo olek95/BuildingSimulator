@@ -1,6 +1,5 @@
 package buildingsimulator;
 
-import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
@@ -18,8 +17,7 @@ public class CraneCabin implements AnalogListener{
     private Node craneCabin, lift, rectractableCranePart, mobileCrane, rope;
     private Spatial hookHandle, hook, ropeHook;
     private float yCraneOffset = 0f, stretchingOut = 1f, loweringHeight = 1f;
-    private Vector3f hookHandleDisplacement = new Vector3f(),
-            hookDisplacement = new Vector3f();
+    private Vector3f hookHandleDisplacement, hookDisplacement;
     private static final float MAX_PROTRUSION = 9.5f, MIN_PROTRUSION = 1f,
             LIFTING_SPEED = 0.04f;
     private HingeJoint lineAndHookHandleJoint;
@@ -33,9 +31,11 @@ public class CraneCabin implements AnalogListener{
         hook = ((Node)ropeHook).getChild("hook");
         rope = (Node)((Node)ropeHook).getChild("rope");
         createCranePhysics();
-        hookHandleDisplacement = calculateDisplacement(rectractableCranePart, 
+        hookHandleDisplacement = GameManager
+                .calculateDisplacementAfterScaling(rectractableCranePart, 
                 new Vector3f(1f, 1f, 1.1f), false, true, true);
-        hookDisplacement = calculateDisplacement((Node)mobileCrane.getChild("rope"), 
+        hookDisplacement = GameManager
+                .calculateDisplacementAfterScaling((Node)mobileCrane.getChild("rope"), 
                 new Vector3f(1f, 1.05f, 1f), false, true, false);
         hookDisplacement.y *= 2;
     }
@@ -63,7 +63,8 @@ public class CraneCabin implements AnalogListener{
                 if(stretchingOut <= MAX_PROTRUSION){
                     ((Geometry)rectractableCranePart.getChild(0)).setLocalScale(1f, 1f,
                             stretchingOut += 0.1f);
-                    movingDuringStretchingOut(true, hookHandle, hookHandleDisplacement);
+                    GameManager.movingDuringStretchingOut(true, hookHandle, 
+                            hookHandleDisplacement);
                     GameManager.createObjectPhysics(rectractableCranePart,
                     rectractableCranePart, 1f, true, rectractableCranePart
                     .getChild(0).getName());
@@ -73,7 +74,8 @@ public class CraneCabin implements AnalogListener{
                 if(stretchingOut > MIN_PROTRUSION){
                     ((Geometry)rectractableCranePart.getChild(0)).setLocalScale(1f, 1f,
                             stretchingOut -= 0.1f);
-                    movingDuringStretchingOut(false, hookHandle, hookHandleDisplacement);
+                    GameManager.movingDuringStretchingOut(false, hookHandle,
+                            hookHandleDisplacement);
                     GameManager.createObjectPhysics(rectractableCranePart,
                     rectractableCranePart, 1f, true, rectractableCranePart
                     .getChild(0).getName());
@@ -82,14 +84,10 @@ public class CraneCabin implements AnalogListener{
             case "Lower hook":
                 ((Geometry)mobileCrane.getChild("Cylinder.0021")).setLocalScale(1f,
                         loweringHeight += 0.05f, 1f);
-                movingDuringStretchingOut(false, hook, hookDisplacement);
+                GameManager.movingDuringStretchingOut(false, hook, hookDisplacement);
                 CompoundCollisionShape com = GameManager.createCompound(rope, 
                         rope.getChild(0).getName());
-                Geometry g2 = (Geometry)mobileCrane.getChild("Mesh1");
-                    CollisionShape c2 = CollisionShapeFactory.createDynamicMeshShape(g2);
-                    c2.setScale(g2.getWorldScale());
-                    com.addChildShape(c2, hook.getLocalTranslation(),
-                            hook.getLocalRotation().toRotationMatrix());
+                createHookCollisionShape(com);
                 GameManager.createPhysics(com, ropeHook, 4f, false, (Geometry)rope
                         .getChild(0));
                 PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
@@ -118,11 +116,7 @@ public class CraneCabin implements AnalogListener{
         physics.add(hookHandle.getControl(0));
         CompoundCollisionShape com = GameManager.createCompound(rope, rope
                 .getChild(0).getName());
-        Geometry g2 = (Geometry)mobileCrane.getChild("Mesh1");
-            CollisionShape c2 = CollisionShapeFactory.createDynamicMeshShape(g2);
-            c2.setScale(g2.getWorldScale());
-            com.addChildShape(c2, hook.getLocalTranslation(), 
-                    hook.getLocalRotation().toRotationMatrix());
+        createHookCollisionShape(com);
         GameManager.createPhysics(com, ropeHook, 4f, false,
                 (Geometry)rope.getChild(0));
         ropeHook.getControl(RigidBodyControl.class).setCollisionGroup(2); // kolizja z trzymaniem
@@ -132,33 +126,11 @@ public class CraneCabin implements AnalogListener{
                 new Vector3f(0f, 0.06f,0f), Vector3f.ZERO, Vector3f.ZERO);
         physics.add(lineAndHookHandleJoint);
     }
-    private Vector3f calculateDisplacement(Node parent, 
-            Vector3f scale, boolean x, boolean y, boolean z){
-        Geometry g = (Geometry)((Node)parent.clone())
-                .getChild(0);
-        Vector3f displacement = new Vector3f(),
-                initialSize  = ((BoundingBox)g.getWorldBound()).getExtent(null);
-        g.setLocalScale(scale);
-        ((BoundingBox)g.getWorldBound()).getExtent(displacement);
-        if(x) displacement.x -= initialSize.z;
-        else displacement.x = 0f;
-        if(y) displacement.y -= initialSize.y;
-        else displacement.y = 0f;
-        if(z) displacement.z -= initialSize.z;
-        else displacement.z = 0f;
-        return displacement;
-    }
-    private void movingDuringStretchingOut(boolean addition, Spatial movingElement,
-            Vector3f elementDisplacement){
-        Vector3f localTranslation = movingElement.getLocalTranslation();
-        Vector3f displacement = elementDisplacement.clone();
-        if(!addition){
-            displacement.x = -displacement.x;
-            displacement.y = -displacement.y;
-            displacement.z = -displacement.z;
-        }
-        localTranslation.x += displacement.x;
-        localTranslation.y += displacement.y;
-        localTranslation.z += displacement.z;
+    private void createHookCollisionShape(CompoundCollisionShape compound){
+        Geometry g2 = (Geometry)mobileCrane.getChild("Mesh1");
+        CollisionShape c2 = CollisionShapeFactory.createDynamicMeshShape(g2);
+        c2.setScale(g2.getWorldScale());
+        compound.addChildShape(c2, hook.getLocalTranslation(), hook.getLocalRotation()
+                .toRotationMatrix());
     }
 }

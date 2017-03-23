@@ -9,16 +9,14 @@ import com.jme3.bullet.control.VehicleControl;
 import com.jme3.bullet.joints.HingeJoint;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.controls.AnalogListener;
-import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import java.util.LinkedHashMap;
 
 public class CraneCabin implements AnalogListener{
-    private Node craneCabin, lift, rectractableCranePart, mobileCrane;
-    private Spatial hookHandle;
+    private Node craneCabin, lift, rectractableCranePart, mobileCrane, rope;
+    private Spatial hookHandle, hook, ropeHook;
     private float yCraneOffset = 0f, stretchingOut = 1f, loweringHeight = 1f;
     private Vector3f hookHandleDisplacement = new Vector3f(),
             hookDisplacement = new Vector3f();
@@ -31,6 +29,9 @@ public class CraneCabin implements AnalogListener{
         lift = (Node)craneCabin.getChild("lift");
         rectractableCranePart = (Node)lift.getChild("retractableCranePart");
         hookHandle = lift.getChild("hookHandle");
+        ropeHook = mobileCrane.getChild("ropeHook");
+        hook = ((Node)ropeHook).getChild("hook");
+        rope = (Node)((Node)ropeHook).getChild("rope");
         createCranePhysics();
         hookHandleDisplacement = calculateDisplacement(rectractableCranePart, 
                 new Vector3f(1f, 1f, 1.1f), false, true, true);
@@ -60,55 +61,57 @@ public class CraneCabin implements AnalogListener{
             case "Pull out":
                 if(stretchingOut <= MAX_PROTRUSION){
                     stretchingOut += 0.1f;
-                    ((Geometry)rectractableCranePart.getChild(0)).setLocalScale(1, 1, stretchingOut);
-                    Vector3f localTranslation = lift.getChild("hookHandle").getLocalTranslation();
+                    ((Geometry)rectractableCranePart.getChild(0)).setLocalScale(1, 1,
+                            stretchingOut);
+                    Vector3f localTranslation = hookHandle.getLocalTranslation();
                     localTranslation.z += hookHandleDisplacement.z;
                     localTranslation.y += hookHandleDisplacement.y;
-                    GameManager.createObjectPhysics(rectractableCranePart, rectractableCranePart, 1f,
-                            true, rectractableCranePart.getChild(0).getName());
+                    GameManager.createObjectPhysics(rectractableCranePart,
+                            rectractableCranePart, 1f, true, rectractableCranePart
+                            .getChild(0).getName());
                 }
                 break;
             case "Pull in":
                 if(stretchingOut > MIN_PROTRUSION){
                     stretchingOut -= 0.1f;
-                    ((Geometry)rectractableCranePart.getChild(0)).setLocalScale(1, 1, stretchingOut);
-                    Vector3f localTranslation = lift.getChild("hookHandle").getLocalTranslation();
+                    ((Geometry)rectractableCranePart.getChild(0)).setLocalScale(1, 1,
+                            stretchingOut);
+                    Vector3f localTranslation = hookHandle.getLocalTranslation();
                     localTranslation.z -= hookHandleDisplacement.z;
                     localTranslation.y -= hookHandleDisplacement.y;
-                    GameManager.createObjectPhysics(rectractableCranePart, rectractableCranePart, 1f,
-                            true, rectractableCranePart.getChild(0).getName());
+                    GameManager.createObjectPhysics(rectractableCranePart, 
+                            rectractableCranePart, 1f, true, rectractableCranePart
+                            .getChild(0).getName());
                 }
                 break;
             case "Lower hook":
                 loweringHeight += 0.05f;
-                ((Geometry)mobileCrane.getChild("Cylinder.0021")).setLocalScale(1f, loweringHeight, 1f);
-                Vector3f localTranslation = mobileCrane.getChild("hook").getLocalTranslation();
+                ((Geometry)mobileCrane.getChild("Cylinder.0021")).setLocalScale(1f,
+                        loweringHeight, 1f);
+                Vector3f localTranslation = hook.getLocalTranslation();
                 localTranslation.y -= hookDisplacement.y * 2; // razy 2 bo zwiększam tylko w jedną strone?
-                Node rope = (Node)mobileCrane.getChild("rope");
-                CompoundCollisionShape com = GameManager.createCompound(rope, rope.getChild(0).getName());
+                CompoundCollisionShape com = GameManager.createCompound(rope, 
+                        rope.getChild(0).getName());
                 Geometry g2 = (Geometry)mobileCrane.getChild("Mesh1");
                     CollisionShape c2 = CollisionShapeFactory.createDynamicMeshShape(g2);
                     c2.setScale(g2.getWorldScale());
-                    com.addChildShape(c2,
-                            mobileCrane.getChild("hook").getLocalTranslation(),
-                            mobileCrane.getChild("hook").getLocalRotation().toRotationMatrix());
-                GameManager.createPhysics(com, mobileCrane.getChild("ropeHook"), 4f, false, (Geometry)rope.getChild(0));
+                    com.addChildShape(c2, hook.getLocalTranslation(),
+                            hook.getLocalRotation().toRotationMatrix());
+                GameManager.createPhysics(com, ropeHook, 4f, false, (Geometry)rope
+                        .getChild(0));
                 PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
                         .getBulletAppState().getPhysicsSpace();
                 physics.remove(lineAndHookHandleJoint);
-                lineAndHookHandleJoint = new HingeJoint((RigidBodyControl)lift.getChild("hookHandle")
-                        .getControl(0), mobileCrane.getChild("ropeHook").getControl(RigidBodyControl.class),
-                        Vector3f.ZERO, new Vector3f(0, 0.06f,0), Vector3f.ZERO, 
-                        Vector3f.ZERO);
+                lineAndHookHandleJoint = new HingeJoint(hookHandle
+                        .getControl(RigidBodyControl.class), ropeHook
+                        .getControl(RigidBodyControl.class), Vector3f.ZERO,
+                        new Vector3f(0, 0.06f,0), Vector3f.ZERO, Vector3f.ZERO);
                 physics.add(lineAndHookHandleJoint);
         }
     }
     private void createCranePhysics(){
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
                 .getBulletAppState().getPhysicsSpace();
-        Node rope = (Node)mobileCrane.getChild("rope");
-        Spatial hook = mobileCrane.getChild("hook"), 
-                ropeHook = mobileCrane.getChild("ropeHook");
         GameManager.createObjectPhysics(craneCabin, craneCabin, 1f, true, 
                 "outsideCabin", "turntable");
         HingeJoint cabinAndMobilecraneJoin = new HingeJoint(mobileCrane

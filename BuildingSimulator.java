@@ -97,6 +97,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             inputManager.addMapping("Pull out", new KeyTrigger(KeyInput.KEY_E));
             inputManager.addMapping("Pull in", new KeyTrigger(KeyInput.KEY_SPACE));
             inputManager.addMapping("Lower hook", new KeyTrigger(KeyInput.KEY_R));
+            inputManager.addMapping("Highten hook", new KeyTrigger(KeyInput.KEY_T));
             inputManager.addMapping("Physics", new KeyTrigger(KeyInput.KEY_P));
         }
         if(o instanceof MobileCrane){
@@ -113,6 +114,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                 inputManager.addListener((CraneCabin)o, "Pull out");
                 inputManager.addListener((CraneCabin)o, "Pull in");
                 inputManager.addListener((CraneCabin)o, "Lower hook");
+                inputManager.addListener((CraneCabin)o, "Highten hook");
             }else{
                 inputManager.addListener(this, "Action");
                 inputManager.addListener(this, "Physics");

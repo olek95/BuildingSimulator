@@ -20,7 +20,7 @@ public class CraneCabin implements AnalogListener{
     private Vector3f hookHandleDisplacement, hookDisplacement;
     private static final float MAX_PROTRUSION = 9.5f, MIN_PROTRUSION = 1f,
             LIFTING_SPEED = 0.04f;
-    private HingeJoint lineAndHookHandleJoint;
+    private HingeJoint lineAndHookHandleJoint = null;
     public CraneCabin(Spatial craneSpatial){
         mobileCrane = (Node)craneSpatial;
         craneCabin = (Node)mobileCrane.getChild("crane");
@@ -90,14 +90,8 @@ public class CraneCabin implements AnalogListener{
                 createHookCollisionShape(com);
                 GameManager.createPhysics(com, ropeHook, 4f, false, (Geometry)rope
                         .getChild(0));
-                PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
-                        .getBulletAppState().getPhysicsSpace();
-                physics.remove(lineAndHookHandleJoint);
-                lineAndHookHandleJoint = new HingeJoint(hookHandle
-                        .getControl(RigidBodyControl.class), ropeHook
-                        .getControl(RigidBodyControl.class), Vector3f.ZERO,
-                        new Vector3f(0, 0.06f,0), Vector3f.ZERO, Vector3f.ZERO);
-                physics.add(lineAndHookHandleJoint);
+                GameManager.joinsElementToOtherElement(lineAndHookHandleJoint, hookHandle,
+                        ropeHook, Vector3f.ZERO, new Vector3f(0, 0.06f,0));
         }
     }
     private void createCranePhysics(){
@@ -120,11 +114,8 @@ public class CraneCabin implements AnalogListener{
         GameManager.createPhysics(com, ropeHook, 4f, false,
                 (Geometry)rope.getChild(0));
         ropeHook.getControl(RigidBodyControl.class).setCollisionGroup(2); // kolizja z trzymaniem
-        lineAndHookHandleJoint = new HingeJoint(hookHandle
-                .getControl(RigidBodyControl.class), ropeHook
-                .getControl(RigidBodyControl.class), Vector3f.ZERO,
-                new Vector3f(0f, 0.06f,0f), Vector3f.ZERO, Vector3f.ZERO);
-        physics.add(lineAndHookHandleJoint);
+        GameManager.joinsElementToOtherElement(lineAndHookHandleJoint, hookHandle, ropeHook,
+                Vector3f.ZERO, new Vector3f(0, 0.06f,0));
     }
     private void createHookCollisionShape(CompoundCollisionShape compound){
         Geometry g2 = (Geometry)mobileCrane.getChild("Mesh1");

@@ -15,28 +15,29 @@ import com.jme3.scene.Spatial;
 public class GameManager {
     public static void createObjectPhysics(Node parent, Spatial controlOwner, 
             float mass, boolean kinematic, String... children){
-        CompoundCollisionShape com = createCompound(parent, children);
-        createPhysics(com, controlOwner, mass, kinematic,
+        CompoundCollisionShape compound = createCompound(parent, children);
+        createPhysics(compound, controlOwner, mass, kinematic,
                 (Geometry)parent.getChild(children[0]));
     }
     public static CompoundCollisionShape createCompound(Node parent, String... children){
-        CompoundCollisionShape com = new CompoundCollisionShape(); 
-        Geometry g;
+        CompoundCollisionShape compound = new CompoundCollisionShape(); 
+        Geometry parentGeometry;
         for(int i = 0; i < children.length; i++){
-            g = (Geometry)parent.getChild(children[i]);
-            CollisionShape c = CollisionShapeFactory.createDynamicMeshShape(g);
-            c.setScale(g.getWorldScale()); 
-            com.addChildShape(c, Vector3f.ZERO);
+            parentGeometry = (Geometry)parent.getChild(children[i]);
+            CollisionShape elementCollisionShape = CollisionShapeFactory
+                    .createDynamicMeshShape(parentGeometry);
+            elementCollisionShape.setScale(parentGeometry.getWorldScale()); 
+            compound.addChildShape(elementCollisionShape, Vector3f.ZERO);
         }
-        return com;
+        return compound;
     }
-    public static void createPhysics(CompoundCollisionShape com, Spatial controlOwner,
-            float mass, boolean kinematic, Geometry g){
+    public static void createPhysics(CompoundCollisionShape compound, Spatial controlOwner,
+            float mass, boolean kinematic, Geometry elementGeometry){
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace();
         if(controlOwner == null){
-            if(g.getControl(RigidBodyControl.class) != null){
-                physics.remove(g.getControl(0));
-                g.removeControl(RigidBodyControl.class);
+            if(elementGeometry.getControl(RigidBodyControl.class) != null){
+                physics.remove(elementGeometry.getControl(0));
+                elementGeometry.removeControl(RigidBodyControl.class);
             }
         }else{
             if(controlOwner.getControl(RigidBodyControl.class) != null){
@@ -44,20 +45,20 @@ public class GameManager {
                 controlOwner.removeControl(RigidBodyControl.class);
             }
         }
-        RigidBodyControl rgc = new RigidBodyControl(com, mass);
-        rgc.setKinematic(kinematic);
-        if(controlOwner == null) g.addControl(rgc);
-        else controlOwner.addControl(rgc);
-        physics.add(rgc);
+        RigidBodyControl control = new RigidBodyControl(compound, mass);
+        control.setKinematic(kinematic);
+        if(controlOwner == null) elementGeometry.addControl(control);
+        else controlOwner.addControl(control);
+        physics.add(control);
     }
     public static Vector3f calculateDisplacementAfterScaling(Node parent, 
             Vector3f scale, boolean x, boolean y, boolean z){
-        Geometry g = (Geometry)((Node)parent.clone())
+        Geometry parentGeometry = (Geometry)((Node)parent.clone())
                 .getChild(0);
         Vector3f displacement = new Vector3f(),
-                initialSize  = ((BoundingBox)g.getWorldBound()).getExtent(null);
-        g.setLocalScale(scale);
-        ((BoundingBox)g.getWorldBound()).getExtent(displacement);
+                initialSize  = ((BoundingBox)parentGeometry.getWorldBound()).getExtent(null);
+        parentGeometry.setLocalScale(scale);
+        ((BoundingBox)parentGeometry.getWorldBound()).getExtent(displacement);
         if(x) displacement.x -= initialSize.z;
         else displacement.x = 0f;
         if(y) displacement.y -= initialSize.y;
@@ -73,11 +74,10 @@ public class GameManager {
         if(!addition) displacement.negateLocal();
         localTranslation.addLocal(displacement);
     }
-    public static HingeJoint joinsElementToOtherElement(HingeJoint joint, Spatial nodeA, Spatial nodeB,
-            Vector3f pivotA, Vector3f pivotB){
+    public static HingeJoint joinsElementToOtherElement(HingeJoint joint, Spatial nodeA,
+            Spatial nodeB, Vector3f pivotA, Vector3f pivotB){
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
                         .getBulletAppState().getPhysicsSpace();
-        System.out.println(joint);
         if(joint != null) physics.remove(joint);
         joint = new HingeJoint(nodeA.getControl(RigidBodyControl.class), nodeB
                .getControl(RigidBodyControl.class), pivotA, pivotB, Vector3f.ZERO,

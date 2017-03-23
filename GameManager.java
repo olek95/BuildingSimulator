@@ -73,14 +73,16 @@ public class GameManager {
         if(!addition) displacement.negateLocal();
         localTranslation.addLocal(displacement);
     }
-    public static void joinsElementToOtherElement(HingeJoint joint, Spatial nodeA, Spatial nodeB,
+    public static HingeJoint joinsElementToOtherElement(HingeJoint joint, Spatial nodeA, Spatial nodeB,
             Vector3f pivotA, Vector3f pivotB){
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
                         .getBulletAppState().getPhysicsSpace();
+        System.out.println(joint);
         if(joint != null) physics.remove(joint);
         joint = new HingeJoint(nodeA.getControl(RigidBodyControl.class), nodeB
                .getControl(RigidBodyControl.class), pivotA, pivotB, Vector3f.ZERO,
                 Vector3f.ZERO);
         physics.add(joint);
+        return joint;
     }
 }

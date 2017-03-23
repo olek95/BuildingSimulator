@@ -1,17 +1,15 @@
 package buildingsimulator;
 
+import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
-import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class GameManager {
     public static void createObjectPhysics(Node parent, Spatial controlOwner, 
@@ -19,12 +17,6 @@ public class GameManager {
         CompoundCollisionShape com = createCompound(parent, children);
         createPhysics(com, controlOwner, mass, kinematic,
                 (Geometry)parent.getChild(children[0]));
-    }
-    public static void createObjectPhysics(Node parent, Spatial controlOwner, 
-            float mass, boolean kinematic, LinkedHashMap<String, Transform> children){
-        CompoundCollisionShape com = createCompound(parent, children);
-        createPhysics(com, controlOwner, mass, kinematic,
-                (Geometry)parent.getChild(children.keySet().iterator().next()));
     }
     public static CompoundCollisionShape createCompound(Node parent, String... children){
         CompoundCollisionShape com = new CompoundCollisionShape(); 
@@ -34,19 +26,6 @@ public class GameManager {
             CollisionShape c = CollisionShapeFactory.createDynamicMeshShape(g);
             c.setScale(g.getWorldScale()); 
             com.addChildShape(c, Vector3f.ZERO);
-        }
-        return com;
-    }
-    public static CompoundCollisionShape createCompound(Node parent, 
-            LinkedHashMap<String, Transform> children){
-        CompoundCollisionShape com = new CompoundCollisionShape(); 
-        Geometry g = new Geometry();
-        for(Map.Entry<String, Transform> entry : children.entrySet()){
-            g = (Geometry)parent.getChild(entry.getKey());
-            CollisionShape c = CollisionShapeFactory.createDynamicMeshShape(g);
-            c.setScale(g.getWorldScale()); 
-            Transform t = entry.getValue();
-            com.addChildShape(c, t.getTranslation(), t.getRotation().toRotationMatrix());
         }
         return com;
     }
@@ -70,4 +49,34 @@ public class GameManager {
         else controlOwner.addControl(rgc);
         physics.add(rgc);
     }
+    public static Vector3f calculateDisplacementAfterScaling(Node parent, 
+            Vector3f scale, boolean x, boolean y, boolean z){
+        Geometry g = (Geometry)((Node)parent.clone())
+                .getChild(0);
+        Vector3f displacement = new Vector3f(),
+                initialSize  = ((BoundingBox)g.getWorldBound()).getExtent(null);
+        g.setLocalScale(scale);
+        ((BoundingBox)g.getWorldBound()).getExtent(displacement);
+        if(x) displacement.x -= initialSize.z;
+        else displacement.x = 0f;
+        if(y) displacement.y -= initialSize.y;
+        else displacement.y = 0f;
+        if(z) displacement.z -= initialSize.z;
+        else displacement.z = 0f;
+        return displacement;
+    }
+    public static void movingDuringStretchingOut(boolean addition, Spatial movingElement,
+            Vector3f elementDisplacement){
+        Vector3f localTranslation = movingElement.getLocalTranslation();
+        Vector3f displacement = elementDisplacement.clone();
+        if(!addition){
+            displacement.x = -displacement.x;
+            displacement.y = -displacement.y;
+            displacement.z = -displacement.z;
+        }
+        localTranslation.x += displacement.x;
+        localTranslation.y += displacement.y;
+        localTranslation.z += displacement.z;
+    }
 }
+

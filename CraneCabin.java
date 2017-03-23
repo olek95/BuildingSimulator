@@ -37,6 +37,7 @@ public class CraneCabin implements AnalogListener{
                 new Vector3f(1f, 1f, 1.1f), false, true, true);
         hookDisplacement = calculateDisplacement((Node)mobileCrane.getChild("rope"), 
                 new Vector3f(1f, 1.05f, 1f), false, true, false);
+        hookDisplacement.y *= 2;
     }
     public void onAnalog(String name, float value, float tpf) {
         switch(name){
@@ -60,36 +61,28 @@ public class CraneCabin implements AnalogListener{
                 break;
             case "Pull out":
                 if(stretchingOut <= MAX_PROTRUSION){
-                    stretchingOut += 0.1f;
-                    ((Geometry)rectractableCranePart.getChild(0)).setLocalScale(1, 1,
-                            stretchingOut);
-                    Vector3f localTranslation = hookHandle.getLocalTranslation();
-                    localTranslation.z += hookHandleDisplacement.z;
-                    localTranslation.y += hookHandleDisplacement.y;
+                    ((Geometry)rectractableCranePart.getChild(0)).setLocalScale(1f, 1f,
+                            stretchingOut += 0.1f);
+                    movingDuringStretchingOut(true, hookHandle, hookHandleDisplacement);
                     GameManager.createObjectPhysics(rectractableCranePart,
-                            rectractableCranePart, 1f, true, rectractableCranePart
-                            .getChild(0).getName());
+                    rectractableCranePart, 1f, true, rectractableCranePart
+                    .getChild(0).getName());
                 }
                 break;
             case "Pull in":
                 if(stretchingOut > MIN_PROTRUSION){
-                    stretchingOut -= 0.1f;
-                    ((Geometry)rectractableCranePart.getChild(0)).setLocalScale(1, 1,
-                            stretchingOut);
-                    Vector3f localTranslation = hookHandle.getLocalTranslation();
-                    localTranslation.z -= hookHandleDisplacement.z;
-                    localTranslation.y -= hookHandleDisplacement.y;
-                    GameManager.createObjectPhysics(rectractableCranePart, 
-                            rectractableCranePart, 1f, true, rectractableCranePart
-                            .getChild(0).getName());
+                    ((Geometry)rectractableCranePart.getChild(0)).setLocalScale(1f, 1f,
+                            stretchingOut -= 0.1f);
+                    movingDuringStretchingOut(false, hookHandle, hookHandleDisplacement);
+                    GameManager.createObjectPhysics(rectractableCranePart,
+                    rectractableCranePart, 1f, true, rectractableCranePart
+                    .getChild(0).getName());
                 }
                 break;
             case "Lower hook":
-                loweringHeight += 0.05f;
                 ((Geometry)mobileCrane.getChild("Cylinder.0021")).setLocalScale(1f,
-                        loweringHeight, 1f);
-                Vector3f localTranslation = hook.getLocalTranslation();
-                localTranslation.y -= hookDisplacement.y * 2; // razy 2 bo zwiększam tylko w jedną strone?
+                        loweringHeight += 0.05f, 1f);
+                movingDuringStretchingOut(false, hook, hookDisplacement);
                 CompoundCollisionShape com = GameManager.createCompound(rope, 
                         rope.getChild(0).getName());
                 Geometry g2 = (Geometry)mobileCrane.getChild("Mesh1");
@@ -148,8 +141,24 @@ public class CraneCabin implements AnalogListener{
         g.setLocalScale(scale);
         ((BoundingBox)g.getWorldBound()).getExtent(displacement);
         if(x) displacement.x -= initialSize.z;
+        else displacement.x = 0f;
         if(y) displacement.y -= initialSize.y;
+        else displacement.y = 0f;
         if(z) displacement.z -= initialSize.z;
+        else displacement.z = 0f;
         return displacement;
+    }
+    private void movingDuringStretchingOut(boolean addition, Spatial movingElement,
+            Vector3f elementDisplacement){
+        Vector3f localTranslation = movingElement.getLocalTranslation();
+        Vector3f displacement = elementDisplacement.clone();
+        if(!addition){
+            displacement.x = -displacement.x;
+            displacement.y = -displacement.y;
+            displacement.z = -displacement.z;
+        }
+        localTranslation.x += displacement.x;
+        localTranslation.y += displacement.y;
+        localTranslation.z += displacement.z;
     }
 }

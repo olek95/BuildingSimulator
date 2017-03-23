@@ -5,6 +5,7 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.bullet.joints.HingeJoint;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
@@ -20,7 +21,7 @@ public class GameManager {
     }
     public static CompoundCollisionShape createCompound(Node parent, String... children){
         CompoundCollisionShape com = new CompoundCollisionShape(); 
-        Geometry g = new Geometry();
+        Geometry g;
         for(int i = 0; i < children.length; i++){
             g = (Geometry)parent.getChild(children[i]);
             CollisionShape c = CollisionShapeFactory.createDynamicMeshShape(g);
@@ -77,6 +78,16 @@ public class GameManager {
         localTranslation.x += displacement.x;
         localTranslation.y += displacement.y;
         localTranslation.z += displacement.z;
+    }
+    public static void joinsElementToOtherElement(HingeJoint joint, Spatial nodeA, Spatial nodeB,
+            Vector3f pivotA, Vector3f pivotB){
+        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
+                        .getBulletAppState().getPhysicsSpace();
+        if(joint != null) physics.remove(joint);
+        joint = new HingeJoint(nodeA.getControl(RigidBodyControl.class), nodeB
+               .getControl(RigidBodyControl.class), pivotA, pivotB, Vector3f.ZERO,
+                Vector3f.ZERO);
+        physics.add(joint);
     }
 }
 

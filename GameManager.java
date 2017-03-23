@@ -70,14 +70,8 @@ public class GameManager {
             Vector3f elementDisplacement){
         Vector3f localTranslation = movingElement.getLocalTranslation();
         Vector3f displacement = elementDisplacement.clone();
-        if(!addition){
-            displacement.x = -displacement.x;
-            displacement.y = -displacement.y;
-            displacement.z = -displacement.z;
-        }
-        localTranslation.x += displacement.x;
-        localTranslation.y += displacement.y;
-        localTranslation.z += displacement.z;
+        if(!addition) displacement.negateLocal();
+        localTranslation.addLocal(displacement);
     }
     public static void joinsElementToOtherElement(HingeJoint joint, Spatial nodeA, Spatial nodeB,
             Vector3f pivotA, Vector3f pivotB){
@@ -90,4 +84,3 @@ public class GameManager {
         physics.add(joint);
     }
 }
-

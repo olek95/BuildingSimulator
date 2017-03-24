@@ -7,6 +7,7 @@ import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.joints.HingeJoint;
 import com.jme3.bullet.util.CollisionShapeFactory;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -21,13 +22,9 @@ public class GameManager {
     }
     public static CompoundCollisionShape createCompound(Node parent, String... children){
         CompoundCollisionShape compound = new CompoundCollisionShape(); 
-        Geometry parentGeometry;
         for(int i = 0; i < children.length; i++){
-            parentGeometry = (Geometry)parent.getChild(children[i]);
-            CollisionShape elementCollisionShape = CollisionShapeFactory
-                    .createDynamicMeshShape(parentGeometry);
-            elementCollisionShape.setScale(parentGeometry.getWorldScale()); 
-            compound.addChildShape(elementCollisionShape, Vector3f.ZERO);
+            addNewCollisionShapeToComponent(compound, parent, children[i], 
+                    Vector3f.ZERO, null);
         }
         return compound;
     }
@@ -84,5 +81,15 @@ public class GameManager {
                 Vector3f.ZERO);
         physics.add(joint);
         return joint;
+    }
+    public static void addNewCollisionShapeToComponent(CompoundCollisionShape compound,
+            Node parent, String child, Vector3f location, Quaternion rotation){
+        Geometry parentGeometry = (Geometry)parent.getChild(child);
+        CollisionShape elementCollisionShape = CollisionShapeFactory
+                .createDynamicMeshShape(parentGeometry);
+        elementCollisionShape.setScale(parentGeometry.getWorldScale()); 
+        if(rotation == null) compound.addChildShape(elementCollisionShape, location);
+        else compound.addChildShape(elementCollisionShape, location, rotation
+                .toRotationMatrix());
     }
 }

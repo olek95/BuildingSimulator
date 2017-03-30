@@ -54,7 +54,6 @@ public class CraneCabin implements AnalogListener{
         hookDisplacement.y *= 2; // wyrównuje poruszanie się haka wraz z liną 
     }
     public void onAnalog(String name, float value, float tpf) {
-        CompoundCollisionShape ropeHookCompound;
         switch(name){
             case "Right":
                 craneCabin.rotate(0, -tpf / 4, 0);
@@ -76,26 +75,12 @@ public class CraneCabin implements AnalogListener{
                 break;
             case "Pull out":
                 if(stretchingOut <= MAX_PROTRUSION){
-                    Spatial rectractableCranePartGeometry = rectractableCranePart.getChild(0);
-                    ((Geometry)rectractableCranePartGeometry).setLocalScale(1f, 1f,
-                            stretchingOut += STRETCHING_OUT_SPEED);
-                    movingDuringStretchingOut(true, hookHandle, hookHandleDisplacement);
-                    createObjectPhysics(rectractableCranePart, rectractableCranePart,
-                            1f, true, rectractableCranePartGeometry.getName());
-                    rectractableCranePart.getControl(RigidBodyControl.class)
-                            .setCollisionGroup(3);
+                    changeHandleHookPoition(true);
                 }
                 break;
             case "Pull in":
                 if(stretchingOut > MIN_PROTRUSION){
-                    Spatial rectractableCranePartGeometry = rectractableCranePart.getChild(0);
-                    ((Geometry)rectractableCranePartGeometry).setLocalScale(1f, 1f,
-                            stretchingOut -= STRETCHING_OUT_SPEED);
-                    movingDuringStretchingOut(false, hookHandle, hookHandleDisplacement);
-                    createObjectPhysics(rectractableCranePart, rectractableCranePart, 1f,
-                            true, rectractableCranePartGeometry.getName());
-                    rectractableCranePart.getControl(RigidBodyControl.class)
-                            .setCollisionGroup(3);
+                    changeHandleHookPoition(false);
                 }
                 break;
             case "Lower hook":
@@ -113,38 +98,15 @@ public class CraneCabin implements AnalogListener{
                 }
                 // obniża hak, jeśli w żadnym punkcie z dołu nie dotyka jakiegoś obiektu
                 if(results.size() == 0){ 
-                    Geometry ropeGeometry = (Geometry)rope.getChild(0);
-                    ropeGeometry.setLocalScale(1f, hookLowering += HOOK_LOWERING_SPEED, 1f);
-                    movingDuringStretchingOut(false, hook, hookDisplacement);
-                    ropeHookCompound = createCompound(rope, ropeGeometry.getName());
-                    addNewCollisionShapeToComponent(ropeHookCompound, (Node)hook, "hookGeometry",
-                            hook.getLocalTranslation(), hook.getLocalRotation());
-                    createPhysics(ropeHookCompound, ropeHook, 4f, false, ropeGeometry);
-                    RigidBodyControl ropeHookControl = ropeHook
-                            .getControl(RigidBodyControl.class);
-                    ropeHookControl.setCollisionGroup(2); 
-                    ropeHookControl.setCollideWithGroups(3);
-                    lineAndHookHandleJoint = joinsElementToOtherElement(lineAndHookHandleJoint,
-                            hookHandle, ropeHook, Vector3f.ZERO, new Vector3f(0, 0.06f,0));
-                    recentlyHitObject = null;
+                    changeHookPosition(true);
                 }
                 break;
             case "Highten hook":
-                Geometry ropeGeometry = (Geometry)rope.getChild(0);
-                ropeGeometry.setLocalScale(1f, hookLowering -= HOOK_LOWERING_SPEED, 1f);
-                movingDuringStretchingOut(true, hook, hookDisplacement);
-                ropeHookCompound = createCompound(rope, ropeGeometry.getName());
-                addNewCollisionShapeToComponent(ropeHookCompound, (Node)hook, "hookGeometry",
-                        hook.getLocalTranslation(), hook.getLocalRotation());
-                createPhysics(ropeHookCompound, ropeHook, 4f, false, ropeGeometry);
-                RigidBodyControl ropeHookControl = ropeHook
-                            .getControl(RigidBodyControl.class);
-                ropeHookControl.setCollisionGroup(2); 
-                ropeHookControl.setCollideWithGroups(3);
-                lineAndHookHandleJoint = joinsElementToOtherElement(lineAndHookHandleJoint,
-                        hookHandle, ropeHook, Vector3f.ZERO, new Vector3f(0, 0.06f,0));
+                if(hookLowering > 1f){
+                    changeHookPosition(false);
+                }
+                recentlyHitObject = null;
         }
-        recentlyHitObject = null;
     }
     private void createCranePhysics(){
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
@@ -153,18 +115,7 @@ public class CraneCabin implements AnalogListener{
         createObjectPhysics(rectractableCranePart, rectractableCranePart, 1f, true,
                 rectractableCranePart.getChild(0).getName());
         rectractableCranePart.getControl(RigidBodyControl.class).setCollisionGroup(3);
-        Spatial ropeGeometry = rope.getChild(0);
-        CompoundCollisionShape ropeHookCompound = createCompound(rope, ropeGeometry
-                .getName());
-        addNewCollisionShapeToComponent(ropeHookCompound, (Node)hook, "hookGeometry", hook
-                .getLocalTranslation(), hook.getLocalRotation());
-        createPhysics(ropeHookCompound, ropeHook, 4f, false, (Geometry)ropeGeometry);
-        RigidBodyControl ropeHookControl = ropeHook
-                            .getControl(RigidBodyControl.class);
-        ropeHookControl.setCollisionGroup(2); 
-        ropeHookControl.setCollideWithGroups(3);
-        lineAndHookHandleJoint = joinsElementToOtherElement(lineAndHookHandleJoint,
-                hookHandle, ropeHook, Vector3f.ZERO, new Vector3f(0, 0.06f,0));
+        createRopeHookPhysics();
         HingeJoint cabinAndMobilecraneJoin = new HingeJoint(mobileCrane
                 .getControl(VehicleControl.class),(RigidBodyControl)craneCabin
                 .getControl(0), craneCabin.getLocalTranslation(), Vector3f.ZERO,
@@ -185,5 +136,36 @@ public class CraneCabin implements AnalogListener{
                 return true;
             }
         }, 2);
+    }
+    private void changeHookPosition(boolean lowering){
+        Geometry ropeGeometry = (Geometry)rope.getChild(0);
+        if(lowering) ropeGeometry.setLocalScale(1f, hookLowering += HOOK_LOWERING_SPEED, 1f);
+        else ropeGeometry.setLocalScale(1f, hookLowering -= HOOK_LOWERING_SPEED, 1f);
+        movingDuringStretchingOut(!lowering, hook, hookDisplacement);
+        createRopeHookPhysics();
+    }
+    private void createRopeHookPhysics(){
+        Geometry ropeGeometry = (Geometry)rope.getChild(0);
+        CompoundCollisionShape ropeHookCompound = createCompound(rope, ropeGeometry.getName());
+        addNewCollisionShapeToComponent(ropeHookCompound, (Node)hook, "hookGeometry",
+                hook.getLocalTranslation(), hook.getLocalRotation());
+        createPhysics(ropeHookCompound, ropeHook, 4f, false, ropeGeometry);
+        RigidBodyControl ropeHookControl = ropeHook.getControl(RigidBodyControl.class);
+        ropeHookControl.setCollisionGroup(2); 
+        ropeHookControl.setCollideWithGroups(3);
+        lineAndHookHandleJoint = joinsElementToOtherElement(lineAndHookHandleJoint,
+                hookHandle, ropeHook, Vector3f.ZERO, new Vector3f(0, 0.06f,0));
+    }
+    private void changeHandleHookPoition(boolean pullingOut){
+        Spatial rectractableCranePartGeometry = rectractableCranePart.getChild(0);
+        if(pullingOut)
+        ((Geometry)rectractableCranePartGeometry).setLocalScale(1f, 1f,
+                stretchingOut += STRETCHING_OUT_SPEED);
+        else ((Geometry)rectractableCranePartGeometry).setLocalScale(1f, 1f,
+                stretchingOut -= STRETCHING_OUT_SPEED);
+        movingDuringStretchingOut(pullingOut, hookHandle, hookHandleDisplacement);
+        createObjectPhysics(rectractableCranePart, rectractableCranePart, 1f, true,
+                rectractableCranePartGeometry.getName());
+        rectractableCranePart.getControl(RigidBodyControl.class).setCollisionGroup(3);
     }
 }

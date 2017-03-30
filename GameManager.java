@@ -110,14 +110,16 @@ public class GameManager {
     }
     /**
      * Przesuwa połączony z obiektem rozszerzającym się element o podany wektor. 
+     * @param scallingGeometry skalowany obiekt 
+     * @param scallingVector wektor skalowania obiektu
      * @param addition true jeśli rozciąga się, false w przeciwnym razie 
      * @param movingElement przesuwany element 
      * @param elementDisplacement wektor przesunięcia 
      */
     public static void movingDuringStretchingOut(Geometry scallingGeometry,
-            float newX, float newY, float newZ, boolean addition, Spatial movingElement,
+            Vector3f scallingVector, boolean addition, Spatial movingElement,
             Vector3f elementDisplacement){
-        scallingGeometry.setLocalScale(newX, newY, newZ);
+        scallingGeometry.setLocalScale(scallingVector);
         Vector3f localTranslation = movingElement.getLocalTranslation();
         Vector3f displacement = elementDisplacement.clone();
         if(!addition) displacement.negateLocal();

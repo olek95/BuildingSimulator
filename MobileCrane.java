@@ -15,6 +15,12 @@ import com.jme3.scene.Node;
 import com.jme3.texture.Texture;
 import com.jme3.water.SimpleWaterProcessor;
 import java.util.List;
+/**
+ * Obiekt klasy <code>MobileCrane</code> reprezentuje mobilny dźwig. Dźwig
+ * ten posiada umiejętność poruszania się w przód i w tył, skręciania oraz 
+ * obsługi ramienia dźwigu. 
+ * @author AleksanderSklorz
+ */
 public class MobileCrane implements ActionListener{
     private BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
     private Node craneSpatial = (Node)game.getAssetManager().loadModel("Models/dzwig/dzwig.j3o");
@@ -76,6 +82,10 @@ public class MobileCrane implements ActionListener{
                 crane.steer(steeringValue);
         }
     }
+    /**
+     * Aktualizuje stan pojazdu. Możliwe stany to: stop, jazda w przód i jazda
+     * w tył. 
+     */
     public void updateState(){
         if(key == null){
             if(crane.getCurrentVehicleSpeedKmHour() < 1 && crane.getCurrentVehicleSpeedKmHour() > -1)
@@ -92,6 +102,10 @@ public class MobileCrane implements ActionListener{
             }
         
     }
+    /**
+     * Zwraca kabinę operatora ramienia dźwigu. 
+     * @return kabina operatora ramienia dźwigu. 
+     */
     public CraneCabin getCabin(){
         return cabin;
     }

@@ -87,24 +87,15 @@ public class CraneCabin implements AnalogListener{
                 CollisionResults results = new CollisionResults();
                 /* jeśli nie dotknęło żadnego obiektu, to zbędne jest sprawdzanie 
                 kolizji w dół*/
-                if(recentlyHitObject != null){ 
-                    // tworzy pomocniczy promień sprawdzający kolizję w dół
-                    Ray r = new Ray(hook.getWorldTranslation(), new Vector3f(0,-0.5f,0));
-                    System.out.println(recentlyHitObject);
-                    System.out.println(recentlyHitObject.getWorldBound());
-                    r.collideWith((BoundingBox)recentlyHitObject.getWorldBound(),
-                            results);
-                    System.out.println(results.size());
-                }
+                if(recentlyHitObject != null)
+                    new Ray(hook.getWorldTranslation(), new Vector3f(0,-0.5f,0))
+                            .collideWith((BoundingBox)recentlyHitObject.getWorldBound(),
+                            results); // tworzy pomocniczy promień sprawdzający kolizję w dół
                 // obniża hak, jeśli w żadnym punkcie z dołu nie dotyka jakiegoś obiektu
-                if(results.size() == 0){ 
-                    changeHookPosition(true);
-                }
+                if(results.size() == 0) changeHookPosition(true);
                 break;
             case "Highten hook":
-                if(hookLowering > 1f){
-                    changeHookPosition(false);
-                }
+                if(hookLowering > 1f) changeHookPosition(false);
                 recentlyHitObject = null;
         }
     }
@@ -130,7 +121,6 @@ public class CraneCabin implements AnalogListener{
             public boolean collide(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB){
                 if(nodeA.getUserObject().equals(ropeHook)
                         && !nodeB.getUserObject().equals(hookHandle)){
-                    System.out.println(nodeB + "DOTKNAL");
                     recentlyHitObject = (Spatial)nodeB.getUserObject();
                 }
                 return true;

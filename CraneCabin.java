@@ -75,13 +75,13 @@ public class CraneCabin implements AnalogListener{
                 break;
             case "Pull out":
                 if(stretchingOut <= MAX_PROTRUSION)
-                    changeHandleHookPoition(rectractableCranePart, 1f, 1f, 
-                            stretchingOut += STRETCHING_OUT_SPEED, true);
+                    changeHandleHookPoition(rectractableCranePart, new Vector3f(1f, 1f, 
+                            stretchingOut += STRETCHING_OUT_SPEED), true);
                 break;
             case "Pull in":
                 if(stretchingOut > MIN_PROTRUSION)
-                    changeHandleHookPoition(rectractableCranePart, 1f, 1f, 
-                            stretchingOut -= STRETCHING_OUT_SPEED, false);
+                    changeHandleHookPoition(rectractableCranePart, new Vector3f(1f, 1f, 
+                            stretchingOut -= STRETCHING_OUT_SPEED), false);
                 break;
             case "Lower hook":
                 CollisionResults results = new CollisionResults();
@@ -93,13 +93,13 @@ public class CraneCabin implements AnalogListener{
                             results); // tworzy pomocniczy promień sprawdzający kolizję w dół
                 // obniża hak, jeśli w żadnym punkcie z dołu nie dotyka jakiegoś obiektu
                 if(results.size() == 0) 
-                    changeHookPosition(rope, 1f, hookLowering += HOOK_LOWERING_SPEED, 1f,
-                            false);
+                    changeHookPosition(rope, new Vector3f(1f, 
+                            hookLowering += HOOK_LOWERING_SPEED, 1f), false);
                 break;
             case "Highten hook":
                 if(hookLowering > 1f) 
-                    changeHookPosition(rope, 1f, hookLowering -= HOOK_LOWERING_SPEED, 1f,
-                            true);
+                    changeHookPosition(rope, new Vector3f(1f, 
+                            hookLowering -= HOOK_LOWERING_SPEED, 1f), true);
                 recentlyHitObject = null;
         }
     }
@@ -131,10 +131,10 @@ public class CraneCabin implements AnalogListener{
             }
         }, 2);
     }
-    private void changeHookPosition(Node scallingGeometryParent, float newX, float newY,
-            float newZ, boolean heightening){
-        movingDuringStretchingOut((Geometry)scallingGeometryParent.getChild(0), newX, newY,
-                newZ, heightening, hook, hookDisplacement);
+    private void changeHookPosition(Node scallingGeometryParent, Vector3f scallingVector,
+            boolean heightening){
+        movingDuringStretchingOut((Geometry)scallingGeometryParent.getChild(0), 
+                scallingVector, heightening, hook, hookDisplacement);
         createRopeHookPhysics();
     }
     private void createRopeHookPhysics(){
@@ -149,10 +149,10 @@ public class CraneCabin implements AnalogListener{
         lineAndHookHandleJoint = joinsElementToOtherElement(lineAndHookHandleJoint,
                 hookHandle, ropeHook, Vector3f.ZERO, new Vector3f(0, 0.06f,0));
     }
-    private void changeHandleHookPoition(Node scallingGeometryParent, float newX, float newY,
-            float newZ, boolean pullingOut){
+    private void changeHandleHookPoition(Node scallingGeometryParent, 
+            Vector3f scallingVector, boolean pullingOut){
         Geometry rectractableCranePartGeometry = (Geometry)scallingGeometryParent.getChild(0);
-        movingDuringStretchingOut(rectractableCranePartGeometry, newX, newY, newZ, 
+        movingDuringStretchingOut(rectractableCranePartGeometry, scallingVector, 
                 pullingOut, hookHandle, hookHandleDisplacement);
         createObjectPhysics(rectractableCranePart, rectractableCranePart, 1f, true,
                 rectractableCranePartGeometry.getName());

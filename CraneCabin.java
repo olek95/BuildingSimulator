@@ -16,6 +16,9 @@ import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.collision.CollisionResults;
 import com.jme3.math.Ray;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Obiekt klasy <code>CraneCabin</code> reprezentuje kabinę operatora ramienia 
@@ -26,7 +29,8 @@ import com.jme3.math.Ray;
 public class CraneCabin implements AnalogListener{
     private Node craneCabin, lift, rectractableCranePart, mobileCrane, rope, ropeHook;
     private Spatial hookHandle, hook;
-    private float yCraneOffset = 0f, stretchingOut = 1f, hookLowering = 1f;
+    private float yCraneOffset = 0f, stretchingOut = 1f, hookLowering = 1f,
+            propsLowering = 0.05f;
     private Vector3f hookHandleDisplacement, hookDisplacement;
     private static final float MAX_PROTRUSION = 9.5f, MIN_PROTRUSION = 1f,
             LIFTING_SPEED = 0.005f, STRETCHING_OUT_SPEED = 0.05f, 
@@ -157,5 +161,20 @@ public class CraneCabin implements AnalogListener{
         createObjectPhysics(rectractableCranePart, rectractableCranePart, 1f, true,
                 rectractableCranePartGeometry.getName());
         rectractableCranePart.getControl(RigidBodyControl.class).setCollisionGroup(3);
+    }
+    public void lowerProps(){
+        List<Spatial> mobileCraneChildren = mobileCrane.getChildren();
+        int i = 0, changed = 0;
+        String[] props = {"protractileProp1", "protractileProp2", "protractileProp3",
+            "protractileProp4"};
+        do{
+            Node prop = (Node)mobileCraneChildren.get(i);
+            if(Arrays.binarySearch(props, prop.getName()) >= 0){
+                    changed++;
+                    ((Geometry)prop.getChild(0)).setLocalScale(1f, 1f + propsLowering, 1f);
+            }
+            i++;
+        }while(changed < 4);
+        propsLowering += 0.05f;
     }
 }

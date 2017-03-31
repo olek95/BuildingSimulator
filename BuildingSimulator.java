@@ -13,6 +13,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 
@@ -21,6 +22,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     private BulletAppState bulletAppState = new BulletAppState();
     private MobileCrane player;
     private boolean debug = false;
+    private static boolean tryb = false;
+    float nowe = 0.05f;
     public static void main(String[] args) {
         game = new BuildingSimulator();
         game.start();
@@ -30,7 +33,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     public void simpleInitApp() {
         Spatial scene = assetManager.loadModel("Scenes/gameMap.j3o");
         scene.setLocalTranslation(0, -3f, 0);
-        flyCam.setMoveSpeed(100);
+        flyCam.setMoveSpeed(10);
         PlaneCollisionShape plane = new PlaneCollisionShape();
         RigidBodyControl rgb = new RigidBodyControl(0.0f);
         scene.addControl(rgb);
@@ -75,6 +78,10 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     @Override
     public void simpleUpdate(float tpf) {
         player.updateState();
+        /*Geometry n = (Geometry)CraneCabin.wysun().getChild(0);
+        n.setLocalScale(1f, 1f + nowe, 1f);
+        nowe += 0.05f;*/
+        if(!player.using) player.getCabin().lowerProps();
     }
 
     @Override
@@ -86,6 +93,9 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     }
     public BulletAppState getBulletAppState(){
         return bulletAppState;
+    }
+    public static boolean getTryb(){
+        return tryb;
     }
     private void setupKeys(Object o){
         if(!inputManager.hasMapping("Left")){
@@ -126,10 +136,12 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             if(player.using){
                 inputManager.removeListener(player);
                 setupKeys(player.getCabin());
+                tryb = true;
             }
             else{
                 inputManager.removeListener(player.getCabin());
                 setupKeys(player);
+                tryb = false;
             }
             player.using = !player.using;
         }else{

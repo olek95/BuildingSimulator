@@ -13,7 +13,6 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 
@@ -23,7 +22,6 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     private MobileCrane player;
     private boolean debug = false;
     private static boolean tryb = false;
-    float nowe = 0.05f;
     public static void main(String[] args) {
         game = new BuildingSimulator();
         game.start();
@@ -78,10 +76,10 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     @Override
     public void simpleUpdate(float tpf) {
         player.updateState();
-        /*Geometry n = (Geometry)CraneCabin.wysun().getChild(0);
-        n.setLocalScale(1f, 1f + nowe, 1f);
-        nowe += 0.05f;*/
-        if(!player.using) player.getCabin().lowerProps();
+        if(!player.using && player.getCabin().getPropsLowering() <= 6.35f) 
+            player.getCabin().controlProps(true);
+        else if(player.using && player.getCabin().getPropsLowering() > 1f)
+            player.getCabin().controlProps(false);
     }
 
     @Override

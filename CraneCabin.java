@@ -30,11 +30,11 @@ public class CraneCabin implements AnalogListener{
     private Node craneCabin, lift, rectractableCranePart, mobileCrane, rope, ropeHook;
     private Spatial hookHandle, hook;
     private float yCraneOffset = 0f, stretchingOut = 1f, hookLowering = 1f,
-            propsLowering = 0.05f;
-    private Vector3f hookHandleDisplacement, hookDisplacement;
+            propsLowering = 1f;
+    private Vector3f hookHandleDisplacement, hookDisplacement, propDisplacement;
     private static final float MAX_PROTRUSION = 9.5f, MIN_PROTRUSION = 1f,
             LIFTING_SPEED = 0.005f, STRETCHING_OUT_SPEED = 0.05f, 
-            HOOK_LOWERING_SPEED = 0.05f;
+            HOOK_LOWERING_SPEED = 0.05f, PROP_LOWERING_SPEED = 0.05f;
     private HingeJoint lineAndHookHandleJoint = null;
     private Spatial recentlyHitObject;
     public CraneCabin(Spatial craneSpatial){
@@ -56,6 +56,9 @@ public class CraneCabin implements AnalogListener{
                 new Vector3f(1f, hookLowering + HOOK_LOWERING_SPEED, 1f),
                 false, true, false);
         hookDisplacement.y *= 2; // wyrównuje poruszanie się haka wraz z liną 
+        propDisplacement =  calculateDisplacementAfterScaling((Node)mobileCrane
+                .getChild("protractileProp1"), new Vector3f(1f, propsLowering + PROP_LOWERING_SPEED,
+                1f), false, true, false);
     }
     public void onAnalog(String name, float value, float tpf) {
         switch(name){
@@ -162,19 +165,30 @@ public class CraneCabin implements AnalogListener{
                 rectractableCranePartGeometry.getName());
         rectractableCranePart.getControl(RigidBodyControl.class).setCollisionGroup(3);
     }
-    public void lowerProps(){
+    public void controlProps(boolean lowering){
         List<Spatial> mobileCraneChildren = mobileCrane.getChildren();
         int i = 0, changed = 0;
-        String[] props = {"protractileProp1", "protractileProp2", "protractileProp3",
-            "protractileProp4"};
+        String[] props = {"propParts1", "propParts2", "propParts3",
+            "propParts4"};
+        Vector3f scallingVector;
+        if(lowering) 
+            scallingVector = new Vector3f(1f, propsLowering  += PROP_LOWERING_SPEED, 1f);
+        else scallingVector = new Vector3f(1f, propsLowering -= PROP_LOWERING_SPEED, 1f);
         do{
             Node prop = (Node)mobileCraneChildren.get(i);
             if(Arrays.binarySearch(props, prop.getName()) >= 0){
                     changed++;
-                    ((Geometry)prop.getChild(0)).setLocalScale(1f, 1f + propsLowering, 1f);
+                    Geometry protractilePropGeometry = (Geometry)((Node)prop.getChild(0))
+                            .getChild(0);
+                    //protractilePropGeometry.setLocalScale(scallingVector);
+                    movingDuringStretchingOut(protractilePropGeometry, scallingVector, 
+                            !lowering, (Node)prop.getChild(1), propDisplacement);
             }
             i++;
         }while(changed < 4);
-        propsLowering += 0.05f;
+        System.out.println(propsLowering);
+    }
+    public float getPropsLowering(){
+        return propsLowering;
     }
 }

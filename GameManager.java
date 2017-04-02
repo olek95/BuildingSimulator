@@ -19,6 +19,7 @@ import com.jme3.scene.Spatial;
  * @author AleksanderSklorz
  */
 public class GameManager {
+    private static String lastAction;
     /**
      * Tworzy fizykę dla danego obiektu. Stosuje ona klasę RigidBodyControl, 
      * natomiast do wykrywania kolizji używa CompoundCollisionShape. 
@@ -85,16 +86,16 @@ public class GameManager {
     /**
      * Pozwala na przewidzenie wektora zawierającego informację o tym, o jaki 
      * wektor należy przesunąć elementy połączone ze skalowanym elementem. 
-     * @param parent skalowany węzeł 
+     * @param parentScallingElement rodzic skalowanego elementu
      * @param scale wartość skalowania 
      * @param x true jeśli skaluje się według osi X, false w przeciwnym razie 
      * @param y true jeśli skaluje się według osi Y, false w przeciwnym razie 
      * @param z true jeśli skaluje się według osi Z, false w przeciwnym razie 
      * @return wektor przesunięcia elementów połączonych ze skalowanym węzłem
      */
-    public static Vector3f calculateDisplacementAfterScaling(Node parent, 
+    public static Vector3f calculateDisplacementAfterScaling(Node parentScallingElement, 
             Vector3f scale, boolean x, boolean y, boolean z){
-        Geometry parentGeometry = (Geometry)((Node)parent.clone())
+        Geometry parentGeometry = (Geometry)((Node)parentScallingElement.clone())
                 .getChild(0); // tworzę kopię węzła, aby nie zmieniać rozmiaru oryginału
         Vector3f displacement = new Vector3f(),
                 initialSize  = ((BoundingBox)parentGeometry.getWorldBound()).getExtent(null);
@@ -112,17 +113,18 @@ public class GameManager {
      * Przesuwa połączony z obiektem rozszerzającym się element o podany wektor. 
      * @param scallingGeometry skalowany obiekt 
      * @param scallingVector wektor skalowania obiektu
-     * @param addition true jeśli rozciąga się, false w przeciwnym razie 
+     * @param direction true jeśli ma się przesuwać w kierunku dodatnim, false 
+     * w przeciwnym kierunku 
      * @param movingElement przesuwany element 
      * @param elementDisplacement wektor przesunięcia 
      */
     public static void movingDuringStretchingOut(Geometry scallingGeometry,
-            Vector3f scallingVector, boolean addition, Spatial movingElement,
+            Vector3f scallingVector, boolean direction, Spatial movingElement,
             Vector3f elementDisplacement){
         scallingGeometry.setLocalScale(scallingVector);
         Vector3f localTranslation = movingElement.getLocalTranslation();
         Vector3f displacement = elementDisplacement.clone();
-        if(!addition) displacement.negateLocal();
+        if(!direction) displacement.negateLocal();
         localTranslation.addLocal(displacement);
     }
     /**
@@ -165,5 +167,19 @@ public class GameManager {
         if(rotation == null) compound.addChildShape(elementCollisionShape, location);
         else compound.addChildShape(elementCollisionShape, location, rotation
                 .toRotationMatrix());
+    }
+    /**
+     * Zwraca ostatnio wykonaną akcję. 
+     * @return ostatnio wykonana akcja
+     */
+    public static String getLastAction(){
+        return lastAction;
+    }
+    /**
+     * Ustawia ostatnio wykonaną akcję. 
+     * @param key ostatnio wykonana akcja
+     */
+    public static void setLastAction(String action){
+        lastAction = action;
     }
 }

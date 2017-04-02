@@ -76,10 +76,26 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     @Override
     public void simpleUpdate(float tpf) {
         player.updateState();
-        if(!player.using && player.getCabin().getPropsLowering() <= 6.35f) 
-            player.getCabin().controlProps(true);
-        else if(player.using && player.getCabin().getPropsLowering() > 1f)
-            player.getCabin().controlProps(false);
+        CraneCabin cabin = player.getCabin();
+        if(player.using){
+            if(cabin.getPropsLowering() > CraneCabin.MIN_PROP_PROTRUSION)
+                cabin.controlProps(false);
+            else{
+                if("Action".equals(GameManager.getLastAction())){
+                    setupKeys(cabin);
+                    GameManager.setLastAction(null);
+                }
+            }
+        }else{
+            if(cabin.getPropsLowering() <= CraneCabin.MAX_PROP_PROTRUSION)
+                cabin.controlProps(true);
+            else{
+                if("Action".equals(GameManager.getLastAction())){
+                    setupKeys(player);
+                    GameManager.setLastAction(null);
+                }
+            }
+        }
     }
 
     @Override
@@ -133,15 +149,14 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         if(isPressed && name.equals("Action")){
             if(player.using){
                 inputManager.removeListener(player);
-                setupKeys(player.getCabin());
                 tryb = true;
             }
             else{
                 inputManager.removeListener(player.getCabin());
-                setupKeys(player);
                 tryb = false;
             }
             player.using = !player.using;
+            GameManager.setLastAction(name);
         }else{
             if(isPressed && name.equals("Physics")){
                 if(!debug) bulletAppState.getPhysicsSpace().enableDebug(assetManager);

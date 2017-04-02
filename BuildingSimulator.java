@@ -77,18 +77,19 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     public void simpleUpdate(float tpf) {
         player.updateState();
         CraneCabin cabin = player.getCabin();
-        if(player.using){
-            if(cabin.getPropsLowering() > CraneCabin.MIN_PROP_PROTRUSION)
-                cabin.controlProps(false);
+        if(!player.using){
+            if(cabin.getPropsLowering() <= CraneCabin.MAX_PROP_PROTRUSION)
+                cabin.controlProps(true);
             else{
+                // metoda wywołana na łańcuchu "Action", gdyż ostatnia akcja może być nullem
                 if("Action".equals(GameManager.getLastAction())){
                     setupKeys(cabin);
                     GameManager.setLastAction(null);
                 }
             }
         }else{
-            if(cabin.getPropsLowering() <= CraneCabin.MAX_PROP_PROTRUSION)
-                cabin.controlProps(true);
+            if(cabin.getPropsLowering() > CraneCabin.MIN_PROP_PROTRUSION)
+                cabin.controlProps(false);
             else{
                 if("Action".equals(GameManager.getLastAction())){
                     setupKeys(player);
@@ -112,6 +113,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         return tryb;
     }
     private void setupKeys(Object o){
+        System.out.println("SETUP");
         if(!inputManager.hasMapping("Left")){
             inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_H));
             inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_K));

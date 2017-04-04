@@ -16,7 +16,6 @@ import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.collision.CollisionResults;
 import com.jme3.math.Ray;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,21 +26,24 @@ import java.util.List;
  * @author AleksanderSklorz
  */
 public class CraneCabin implements AnalogListener{
-    private Node craneCabin, lift, rectractableCranePart, mobileCrane, rope, ropeHook;
-    private Spatial hookHandle, hook;
+    private Node craneCabin, lift, rectractableCranePart, mobileCrane, rope, ropeHook,
+            craneProps;
+    private Spatial hookHandle, hook, recentlyHitObject;
     private float yCraneOffset = 0f, stretchingOut = 1f, hookLowering = 1f,
-            propsLowering = 1f;
+            propsLowering = 1f, cranePropsProtrusion = 1f;
     private Vector3f hookHandleDisplacement, hookDisplacement, propDisplacement;
     private static final float MAX_PROTRUSION = 9.5f, MIN_PROTRUSION = 1f,
             LIFTING_SPEED = 0.005f, STRETCHING_OUT_SPEED = 0.05f, 
-            HOOK_LOWERING_SPEED = 0.05f, PROP_LOWERING_SPEED = 0.05f;
+            HOOK_LOWERING_SPEED = 0.05f, PROP_LOWERING_SPEED = 0.05f,
+            CRANE_PROP_GOING_OUT_SPEED = 0.035f, MAX_CRANE_PROP_PROTRUSION = 9f; // 0.07f, 8.8f
+    public static final float MAX_PROP_PROTRUSION = 6.35f, MIN_PROP_PROTRUSION = 1f;
     private HingeJoint lineAndHookHandleJoint = null;
-    private Spatial recentlyHitObject;
     public CraneCabin(Spatial craneSpatial){
         mobileCrane = (Node)craneSpatial;
         craneCabin = (Node)mobileCrane.getChild("crane");
         lift = (Node)craneCabin.getChild("lift");
         rectractableCranePart = (Node)lift.getChild("retractableCranePart");
+        craneProps = (Node)craneCabin.getChild("craneProps");
         hookHandle = lift.getChild("hookHandle");
         // do aktualnej kolizji dołącza kolizję z grupą 1
         hookHandle.getControl(RigidBodyControl.class).addCollideWithGroup(1);
@@ -72,12 +74,19 @@ public class CraneCabin implements AnalogListener{
                 if(yCraneOffset + LIFTING_SPEED < 0.6f){
                     yCraneOffset += LIFTING_SPEED;
                     lift.rotate(-LIFTING_SPEED, 0, 0);
+                    if(cranePropsProtrusion <= MAX_CRANE_PROP_PROTRUSION)
+                        craneProps.rotate(-LIFTING_SPEED, 0, 0);
+                    ((Geometry)((Node)craneProps.getChild("leftProtractileProp")).getChild("Cylinder.0041"))
+                            .setLocalScale(1f, cranePropsProtrusion += CRANE_PROP_GOING_OUT_SPEED, 1f);
+                    ((Geometry)((Node)craneProps.getChild("rightProtractileProp")).getChild(0))
+                            .setLocalScale(1f, cranePropsProtrusion += CRANE_PROP_GOING_OUT_SPEED, 1f);
                 }
                 break;
             case "Down":
                 if(yCraneOffset - LIFTING_SPEED >= 0f){
                     yCraneOffset -= LIFTING_SPEED;
                     lift.rotate(LIFTING_SPEED, 0, 0);
+                    craneProps.rotate(LIFTING_SPEED, 0, 0);
                 }
                 break;
             case "Pull out":
@@ -186,7 +195,6 @@ public class CraneCabin implements AnalogListener{
             }
             i++;
         }while(changed < 4);
-        System.out.println(propsLowering);
     }
     public float getPropsLowering(){
         return propsLowering;

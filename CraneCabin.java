@@ -35,7 +35,7 @@ public class CraneCabin implements AnalogListener{
     private static final float MAX_PROTRUSION = 9.5f, MIN_PROTRUSION = 1f,
             LIFTING_SPEED = 0.005f, STRETCHING_OUT_SPEED = 0.05f, 
             HOOK_LOWERING_SPEED = 0.05f, PROP_LOWERING_SPEED = 0.05f,
-            CRANE_PROP_GOING_OUT_SPEED = 0.035f, MAX_CRANE_PROP_PROTRUSION = 9f,
+            CRANE_PROP_GOING_OUT_SPEED = 0.07f,
             MIN_CRANE_PROP_PROTRUSION = 1f;
     public static final float MAX_PROP_PROTRUSION = 6.35f, MIN_PROP_PROTRUSION = 1f;
     private HingeJoint lineAndHookHandleJoint = null;
@@ -78,25 +78,12 @@ public class CraneCabin implements AnalogListener{
                 break;
             case "Up":
                 if(yCraneOffset + LIFTING_SPEED < 0.6f){
-                    yCraneOffset += LIFTING_SPEED;
-                    lift.rotate(-LIFTING_SPEED, 0, 0);
-                        craneProps.rotate(-LIFTING_SPEED, 0, 0);
-                    leftProtractilePropGeometry.setLocalScale(1f,
-                            cranePropsProtrusion += CRANE_PROP_GOING_OUT_SPEED, 1f);
-                    rightProtractilePropGeometry.setLocalScale(1f,
-                            cranePropsProtrusion += CRANE_PROP_GOING_OUT_SPEED, 1f);
+                    controlCrane(false);
                 }
                 break;
             case "Down":
                 if(yCraneOffset - LIFTING_SPEED >= 0f){
-                    yCraneOffset -= LIFTING_SPEED;
-                    lift.rotate(LIFTING_SPEED, 0, 0);
-                    if(cranePropsProtrusion >= MIN_CRANE_PROP_PROTRUSION)
-                        craneProps.rotate(LIFTING_SPEED, 0, 0);
-                    leftProtractilePropGeometry.setLocalScale(1f,
-                            cranePropsProtrusion -= CRANE_PROP_GOING_OUT_SPEED, 1f);
-                    rightProtractilePropGeometry.setLocalScale(1f,
-                            cranePropsProtrusion -= CRANE_PROP_GOING_OUT_SPEED, 1f);
+                    controlCrane(true);
                 }
                 break;
             case "Pull out":
@@ -128,6 +115,38 @@ public class CraneCabin implements AnalogListener{
                             hookLowering -= HOOK_LOWERING_SPEED, 1f), true);
                 recentlyHitObject = null;
         }
+    }
+    /**
+     * Pozwala na kontrolowanie podporami (na opuszczanie i podnioszenie ich). 
+     * @param lowering true jeśli podpory mają być opuszczane, false jeśli podnioszone
+     */
+    public void controlProps(boolean lowering){
+        List<Spatial> mobileCraneChildren = mobileCrane.getChildren();
+        int i = 0, changed = 0;
+        String[] props = {"propParts1", "propParts2", "propParts3",
+            "propParts4"};
+        Vector3f scallingVector;
+        if(lowering) 
+            scallingVector = new Vector3f(1f, propsLowering  += PROP_LOWERING_SPEED, 1f);
+        else scallingVector = new Vector3f(1f, propsLowering -= PROP_LOWERING_SPEED, 1f);
+        do{
+            Node prop = (Node)mobileCraneChildren.get(i);
+            if(Arrays.binarySearch(props, prop.getName()) >= 0){
+                    changed++;
+                    Geometry protractilePropGeometry = (Geometry)((Node)prop.getChild(0))
+                            .getChild(0);
+                    movingDuringStretchingOut(protractilePropGeometry, scallingVector, 
+                            !lowering, (Node)prop.getChild(1), propDisplacement);
+            }
+            i++;
+        }while(changed < 4);
+    }
+    /**
+     * Zwraca wartość określającą jak bardzo opuszczone są podpory. 
+     * @return wartość określającą opuszczenie podpór 
+     */
+    public float getPropsLowering(){
+        return propsLowering;
     }
     private void createCranePhysics(){
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
@@ -184,36 +203,20 @@ public class CraneCabin implements AnalogListener{
                 rectractableCranePartGeometry.getName());
         rectractableCranePart.getControl(RigidBodyControl.class).setCollisionGroup(3);
     }
-    /**
-     * Pozwala na kontrolowanie podporami (na opuszczanie i podnioszenie ich). 
-     * @param lowering true jeśli podpory mają być opuszczane, false jeśli podnioszone
-     */
-    public void controlProps(boolean lowering){
-        List<Spatial> mobileCraneChildren = mobileCrane.getChildren();
-        int i = 0, changed = 0;
-        String[] props = {"propParts1", "propParts2", "propParts3",
-            "propParts4"};
-        Vector3f scallingVector;
-        if(lowering) 
-            scallingVector = new Vector3f(1f, propsLowering  += PROP_LOWERING_SPEED, 1f);
-        else scallingVector = new Vector3f(1f, propsLowering -= PROP_LOWERING_SPEED, 1f);
-        do{
-            Node prop = (Node)mobileCraneChildren.get(i);
-            if(Arrays.binarySearch(props, prop.getName()) >= 0){
-                    changed++;
-                    Geometry protractilePropGeometry = (Geometry)((Node)prop.getChild(0))
-                            .getChild(0);
-                    movingDuringStretchingOut(protractilePropGeometry, scallingVector, 
-                            !lowering, (Node)prop.getChild(1), propDisplacement);
-            }
-            i++;
-        }while(changed < 4);
-    }
-    /**
-     * Zwraca wartość określającą jak bardzo opuszczone są podpory. 
-     * @return wartość określającą opuszczenie podpór 
-     */
-    public float getPropsLowering(){
-        return propsLowering;
+    private void controlCrane(boolean lowering){
+        if(lowering){
+            yCraneOffset -= LIFTING_SPEED;
+            cranePropsProtrusion -= CRANE_PROP_GOING_OUT_SPEED;
+            if(cranePropsProtrusion >= MIN_CRANE_PROP_PROTRUSION)
+                craneProps.rotate(LIFTING_SPEED, 0, 0);
+            lift.rotate(LIFTING_SPEED, 0, 0);
+        }else{
+            yCraneOffset += LIFTING_SPEED;
+            cranePropsProtrusion += CRANE_PROP_GOING_OUT_SPEED;
+            craneProps.rotate(-LIFTING_SPEED, 0, 0);
+            lift.rotate(-LIFTING_SPEED, 0, 0);
+        }
+        leftProtractilePropGeometry.setLocalScale(1f, cranePropsProtrusion, 1f);
+        rightProtractilePropGeometry.setLocalScale(1f, cranePropsProtrusion, 1f);
     }
 }

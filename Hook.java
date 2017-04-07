@@ -15,6 +15,11 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
+/**
+ * Obiekt klasy <code>Hook</code> reprezentuje hak zawieszony na linie. 
+ * Może być zarówno opuszczany jak i podnoszony. 
+ * @author AleksanderSklorz 
+ */
 public class Hook {
     private Spatial hook, hookHandle, recentlyHitObject;
     private Node rope, ropeHook;
@@ -37,6 +42,9 @@ public class Hook {
                 .getBulletAppState().getPhysicsSpace();
         physics.add(hookHandle.getControl(0));
     }
+    /**
+     * Opuszcza hak do momentu wykrycia przeszkody. 
+     */
     public void lower(){
         CollisionResults results = new CollisionResults();
         /* jeśli nie dotknęło żadnego obiektu, to zbędne jest sprawdzanie 
@@ -50,15 +58,27 @@ public class Hook {
             changeHookPosition(rope, new Vector3f(1f,hookLowering += HOOK_LOWERING_SPEED, 1f),
                     false);
     }
+    /**
+     * Podnosi hak. 
+     */
     public void highten(){
         changeHookPosition(rope, new Vector3f(1f, hookLowering -= HOOK_LOWERING_SPEED, 1f),
                 true);
     }
+    /**
+     * Zwraca wartość określajacą jak bardzo opuszczony jest hak. 
+     * @return wartość opuszczenia haka 
+     */
     public float getHookLowering(){
         return hookLowering;
     }
+    /**
+     * Tworzy słuchacza dla haka, który sprawdza kolizję haka z obiektami otoczenia.
+     * @return słuchacz kolizji
+     */
     public PhysicsCollisionGroupListener createCollisionListener(){
         return new PhysicsCollisionGroupListener(){
+            @Override
             public boolean collide(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB){
                 if(nodeA.getUserObject().equals(ropeHook)
                         && !nodeB.getUserObject().equals(hookHandle)){
@@ -68,9 +88,17 @@ public class Hook {
             }
         };
     }
+    /**
+     * Zwraca uchwyt do jakiego przyczepiona jest lina. 
+     * @return uchwyt liny
+     */
     public Spatial getHookHandle(){
         return hookHandle;
     }
+    /**
+     * Ustawia ostatnio dotknięty przez hak obiekt.
+     * @param object dotknięty obiekt 
+     */
     public void setRecentlyHitObject(Spatial object){
         recentlyHitObject = object;
     }
@@ -93,3 +121,4 @@ public class Hook {
                 hookHandle, ropeHook, Vector3f.ZERO, new Vector3f(0, 0.06f,0));
     }
 }
+

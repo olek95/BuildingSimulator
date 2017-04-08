@@ -91,12 +91,9 @@ public class GameManager {
                 initialSize  = ((BoundingBox)parentGeometry.getWorldBound()).getExtent(null);
         parentGeometry.setLocalScale(scale);
         ((BoundingBox)parentGeometry.getWorldBound()).getExtent(displacement);
-        if(x) displacement.x -= initialSize.z;
-        else displacement.x = 0f;
-        if(y) displacement.y -= initialSize.y;
-        else displacement.y = 0f;
-        if(z) displacement.z -= initialSize.z;
-        else displacement.z = 0f;
+        displacement.x = x ? displacement.x - initialSize.z : 0f;
+        displacement.y = y ? displacement.y - initialSize.y : 0f;
+        displacement.z = z ? displacement.z - initialSize.z : 0f;
         return displacement;
     }
     /**
@@ -112,10 +109,9 @@ public class GameManager {
             Vector3f scallingVector, boolean direction, Spatial movingElement,
             Vector3f elementDisplacement){
         scallingGeometry.setLocalScale(scallingVector);
-        Vector3f localTranslation = movingElement.getLocalTranslation();
         Vector3f displacement = elementDisplacement.clone();
         if(!direction) displacement.negateLocal();
-        localTranslation.addLocal(displacement);
+        movingElement.getLocalTranslation().addLocal(displacement);
     }
     /**
      * Tworzy połączenie dwóch obiektów. 

@@ -24,18 +24,16 @@ public class GameManager {
      * Tworzy fizykę dla danego obiektu. Stosuje ona klasę RigidBodyControl, 
      * natomiast do wykrywania kolizji używa CompoundCollisionShape. 
      * @param parent węzeł z którego pobierane są elementy podrzędne tworzące
-     * obiekt fizyczny 
-     * @param controlOwner właściciel fizyki danego obiektu fizycznego 
+     * obiekt fizyczny. Jest też właścicielem fizyki tego obiektu. 
      * @param mass masa obiektu 
      * @param kinematic true jeśli używamy fizyki kinematycznej, false jeśli dynamicznej
      * @param children nazwy elementów podrzędnych węzła parent, które tworzą
      * obiekt fizyczny
      */
-    public static void createObjectPhysics(Node parent, Spatial controlOwner, 
-            float mass, boolean kinematic, String... children){
+    public static void createObjectPhysics(Node parent, float mass, boolean kinematic,
+            String... children){
         CompoundCollisionShape compound = createCompound(parent, children);
-        createPhysics(compound, controlOwner, mass, kinematic,
-                (Geometry)parent.getChild(children[0]));
+        createPhysics(compound, parent, mass, kinematic);
     }
     /**
      * Tworzy siatkę kolizji dla danych elementów. 
@@ -64,23 +62,15 @@ public class GameManager {
      * ma wartość null
      */
     public static void createPhysics(CompoundCollisionShape compound, Spatial controlOwner,
-            float mass, boolean kinematic, Geometry elementGeometry){
+            float mass, boolean kinematic){
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace();
-        if(controlOwner == null){
-            if(elementGeometry.getControl(RigidBodyControl.class) != null){
-                physics.remove(elementGeometry.getControl(0));
-                elementGeometry.removeControl(RigidBodyControl.class);
-            }
-        }else{
-            if(controlOwner.getControl(RigidBodyControl.class) != null){
-                physics.remove(controlOwner.getControl(0));
-                controlOwner.removeControl(RigidBodyControl.class);
-            }
+        if(controlOwner.getControl(RigidBodyControl.class) != null){
+            physics.remove(controlOwner.getControl(0));
+            controlOwner.removeControl(RigidBodyControl.class);
         }
         RigidBodyControl control = new RigidBodyControl(compound, mass);
         control.setKinematic(kinematic);
-        if(controlOwner == null) elementGeometry.addControl(control);
-        else controlOwner.addControl(control);
+        controlOwner.addControl(control);
         physics.add(control);
     }
     /**

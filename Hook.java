@@ -2,7 +2,6 @@ package buildingsimulator;
 
 import static buildingsimulator.GameManager.*;
 import com.jme3.bounding.BoundingBox;
-import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
@@ -38,9 +37,8 @@ public class Hook {
                 false, true, false);
         hookDisplacement.y *= 2; // wyrównuje poruszanie się haka wraz z liną 
         createRopeHookPhysics();
-        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
-                .getBulletAppState().getPhysicsSpace();
-        physics.add(hookHandle.getControl(0));
+        BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
+                .add(hookHandle.getControl(0));
     }
     /**
      * Opuszcza hak do momentu wykrycia przeszkody. 
@@ -52,7 +50,7 @@ public class Hook {
         if(recentlyHitObject != null)
             // tworzy pomocniczy promień sprawdzający kolizję w dół
             new Ray(hook.getWorldTranslation(), new Vector3f(0,-0.5f,0))
-                    .collideWith((BoundingBox)recentlyHitObject.getWorldBound(),results);
+                    .collideWith((BoundingBox)recentlyHitObject.getWorldBound(), results);
         // obniża hak, jeśli w żadnym punkcie z dołu nie dotyka jakiegoś obiektu
         if(results.size() == 0)
             changeHookPosition(rope, new Vector3f(1f,hookLowering += HOOK_LOWERING_SPEED, 1f),
@@ -109,11 +107,11 @@ public class Hook {
         createRopeHookPhysics();
     }
     private void createRopeHookPhysics(){
-        Geometry ropeGeometry = (Geometry)rope.getChild(0);
-        CompoundCollisionShape ropeHookCompound = createCompound(rope, ropeGeometry.getName());
+        CompoundCollisionShape ropeHookCompound = createCompound(rope, rope.getChild(0)
+                .getName());
         addNewCollisionShapeToComponent(ropeHookCompound, (Node)hook, "hookGeometry",
                 hook.getLocalTranslation(), hook.getLocalRotation());
-        createPhysics(ropeHookCompound, ropeHook, 4f, false, ropeGeometry);
+        createPhysics(ropeHookCompound, ropeHook, 4f, false);
         RigidBodyControl ropeHookControl = ropeHook.getControl(RigidBodyControl.class);
         ropeHookControl.setCollisionGroup(2); 
         ropeHookControl.setCollideWithGroups(3);
@@ -121,4 +119,3 @@ public class Hook {
                 hookHandle, ropeHook, Vector3f.ZERO, new Vector3f(0, 0.06f,0));
     }
 }
-

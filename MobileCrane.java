@@ -39,6 +39,7 @@ public class MobileCrane implements ActionListener{
         physics.add(craneControl);
         cabin = new CraneCabin(crane);
     }
+    @Override
     public void onAction(String name, boolean isPressed, float tpf) {
         switch(name){
             case "Up":

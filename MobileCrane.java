@@ -2,10 +2,8 @@ package buildingsimulator;
 
 import com.jme3.scene.Spatial;
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.VehicleControl;
-import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.material.Material;
 import com.jme3.math.Vector2f;
@@ -23,63 +21,53 @@ import java.util.List;
  */
 public class MobileCrane implements ActionListener{
     private BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-    private Node craneSpatial = (Node)game.getAssetManager().loadModel("Models/dzwig/dzwig.j3o");
-    private VehicleControl crane = craneSpatial.getControl(VehicleControl.class);
+    private Node crane = (Node)game.getAssetManager().loadModel("Models/dzwig/dzwig.j3o");
+    private VehicleControl craneControl = crane.getControl(VehicleControl.class);
     private CraneCabin cabin;
-    private final float accelerationForce = 100.0f, brakeForce = 20.0f, frictionForce = 10.0f;
+    private static final float ACCELERATION_FORCE = 100.0f, BRAKE_FORCE = 20.0f,
+            FRICTION_FORCE = 10.0f;
     private float steeringValue = 0f;
     private String key = "";
     boolean using = true;
     public MobileCrane(){
-        craneSpatial.setLocalTranslation(0, 1.15f, 0); // 100
+        crane.setLocalTranslation(0, 1.15f, 0);
         createMobileCranePhysics();
         scaleTiresTexture();
         createMirrors();
-        game.getRootNode().attachChild(craneSpatial);
+        game.getRootNode().attachChild(crane);
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
-        physics.add(crane);
-        cabin = new CraneCabin(craneSpatial);
+        physics.add(craneControl);
+        cabin = new CraneCabin(crane);
     }
     public void onAction(String name, boolean isPressed, float tpf) {
         switch(name){
             case "Up":
                 if(isPressed){
                     key = name;
-                    crane.accelerate(0f);
-                    crane.brake(brakeForce);
+                    craneControl.accelerate(0f);
+                    craneControl.brake(BRAKE_FORCE);
                 }else{
                     key = null;
-                    if(crane.getCurrentVehicleSpeedKmHour() > 0) crane.accelerate(-frictionForce);
-                    else crane.accelerate(frictionForce);
+                    craneControl.accelerate(craneControl.getCurrentVehicleSpeedKmHour() > 0 ?
+                            -FRICTION_FORCE : FRICTION_FORCE);
                 }
                 break;
             case "Down":
                 if(isPressed){
                     key = name;
-                    crane.accelerate(0f);
-                    crane.brake(brakeForce);
+                    craneControl.accelerate(0f);
+                    craneControl.brake(BRAKE_FORCE);
                 }else{
                     key = null;
-                    crane.brake(0f);
-                    if(crane.getCurrentVehicleSpeedKmHour() < 0) crane.accelerate(frictionForce);
-                    else crane.accelerate(-frictionForce);
+                    craneControl.brake(0f);
+                    craneControl.accelerate(craneControl.getCurrentVehicleSpeedKmHour() < 0 ?
+                            FRICTION_FORCE : -FRICTION_FORCE);
                 }
                 break;
             case "Left":
-                if(isPressed){
-                    steeringValue += 0.5f;
-                }else{
-                    steeringValue -= 0.5f;
-                }
-                crane.steer(steeringValue);
+                craneControl.steer(steeringValue += isPressed ? 0.5f : -0.5f);
                 break;
-            case "Right":
-                if(isPressed){
-                    steeringValue -= 0.5f;
-                }else{
-                    steeringValue += 0.5f;
-                }
-                crane.steer(steeringValue);
+            case "Right": craneControl.steer(steeringValue += isPressed ? -0.5f : 0.5f);
         }
     }
     /**
@@ -88,19 +76,19 @@ public class MobileCrane implements ActionListener{
      */
     public void updateState(){
         if(key == null){
-            if(crane.getCurrentVehicleSpeedKmHour() < 1 && crane.getCurrentVehicleSpeedKmHour() > -1)
+            if(craneControl.getCurrentVehicleSpeedKmHour() < 1 
+                    && craneControl.getCurrentVehicleSpeedKmHour() > -1)
                 stop();
         }else if(!key.equals(""))
-            if(key.equals("Down") && crane.getCurrentVehicleSpeedKmHour() < 0){
-                crane.brake(0f);
-                crane.accelerate(-accelerationForce * 0.5f); // prędkość w tył jest mniejsza 
+            if(key.equals("Down") && craneControl.getCurrentVehicleSpeedKmHour() < 0){
+                craneControl.brake(0f);
+                craneControl.accelerate(-ACCELERATION_FORCE * 0.5f); // prędkość w tył jest mniejsza 
             }else{
-                if(key.equals("Up") && Math.ceil(crane.getCurrentVehicleSpeedKmHour()) >= 0){
-                    crane.brake(0f);
-                    crane.accelerate(accelerationForce);
+                if(key.equals("Up") && Math.ceil(craneControl.getCurrentVehicleSpeedKmHour()) >= 0){
+                    craneControl.brake(0f);
+                    craneControl.accelerate(ACCELERATION_FORCE);
                 }
             }
-        
     }
     /**
      * Zwraca kabinę operatora ramienia dźwigu. 
@@ -111,12 +99,13 @@ public class MobileCrane implements ActionListener{
     }
     private void stop(){
         key = "";
-        crane.accelerate(0f);
-        crane.brake(0f);
-        crane.setLinearVelocity(Vector3f.ZERO); // jeśli jeszcze jest jakaś mała prędkość, to zeruje
+        craneControl.accelerate(0f);
+        craneControl.brake(0f);
+        // jeśli jeszcze jest jakaś mała prędkość, to zeruje
+        craneControl.setLinearVelocity(Vector3f.ZERO); 
     }
     private void scaleTiresTexture(){
-        List<Spatial> craneElements = craneSpatial.getChildren();
+        List<Spatial> craneElements = crane.getChildren();
         Texture tireTexture = null;
         for(Spatial element : craneElements)
             if(element.getName().startsWith("wheel")){
@@ -133,8 +122,8 @@ public class MobileCrane implements ActionListener{
         Geometry mirror;
         float x = 0.2f;
         for(int i = 0; i < 2; i++){
-            if(i == 0) mirror = (Geometry)craneSpatial.getChild("leftMirror");
-            else mirror = (Geometry)craneSpatial.getChild("rightMirror");
+            if(i == 0) mirror = (Geometry)crane.getChild("leftMirror");
+            else mirror = (Geometry)crane.getChild("rightMirror");
             SimpleWaterProcessor mirrorProcessor = new SimpleWaterProcessor(game.getAssetManager());
             mirrorProcessor.setReflectionScene(game.getRootNode());
             mirrorProcessor.setDistortionScale(0.0f);
@@ -143,20 +132,13 @@ public class MobileCrane implements ActionListener{
             if(i == 1) x = -x;
             mirrorProcessor.setPlane(new Vector3f(0f, 0f, 0f),new Vector3f(x, 0f, 1f));
             game.getViewPort().addProcessor(mirrorProcessor);
-            Material mirrorMaterial = mirrorProcessor.getMaterial();
-            mirror.setMaterial(mirrorMaterial);
+            mirror.setMaterial(mirrorProcessor.getMaterial());
         }
     }
     private void createMobileCranePhysics(){
-        String[] mobileCraneElements = {"outsideMobileCraneCabin", "bollardsShape"};
-        CompoundCollisionShape mobileCraneCollision = (CompoundCollisionShape)crane.getCollisionShape();
-        for(int i = 0; i < mobileCraneElements.length; i++){
-            Geometry elementGeometry = (Geometry)craneSpatial.getChild(mobileCraneElements[i]);
-            CollisionShape elementCollision = CollisionShapeFactory
-                    .createDynamicMeshShape(elementGeometry);
-            elementCollision.setScale(elementGeometry.getWorldScale());
-            mobileCraneCollision.addChildShape(elementCollision, Vector3f.ZERO);
-        }
+        GameManager.addNewCollisionShapeToComponent((CompoundCollisionShape)craneControl
+                .getCollisionShape(),crane, "outsideMobileCraneCabin", Vector3f.ZERO, null);
+        GameManager.addNewCollisionShapeToComponent((CompoundCollisionShape)craneControl
+                .getCollisionShape(),crane, "bollardsShape", Vector3f.ZERO, null);
     }
 }
-

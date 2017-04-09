@@ -98,6 +98,13 @@ public class MobileCrane implements ActionListener{
     public CraneCabin getCabin(){
         return cabin;
     }
+    /**
+     * Zwraca aktualną prędkość dźwigu. 
+     * @return prędkość
+     */
+    public float getSpeed(){
+        return craneControl.getCurrentVehicleSpeedKmHour();
+    }
     private void stop(){
         key = "";
         craneControl.accelerate(0f);

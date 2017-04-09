@@ -21,7 +21,6 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     private BulletAppState bulletAppState = new BulletAppState();
     private MobileCrane player;
     private boolean debug = false;
-    private static boolean tryb = false;
     public static void main(String[] args) {
         game = new BuildingSimulator();
         game.start();
@@ -81,7 +80,9 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             if(cabin.getPropsLowering() <= CraneCabin.MAX_PROP_PROTRUSION)
                 cabin.controlProps(true);
             else{
-                // metoda wywołana na łańcuchu "Action", gdyż ostatnia akcja może być nullem
+                /* metoda wywołana na łańcuchu "Action", gdyż ostatnia akcja może być nullem.
+                Może być bez tego ifa, ale dodany w celu optymalizacji aby nie powtarzać
+                dodawania listenerów klawiszy*/
                 if("Action".equals(GameManager.getLastAction())){
                     setupKeys(cabin);
                     GameManager.setLastAction(null);
@@ -109,11 +110,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     public BulletAppState getBulletAppState(){
         return bulletAppState;
     }
-    public static boolean getTryb(){
-        return tryb;
-    }
     private void setupKeys(Object o){
-        System.out.println("SETUP");
         if(!inputManager.hasMapping("Left")){
             inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_H));
             inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_K));
@@ -148,17 +145,22 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         }
     }
     public void onAction(String name, boolean isPressed, float tpf){
+        boolean craneStop = true;
         if(isPressed && name.equals("Action")){
             if(player.using){
-                inputManager.removeListener(player);
-                tryb = true;
+                float craneSpeed = player.getSpeed();
+                craneStop = Math.floor(craneSpeed) == 0f && craneSpeed >= 0f 
+                        || Math.ceil(craneSpeed) == 0f && craneSpeed < 0f;
+                // zezwala na opuszczenie podpór tylko gdy dźwig nie porusza się
+                if(craneStop) inputManager.removeListener(player);
             }
             else{
                 inputManager.removeListener(player.getCabin());
-                tryb = false;
             }
-            player.using = !player.using;
-            GameManager.setLastAction(name);
+            if(craneStop){
+                player.using = !player.using;
+                GameManager.setLastAction(name);
+            }
         }else{
             if(isPressed && name.equals("Physics")){
                 if(!debug) bulletAppState.getPhysicsSpace().enableDebug(assetManager);

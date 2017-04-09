@@ -166,4 +166,3 @@ public class CraneCabin implements AnalogListener{
         rightProtractilePropGeometry.setLocalScale(1f, cranePropsProtrusion, 1f);
     }
 }
-

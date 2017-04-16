@@ -2,7 +2,6 @@ package buildingsimulator;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.collision.shapes.PlaneCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -20,6 +19,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     private static BuildingSimulator game;
     private BulletAppState bulletAppState = new BulletAppState();
     private MobileCrane player;
+    private Crane player2;
     private boolean debug = false;
     public static void main(String[] args) {
         game = new BuildingSimulator();
@@ -30,14 +30,13 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     public void simpleInitApp() {
         Spatial scene = assetManager.loadModel("Scenes/gameMap.j3o");
         scene.setLocalTranslation(0, -3f, 0);
-        flyCam.setMoveSpeed(10);
-        PlaneCollisionShape plane = new PlaneCollisionShape();
-        RigidBodyControl rgb = new RigidBodyControl(0.0f);
-        scene.addControl(rgb);
+        flyCam.setMoveSpeed(100);
+        RigidBodyControl rgc = new RigidBodyControl(0.0f);
+        scene.addControl(rgc);
         rootNode.attachChild(scene);
         stateManager.attach(bulletAppState);
-        bulletAppState.getPhysicsSpace().add(rgb);
-        //bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+        bulletAppState.getPhysicsSpace().add(rgc);
+        player2 = new Crane();
         player = new MobileCrane();
         setupKeys(player);
         setupKeys(this);

@@ -2,6 +2,8 @@ package buildingsimulator;
 
 import com.jme3.scene.Spatial;
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.collision.PhysicsCollisionEvent;
+import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.VehicleControl;
 import com.jme3.input.controls.ActionListener;
@@ -38,6 +40,16 @@ public class MobileCrane implements ActionListener{
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
         physics.add(craneControl);
         cabin = new CraneCabin(crane);
+        // pozwala na cofanie po uderzeniu mobilnego dźwigu z żurawiem 
+        physics.addCollisionListener(new PhysicsCollisionListener(){
+            @Override
+            public void collision(PhysicsCollisionEvent event) {
+                if(event.getNodeA().equals(crane))
+                    craneControl.setPhysicsLocation(craneControl.getPhysicsLocation()
+                            .subtract(new Vector3f(0f,0f,0.001f)));
+            }
+            
+        });
     }
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {

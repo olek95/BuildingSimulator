@@ -10,6 +10,8 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import static buildingsimulator.GameManager.*;
+import com.jme3.bullet.collision.PhysicsCollisionEvent;
+import com.jme3.bullet.collision.PhysicsCollisionListener;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,6 +34,7 @@ public class CraneCabin implements AnalogListener{
     public static final float MAX_PROP_PROTRUSION = 6.35f, MIN_PROP_PROTRUSION = 1f;
     private Geometry leftProtractilePropGeometry, rightProtractilePropGeometry;
     private Hook hook;
+    boolean obstacleLeft = false, obstacleRight = false;
     public CraneCabin(Node crane){
         initCraneElements(crane);
         createCranePhysics();
@@ -46,10 +49,14 @@ public class CraneCabin implements AnalogListener{
     public void onAnalog(String name, float value, float tpf) {
         switch(name){
             case "Right":
-                craneCabin.rotate(0, -tpf / 4, 0);
+                setLastAction(name);
+                if(!obstacleRight)
+                    craneCabin.rotate(0f, -tpf / 5, 0f);
                 break;
             case "Left": 
-                craneCabin.rotate(0, tpf / 4, 0);
+                setLastAction(name);
+                if(!obstacleLeft)
+                    craneCabin.rotate(0f, tpf / 5, 0f);
                 break;
             case "Up":
                 if(yCraneOffset + LIFTING_SPEED < 0.6f){
@@ -138,7 +145,32 @@ public class CraneCabin implements AnalogListener{
         /* Dodaje listener sprawdzający kolizję haka z obiektami otoczenia.
          Dla optymalizacji sprawdzam kolizję tylko dla grupy 2, czyli tej w 
          której znajduje sie hak.*/
+        System.out.println(rectractableCranePart.getWorldTranslation() + " T");
         physics.addCollisionGroupListener(hook.createCollisionListener(), 2);
+        physics.addCollisionListener(new PhysicsCollisionListener(){
+            @Override
+            public void collision(PhysicsCollisionEvent event) {
+                Spatial a = event.getNodeA(), b = event.getNodeB();
+                if(a instanceof Node && b instanceof Node){
+                    Node nodeA = (Node)a;
+                    if(nodeA.equals(rectractableCranePart) || nodeA.equals(hook.getHookHandle())){
+                        Vector3f craneArmLocation = rectractableCranePart
+                                .getWorldTranslation();
+                        Vector3f objectLocation = ((Node)b).getWorldTranslation();
+                        if(craneArmLocation.z != objectLocation.z 
+                                && craneArmLocation.y < objectLocation.y){
+                            if(getLastAction().equals("Left")){
+                                obstacleLeft = true;
+                                craneCabin.rotate(0f, -0.04f, 0f);
+                            }else{
+                                obstacleRight = true; 
+                                craneCabin.rotate(0f, 0.04f, 0f);
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
     private void changeHandleHookPoition(Node scallingGeometryParent, 
             Vector3f scallingVector, boolean pullingOut){
@@ -166,3 +198,4 @@ public class CraneCabin implements AnalogListener{
         rightProtractilePropGeometry.setLocalScale(1f, cranePropsProtrusion, 1f);
     }
 }
+

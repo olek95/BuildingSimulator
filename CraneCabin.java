@@ -34,7 +34,7 @@ public class CraneCabin implements AnalogListener{
     public static final float MAX_PROP_PROTRUSION = 6.35f, MIN_PROP_PROTRUSION = 1f;
     private Geometry leftProtractilePropGeometry, rightProtractilePropGeometry;
     private Hook hook;
-    boolean obstacleLeft = false, obstacleRight = false;
+    boolean obstacleLeft = false, obstacleRight = false, obstacle = false;
     public CraneCabin(Node crane){
         initCraneElements(crane);
         createCranePhysics();
@@ -52,11 +52,13 @@ public class CraneCabin implements AnalogListener{
                 setLastAction(name);
                 if(!obstacleRight)
                     craneCabin.rotate(0f, -tpf / 5, 0f);
+                else obstacleRight = false;
                 break;
             case "Left": 
                 setLastAction(name);
                 if(!obstacleLeft)
                     craneCabin.rotate(0f, tpf / 5, 0f);
+                else obstacleLeft = false;
                 break;
             case "Up":
                 if(yCraneOffset + LIFTING_SPEED < 0.6f){
@@ -116,6 +118,12 @@ public class CraneCabin implements AnalogListener{
     public float getPropsLowering(){
         return propsLowering;
     }
+    public boolean isAnyObstacle(){
+        return obstacleLeft || obstacleRight || obstacle;
+    }
+    public float getYCabinCraneRotation(){
+        return craneCabin.getLocalRotation().getY();
+    }
     private void initCraneElements(Node crane){
         mobileCrane = crane;
         craneCabin = (Node)mobileCrane.getChild("crane");
@@ -159,12 +167,16 @@ public class CraneCabin implements AnalogListener{
                         Vector3f objectLocation = ((Node)b).getWorldTranslation();
                         if(craneArmLocation.z != objectLocation.z 
                                 && craneArmLocation.y < objectLocation.y){
-                            if(getLastAction().equals("Left")){
+                            float rotate = getFPS() <= 10 ? 0.09f : 0.04f;
+                            //String lastAction = getLastAction();
+                            float yRotation = craneCabin.getLocalRotation().getY();
+                            //if("Left".equalsIgnoreCase(lastAction)){
+                            if(yRotation > 0){
                                 obstacleLeft = true;
-                                craneCabin.rotate(0f, -0.04f, 0f);
+                                craneCabin.rotate(0f, -rotate, 0f);
                             }else{
                                 obstacleRight = true; 
-                                craneCabin.rotate(0f, 0.04f, 0f);
+                                craneCabin.rotate(0f, rotate, 0f);
                             }
                         }
                     }
@@ -198,4 +210,3 @@ public class CraneCabin implements AnalogListener{
         rightProtractilePropGeometry.setLocalScale(1f, cranePropsProtrusion, 1f);
     }
 }
-

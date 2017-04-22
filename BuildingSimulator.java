@@ -12,10 +12,8 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
-import com.jme3.system.AppSettings;
 
 public class BuildingSimulator extends SimpleApplication implements ActionListener{
     private static BuildingSimulator game;
@@ -105,9 +103,17 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     public void simpleRender(RenderManager rm) {
         //TODO: add render code
     }
+    /** 
+     * Metoda zwracająca aktualną grę. 
+     * @return aktualna gra
+     */
     public static BuildingSimulator getBuildingSimulator(){
         return game;
     }
+    /**
+     * Zwraca obiekt do symulowania fizyki. 
+     * @return obiekt do symulowania fizyki
+     */
     public BulletAppState getBulletAppState(){
         return bulletAppState;
     }
@@ -170,6 +176,10 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             }
         }
     }
+    /**
+     * Pobiera tekstową reprezentację liczby klatek na sekundę. 
+     * @return FPS w postaci tekstu 
+     */
     public static String getFPSString(){
         return BuildingSimulator.game.fpsText.getText();
     }

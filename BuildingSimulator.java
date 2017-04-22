@@ -12,8 +12,10 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
+import com.jme3.system.AppSettings;
 
 public class BuildingSimulator extends SimpleApplication implements ActionListener{
     private static BuildingSimulator game;
@@ -29,7 +31,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     @Override
     public void simpleInitApp() {
         Spatial scene = assetManager.loadModel("Scenes/gameMap.j3o");
-        scene.setLocalTranslation(0, -3f, 0);
+        scene.setLocalTranslation(0, -1, 0);
         flyCam.setMoveSpeed(100);
         RigidBodyControl rgc = new RigidBodyControl(0.0f);
         scene.addControl(rgc);
@@ -48,24 +50,24 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         // KOD DLA TESTU!!
         Box b = new Box(1, 1, 1); // create cube shape
         Geometry geom = new Geometry("Box", b);  // create cube geometry from the shape
-        geom.setLocalTranslation(0, 0, 20);
+        geom.setLocalTranslation(0, 0f, 20);
         Material mat = new Material(assetManager,
           "Common/MatDefs/Misc/Unshaded.j3md");  // create a simple material
         mat.setColor("Color", ColorRGBA.Blue);   // set color of material to blue
         geom.setMaterial(mat);                   // set the cube's material
         rootNode.attachChild(geom);              // make the cube appear in the scene
-        RigidBodyControl rg = new RigidBodyControl(1f);
+        RigidBodyControl rg = new RigidBodyControl(0.1f);
         geom.addControl(rg);
         bulletAppState.getPhysicsSpace().add(rg);
         Box b2 = new Box(1, 1, 1); // create cube shape
         Geometry geom2 = new Geometry("Box", b2);  // create cube geometry from the shape
-        geom2.setLocalTranslation(0, 1, 20);
+        geom2.setLocalTranslation(0, 2.1f, 20);
         Material mat2 = new Material(assetManager,
           "Common/MatDefs/Misc/Unshaded.j3md");  // create a simple material
         mat2.setColor("Color", ColorRGBA.Blue);   // set color of material to blue
         geom2.setMaterial(mat2);                   // set the cube's material
         rootNode.attachChild(geom2);              // make the cube appear in the scene
-        RigidBodyControl rg2 = new RigidBodyControl(1f);
+        RigidBodyControl rg2 = new RigidBodyControl(0.1f);
         geom2.addControl(rg2);
         bulletAppState.getPhysicsSpace().add(rg2);
         // KONIEC KODU DLA TESTU 
@@ -167,5 +169,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                 debug = !debug;
             }
         }
+    }
+    public static String getFPSString(){
+        return BuildingSimulator.game.fpsText.getText();
     }
 }

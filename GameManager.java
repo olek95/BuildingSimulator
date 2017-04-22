@@ -20,6 +20,7 @@ import com.jme3.scene.Spatial;
  */
 public class GameManager {
     private static String lastAction;
+    private static Spatial crane;
     /**
      * Tworzy fizykę dla danego obiektu. Stosuje ona klasę RigidBodyControl, 
      * natomiast do wykrywania kolizji używa CompoundCollisionShape. 
@@ -167,5 +168,22 @@ public class GameManager {
      */
     public static void setLastAction(String action){
         lastAction = action;
+    }
+    
+    public static Spatial getCrane(){
+        return crane;
+    }
+    public static void setCrane(Spatial crane){
+        GameManager.crane = crane;
+    }
+    public static int getFPS(){
+        String fpsString = BuildingSimulator.getFPSString(), tempFPSString = "";
+        int length = fpsString.length(), i = length - 1;  
+        do{
+            i--; // bo na początku może być minimum jedna cyfra 
+        }while(fpsString.charAt(i) != ' ');
+        i++;
+        for(; i < length; i++) tempFPSString += fpsString.charAt(i);
+        return Integer.parseInt(tempFPSString);
     }
 }

@@ -154,10 +154,10 @@ public class CraneCabin implements AnalogListener{
                 Spatial a = event.getNodeA(), b = event.getNodeB();
                 if(a != null && b != null){
                     if(a.equals(rectractableCranePart) || a.equals(hook.getHookHandle())){
-                        if(b.equals(GameManager.getCrane())) rotateAfterImpact(a);
+                        if(b.equals(GameManager.getCraneRack())) rotateAfterImpact(a);
                     }else{
                         if(b.equals(rectractableCranePart) || b.equals(hook.getHookHandle())){
-                            if(a.equals(GameManager.getCrane())) rotateAfterImpact(b);
+                            if(a.equals(GameManager.getCraneRack())) rotateAfterImpact(b);
                         }
                     }
                 }

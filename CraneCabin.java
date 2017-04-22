@@ -118,12 +118,6 @@ public class CraneCabin implements AnalogListener{
     public float getPropsLowering(){
         return propsLowering;
     }
-    public boolean isAnyObstacle(){
-        return obstacleLeft || obstacleRight || obstacle;
-    }
-    public float getYCabinCraneRotation(){
-        return craneCabin.getLocalRotation().getY();
-    }
     private void initCraneElements(Node crane){
         mobileCrane = crane;
         craneCabin = (Node)mobileCrane.getChild("crane");
@@ -159,25 +153,12 @@ public class CraneCabin implements AnalogListener{
             @Override
             public void collision(PhysicsCollisionEvent event) {
                 Spatial a = event.getNodeA(), b = event.getNodeB();
-                if(a instanceof Node && b instanceof Node){
-                    Node nodeA = (Node)a;
-                    if(nodeA.equals(rectractableCranePart) || nodeA.equals(hook.getHookHandle())){
-                        Vector3f craneArmLocation = rectractableCranePart
-                                .getWorldTranslation();
-                        Vector3f objectLocation = ((Node)b).getWorldTranslation();
-                        if(craneArmLocation.z != objectLocation.z 
-                                && craneArmLocation.y < objectLocation.y){
-                            float rotate = getFPS() <= 10 ? 0.09f : 0.04f;
-                            //String lastAction = getLastAction();
-                            float yRotation = craneCabin.getLocalRotation().getY();
-                            //if("Left".equalsIgnoreCase(lastAction)){
-                            if(yRotation > 0){
-                                obstacleLeft = true;
-                                craneCabin.rotate(0f, -rotate, 0f);
-                            }else{
-                                obstacleRight = true; 
-                                craneCabin.rotate(0f, rotate, 0f);
-                            }
+                if(a != null && b != null){
+                    if(a.equals(rectractableCranePart) || a.equals(hook.getHookHandle())){
+                        if(b.equals(GameManager.getCrane())) rotateAfterImpact(a);
+                    }else{
+                        if(b.equals(rectractableCranePart) || b.equals(hook.getHookHandle())){
+                            if(a.equals(GameManager.getCrane())) rotateAfterImpact(b);
                         }
                     }
                 }
@@ -208,5 +189,18 @@ public class CraneCabin implements AnalogListener{
         }
         leftProtractilePropGeometry.setLocalScale(1f, cranePropsProtrusion, 1f);
         rightProtractilePropGeometry.setLocalScale(1f, cranePropsProtrusion, 1f);
+    }
+    private void rotateAfterImpact(Spatial object){
+        float rotate;
+        if(object.equals(rectractableCranePart)) rotate = getFPS() <= 10 ? 0.09f : 0.04f;
+        else rotate = getFPS() <= 10 ? 0.09f : 0.02f;
+        float yRotation = craneCabin.getLocalRotation().getY();
+        if(yRotation > 0){
+            obstacleLeft = true;
+            craneCabin.rotate(0f, -rotate, 0f);
+        }else{
+            obstacleRight = true; 
+            craneCabin.rotate(0f, rotate, 0f);
+        }
     }
 }

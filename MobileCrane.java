@@ -40,16 +40,6 @@ public class MobileCrane implements ActionListener{
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
         physics.add(craneControl);
         cabin = new CraneCabin(crane);
-        // pozwala na cofanie po uderzeniu mobilnego dźwigu z żurawiem 
-        physics.addCollisionListener(new PhysicsCollisionListener(){
-            @Override
-            public void collision(PhysicsCollisionEvent event) {
-                if(event.getNodeA().equals(crane))
-                    craneControl.setPhysicsLocation(craneControl.getPhysicsLocation()
-                            .subtract(new Vector3f(0f,0f,0.001f)));
-            }
-            
-        });
     }
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {

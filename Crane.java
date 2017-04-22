@@ -20,7 +20,7 @@ public class Crane {
         physics.add(setProperLocation(crane.getChild("prop"), craneLocation));
         Spatial rack = crane.getChild("rack");
         physics.add(setProperLocation(rack, craneLocation));
-        GameManager.setCrane(rack);
+        GameManager.setCraneRack(rack);
         game.getRootNode().attachChild(crane);
     }
     private RigidBodyControl setProperLocation(Spatial object, Vector3f displacement){

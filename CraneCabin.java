@@ -147,7 +147,6 @@ public class CraneCabin implements AnalogListener{
         /* Dodaje listener sprawdzający kolizję haka z obiektami otoczenia.
          Dla optymalizacji sprawdzam kolizję tylko dla grupy 2, czyli tej w 
          której znajduje sie hak.*/
-        System.out.println(rectractableCranePart.getWorldTranslation() + " T");
         physics.addCollisionGroupListener(hook.createCollisionListener(), 2);
         physics.addCollisionListener(new PhysicsCollisionListener(){
             @Override

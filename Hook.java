@@ -72,15 +72,24 @@ public class Hook {
     }
     /**
      * Tworzy słuchacza dla haka, który sprawdza kolizję haka z obiektami otoczenia.
+     * Dodatkowo sprawdza czy hak ma kolizję z żurawiem, jeśli tak - nie widzi przeszkody.
      * @return słuchacz kolizji
      */
     public PhysicsCollisionGroupListener createCollisionListener(){
         return new PhysicsCollisionGroupListener(){
             @Override
             public boolean collide(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB){
-                if(nodeA.getUserObject().equals(ropeHook)
-                        && !nodeB.getUserObject().equals(hookHandle)){
+                Object a = nodeA.getUserObject(), b = nodeB.getUserObject();
+                if(a.equals(ropeHook) && !b.equals(hookHandle)){
                     recentlyHitObject = (Spatial)nodeB.getUserObject();
+                    int collisionGroup = nodeB.getCollisionGroup();
+                    if(collisionGroup != 3 && collisionGroup != 1) return false;
+                }else{
+                    if(b.equals(ropeHook) && !a.equals(hookHandle)){
+                        recentlyHitObject = (Spatial)nodeA.getUserObject();
+                        int collisionGroup = nodeA.getCollisionGroup();
+                        if(collisionGroup != 3 && collisionGroup != 1) return false;
+                    }
                 }
                 return true;
             }
@@ -100,6 +109,9 @@ public class Hook {
     public void setRecentlyHitObject(Spatial object){
         recentlyHitObject = object;
     }
+    public Node getRopeHook(){
+        return ropeHook;
+    }
     private void changeHookPosition(Node scallingGeometryParent, Vector3f scallingVector,
             boolean heightening){
         movingDuringStretchingOut((Geometry)scallingGeometryParent.getChild(0), 
@@ -114,6 +126,7 @@ public class Hook {
         createPhysics(ropeHookCompound, ropeHook, 4f, false);
         RigidBodyControl ropeHookControl = ropeHook.getControl(RigidBodyControl.class);
         ropeHookControl.setCollisionGroup(2); 
+        ropeHookControl.addCollideWithGroup(1);
         ropeHookControl.setCollideWithGroups(3);
         lineAndHookHandleJoint = joinsElementToOtherElement(lineAndHookHandleJoint,
                 hookHandle, ropeHook, Vector3f.ZERO, new Vector3f(0, 0.06f,0));

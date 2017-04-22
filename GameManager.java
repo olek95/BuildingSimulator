@@ -20,7 +20,7 @@ import com.jme3.scene.Spatial;
  */
 public class GameManager {
     private static String lastAction;
-    private static Spatial crane;
+    private static Spatial craneRack;
     /**
      * Tworzy fizykę dla danego obiektu. Stosuje ona klasę RigidBodyControl, 
      * natomiast do wykrywania kolizji używa CompoundCollisionShape. 
@@ -169,13 +169,24 @@ public class GameManager {
     public static void setLastAction(String action){
         lastAction = action;
     }
-    
-    public static Spatial getCrane(){
-        return crane;
+    /**
+     * Zwraca "stojak" żurawia. 
+     * @return stojak żurawia 
+     */
+    public static Spatial getCraneRack(){
+        return craneRack;
     }
-    public static void setCrane(Spatial crane){
-        GameManager.crane = crane;
+    /**
+     * Ustawia "stojak" żurawia. 
+     * @param craneRack stojak żurawia 
+     */
+    public static void setCraneRack(Spatial craneRack){
+        GameManager.craneRack = craneRack;
     }
+    /**
+     * Zwraca aktualną liczbę klatek na sekundę w postaci liczby. 
+     * @return FPS w postaci liczby 
+     */
     public static int getFPS(){
         String fpsString = BuildingSimulator.getFPSString(), tempFPSString = "";
         int length = fpsString.length(), i = length - 1;  
@@ -187,3 +198,4 @@ public class GameManager {
         return Integer.parseInt(tempFPSString);
     }
 }
+

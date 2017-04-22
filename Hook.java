@@ -109,9 +109,6 @@ public class Hook {
     public void setRecentlyHitObject(Spatial object){
         recentlyHitObject = object;
     }
-    public Node getRopeHook(){
-        return ropeHook;
-    }
     private void changeHookPosition(Node scallingGeometryParent, Vector3f scallingVector,
             boolean heightening){
         movingDuringStretchingOut((Geometry)scallingGeometryParent.getChild(0), 
@@ -132,3 +129,4 @@ public class Hook {
                 hookHandle, ropeHook, Vector3f.ZERO, new Vector3f(0, 0.06f,0));
     }
 }
+

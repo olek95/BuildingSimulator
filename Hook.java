@@ -118,7 +118,7 @@ public class Hook {
     private void createRopeHookPhysics(){
         CompoundCollisionShape ropeHookCompound = createCompound(rope, rope.getChild(0)
                 .getName());
-        addNewCollisionShapeToComponent(ropeHookCompound, (Node)hook, "hookGeometry",
+        addNewCollisionShapeToCompound(ropeHookCompound, (Node)hook, "hookGeometry",
                 hook.getLocalTranslation(), hook.getLocalRotation());
         createPhysics(ropeHookCompound, ropeHook, 4f, false);
         RigidBodyControl ropeHookControl = ropeHook.getControl(RigidBodyControl.class);

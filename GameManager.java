@@ -48,7 +48,7 @@ public class GameManager {
     public static CompoundCollisionShape createCompound(Node parent, String... children){
         CompoundCollisionShape compound = new CompoundCollisionShape(); 
         for(int i = 0; i < children.length; i++){
-            addNewCollisionShapeToComponent(compound, parent, children[i], 
+            addNewCollisionShapeToCompound(compound, parent, children[i], 
                     Vector3f.ZERO, null);
         }
         return compound;
@@ -145,7 +145,7 @@ public class GameManager {
      * @param rotation obrót dodawanej kolizji w złożonym obiekcie kolizji. 
      * Może mieć wartość null, wtedy pozostaje bez obrotu. 
      */
-    public static void addNewCollisionShapeToComponent(CompoundCollisionShape compound,
+    public static void addNewCollisionShapeToCompound(CompoundCollisionShape compound,
             Node parent, String child, Vector3f location, Quaternion rotation){
         Geometry parentGeometry = (Geometry)parent.getChild(child);
         CollisionShape elementCollisionShape = CollisionShapeFactory
@@ -198,4 +198,3 @@ public class GameManager {
         return Integer.parseInt(tempFPSString);
     }
 }
-

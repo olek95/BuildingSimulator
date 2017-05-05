@@ -3,8 +3,10 @@ package buildingsimulator;
 import static buildingsimulator.GameManager.*;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.math.Ray;
@@ -21,41 +23,23 @@ import java.util.List;
  */
 public class Crane implements AnalogListener{
     private BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-    private Node crane, craneControl, hookHandleControl, ropeHook;
+    private Node crane, craneControl, hookHandleControl, ropeHook, littleHookHandle;
     private Node[] ropes = new Node[4];
-    private Spatial rack, craneArm, hook;
+    private Spatial rack, craneArm, hookHandle;
     private static final float MIN_HANDLE_HOOK_DISPLACEMENT = -63f,
             HOOK_LOWERING_SPEED = 0.05f;
     private float maxHandleHookDisplacement, hookLowering = 1f;
     private Vector3f hookDisplacement;
+    private FourRopesHook hook;
     public Crane(){
         initCraneElements((Node)game.getAssetManager().loadModel("Models/zuraw/zuraw.j3o"));
         GameManager.setCraneRack(rack);
         maxHandleHookDisplacement = hookHandleControl.getLocalTranslation().z;
+        hook = new FourRopesHook((Node)crane.getChild("ropeHook"),
+                hookHandle);
         
-        
-        PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
-        ropeHook = (Node)hookHandleControl.getChild("ropeHook");
-        hook = ropeHook.getChild("hook");
-        List<Spatial> ropeHookChildren = ropeHook.getChildren();
-        int index = 0;
-        for(int i = 0; i < ropeHookChildren.size(); i++){
-            Spatial children = ropeHookChildren.get(i);
-            if(children.getName().startsWith("rope")){
-                ropes[index] = (Node)children;
-                index++;
-            }
-        }
-        //hookHandle.getControl(RigidBodyControl.class).addCollideWithGroup(1);
-        hookDisplacement = calculateDisplacementAfterScaling(ropes[0], 
-                new Vector3f(1f, hookLowering + HOOK_LOWERING_SPEED, 1f),
-                false, true, false);
-        //hookDisplacement.y *= 2;
-        createRopeHookPhysics();
-        
-        
-        
-        
+        game.getBulletAppState().getPhysicsSpace()
+                .addCollisionGroupListener(hook.createCollisionListener(), 2);
         game.getRootNode().attachChild(crane);
     }
     @Override
@@ -64,9 +48,13 @@ public class Crane implements AnalogListener{
         switch(name){
             case "Right":
                 craneControl.rotate(0f, -tpf / 5, 0f);
+                hook.get().getControl(RigidBodyControl.class).setPhysicsRotation(
+                        craneControl.getLocalRotation());
                 break;
             case "Left": 
                 craneControl.rotate(0f, tpf / 5, 0f);
+                hook.get().getControl(RigidBodyControl.class).setPhysicsRotation(
+                        craneControl.getLocalRotation());
                 break;
             case "Up":
                 hookHandleTranslation = hookHandleControl.getLocalTranslation();
@@ -81,10 +69,12 @@ public class Crane implements AnalogListener{
                             .addLocal(0 , 0, tpf));
                 break;
             case "Lower hook":
-                lower();
+                hook.lower();
                 break;
             case "Highten hook":
+                hook.highten();
         }
+        if(!name.equals("Lower hook")) hook.setRecentlyHitObject(null);
     }
     private RigidBodyControl setProperLocation(Spatial object, Vector3f displacement){
         RigidBodyControl control = object.getControl(RigidBodyControl.class);
@@ -96,7 +86,21 @@ public class Crane implements AnalogListener{
         Vector3f craneLocation = new Vector3f(10f, -1f, 0f);
         crane.setLocalTranslation(craneLocation);
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
-        physics.add(setProperLocation(crane.getChild("prop"), craneLocation));
+        //crane.getChild("prop").removeControl(RigidBodyControl.class);
+        /*CompoundCollisionShape shape = new CompoundCollisionShape(); 
+        CollisionShape sh = CollisionShapeFactory.createDynamicMeshShape(crane.getChild("prop0"));
+        shape.addChildShape(sh, Vector3f.ZERO);
+        CollisionShape sh2 = CollisionShapeFactory.createDynamicMeshShape(crane.getChild("prop1"));
+        shape.addChildShape(sh2, Vector3f.ZERO);
+        RigidBodyControl rbc = new RigidBodyControl(sh, 0);*/
+       //BoundingBox box = ((BoundingBox)crane.getChild("prop").getWorldBound());
+        //box.setXExtent(6);
+       // box.setZExtent(10);
+        //crane.getChild("prop").setModelBound(box);
+        //crane.getChild("prop").addControl(rbc);
+        //physics.add(rbc);
+        physics.add(setProperLocation(crane.getChild("prop0"), craneLocation));
+        physics.add(setProperLocation(crane.getChild("prop1"), craneLocation));
         physics.add(setProperLocation(rack = crane.getChild("rack"), craneLocation));
         craneControl = (Node)crane.getChild("craneControl");
         physics.add(setProperLocation(crane.getChild("entrancePlatform"), craneLocation));
@@ -106,53 +110,7 @@ public class Crane implements AnalogListener{
         physics.add(setProperLocation(craneArm, craneLocation));
         physics.add(setProperLocation(craneControl.getChild("cabin"), craneLocation));
         hookHandleControl = (Node)craneControl.getChild("hookHandleControl");
-        physics.add(setProperLocation(hookHandleControl.getChild("hookHandle"), craneLocation));
-    }
-    
-    
-    
-    
-    
-    public void lower(){
-        //CollisionResults results = new CollisionResults();
-        /* jeśli nie dotknęło żadnego obiektu, to zbędne jest sprawdzanie 
-        kolizji w dół*/
-        //if(recentlyHitObject != null)
-            // tworzy pomocniczy promień sprawdzający kolizję w dół
-            //new Ray(hook.getWorldTranslation(), new Vector3f(0,-0.5f,0))
-                    //.collideWith((BoundingBox)recentlyHitObject.getWorldBound(), results);
-        // obniża hak, jeśli w żadnym punkcie z dołu nie dotyka jakiegoś obiektu
-        //if(results.size() == 0)
-            changeHookPosition(new Vector3f(1f,hookLowering += HOOK_LOWERING_SPEED, 1f),
-                    false);
-    }
-    private void createRopeHookPhysics(){
-        CompoundCollisionShape ropeHookCompound = createCompound(ropes[0], ropes[0].getChild(0)
-                .getName());
-        ropeHookCompound.getChildren().get(0).location = ropes[0].getLocalTranslation();
-        addNewCollisionShapeToCompound(ropeHookCompound, ropes[1], ropes[1].getChild(0).getName(),
-                ropes[1].getLocalTranslation(), null);
-        addNewCollisionShapeToCompound(ropeHookCompound, ropes[2], ropes[2].getChild(0).getName(),
-                ropes[2].getLocalTranslation(), null);
-        addNewCollisionShapeToCompound(ropeHookCompound, ropes[3], ropes[3].getChild(0).getName(),
-                ropes[3].getLocalTranslation(), null);
-                
-                
-        addNewCollisionShapeToCompound(ropeHookCompound, (Node)hook, ((Node)hook).getChild(0).getName(),
-                hook.getLocalTranslation(), hook.getLocalRotation());
-        createPhysics(ropeHookCompound, ropeHook, 4f, true);
-        /*RigidBodyControl ropeHookControl = ropeHook.getControl(RigidBodyControl.class);
-        ropeHookControl.setCollisionGroup(2); 
-        ropeHookControl.addCollideWithGroup(1);
-        ropeHookControl.setCollideWithGroups(3);*/
-        //lineAndHookHandleJoint = joinsElementToOtherElement(lineAndHookHandleJoint,
-        //        hookHandle, ropeHook, Vector3f.ZERO, new Vector3f(0, 0.06f,0));
-    }
-    private void changeHookPosition(Vector3f scallingVector,
-            boolean heightening){
-        for(int i = 0; i < ropes.length; i++)
-            movingDuringStretchingOut((Geometry)ropes[i].getChild(0), 
-                    scallingVector, heightening, hook, hookDisplacement);
-        createRopeHookPhysics();
+        hookHandle = hookHandleControl.getChild("hookHandle");
+        physics.add(setProperLocation(hookHandle, craneLocation));
     }
 }

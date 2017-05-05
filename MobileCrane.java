@@ -144,9 +144,10 @@ public class MobileCrane implements ActionListener{
         }
     }
     private void createMobileCranePhysics(){
-        GameManager.addNewCollisionShapeToComponent((CompoundCollisionShape)craneControl
+        GameManager.addNewCollisionShapeToCompound((CompoundCollisionShape)craneControl
                 .getCollisionShape(),crane, "outsideMobileCraneCabin", Vector3f.ZERO, null);
-        GameManager.addNewCollisionShapeToComponent((CompoundCollisionShape)craneControl
+        GameManager.addNewCollisionShapeToCompound((CompoundCollisionShape)craneControl
                 .getCollisionShape(),crane, "bollardsShape", Vector3f.ZERO, null);
     }
 }
+

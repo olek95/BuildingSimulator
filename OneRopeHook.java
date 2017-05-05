@@ -15,18 +15,18 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
 /**
- * Obiekt klasy <code>Hook</code> reprezentuje hak zawieszony na linie. 
+ * Obiekt klasy <code>OneRopeHook</code> reprezentuje hak zawieszony na linie. 
  * Może być zarówno opuszczany jak i podnoszony. 
  * @author AleksanderSklorz 
  */
-public class Hook {
+public class OneRopeHook {
     private Spatial hook, hookHandle, recentlyHitObject;
     private Node rope, ropeHook;
     private Vector3f hookDisplacement;
     private HingeJoint lineAndHookHandleJoint = null;
     private float hookLowering = 1f;
     private static final float HOOK_LOWERING_SPEED = 0.05f;
-    public Hook(Node ropeHook, Spatial hookHandle){
+    public OneRopeHook(Node ropeHook, Spatial hookHandle){
         this.ropeHook = ropeHook;
         hook = ropeHook.getChild("hook");
         rope = (Node)ropeHook.getChild("rope");
@@ -111,8 +111,10 @@ public class Hook {
     }
     private void changeHookPosition(Node scallingGeometryParent, Vector3f scallingVector,
             boolean heightening){
-        movingDuringStretchingOut((Geometry)scallingGeometryParent.getChild(0), 
-                scallingVector, heightening, hook, hookDisplacement);
+        ((Geometry)scallingGeometryParent.getChild(0)).setLocalScale(scallingVector);
+        moveByVector(heightening, hook, hookDisplacement);
+        //movingDuringStretchingOut((Geometry)scallingGeometryParent.getChild(0), 
+        //        scallingVector, heightening, hook, hookDisplacement);
         createRopeHookPhysics();
     }
     private void createRopeHookPhysics(){
@@ -129,4 +131,3 @@ public class Hook {
                 hookHandle, ropeHook, Vector3f.ZERO, new Vector3f(0, 0.06f,0));
     }
 }
-

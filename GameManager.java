@@ -98,21 +98,20 @@ public class GameManager {
         return displacement;
     }
     /**
-     * Przesuwa połączony z obiektem rozszerzającym się element o podany wektor. 
-     * @param scallingGeometry skalowany obiekt 
-     * @param scallingVector wektor skalowania obiektu
+     * Przesuwa element o podany wektor. 
      * @param direction true jeśli ma się przesuwać w kierunku dodatnim, false 
      * w przeciwnym kierunku 
      * @param movingElement przesuwany element 
      * @param elementDisplacement wektor przesunięcia 
      */
-    public static void movingDuringStretchingOut(Geometry scallingGeometry,
-            Vector3f scallingVector, boolean direction, Spatial movingElement,
+    public static void moveByVector(boolean direction, Spatial movingElement,
             Vector3f elementDisplacement){
-        scallingGeometry.setLocalScale(scallingVector);
+        //scallingGeometry.setLocalScale(scallingVector);
         Vector3f displacement = elementDisplacement.clone();
         if(!direction) displacement.negateLocal();
-        movingElement.getLocalTranslation().addLocal(displacement);
+        movingElement.setLocalTranslation(movingElement.getLocalTranslation()
+                .addLocal(displacement));
+        //movingElement.getLocalTranslation().addLocal(displacement);
     }
     /**
      * Tworzy połączenie dwóch obiektów. 

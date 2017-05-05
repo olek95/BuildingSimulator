@@ -33,7 +33,7 @@ public class CraneCabin implements AnalogListener{
             MIN_CRANE_PROP_PROTRUSION = 1f;
     public static final float MAX_PROP_PROTRUSION = 6.35f, MIN_PROP_PROTRUSION = 1f;
     private Geometry leftProtractilePropGeometry, rightProtractilePropGeometry;
-    private Hook hook;
+    private OneRopeHook hook;
     boolean obstacleLeft = false, obstacleRight = false, obstacle = false;
     public CraneCabin(Node crane){
         initCraneElements(crane);
@@ -72,12 +72,12 @@ public class CraneCabin implements AnalogListener{
                 break;
             case "Pull out":
                 if(stretchingOut <= MAX_PROTRUSION)
-                    changeHandleHookPoition(rectractableCranePart, new Vector3f(1f, 1f, 
+                    changeHandleHookPosition(rectractableCranePart, new Vector3f(1f, 1f, 
                             stretchingOut += STRETCHING_OUT_SPEED), true);
                 break;
             case "Pull in":
                 if(stretchingOut > MIN_PROTRUSION)
-                    changeHandleHookPoition(rectractableCranePart, new Vector3f(1f, 1f, 
+                    changeHandleHookPosition(rectractableCranePart, new Vector3f(1f, 1f, 
                             stretchingOut -= STRETCHING_OUT_SPEED), false);
                 break;
             case "Lower hook":
@@ -87,7 +87,7 @@ public class CraneCabin implements AnalogListener{
                 if(hook.getHookLowering() > 1f) 
                     hook.highten();
         }
-         hook.setRecentlyHitObject(null);
+        hook.setRecentlyHitObject(null);
     }
     /**
      * Pozwala na kontrolowanie podporami (na opuszczanie i podnioszenie ich). 
@@ -104,9 +104,12 @@ public class CraneCabin implements AnalogListener{
             Node prop = (Node)mobileCraneChildren.get(i);
             if(Arrays.binarySearch(props, prop.getName()) >= 0){
                     changed++;
-                    movingDuringStretchingOut((Geometry)((Node)prop.getChild(0))
+                    ((Geometry)((Node)prop.getChild(0)).getChild(0))
+                            .setLocalScale(scallingVector);
+                    moveByVector(!lowering, (Node)prop.getChild(1),propDisplacement);
+                    /*((Geometry)((Node)prop.getChild(0))
                             .getChild(0), scallingVector, !lowering, (Node)prop.getChild(1),
-                            propDisplacement);
+                            propDisplacement);*/
             }
             i++;
         }while(changed < 4);
@@ -129,7 +132,7 @@ public class CraneCabin implements AnalogListener{
         rightProtractilePropGeometry = (Geometry)((Node)craneProps
                 .getChild("rightProtractileProp")).getChild(0);
         // do aktualnej kolizji dołącza kolizję z grupą 1
-        hook = new Hook((Node)mobileCrane.getChild("ropeHook"), lift.getChild("hookHandle"));
+        hook = new OneRopeHook((Node)mobileCrane.getChild("ropeHook"), lift.getChild("hookHandle"));
     }
     private void createCranePhysics(){
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
@@ -164,11 +167,13 @@ public class CraneCabin implements AnalogListener{
             }
         });
     }
-    private void changeHandleHookPoition(Node scallingGeometryParent, 
+    private void changeHandleHookPosition(Node scallingGeometryParent, 
             Vector3f scallingVector, boolean pullingOut){
         Geometry rectractableCranePartGeometry = (Geometry)scallingGeometryParent.getChild(0);
-        movingDuringStretchingOut(rectractableCranePartGeometry, scallingVector, 
-                pullingOut, hook.getHookHandle(), hookHandleDisplacement);
+        rectractableCranePartGeometry.setLocalScale(scallingVector);
+        moveByVector(pullingOut, hook.getHookHandle(), hookHandleDisplacement);
+        /*movingDuringStretchingOut(rectractableCranePartGeometry, scallingVector, 
+                pullingOut, hook.getHookHandle(), hookHandleDisplacement);*/
         createObjectPhysics(rectractableCranePart, 1f, true, rectractableCranePartGeometry
                 .getName());
         rectractableCranePart.getControl(RigidBodyControl.class).setCollisionGroup(3);

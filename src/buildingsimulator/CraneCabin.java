@@ -104,12 +104,8 @@ public class CraneCabin implements AnalogListener{
             Node prop = (Node)mobileCraneChildren.get(i);
             if(Arrays.binarySearch(props, prop.getName()) >= 0){
                     changed++;
-                    ((Geometry)((Node)prop.getChild(0)).getChild(0))
-                            .setLocalScale(scallingVector);
-                    moveByVector(!lowering, (Node)prop.getChild(1),propDisplacement);
-                    /*((Geometry)((Node)prop.getChild(0))
-                            .getChild(0), scallingVector, !lowering, (Node)prop.getChild(1),
-                            propDisplacement);*/
+                    moveWithScallingObject(!lowering, propDisplacement, scallingVector, (Node)((Node)prop
+                            .getChild(0)).getChild(0), prop.getChild(1));
             }
             i++;
         }while(changed < 4);
@@ -170,10 +166,8 @@ public class CraneCabin implements AnalogListener{
     private void changeHandleHookPosition(Node scallingGeometryParent, 
             Vector3f scallingVector, boolean pullingOut){
         Geometry rectractableCranePartGeometry = (Geometry)scallingGeometryParent.getChild(0);
-        rectractableCranePartGeometry.setLocalScale(scallingVector);
-        moveByVector(pullingOut, hook.getHookHandle(), hookHandleDisplacement);
-        /*movingDuringStretchingOut(rectractableCranePartGeometry, scallingVector, 
-                pullingOut, hook.getHookHandle(), hookHandleDisplacement);*/
+        moveWithScallingObject(pullingOut, hookHandleDisplacement,scallingVector,
+                scallingGeometryParent, hook.getHookHandle());
         createObjectPhysics(rectractableCranePart, 1f, true, rectractableCranePartGeometry
                 .getName());
         rectractableCranePart.getControl(RigidBodyControl.class).setCollisionGroup(3);

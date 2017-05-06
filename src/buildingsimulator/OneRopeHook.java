@@ -111,10 +111,8 @@ public class OneRopeHook {
     }
     private void changeHookPosition(Node scallingGeometryParent, Vector3f scallingVector,
             boolean heightening){
-        ((Geometry)scallingGeometryParent.getChild(0)).setLocalScale(scallingVector);
-        moveByVector(heightening, hook, hookDisplacement);
-        //movingDuringStretchingOut((Geometry)scallingGeometryParent.getChild(0), 
-        //        scallingVector, heightening, hook, hookDisplacement);
+        moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
+                rope, hook);
         createRopeHookPhysics();
     }
     private void createRopeHookPhysics(){

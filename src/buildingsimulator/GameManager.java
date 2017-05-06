@@ -104,14 +104,22 @@ public class GameManager {
      * @param movingElement przesuwany element 
      * @param elementDisplacement wektor przesunięcia 
      */
-    public static void moveByVector(boolean direction, Spatial movingElement,
-            Vector3f elementDisplacement){
-        //scallingGeometry.setLocalScale(scallingVector);
+    public static void moveWithScallingObject(boolean direction, Vector3f elementDisplacement,
+            Vector3f scallingVector, Node scallingElement, Spatial... movingElements){
+        ((Geometry)scallingElement.getChild(0)).setLocalScale(scallingVector);
         Vector3f displacement = elementDisplacement.clone();
         if(!direction) displacement.negateLocal();
-        movingElement.setLocalTranslation(movingElement.getLocalTranslation()
-                .addLocal(displacement));
-        //movingElement.getLocalTranslation().addLocal(displacement);
+            for(int i = 0; i < movingElements.length; i++)
+                movingElements[i].getLocalTranslation().addLocal(displacement);
+    }
+    public static void moveWithScallingObject(boolean direction, Vector3f elementDisplacement,
+            Vector3f scallingVector, Node[] scallingElements, Spatial... movingElements){
+        for(int i = 0; i < scallingElements.length; i++)
+            ((Geometry)scallingElements[i].getChild(0)).setLocalScale(scallingVector);
+        Vector3f displacement = elementDisplacement.clone();
+        if(!direction) displacement.negateLocal();
+            for(int i = 0; i < movingElements.length; i++)
+                movingElements[i].getLocalTranslation().addLocal(displacement);
     }
     /**
      * Tworzy połączenie dwóch obiektów. 

@@ -1,6 +1,6 @@
 package buildingsimulator;
 
-import static buildingsimulator.GameManager.moveByVector;
+import static buildingsimulator.GameManager.moveWithScallingObject;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -38,8 +38,9 @@ public abstract class Hook {
         return hookLowering;
     }
     protected abstract void createRopeHookPhysics();
-    protected void changeHookPosition(Vector3f scallingVector, boolean heightening){
-        moveByVector(heightening, hook, hookDisplacement);
+    protected abstract void changeHookPosition(Vector3f scallingVector, boolean heightening);
+    /*protected void changeHookPosition(Vector3f scallingVector, boolean heightening){
+        moveWithScallingObject(heightening, hook, hookDisplacement);
         createRopeHookPhysics();
-    }
+    }*/
 }

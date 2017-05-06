@@ -91,20 +91,8 @@ public class FourRopesHook extends Hook{
     }
     protected void changeHookPosition(Vector3f scallingVector,
             boolean heightening){
-        for(int i = 0; i < ropes.length; i++){
-            ((Geometry)ropes[i].getChild(0)).setLocalScale(scallingVector);
-        }
-        Vector3f displacement = hookDisplacement.clone();
-        if(!heightening) displacement.negateLocal();
-        //movingElement.setLocalTranslation(movingElement.getLocalTranslation()
-                //.addLocal(displacement));
-        littleHookHandle.getLocalTranslation().addLocal(displacement);
-        //moveByVector(heightening, hook, hookDisplacement);
-        //moveByVector(heightening, littleHookHandle, hookDisplacement);
-        /*Vector3f displacement = hookDisplacement.clone().negateLocal();
-        hook.setLocalTranslation(hook.getLocalTranslation().addLocal(displacement));
-        littleHookHandle.setLocalTranslation(littleHookHandle.getLocalTranslation()
-                .addLocal(displacement));*/
+        moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
+                ropes, hook, littleHookHandle);
         createRopeHookPhysics();
     }
     public PhysicsCollisionGroupListener createCollisionListener(){

@@ -42,12 +42,14 @@ public class FourRopesHook extends Hook{
         /* jeśli nie dotknęło żadnego obiektu, to zbędne jest sprawdzanie 
         kolizji w dół*/
         if(recentlyHitObject != null){
+            System.out.println(recentlyHitObject);
             Ray ray = new Ray(hook.getWorldTranslation(), new Vector3f(0,-0.5f,0));
             if(recentlyHitObject.getName().startsWith("prop")){
                 // new Ray tworzy pomocniczy promień sprawdzający kolizję w dół
                 Node crane = recentlyHitObject.getParent();
                 ((Node)crane.getChild("prop0")).getChild(0).collideWith(ray, results);
                 ((Node)crane.getChild("prop1")).getChild(0).collideWith(ray, results);
+                //ray.collideWith((BoundingBox)BuildingSimulator.getScene().getWorldBound(), results);
             }else{
                 ray.collideWith((BoundingBox)recentlyHitObject.getWorldBound(), results);
             }
@@ -63,20 +65,6 @@ public class FourRopesHook extends Hook{
     protected void createRopeHookPhysics(){
         CompoundCollisionShape ropeHookCompound = createCompound(((Node)ropeHook), ropes[0].getChild(0)
                 .getName());
-        /*ropeHookCompound.getChildren().get(0).location = ropes[0].getWorldTranslation()
-                .subtract(ropes[0].getWorldTranslation()).subtract(ropes[0].getLocalTranslation())
-                .add(ropes[0].getWorldTranslation());
-        addNewCollisionShapeToCompound(ropeHookCompound, ropes[1], ropes[1].getChild(0).getName(),
-                ropes[1].getLocalTranslation().subtract(ropeHookTranslation), null);
-        addNewCollisionShapeToCompound(ropeHookCompound, ropes[2], ropes[2].getChild(0).getName(),
-                ropes[2].getLocalTranslation().subtract(ropeHookTranslation), null);
-        addNewCollisionShapeToCompound(ropeHookCompound, ropes[3], ropes[3].getChild(0).getName(),
-                ropes[3].getLocalTranslation().subtract(ropeHookTranslation), null);
-        addNewCollisionShapeToCompound(ropeHookCompound, littleHookHandle, littleHookHandle
-                .getChild(0).getName(), littleHookHandle.getLocalTranslation()
-                .subtract(ropeHookTranslation), null);
-        addNewCollisionShapeToCompound(ropeHookCompound, (Node)hook, ((Node)hook).getChild(0).getName(),
-                hook.getLocalTranslation().subtract(ropeHookTranslation), hook.getLocalRotation());*/
         ropeHookCompound.getChildren().get(0).location = ropes[0].getLocalTranslation();
         addNewCollisionShapeToCompound(ropeHookCompound, ropes[1], ropes[1].getChild(0).getName(),
                 ropes[1].getLocalTranslation(), null);
@@ -90,12 +78,15 @@ public class FourRopesHook extends Hook{
                 hook.getLocalTranslation(), hook.getLocalRotation());
         createPhysics(ropeHookCompound, ropeHook, 4f, false);
         RigidBodyControl ropeHookControl = ropeHook.getControl(RigidBodyControl.class);
-        //ropeHookControl.setAngularDamping(1f);
         ropeHookControl.setCollisionGroup(2); 
         lineAndHookHandleJoint = joinsElementToOtherElement(lineAndHookHandleJoint,
                 hookHandle, ropeHook, Vector3f.ZERO, new Vector3f(0, 0.6f,0));
     }
-    public Node get(){
+    /**
+     * Zwraca węzeł z hakiem z liniami. 
+     * @return węzeł z hakiem z liniami 
+     */
+    public Node getRopeHook(){
         return ropeHook;
     }
     protected void changeHookPosition(Vector3f scallingVector,
@@ -103,8 +94,13 @@ public class FourRopesHook extends Hook{
         for(int i = 0; i < ropes.length; i++){
             ((Geometry)ropes[i].getChild(0)).setLocalScale(scallingVector);
         }
-        moveByVector(heightening, hook, hookDisplacement);
-        moveByVector(heightening, littleHookHandle, hookDisplacement);
+        Vector3f displacement = hookDisplacement.clone();
+        if(!heightening) displacement.negateLocal();
+        //movingElement.setLocalTranslation(movingElement.getLocalTranslation()
+                //.addLocal(displacement));
+        littleHookHandle.getLocalTranslation().addLocal(displacement);
+        //moveByVector(heightening, hook, hookDisplacement);
+        //moveByVector(heightening, littleHookHandle, hookDisplacement);
         /*Vector3f displacement = hookDisplacement.clone().negateLocal();
         hook.setLocalTranslation(hook.getLocalTranslation().addLocal(displacement));
         littleHookHandle.setLocalTranslation(littleHookHandle.getLocalTranslation()
@@ -116,12 +112,16 @@ public class FourRopesHook extends Hook{
             @Override
             public boolean collide(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB){
                 Object a = nodeA.getUserObject(), b = nodeB.getUserObject();
+                /*boolean isGround = false;
+                if(recentlyHitObject != null) 
+                    isGround = recentlyHitObject.getName().equals("New Scene");
+                if(!isGround)*/
                 if(a.equals(ropeHook) && !b.equals(hookHandle)){
                     Spatial spatialA = (Spatial)a, spatialB = (Spatial)b;
                     float y1 = ((BoundingBox)spatialA.getWorldBound()).getMin(null).y,
                             y2 = ((BoundingBox)spatialB.getWorldBound()).getMax(null).y;
                     if(Math.abs(y1-y2) >= 0 && Math.abs(y1-y2) < 0.1f)
-                    recentlyHitObject = (Spatial)b;
+                        recentlyHitObject = spatialB;
                     int collisionGroup = nodeB.getCollisionGroup();
                     if(collisionGroup != 3 && collisionGroup != 1) return false;
                 }else{
@@ -130,7 +130,7 @@ public class FourRopesHook extends Hook{
                     float y1 = ((BoundingBox)spatialA.getWorldBound()).getMax(null).y,
                             y2 = ((BoundingBox)spatialB.getWorldBound()).getMin(null).y;
                     if(Math.abs(y1-y2) >= 0 && Math.abs(y1-y2) < 0.1f)
-                        recentlyHitObject = (Spatial)a;
+                            recentlyHitObject = spatialA;
                         int collisionGroup = nodeA.getCollisionGroup();
                         if(collisionGroup != 3 && collisionGroup != 1) return false;
                     }

@@ -21,6 +21,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     private MobileCrane player;
     private Crane player2;
     private boolean debug = false;
+    boolean kabina;
+    private static Spatial scene;
     public static void main(String[] args) {
         game = new BuildingSimulator();
         game.start();
@@ -28,7 +30,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
 
     @Override
     public void simpleInitApp() {
-        Spatial scene = assetManager.loadModel("Scenes/gameMap.j3o");
+        scene = assetManager.loadModel("Scenes/gameMap.j3o");
         scene.setLocalTranslation(0, -1, 0);
         flyCam.setMoveSpeed(100);
         RigidBodyControl rgc = new RigidBodyControl(0.0f);
@@ -37,8 +39,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         stateManager.attach(bulletAppState);
         bulletAppState.getPhysicsSpace().add(rgc);
         player2 = new Crane();
-        player = new MobileCrane();
-        setupKeys(player);
+        //player = new MobileCrane();
+        setupKeys(player2);
         setupKeys(this);
         DirectionalLight sun = new DirectionalLight();
         sun.setColor(ColorRGBA.White);
@@ -68,12 +70,23 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         RigidBodyControl rg2 = new RigidBodyControl(0.1f);
         geom2.addControl(rg2);
         bulletAppState.getPhysicsSpace().add(rg2);
+        /*Box b3 = new Box(1, 1, 1); // create cube shape
+        Geometry geom3 = new Geometry("Box", b3);  // create cube geometry from the shape
+        geom3.setLocalTranslation(0, 4.1f, 20);
+        Material mat3 = new Material(assetManager,
+          "Common/MatDefs/Misc/Unshaded.j3md");  // create a simple material
+        mat3.setColor("Color", ColorRGBA.Blue);   // set color of material to blue
+        geom3.setMaterial(mat3);                   // set the cube's material
+        rootNode.attachChild(geom3);              // make the cube appear in the scene
+        RigidBodyControl rg3 = new RigidBodyControl(0.1f);
+        geom3.addControl(rg3);
+        bulletAppState.getPhysicsSpace().add(rg3);*/
         // KONIEC KODU DLA TESTU 
     }
 
     @Override
     public void simpleUpdate(float tpf) {
-        player.updateState();
+        /*player.updateState();
         CraneCabin cabin = player.getCabin();
         if(!player.using){
             if(cabin.getPropsLowering() <= CraneCabin.MAX_PROP_PROTRUSION)
@@ -82,7 +95,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                 /* metoda wywołana na łańcuchu "Action", gdyż ostatnia akcja może być nullem.
                 Może być bez tego ifa, ale dodany w celu optymalizacji aby nie powtarzać
                 dodawania listenerów klawiszy*/
-                if("Action".equals(GameManager.getLastAction())){
+                /*if("Action".equals(GameManager.getLastAction())){
                     setupKeys(cabin);
                     GameManager.setLastAction(null);
                 }
@@ -96,7 +109,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     GameManager.setLastAction(null);
                 }
             }
-        }
+        }*/
     }
 
     @Override
@@ -136,15 +149,16 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             inputManager.addListener((MobileCrane)o, "Up");
             inputManager.addListener((MobileCrane)o, "Down");
         }else{
-            if(o instanceof CraneCabin){
-                inputManager.addListener((CraneCabin)o, "Left");
-                inputManager.addListener((CraneCabin)o, "Right");
-                inputManager.addListener((CraneCabin)o, "Up");
-                inputManager.addListener((CraneCabin)o, "Down");
-                inputManager.addListener((CraneCabin)o, "Pull out");
-                inputManager.addListener((CraneCabin)o, "Pull in");
-                inputManager.addListener((CraneCabin)o, "Lower hook");
-                inputManager.addListener((CraneCabin)o, "Highten hook");
+            //if(o instanceof CraneCabin){
+            if(o instanceof Crane){
+                inputManager.addListener((Crane)o, "Left");
+                inputManager.addListener((Crane)o, "Right");
+                inputManager.addListener((Crane)o, "Up");
+                inputManager.addListener((Crane)o, "Down");
+                inputManager.addListener((Crane)o, "Pull out");
+                inputManager.addListener((Crane)o, "Pull in");
+                inputManager.addListener((Crane)o, "Lower hook");
+                inputManager.addListener((Crane)o, "Highten hook");
             }else{
                 inputManager.addListener(this, "Action");
                 inputManager.addListener(this, "Physics");
@@ -152,7 +166,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         }
     }
     public void onAction(String name, boolean isPressed, float tpf){
-        boolean craneStop = true;
+        /*boolean craneStop = true;
         if(isPressed && name.equals("Action")){
             if(player.using){
                 float craneSpeed = player.getSpeed();
@@ -174,7 +188,12 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                 else bulletAppState.getPhysicsSpace().disableDebug();
                 debug = !debug;
             }
-        }
+        }*/
+        if(isPressed && name.equals("Physics")){
+                if(!debug) bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+                else bulletAppState.getPhysicsSpace().disableDebug();
+                debug = !debug;
+            }
     }
     /**
      * Pobiera tekstową reprezentację liczby klatek na sekundę. 
@@ -182,5 +201,9 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
      */
     public static String getFPSString(){
         return BuildingSimulator.game.fpsText.getText();
+    }
+    
+    public static Spatial getScene(){
+        return scene;
     }
 }

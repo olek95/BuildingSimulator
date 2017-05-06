@@ -150,4 +150,3 @@ public class MobileCrane implements ActionListener{
                 .getCollisionShape(),crane, "bollardsShape", Vector3f.ZERO, null);
     }
 }
-

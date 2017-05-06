@@ -1,21 +1,11 @@
 package buildingsimulator;
 
-import static buildingsimulator.GameManager.*;
-import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.bullet.util.CollisionShapeFactory;
-import com.jme3.collision.CollisionResults;
 import com.jme3.input.controls.AnalogListener;
-import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Obiekt klasy <code>Crane</code> reprezentuje żuraw. 
@@ -23,13 +13,10 @@ import java.util.List;
  */
 public class Crane implements AnalogListener{
     private BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-    private Node crane, craneControl, hookHandleControl, ropeHook, littleHookHandle;
-    private Node[] ropes = new Node[4];
+    private Node crane, craneControl, hookHandleControl;
     private Spatial rack, craneArm, hookHandle;
-    private static final float MIN_HANDLE_HOOK_DISPLACEMENT = -63f,
-            HOOK_LOWERING_SPEED = 0.05f;
-    private float maxHandleHookDisplacement, hookLowering = 1f;
-    private Vector3f hookDisplacement;
+    private static final float MIN_HANDLE_HOOK_DISPLACEMENT = -63f;
+    private float maxHandleHookDisplacement;
     private FourRopesHook hook;
     public Crane(){
         initCraneElements((Node)game.getAssetManager().loadModel("Models/zuraw/zuraw.j3o"));
@@ -48,12 +35,12 @@ public class Crane implements AnalogListener{
         switch(name){
             case "Right":
                 craneControl.rotate(0f, -tpf / 5, 0f);
-                hook.get().getControl(RigidBodyControl.class).setPhysicsRotation(
+                hook.getRopeHook().getControl(RigidBodyControl.class).setPhysicsRotation(
                         craneControl.getLocalRotation());
                 break;
             case "Left": 
                 craneControl.rotate(0f, tpf / 5, 0f);
-                hook.get().getControl(RigidBodyControl.class).setPhysicsRotation(
+                hook.getRopeHook().getControl(RigidBodyControl.class).setPhysicsRotation(
                         craneControl.getLocalRotation());
                 break;
             case "Up":
@@ -72,7 +59,8 @@ public class Crane implements AnalogListener{
                 hook.lower();
                 break;
             case "Highten hook":
-                hook.highten();
+                if(hook.getHookLowering() > 1f)
+                    hook.highten();
         }
         if(!name.equals("Lower hook")) hook.setRecentlyHitObject(null);
     }

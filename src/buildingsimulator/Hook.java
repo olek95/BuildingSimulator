@@ -30,6 +30,13 @@ public abstract class Hook {
     public void setRecentlyHitObject(Spatial object){
         recentlyHitObject = object;
     }
+    /**
+     * Zwraca wartość określającą jak bardzo opuszczony jest hak. 
+     * @return wartość opuszczenia haka 
+     */
+    public float getHookLowering(){
+        return hookLowering;
+    }
     protected abstract void createRopeHookPhysics();
     protected void changeHookPosition(Vector3f scallingVector, boolean heightening){
         moveByVector(heightening, hook, hookDisplacement);

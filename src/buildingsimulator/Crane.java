@@ -26,7 +26,7 @@ public class Crane implements AnalogListener{
                 hookHandle);
         
         game.getBulletAppState().getPhysicsSpace()
-                .addCollisionGroupListener(hook.createCollisionListener(), 2);
+                .addCollisionGroupListener(hook.createCollisionListener(false), 2);
         game.getRootNode().attachChild(crane);
     }
     @Override

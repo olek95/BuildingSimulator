@@ -22,7 +22,6 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     private Crane player2;
     private boolean debug = false;
     boolean kabina;
-    private static Spatial scene;
     public static void main(String[] args) {
         game = new BuildingSimulator();
         game.start();
@@ -30,7 +29,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
 
     @Override
     public void simpleInitApp() {
-        scene = assetManager.loadModel("Scenes/gameMap.j3o");
+        Spatial scene = assetManager.loadModel("Scenes/gameMap.j3o");
         scene.setLocalTranslation(0, -1, 0);
         flyCam.setMoveSpeed(100);
         RigidBodyControl rgc = new RigidBodyControl(0.0f);
@@ -201,9 +200,5 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
      */
     public static String getFPSString(){
         return BuildingSimulator.game.fpsText.getText();
-    }
-    
-    public static Spatial getScene(){
-        return scene;
     }
 }

@@ -62,6 +62,8 @@ public abstract class Hook {
         createPhysics(ropeHookCompound, ropeHook, 4f, false);
         RigidBodyControl ropeHookControl = ropeHook.getControl(RigidBodyControl.class);
         ropeHookControl.setCollisionGroup(2); 
+        ropeHookControl.addCollideWithGroup(1); // tylko mobilny???
+        ropeHookControl.setCollideWithGroups(3); // tylko mobilny???
         lineAndHookHandleJoint = joinsElementToOtherElement(lineAndHookHandleJoint,
                 hookHandle, ropeHook, Vector3f.ZERO, new Vector3f(0, 0.6f,0));
     }

@@ -2,8 +2,6 @@ package buildingsimulator;
 
 import static buildingsimulator.GameManager.*;
 import com.jme3.bounding.BoundingBox;
-import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
-import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.collision.CollisionResults;
 import com.jme3.math.Ray;
@@ -38,14 +36,12 @@ public class FourRopesHook extends Hook{
         /* jeśli nie dotknęło żadnego obiektu, to zbędne jest sprawdzanie 
         kolizji w dół*/
         if(recentlyHitObject != null){
-            System.out.println(recentlyHitObject);
             Ray ray = new Ray(hook.getWorldTranslation(), new Vector3f(0,-0.5f,0));
             if(recentlyHitObject.getName().startsWith("prop")){
                 // new Ray tworzy pomocniczy promień sprawdzający kolizję w dół
                 Node crane = recentlyHitObject.getParent();
                 ((Node)crane.getChild("prop0")).getChild(0).collideWith(ray, results);
                 ((Node)crane.getChild("prop1")).getChild(0).collideWith(ray, results);
-                //ray.collideWith((BoundingBox)BuildingSimulator.getScene().getWorldBound(), results);
             }else{
                 ray.collideWith((BoundingBox)recentlyHitObject.getWorldBound(), results);
             }

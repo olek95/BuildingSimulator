@@ -5,6 +5,7 @@ import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
@@ -18,8 +19,7 @@ import com.jme3.scene.shape.Box;
 public class BuildingSimulator extends SimpleApplication implements ActionListener{
     private static BuildingSimulator game;
     private BulletAppState bulletAppState = new BulletAppState();
-    private MobileCrane player;
-    private Crane player2;
+    private static Playable actualUnit;
     private boolean debug = false;
     boolean kabina;
     public static void main(String[] args) {
@@ -37,8 +37,10 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         rootNode.attachChild(scene);
         stateManager.attach(bulletAppState);
         bulletAppState.getPhysicsSpace().add(rgc);
-        player2 = new Crane();
-        //player = new MobileCrane();
+        Crane player2 = new Crane();
+        MobileCrane player = new MobileCrane();
+        actualUnit = player2;
+        GameManager.initHookCollisionListener();
         setupKeys(player2);
         setupKeys(this);
         DirectionalLight sun = new DirectionalLight();
@@ -200,5 +202,9 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
      */
     public static String getFPSString(){
         return BuildingSimulator.game.fpsText.getText();
+    }
+    
+    public static Playable getActualUnit(){
+        return actualUnit;
     }
 }

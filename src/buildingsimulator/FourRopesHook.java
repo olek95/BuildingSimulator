@@ -58,7 +58,7 @@ public class FourRopesHook extends Hook{
                     .getChild(0).getName(), ropes[i].getLocalTranslation(), null);
         addNewCollisionShapeToCompound(ropeHookCompound, littleHookHandle, littleHookHandle
                 .getChild(0).getName(), littleHookHandle.getLocalTranslation(), null);
-        super.createRopeHookPhysics(ropeHookCompound);
+        super.createRopeHookPhysics(ropeHookCompound, new Vector3f(0, 0.6f,0));
     }
     /**
      * Zwraca węzeł z hakiem z liniami. 

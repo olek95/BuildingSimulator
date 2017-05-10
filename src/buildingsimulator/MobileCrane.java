@@ -19,7 +19,7 @@ import java.util.List;
  * obsługi ramienia dźwigu. 
  * @author AleksanderSklorz
  */
-public class MobileCrane implements ActionListener{
+public class MobileCrane implements ActionListener, Playable{
     private BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
     private Node crane = (Node)game.getAssetManager().loadModel("Models/dzwig/dzwig.j3o");
     private VehicleControl craneControl = crane.getControl(VehicleControl.class);
@@ -28,6 +28,7 @@ public class MobileCrane implements ActionListener{
             FRICTION_FORCE = 10.0f;
     private float steeringValue = 0f;
     private String key = "";
+    public static final boolean WEAK = true;
     boolean using = true;
     public MobileCrane(){
         crane.setLocalTranslation(0, 1.15f, 0);
@@ -148,5 +149,9 @@ public class MobileCrane implements ActionListener{
                 .getCollisionShape(),crane, "outsideMobileCraneCabin", Vector3f.ZERO, null);
         GameManager.addNewCollisionShapeToCompound((CompoundCollisionShape)craneControl
                 .getCollisionShape(),crane, "bollardsShape", Vector3f.ZERO, null);
+    }
+    @Override
+    public Hook getHook(){
+        return cabin.getHook();
     }
 }

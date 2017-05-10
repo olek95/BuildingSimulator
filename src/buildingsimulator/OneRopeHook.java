@@ -56,6 +56,7 @@ public class OneRopeHook extends Hook{
         createRopeHookPhysics();
     }
     private void createRopeHookPhysics(){
-        super.createRopeHookPhysics(createCompound(rope, rope.getChild(0).getName()));
+        super.createRopeHookPhysics(createCompound(rope, rope.getChild(0).getName()),
+                new Vector3f(0, 0.06f,0));
     }
 }

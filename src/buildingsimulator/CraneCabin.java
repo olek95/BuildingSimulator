@@ -104,8 +104,8 @@ public class CraneCabin implements AnalogListener{
             Node prop = (Node)mobileCraneChildren.get(i);
             if(Arrays.binarySearch(props, prop.getName()) >= 0){
                     changed++;
-                    moveWithScallingObject(!lowering, propDisplacement, scallingVector, (Node)((Node)prop
-                            .getChild(0)).getChild(0), prop.getChild(1));
+                    moveWithScallingObject(!lowering, propDisplacement, scallingVector, (Node)prop
+                            .getChild(0), prop.getChild(1));
             }
             i++;
         }while(changed < 4);
@@ -146,7 +146,7 @@ public class CraneCabin implements AnalogListener{
         /* Dodaje listener sprawdzający kolizję haka z obiektami otoczenia.
          Dla optymalizacji sprawdzam kolizję tylko dla grupy 2, czyli tej w 
          której znajduje sie hak.*/
-        physics.addCollisionGroupListener(hook.createCollisionListener(true), 2);
+        //physics.addCollisionGroupListener(hook.createCollisionListener(), 2);
         physics.addCollisionListener(new PhysicsCollisionListener(){
             @Override
             public void collision(PhysicsCollisionEvent event) {
@@ -200,5 +200,8 @@ public class CraneCabin implements AnalogListener{
             obstacleRight = true; 
             craneCabin.rotate(0f, rotate, 0f);
         }
+    }
+    public Hook getHook(){
+        return hook;
     }
 }

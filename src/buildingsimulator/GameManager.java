@@ -21,6 +21,8 @@ import com.jme3.scene.Spatial;
 public class GameManager {
     private static String lastAction;
     private static Spatial craneRack;
+    private static MobileCrane mobileCrane;
+    private static Crane crane;
     /**
      * Tworzy fizykę dla danego obiektu. Stosuje ona klasę RigidBodyControl, 
      * natomiast do wykrywania kolizji używa CompoundCollisionShape. 
@@ -203,5 +205,9 @@ public class GameManager {
         i++;
         for(; i < length; i++) tempFPSString += fpsString.charAt(i);
         return Integer.parseInt(tempFPSString);
+    }
+    public static void initHookCollisionListener(){
+        BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
+                .addCollisionGroupListener(Hook.createCollisionListener(), 2);
     }
 }

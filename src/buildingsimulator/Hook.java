@@ -13,6 +13,7 @@ import com.jme3.collision.CollisionResults;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.control.Control;
 
 public abstract class Hook {
     protected Node ropeHook;
@@ -28,6 +29,7 @@ public abstract class Hook {
     }
     protected Spatial lower(CollisionResults results){
         // obniża hak, jeśli w żadnym punkcie z dołu nie dotyka jakiegoś obiektu
+        //System.out.println(results.size());
         if(results.size() == 0){
             changeHookPosition(new Vector3f(1f,hookLowering += HOOK_LOWERING_SPEED, 1f),
                     false);
@@ -56,7 +58,8 @@ public abstract class Hook {
     public float getHookLowering(){
         return hookLowering;
     }
-    protected  void createRopeHookPhysics(CompoundCollisionShape ropeHookCompound){
+    protected  void createRopeHookPhysics(CompoundCollisionShape ropeHookCompound,
+            Vector3f distanceHookHandleAndRopeHook){
         addNewCollisionShapeToCompound(ropeHookCompound, (Node)hook, ((Node)hook).getChild(0).getName(),
                 hook.getLocalTranslation(), hook.getLocalRotation());
         createPhysics(ropeHookCompound, ropeHook, 4f, false);
@@ -65,31 +68,44 @@ public abstract class Hook {
         ropeHookControl.addCollideWithGroup(1); // tylko mobilny???
         ropeHookControl.setCollideWithGroups(3); // tylko mobilny???
         lineAndHookHandleJoint = joinsElementToOtherElement(lineAndHookHandleJoint,
-                hookHandle, ropeHook, Vector3f.ZERO, new Vector3f(0, 0.6f,0));
+                hookHandle, ropeHook, Vector3f.ZERO, distanceHookHandleAndRopeHook);
     }
     protected abstract void changeHookPosition(Vector3f scallingVector, boolean heightening);
-    public PhysicsCollisionGroupListener createCollisionListener(final boolean weak){
+    public static PhysicsCollisionGroupListener createCollisionListener(){
         return new PhysicsCollisionGroupListener(){
             @Override
             public boolean collide(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB){
                 Object a = nodeA.getUserObject(), b = nodeB.getUserObject();
-                if(a.equals(ropeHook) && !b.equals(hookHandle))
-                    return setCollision(ropeHook, (Spatial)b, weak);
-                else if(b.equals(ropeHook) && !a.equals(hookHandle))
-                    return setCollision(ropeHook, (Spatial)a, weak);
+                String aName = ((Spatial)a).getName(), bName = ((Spatial)b).getName();
+                boolean weak;
+                if(aName.equals("ropeHook") && !bName.equals("hookHandle")){
+                    System.out.println(((Spatial)a).getParent());
+                    Playable playerUnit = BuildingSimulator.getActualUnit();
+                    weak = playerUnit instanceof MobileCrane;
+                    return setCollision(playerUnit, (Spatial)a, (Spatial)b, weak);
+                }
+                else if(bName.equals("ropeHook") && !aName.equals("hookHandle")){
+                    System.out.println(((Spatial)b).getParent());
+                    Playable playerUnit = BuildingSimulator.getActualUnit();
+                    weak = playerUnit instanceof MobileCrane;
+                    return setCollision(playerUnit, (Spatial)b, (Spatial)a, weak);
+                }
                 return true;
             }
         };
     }
-    private boolean setCollision(Spatial a, Spatial b, boolean weak){
+    private static boolean setCollision(Playable playerUnit, Spatial a, Spatial b, boolean weak){
         float y1 = 0, y2 = 0;
         if(!weak){
             y1 = ((BoundingBox)a.getWorldBound()).getMin(null).y;
             y2 = ((BoundingBox)b.getWorldBound()).getMax(null).y;
         }
-        if(!weak && Math.abs(y1-y2) >= 0 && Math.abs(y1-y2) < 0.1f)
-            recentlyHitObject = b;
-        int collisionGroup = b.getControl(RigidBodyControl.class).getCollisionGroup();
+        if(!weak){
+            if(Math.abs(y1-y2) >= 0 && Math.abs(y1-y2) < 0.1f)
+                playerUnit.getHook().recentlyHitObject = b;
+        }else playerUnit.getHook().recentlyHitObject = b;
+        // PhysicsCollisionObject bo control nie musi być tylko typu RigidBodyControl 
+        int collisionGroup = ((PhysicsCollisionObject)b.getControl(0)).getCollisionGroup();
         return collisionGroup == 3 || collisionGroup == 1;
     }
 }

@@ -21,7 +21,6 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     private BulletAppState bulletAppState = new BulletAppState();
     private Crane player2;
     private MobileCrane player;
-    private static Playable actualUnit;
     private boolean debug = false;
     boolean kabina;
     public static void main(String[] args) {
@@ -41,7 +40,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         bulletAppState.getPhysicsSpace().add(rgc);
         player2 = new Crane();
         player = new MobileCrane();
-        actualUnit = player;
+        GameManager.setActualUnit(player);
         GameManager.initHookCollisionListener();
         setupKeys(player);
         setupKeys(this);
@@ -204,9 +203,5 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
      */
     public static String getFPSString(){
         return BuildingSimulator.game.fpsText.getText();
-    }
-    
-    public static Playable getActualUnit(){
-        return actualUnit;
     }
 }

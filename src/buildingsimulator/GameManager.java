@@ -21,8 +21,8 @@ import com.jme3.scene.Spatial;
 public class GameManager {
     private static String lastAction;
     private static Spatial craneRack;
-    private static MobileCrane mobileCrane;
-    private static Crane crane;
+    private static Playable actualUnit;
+    
     /**
      * Tworzy fizykę dla danego obiektu. Stosuje ona klasę RigidBodyControl, 
      * natomiast do wykrywania kolizji używa CompoundCollisionShape. 
@@ -38,6 +38,7 @@ public class GameManager {
         CompoundCollisionShape compound = createCompound(parent, children);
         createPhysics(compound, parent, mass, kinematic);
     }
+    
     /**
      * Tworzy siatkę kolizji dla danych elementów. 
      * @param parent węzeł nadrzędny z którego pobierane są elementy podrzędne 
@@ -55,6 +56,7 @@ public class GameManager {
         }
         return compound;
     }
+    
     /**
      * Tworzy fizykę z podanego kształtu kolizji. 
      * @param compound kształt kolizji z którego tworzy się fizykę
@@ -76,6 +78,7 @@ public class GameManager {
         controlOwner.addControl(control);
         physics.add(control);
     }
+    
     /**
      * Pozwala na przewidzenie wektora zawierającego informację o tym, o jaki 
      * wektor należy przesunąć elementy połączone ze skalowanym elementem. 
@@ -99,12 +102,15 @@ public class GameManager {
         displacement.z = z ? displacement.z - initialSize.z : 0f;
         return displacement;
     }
+    
     /**
-     * Przesuwa element o podany wektor. 
+     * Przesuwa elementy o podany wektor, jednocześnie skalując ich sąsiada. 
      * @param direction true jeśli ma się przesuwać w kierunku dodatnim, false 
      * w przeciwnym kierunku 
-     * @param movingElement przesuwany element 
      * @param elementDisplacement wektor przesunięcia 
+     * @param scallingVector wektor skalowania 
+     * @param scallingElement skalowany element 
+     * @param movingElements przesuwane elementy  
      */
     public static void moveWithScallingObject(boolean direction, Vector3f elementDisplacement,
             Vector3f scallingVector, Node scallingElement, Spatial... movingElements){
@@ -114,6 +120,16 @@ public class GameManager {
             for(int i = 0; i < movingElements.length; i++)
                 movingElements[i].getLocalTranslation().addLocal(displacement);
     }
+    
+    /**
+     * Przesuwa elementy o podany wektor, jednocześnie skalując ich sąsiadów. 
+     * @param direction true jeśli ma się przesuwać w kierunku dodatnim, false 
+     * w przeciwnym kierunku 
+     * @param elementDisplacement wektor przesunięcia 
+     * @param scallingVector wektor skalowania 
+     * @param scallingElements skalowane elementy 
+     * @param movingElements przesuwane elementy 
+     */
     public static void moveWithScallingObject(boolean direction, Vector3f elementDisplacement,
             Vector3f scallingVector, Node[] scallingElements, Spatial... movingElements){
         for(int i = 0; i < scallingElements.length; i++)
@@ -123,6 +139,7 @@ public class GameManager {
             for(int i = 0; i < movingElements.length; i++)
                 movingElements[i].getLocalTranslation().addLocal(displacement);
     }
+    
     /**
      * Tworzy połączenie dwóch obiektów. 
      * @param joint obiekt przechowujący połączenie. Może mieć wartość null, wtedy 
@@ -144,6 +161,7 @@ public class GameManager {
         physics.add(joint);
         return joint;
     }
+    
     /**
      * Dodaje kształt kolizji do obiektu CompoundCollisionShape reprezentującego 
      * złożony kształt kolizji. 
@@ -164,6 +182,7 @@ public class GameManager {
         else compound.addChildShape(elementCollisionShape, location, rotation
                 .toRotationMatrix());
     }
+    
     /**
      * Zwraca ostatnio wykonaną akcję. 
      * @return ostatnio wykonana akcja
@@ -171,6 +190,7 @@ public class GameManager {
     public static String getLastAction(){
         return lastAction;
     }
+    
     /**
      * Ustawia ostatnio wykonaną akcję. 
      * @param key ostatnio wykonana akcja
@@ -178,6 +198,7 @@ public class GameManager {
     public static void setLastAction(String action){
         lastAction = action;
     }
+    
     /**
      * Zwraca "stojak" żurawia. 
      * @return stojak żurawia 
@@ -185,6 +206,7 @@ public class GameManager {
     public static Spatial getCraneRack(){
         return craneRack;
     }
+    
     /**
      * Ustawia "stojak" żurawia. 
      * @param craneRack stojak żurawia 
@@ -192,6 +214,7 @@ public class GameManager {
     public static void setCraneRack(Spatial craneRack){
         GameManager.craneRack = craneRack;
     }
+    
     /**
      * Zwraca aktualną liczbę klatek na sekundę w postaci liczby. 
      * @return FPS w postaci liczby 
@@ -206,8 +229,28 @@ public class GameManager {
         for(; i < length; i++) tempFPSString += fpsString.charAt(i);
         return Integer.parseInt(tempFPSString);
     }
+    
+    /**
+     * Inicjuje słuchacza dla kolizji haków. 
+     */
     public static void initHookCollisionListener(){
         BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
                 .addCollisionGroupListener(Hook.createCollisionListener(), 2);
+    }
+    
+    /**
+     * Ustawia aktualnie używaną jednostkę. 
+     * @param unit jednostka 
+     */
+    public static void setActualUnit(Playable unit){
+        actualUnit = unit; 
+    }
+    
+    /**
+     * Zwraca aktualnie używaną jednostkę. 
+     * @return aktualnie używana jednostka.
+     */
+    public static Playable getActualUnit(){
+        return actualUnit;
     }
 }

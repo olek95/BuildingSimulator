@@ -13,8 +13,11 @@ import com.jme3.collision.CollisionResults;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.control.Control;
 
+/**
+ * Klasa <code>Hook</code> jest klasą abstrakcji dla wszystkich haków w grze. 
+ * @author AleksanderSklorz
+ */
 public abstract class Hook {
     protected Node ropeHook;
     protected Spatial hook, hookHandle, recentlyHitObject;
@@ -27,15 +30,22 @@ public abstract class Hook {
         hook = ropeHook.getChild("hook");
         this.hookHandle = hookHandle;
     }
+    
+    /**
+     * Opuszcza hak, jeśli nic nie znajduje się pod nim. W przeciwnym razie 
+     * hak nie zmienia pozycji. 
+     * @param results wyniki kolizji, dzięki którym sprawdza się w ilu punktach 
+     * jest kolizja z danym obiektem 
+     */
     protected void lower(CollisionResults results){
         // obniża hak, jeśli w żadnym punkcie z dołu nie dotyka jakiegoś obiektu
-        //System.out.println(results.size());
         if(results.size() == 0){
             changeHookPosition(new Vector3f(1f,hookLowering += HOOK_LOWERING_SPEED, 1f),
                     false);
             recentlyHitObject = null;
         }
     }
+    
     /**
      * Podnosi hak. 
      */
@@ -43,6 +53,7 @@ public abstract class Hook {
         changeHookPosition(new Vector3f(1f, hookLowering -= HOOK_LOWERING_SPEED, 1f),
                 true);
     }
+    
     /**
      * Ustawia ostatnio dotknięty przez hak obiekt.
      * @param object dotknięty obiekt 
@@ -50,6 +61,7 @@ public abstract class Hook {
     public void setRecentlyHitObject(Spatial object){
         recentlyHitObject = object;
     }
+    
     /**
      * Zwraca wartość określającą jak bardzo opuszczony jest hak. 
      * @return wartość opuszczenia haka 
@@ -57,6 +69,17 @@ public abstract class Hook {
     public float getHookLowering(){
         return hookLowering;
     }
+    
+    /**
+     * Dołącza do podanego złożonego kształtu kolizji kształty kolizji innych 
+     * elementów haka, wspólnych dla wszystkich haków. Ponadto dołącza fizykę 
+     * dla tego obiektu do gry, ustawia odpowiednie grupy kolizji, a także 
+     * łączy hak z uchwytem na hak. 
+     * @param ropeHookCompound złożony kształt kolizji do którego dołącza się 
+     * kształty kolizji dla haka. 
+     * @param distanceHookHandleAndRopeHook wektor decydujący w jakiej odległości 
+     * ma być zawieszony hak od uchwytu na hak. 
+     */
     protected  void createRopeHookPhysics(CompoundCollisionShape ropeHookCompound,
             Vector3f distanceHookHandleAndRopeHook){
         addNewCollisionShapeToCompound(ropeHookCompound, (Node)hook, ((Node)hook).getChild(0).getName(),
@@ -69,40 +92,44 @@ public abstract class Hook {
         lineAndHookHandleJoint = joinsElementToOtherElement(lineAndHookHandleJoint,
                 hookHandle, ropeHook, Vector3f.ZERO, distanceHookHandleAndRopeHook);
     }
-    protected abstract void changeHookPosition(Vector3f scallingVector, boolean heightening);
+    
+    /**
+     * Tworzy obiekt kolizji dla haków. Ustawia on ostatnio dotkniety przez hak 
+     * obiekt. 
+     * @return obiekt kolizji dla haków 
+     */
     public static PhysicsCollisionGroupListener createCollisionListener(){
         return new PhysicsCollisionGroupListener(){
             @Override
             public boolean collide(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB){
                 Object a = nodeA.getUserObject(), b = nodeB.getUserObject();
-                String aName = ((Spatial)a).getName(), bName = ((Spatial)b).getName();
-                boolean weak;
+                Spatial aSpatial = (Spatial)a, bSpatial = (Spatial)b;
+                String aName = aSpatial.getName(), bName = bSpatial.getName();
                 if(aName.equals("ropeHook") && !bName.equals("hookHandle")){
-                    //System.out.println(((Spatial)a).getParent());
-                    Playable playerUnit = BuildingSimulator.getActualUnit();
-                    weak = playerUnit instanceof MobileCrane;
-                    return setCollision(playerUnit, (Spatial)a, (Spatial)b, weak);
+                    return setCollision(aSpatial, bSpatial);
                 }
                 else if(bName.equals("ropeHook") && !aName.equals("hookHandle")){
-                    //System.out.println(((Spatial)b).getParent());
-                    Playable playerUnit = BuildingSimulator.getActualUnit();
-                    weak = playerUnit instanceof MobileCrane;
-                    return setCollision(playerUnit, (Spatial)b, (Spatial)a, weak);
+                    return setCollision(bSpatial, aSpatial);
                 }
                 return true;
             }
         };
     }
-    private static boolean setCollision(Playable playerUnit, Spatial a, Spatial b, boolean weak){
-        float y1 = 0, y2 = 0;
-        if(!weak){
-            y1 = ((BoundingBox)a.getWorldBound()).getMin(null).y;
-            y2 = ((BoundingBox)b.getWorldBound()).getMax(null).y;
-        }
-        if(!weak){
-            if(Math.abs(y1-y2) >= 0 && Math.abs(y1-y2) < 0.1f)
-                playerUnit.getHook().recentlyHitObject = b;
-        }else playerUnit.getHook().recentlyHitObject = b;
+    
+    /**
+     * Zmienia pozycję haka w górę lub w dół równocześnie skalując liny haka. 
+     * @param scallingVector wektor skalowania lin 
+     * @param heightening true jeśli podnosimy hak, false w przeciwnym razie 
+     */
+    protected abstract void changeHookPosition(Vector3f scallingVector, boolean heightening);
+    
+    private static boolean setCollision(Spatial a, Spatial b){
+        float y1 = ((BoundingBox)a.getWorldBound()).getMin(null).y,
+                y2 = ((BoundingBox)b.getWorldBound()).getMax(null).y;
+        /* zabezpiecza przypadek gdy hak dotyka jednocześnie elementu pionowego
+        i poziomego*/
+        if(Math.abs(y1 - y2) >= 0 && Math.abs(y1 - y2) < 0.1f)
+            GameManager.getActualUnit().getHook().recentlyHitObject = b;
         // PhysicsCollisionObject bo control nie musi być tylko typu RigidBodyControl 
         int collisionGroup = ((PhysicsCollisionObject)b.getControl(0)).getCollisionGroup();
         return collisionGroup == 3 || collisionGroup == 1;

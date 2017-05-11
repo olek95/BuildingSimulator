@@ -28,6 +28,7 @@ public class OneRopeHook extends Hook{
         BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
                 .add(hookHandle.getControl(0));
     }
+    
     /**
      * Opuszcza hak do momentu wykrycia przeszkody. 
      */
@@ -41,6 +42,7 @@ public class OneRopeHook extends Hook{
                     .collideWith((BoundingBox)recentlyHitObject.getWorldBound(), results);
         super.lower(results);
     }
+    
     /**
      * Zwraca uchwyt do jakiego przyczepiona jest lina. 
      * @return uchwyt liny
@@ -48,6 +50,7 @@ public class OneRopeHook extends Hook{
     public Spatial getHookHandle(){
         return hookHandle;
     }
+    
     @Override
     protected void changeHookPosition(Vector3f scallingVector,
             boolean heightening){
@@ -55,6 +58,7 @@ public class OneRopeHook extends Hook{
                 rope, hook);
         createRopeHookPhysics();
     }
+    
     private void createRopeHookPhysics(){
         super.createRopeHookPhysics(createCompound(rope, rope.getChild(0).getName()),
                 new Vector3f(0, 0.06f,0));

@@ -46,7 +46,7 @@ public class FourRopesHook extends Hook{
                 ray.collideWith((BoundingBox)recentlyHitObject.getWorldBound(), results);
             }
         }
-        recentlyHitObject = super.lower(results);
+        super.lower(results);
     }
     
     private void createRopeHookPhysics(){

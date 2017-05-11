@@ -87,7 +87,7 @@ public class CraneCabin implements AnalogListener{
                 if(hook.getHookLowering() > 1f) 
                     hook.highten();
         }
-        hook.setRecentlyHitObject(null);
+        if(!name.equals("Lower hook")) hook.setRecentlyHitObject(null);
     }
     /**
      * Pozwala na kontrolowanie podporami (na opuszczanie i podnioszenie ich). 

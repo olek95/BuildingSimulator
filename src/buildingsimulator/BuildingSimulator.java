@@ -19,6 +19,8 @@ import com.jme3.scene.shape.Box;
 public class BuildingSimulator extends SimpleApplication implements ActionListener{
     private static BuildingSimulator game;
     private BulletAppState bulletAppState = new BulletAppState();
+    private Crane player2;
+    private MobileCrane player;
     private static Playable actualUnit;
     private boolean debug = false;
     boolean kabina;
@@ -37,11 +39,11 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         rootNode.attachChild(scene);
         stateManager.attach(bulletAppState);
         bulletAppState.getPhysicsSpace().add(rgc);
-        Crane player2 = new Crane();
-        MobileCrane player = new MobileCrane();
-        actualUnit = player2;
+        player2 = new Crane();
+        player = new MobileCrane();
+        actualUnit = player;
         GameManager.initHookCollisionListener();
-        setupKeys(player2);
+        setupKeys(player);
         setupKeys(this);
         DirectionalLight sun = new DirectionalLight();
         sun.setColor(ColorRGBA.White);
@@ -87,7 +89,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
 
     @Override
     public void simpleUpdate(float tpf) {
-        /*player.updateState();
+        player.updateState();
         CraneCabin cabin = player.getCabin();
         if(!player.using){
             if(cabin.getPropsLowering() <= CraneCabin.MAX_PROP_PROTRUSION)
@@ -96,7 +98,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                 /* metoda wywołana na łańcuchu "Action", gdyż ostatnia akcja może być nullem.
                 Może być bez tego ifa, ale dodany w celu optymalizacji aby nie powtarzać
                 dodawania listenerów klawiszy*/
-                /*if("Action".equals(GameManager.getLastAction())){
+                if("Action".equals(GameManager.getLastAction())){
                     setupKeys(cabin);
                     GameManager.setLastAction(null);
                 }
@@ -110,7 +112,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     GameManager.setLastAction(null);
                 }
             }
-        }*/
+        }
     }
 
     @Override
@@ -150,16 +152,16 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             inputManager.addListener((MobileCrane)o, "Up");
             inputManager.addListener((MobileCrane)o, "Down");
         }else{
-            //if(o instanceof CraneCabin){
-            if(o instanceof Crane){
-                inputManager.addListener((Crane)o, "Left");
-                inputManager.addListener((Crane)o, "Right");
-                inputManager.addListener((Crane)o, "Up");
-                inputManager.addListener((Crane)o, "Down");
-                inputManager.addListener((Crane)o, "Pull out");
-                inputManager.addListener((Crane)o, "Pull in");
-                inputManager.addListener((Crane)o, "Lower hook");
-                inputManager.addListener((Crane)o, "Highten hook");
+            if(o instanceof CraneCabin){
+            //if(o instanceof Crane){
+                inputManager.addListener((CraneCabin)o, "Left");
+                inputManager.addListener((CraneCabin)o, "Right");
+                inputManager.addListener((CraneCabin)o, "Up");
+                inputManager.addListener((CraneCabin)o, "Down");
+                inputManager.addListener((CraneCabin)o, "Pull out");
+                inputManager.addListener((CraneCabin)o, "Pull in");
+                inputManager.addListener((CraneCabin)o, "Lower hook");
+                inputManager.addListener((CraneCabin)o, "Highten hook");
             }else{
                 inputManager.addListener(this, "Action");
                 inputManager.addListener(this, "Physics");
@@ -167,7 +169,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         }
     }
     public void onAction(String name, boolean isPressed, float tpf){
-        /*boolean craneStop = true;
+        boolean craneStop = true;
         if(isPressed && name.equals("Action")){
             if(player.using){
                 float craneSpeed = player.getSpeed();
@@ -189,12 +191,12 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                 else bulletAppState.getPhysicsSpace().disableDebug();
                 debug = !debug;
             }
-        }*/
-        if(isPressed && name.equals("Physics")){
+        }
+        /*if(isPressed && name.equals("Physics")){
                 if(!debug) bulletAppState.getPhysicsSpace().enableDebug(assetManager);
                 else bulletAppState.getPhysicsSpace().disableDebug();
                 debug = !debug;
-            }
+            }*/
     }
     /**
      * Pobiera tekstową reprezentację liczby klatek na sekundę. 

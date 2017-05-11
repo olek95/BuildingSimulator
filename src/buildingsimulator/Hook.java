@@ -27,15 +27,14 @@ public abstract class Hook {
         hook = ropeHook.getChild("hook");
         this.hookHandle = hookHandle;
     }
-    protected Spatial lower(CollisionResults results){
+    protected void lower(CollisionResults results){
         // obniża hak, jeśli w żadnym punkcie z dołu nie dotyka jakiegoś obiektu
         //System.out.println(results.size());
         if(results.size() == 0){
             changeHookPosition(new Vector3f(1f,hookLowering += HOOK_LOWERING_SPEED, 1f),
                     false);
-            return null;
+            recentlyHitObject = null;
         }
-        return recentlyHitObject;
     }
     /**
      * Podnosi hak. 
@@ -79,13 +78,13 @@ public abstract class Hook {
                 String aName = ((Spatial)a).getName(), bName = ((Spatial)b).getName();
                 boolean weak;
                 if(aName.equals("ropeHook") && !bName.equals("hookHandle")){
-                    System.out.println(((Spatial)a).getParent());
+                    //System.out.println(((Spatial)a).getParent());
                     Playable playerUnit = BuildingSimulator.getActualUnit();
                     weak = playerUnit instanceof MobileCrane;
                     return setCollision(playerUnit, (Spatial)a, (Spatial)b, weak);
                 }
                 else if(bName.equals("ropeHook") && !aName.equals("hookHandle")){
-                    System.out.println(((Spatial)b).getParent());
+                    //System.out.println(((Spatial)b).getParent());
                     Playable playerUnit = BuildingSimulator.getActualUnit();
                     weak = playerUnit instanceof MobileCrane;
                     return setCollision(playerUnit, (Spatial)b, (Spatial)a, weak);

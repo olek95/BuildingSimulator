@@ -21,20 +21,19 @@ import java.util.List;
  * wysuwania go i wsuwania, a także opuszczania i podnoszenia liny z hakiem. 
  * @author AleksanderSklorz
  */
-public class CraneCabin implements AnalogListener{
+public class CraneCabin extends Cabin implements AnalogListener{
     private Node craneCabin, lift, rectractableCranePart, mobileCrane,
             craneProps;
     private float yCraneOffset = 0f, stretchingOut = 1f, propsLowering = 1f,
             cranePropsProtrusion = 1f;
     private Vector3f hookHandleDisplacement, propDisplacement;
-    private static final float MAX_PROTRUSION = 9.5f, MIN_PROTRUSION = 1f,
-            LIFTING_SPEED = 0.005f, STRETCHING_OUT_SPEED = 0.05f, PROP_LOWERING_SPEED = 0.05f,
+    private static final float LIFTING_SPEED = 0.005f, STRETCHING_OUT_SPEED = 0.05f, PROP_LOWERING_SPEED = 0.05f,
             CRANE_PROP_GOING_OUT_SPEED = 0.07f,
             MIN_CRANE_PROP_PROTRUSION = 1f;
     public static final float MAX_PROP_PROTRUSION = 6.35f, MIN_PROP_PROTRUSION = 1f;
     private Geometry leftProtractilePropGeometry, rightProtractilePropGeometry;
     private OneRopeHook hook;
-    boolean obstacleLeft = false, obstacleRight = false, obstacle = false;
+    private boolean obstacleLeft = false, obstacleRight = false;
     public CraneCabin(Node crane){
         initCraneElements(crane);
         createCranePhysics();
@@ -83,9 +82,9 @@ public class CraneCabin implements AnalogListener{
             case "Lower hook":
                 hook.lower();
                 break;
-            case "Highten hook":
+            case "Heighten hook":
                 if(hook.getHookLowering() > 1f) 
-                    hook.highten();
+                    hook.heighten();
         }
         if(!name.equals("Lower hook")) hook.setRecentlyHitObject(null);
     }
@@ -117,6 +116,27 @@ public class CraneCabin implements AnalogListener{
     public float getPropsLowering(){
         return propsLowering;
     }
+    
+    @Override
+    protected void rotate(float yAngle){
+        boolean obstacle = yAngle < 0 ? obstacleRight : obstacleLeft;
+        if(!obstacle) craneCabin.rotate(0f, yAngle, 0f);
+        else{
+            if(yAngle < 0) obstacleRight = false; 
+            else obstacleLeft = false;
+        }
+    }
+    
+    @Override
+    protected void moveHandleHook(float limit, boolean movingForward){
+        if(movingForward && stretchingOut <= limit)
+            changeHandleHookPosition(rectractableCranePart, new Vector3f(1f, 1f, 
+                    stretchingOut += STRETCHING_OUT_SPEED), movingForward);
+        else if(!movingForward && stretchingOut > limit)
+            changeHandleHookPosition(rectractableCranePart, new Vector3f(1f, 1f, 
+                    stretchingOut -= STRETCHING_OUT_SPEED), movingForward);
+    }
+    
     private void initCraneElements(Node crane){
         mobileCrane = crane;
         craneCabin = (Node)mobileCrane.getChild("crane");

@@ -59,9 +59,9 @@ public class Crane implements AnalogListener, Playable{
             case "Lower hook":
                 hook.lower();
                 break;
-            case "Highten hook":
+            case "Heighten hook":
                 if(hook.getHookLowering() > 1f)
-                    hook.highten();
+                    hook.heighten();
         }
         if(!name.equals("Lower hook")) hook.setRecentlyHitObject(null);
     }

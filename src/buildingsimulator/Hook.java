@@ -49,7 +49,7 @@ public abstract class Hook {
     /**
      * Podnosi hak. 
      */
-    public void highten(){
+    public void heighten(){
         changeHookPosition(new Vector3f(1f, hookLowering -= HOOK_LOWERING_SPEED, 1f),
                 true);
     }
@@ -122,6 +122,8 @@ public abstract class Hook {
      * @param heightening true jeśli podnosimy hak, false w przeciwnym razie 
      */
     protected abstract void changeHookPosition(Vector3f scallingVector, boolean heightening);
+    
+    protected abstract void lower();
     
     private static boolean setCollision(Spatial a, Spatial b){
         float y1 = ((BoundingBox)a.getWorldBound()).getMin(null).y,

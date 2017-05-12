@@ -160,7 +160,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                 inputManager.addListener((CraneCabin)o, "Pull out");
                 inputManager.addListener((CraneCabin)o, "Pull in");
                 inputManager.addListener((CraneCabin)o, "Lower hook");
-                inputManager.addListener((CraneCabin)o, "Highten hook");
+                inputManager.addListener((CraneCabin)o, "Heighten hook");
             }else{
                 inputManager.addListener(this, "Action");
                 inputManager.addListener(this, "Physics");

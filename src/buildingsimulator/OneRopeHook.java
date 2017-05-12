@@ -32,6 +32,7 @@ public class OneRopeHook extends Hook{
     /**
      * Opuszcza hak do momentu wykrycia przeszkody. 
      */
+    @Override
     public void lower(){
         CollisionResults results = new CollisionResults();
         /* jeśli nie dotknęło żadnego obiektu, to zbędne jest sprawdzanie 

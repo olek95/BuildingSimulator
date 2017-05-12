@@ -31,6 +31,7 @@ public class FourRopesHook extends Hook{
         hookDisplacement.y *= 2;
         createRopeHookPhysics();
     }
+    @Override
     public void lower(){
         CollisionResults results = new CollisionResults();
         /* jeśli nie dotknęło żadnego obiektu, to zbędne jest sprawdzanie 

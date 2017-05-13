@@ -32,7 +32,6 @@ public class CraneCabin extends Cabin implements AnalogListener{
             MIN_CRANE_PROP_PROTRUSION = 1f;
     public static final float MAX_PROP_PROTRUSION = 6.35f, MIN_PROP_PROTRUSION = 1f;
     private Geometry leftProtractilePropGeometry, rightProtractilePropGeometry;
-    private OneRopeHook hook;
     private boolean obstacleLeft = false, obstacleRight = false;
     public CraneCabin(Node crane){
         initCraneElements(crane);
@@ -44,50 +43,7 @@ public class CraneCabin extends Cabin implements AnalogListener{
                 .getChild("protractileProp1"), new Vector3f(1f, propsLowering + PROP_LOWERING_SPEED,
                 1f), false, true, false);
     }
-    @Override
-    public void onAnalog(String name, float value, float tpf) {
-        switch(name){
-            case "Right":
-                setLastAction(name);
-                if(!obstacleRight)
-                    craneCabin.rotate(0f, -tpf / 5, 0f);
-                else obstacleRight = false;
-                break;
-            case "Left": 
-                setLastAction(name);
-                if(!obstacleLeft)
-                    craneCabin.rotate(0f, tpf / 5, 0f);
-                else obstacleLeft = false;
-                break;
-            case "Up":
-                if(yCraneOffset + LIFTING_SPEED < 0.6f){
-                    controlCrane(false);
-                }
-                break;
-            case "Down":
-                if(yCraneOffset - LIFTING_SPEED >= 0f){
-                    controlCrane(true);
-                }
-                break;
-            case "Pull out":
-                if(stretchingOut <= MAX_PROTRUSION)
-                    changeHandleHookPosition(rectractableCranePart, new Vector3f(1f, 1f, 
-                            stretchingOut += STRETCHING_OUT_SPEED), true);
-                break;
-            case "Pull in":
-                if(stretchingOut > MIN_PROTRUSION)
-                    changeHandleHookPosition(rectractableCranePart, new Vector3f(1f, 1f, 
-                            stretchingOut -= STRETCHING_OUT_SPEED), false);
-                break;
-            case "Lower hook":
-                hook.lower();
-                break;
-            case "Heighten hook":
-                if(hook.getHookLowering() > 1f) 
-                    hook.heighten();
-        }
-        if(!name.equals("Lower hook")) hook.setRecentlyHitObject(null);
-    }
+    
     /**
      * Pozwala na kontrolowanie podporami (na opuszczanie i podnioszenie ich). 
      * @param lowering true jeśli podpory mają być opuszczane, false jeśli podnioszone
@@ -135,6 +91,13 @@ public class CraneCabin extends Cabin implements AnalogListener{
         else if(!movingForward && stretchingOut > limit)
             changeHandleHookPosition(rectractableCranePart, new Vector3f(1f, 1f, 
                     stretchingOut -= STRETCHING_OUT_SPEED), movingForward);
+    }
+    
+    @Override 
+    protected void changeArmHeight(float limit, boolean lowering){
+        if(limit == maxArmHeight && yCraneOffset + LIFTING_SPEED < limit
+                || limit == minArmHeight && yCraneOffset - LIFTING_SPEED >= limit)
+            controlCrane(lowering);
     }
     
     private void initCraneElements(Node crane){

@@ -117,6 +117,14 @@ public abstract class Hook {
     }
     
     /**
+     * Zwraca uchwyt do jakiego przyczepiona jest lina. 
+     * @return uchwyt liny
+     */
+    public Spatial getHookHandle(){
+        return hookHandle;
+    }
+    
+    /**
      * Zmienia pozycję haka w górę lub w dół równocześnie skalując liny haka. 
      * @param scallingVector wektor skalowania lin 
      * @param heightening true jeśli podnosimy hak, false w przeciwnym razie 

@@ -44,14 +44,6 @@ public class OneRopeHook extends Hook{
         super.lower(results);
     }
     
-    /**
-     * Zwraca uchwyt do jakiego przyczepiona jest lina. 
-     * @return uchwyt liny
-     */
-    public Spatial getHookHandle(){
-        return hookHandle;
-    }
-    
     @Override
     protected void changeHookPosition(Vector3f scallingVector,
             boolean heightening){

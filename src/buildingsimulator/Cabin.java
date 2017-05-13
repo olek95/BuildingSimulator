@@ -1,18 +1,20 @@
 package buildingsimulator;
 
 import com.jme3.input.controls.AnalogListener;
+import com.jme3.scene.Node;
 
 public abstract class Cabin implements AnalogListener{
-    private Hook hook;
+    protected Hook hook;
     private final float maxProtrusion = 9.5f, minProtrusion = 1f;
+    protected final float maxArmHeight = 0.6f, minArmHeight = 0f;
     @Override
     public void onAnalog(String name, float value, float tpf) {
         switch(name){
             case "Right":
-                rotate(value);
+                rotate(-tpf / 5);
                 break;
             case "Left":
-                rotate(value);
+                rotate(tpf / 5);
                 break;
             case "Pull out":
                 moveHandleHook(maxProtrusion, true);
@@ -28,10 +30,10 @@ public abstract class Cabin implements AnalogListener{
                     hook.heighten();
                 break;
             case "Up":
-                changeArmHeight();
+                changeArmHeight(maxArmHeight, false);
                 break;
             case "Down":
-                changeArmHeight(); 
+                changeArmHeight(minArmHeight, true); 
         }
         if(!name.equals("Lower hook")) hook.setRecentlyHitObject(null);
     }

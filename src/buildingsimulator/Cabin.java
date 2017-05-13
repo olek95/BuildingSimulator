@@ -5,7 +5,7 @@ import com.jme3.scene.Node;
 
 public abstract class Cabin implements AnalogListener{
     protected Hook hook;
-    private final float maxProtrusion = 9.5f, minProtrusion = 1f;
+    protected final float maxHandleHookDisplacement = 9.5f, minHandleHookDisplacement = 1f;
     protected final float maxArmHeight = 0.6f, minArmHeight = 0f;
     @Override
     public void onAnalog(String name, float value, float tpf) {
@@ -17,10 +17,10 @@ public abstract class Cabin implements AnalogListener{
                 rotate(tpf / 5);
                 break;
             case "Pull out":
-                moveHandleHook(maxProtrusion, true);
+                moveHandleHook(maxHandleHookDisplacement, true, -tpf);
                 break;
             case "Pull in":
-                moveHandleHook(maxProtrusion, false);
+                moveHandleHook(minHandleHookDisplacement, false, tpf);
                 break;
             case "Lower hook":
                 hook.lower();
@@ -40,7 +40,7 @@ public abstract class Cabin implements AnalogListener{
     
     protected abstract void rotate(float yAngle);
     
-    protected abstract void moveHandleHook(float limit, boolean movingForward);
+    protected abstract void moveHandleHook(float limit, boolean movingForward, float speed);
     
-    protected abstract void changeArmHeight(float limit, boolean lowering); 
+    protected void changeArmHeight(float limit, boolean lowering){} 
 }

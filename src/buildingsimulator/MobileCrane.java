@@ -23,7 +23,7 @@ public class MobileCrane implements ActionListener, Playable{
     private BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
     private Node crane = (Node)game.getAssetManager().loadModel("Models/dzwig/dzwig.j3o");
     private VehicleControl craneControl = crane.getControl(VehicleControl.class);
-    private CraneCabin cabin;
+    private MobileCraneCabin cabin;
     private static final float ACCELERATION_FORCE = 100.0f, BRAKE_FORCE = 20.0f,
             FRICTION_FORCE = 10.0f;
     private float steeringValue = 0f;
@@ -38,7 +38,7 @@ public class MobileCrane implements ActionListener, Playable{
         game.getRootNode().attachChild(crane);
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
         physics.add(craneControl);
-        cabin = new CraneCabin(crane);
+        cabin = new MobileCraneCabin(crane, 9.5f, 1f);
     }
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
@@ -96,7 +96,7 @@ public class MobileCrane implements ActionListener, Playable{
      * Zwraca kabinę operatora ramienia dźwigu. 
      * @return kabina operatora ramienia dźwigu. 
      */
-    public CraneCabin getCabin(){
+    public MobileCraneCabin getCabin(){
         return cabin;
     }
     /**

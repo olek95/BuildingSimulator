@@ -89,9 +89,9 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     @Override
     public void simpleUpdate(float tpf) {
         player.updateState();
-        CraneCabin cabin = player.getCabin();
+        MobileCraneCabin cabin = player.getCabin();
         if(!player.using){
-            if(cabin.getPropsLowering() <= CraneCabin.MAX_PROP_PROTRUSION)
+            if(cabin.getPropsLowering() <= MobileCraneCabin.MAX_PROP_PROTRUSION)
                 cabin.controlProps(true);
             else{
                 /* metoda wywołana na łańcuchu "Action", gdyż ostatnia akcja może być nullem.
@@ -103,7 +103,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                 }
             }
         }else{
-            if(cabin.getPropsLowering() > CraneCabin.MIN_PROP_PROTRUSION)
+            if(cabin.getPropsLowering() > MobileCraneCabin.MIN_PROP_PROTRUSION)
                 cabin.controlProps(false);
             else{
                 if("Action".equals(GameManager.getLastAction())){
@@ -142,7 +142,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             inputManager.addMapping("Pull out", new KeyTrigger(KeyInput.KEY_E));
             inputManager.addMapping("Pull in", new KeyTrigger(KeyInput.KEY_SPACE));
             inputManager.addMapping("Lower hook", new KeyTrigger(KeyInput.KEY_R));
-            inputManager.addMapping("Highten hook", new KeyTrigger(KeyInput.KEY_T));
+            inputManager.addMapping("Heighten hook", new KeyTrigger(KeyInput.KEY_T));
             inputManager.addMapping("Physics", new KeyTrigger(KeyInput.KEY_P));
         }
         if(o instanceof MobileCrane){
@@ -151,16 +151,16 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             inputManager.addListener((MobileCrane)o, "Up");
             inputManager.addListener((MobileCrane)o, "Down");
         }else{
-            if(o instanceof CraneCabin){
+            if(o instanceof MobileCraneCabin){
             //if(o instanceof Crane){
-                inputManager.addListener((CraneCabin)o, "Left");
-                inputManager.addListener((CraneCabin)o, "Right");
-                inputManager.addListener((CraneCabin)o, "Up");
-                inputManager.addListener((CraneCabin)o, "Down");
-                inputManager.addListener((CraneCabin)o, "Pull out");
-                inputManager.addListener((CraneCabin)o, "Pull in");
-                inputManager.addListener((CraneCabin)o, "Lower hook");
-                inputManager.addListener((CraneCabin)o, "Heighten hook");
+                inputManager.addListener((MobileCraneCabin)o, "Left");
+                inputManager.addListener((MobileCraneCabin)o, "Right");
+                inputManager.addListener((MobileCraneCabin)o, "Up");
+                inputManager.addListener((MobileCraneCabin)o, "Down");
+                inputManager.addListener((MobileCraneCabin)o, "Pull out");
+                inputManager.addListener((MobileCraneCabin)o, "Pull in");
+                inputManager.addListener((MobileCraneCabin)o, "Lower hook");
+                inputManager.addListener((MobileCraneCabin)o, "Heighten hook");
             }else{
                 inputManager.addListener(this, "Action");
                 inputManager.addListener(this, "Physics");

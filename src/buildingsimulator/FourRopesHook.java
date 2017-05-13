@@ -61,13 +61,7 @@ public class FourRopesHook extends Hook{
                 .getChild(0).getName(), littleHookHandle.getLocalTranslation(), null);
         super.createRopeHookPhysics(ropeHookCompound, new Vector3f(0, 0.6f,0));
     }
-    /**
-     * Zwraca węzeł z hakiem z liniami. 
-     * @return węzeł z hakiem z liniami 
-     */
-    public Node getRopeHook(){
-        return ropeHook;
-    }
+    
     @Override
     protected void changeHookPosition(Vector3f scallingVector,
             boolean heightening){

@@ -11,8 +11,8 @@ public class CraneCabin extends Cabin{
     private Node crane, craneControl, hookHandleControl;
     public CraneCabin(Node crane){
         initCraneCabinElements(crane);
-        minHandleHookDisplacement = -63f;
-        maxHandleHookDisplacement = hookHandleControl.getLocalTranslation().z;
+        maxHandleHookDisplacement = -63f;
+        minHandleHookDisplacement = hookHandleControl.getLocalTranslation().z;
     }
     @Override
     protected void rotate(float yAngle) {

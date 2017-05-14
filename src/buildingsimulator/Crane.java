@@ -41,4 +41,7 @@ public class Crane implements Playable{
     public Hook getHook() {
         return cabin.getHook();
     }
+    public Cabin getCabin(){
+        return cabin;
+    }
 }

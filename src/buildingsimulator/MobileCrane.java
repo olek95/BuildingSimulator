@@ -38,7 +38,7 @@ public class MobileCrane implements ActionListener, Playable{
         game.getRootNode().attachChild(crane);
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
         physics.add(craneControl);
-        cabin = new MobileCraneCabin(crane, 9.5f, 1f);
+        cabin = new MobileCraneCabin(crane);
     }
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {

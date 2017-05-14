@@ -33,8 +33,8 @@ public class MobileCraneCabin extends Cabin{
     public static final float MAX_PROP_PROTRUSION = 6.35f, MIN_PROP_PROTRUSION = 1f;
     private Geometry leftProtractilePropGeometry, rightProtractilePropGeometry;
     private boolean obstacleLeft = false, obstacleRight = false;
-    public MobileCraneCabin(Node crane, float maxHandleHookDisplacement, 
-            float minHandleHookDisplacement){
+    public MobileCraneCabin(Node crane){
+        super(9.5f,1f);
         initCraneElements(crane);
         createCranePhysics();
         hookHandleDisplacement = calculateDisplacementAfterScaling(rectractableCranePart, 
@@ -184,8 +184,5 @@ public class MobileCraneCabin extends Cabin{
             obstacleRight = true; 
             craneCabin.rotate(0f, rotate, 0f);
         }
-    }
-    public Hook getHook(){
-        return hook;
     }
 }

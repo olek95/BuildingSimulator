@@ -5,8 +5,13 @@ import com.jme3.scene.Node;
 
 public abstract class Cabin implements AnalogListener{
     protected Hook hook;
-    protected final float maxHandleHookDisplacement = 9.5f, minHandleHookDisplacement = 1f;
+    protected float maxHandleHookDisplacement, minHandleHookDisplacement;
     protected final float maxArmHeight = 0.6f, minArmHeight = 0f;
+    public Cabin(){}
+    public Cabin(float maxHandleHookDisplacement, float minHandleHookDisplacement){
+        this.maxHandleHookDisplacement = maxHandleHookDisplacement; 
+        this.minHandleHookDisplacement = minHandleHookDisplacement;
+    }
     @Override
     public void onAnalog(String name, float value, float tpf) {
         switch(name){
@@ -43,4 +48,8 @@ public abstract class Cabin implements AnalogListener{
     protected abstract void moveHandleHook(float limit, boolean movingForward, float speed);
     
     protected void changeArmHeight(float limit, boolean lowering){} 
+    
+    public Hook getHook(){
+        return hook;
+    }
 }

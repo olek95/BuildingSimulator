@@ -22,8 +22,7 @@ import java.util.List;
  * @author AleksanderSklorz
  */
 public class MobileCraneCabin extends Cabin{
-    private Node craneCabin, lift, rectractableCranePart, mobileCrane,
-            craneProps;
+    private Node lift, rectractableCranePart, craneProps;
     private float yCraneOffset = 0f, stretchingOut = 1f, propsLowering = 1f,
             cranePropsProtrusion = 1f;
     private Vector3f hookHandleDisplacement, propDisplacement;
@@ -34,13 +33,12 @@ public class MobileCraneCabin extends Cabin{
     private Geometry leftProtractilePropGeometry, rightProtractilePropGeometry;
     private boolean obstacleLeft = false, obstacleRight = false;
     public MobileCraneCabin(Node crane){
-        super(9.5f,1f);
-        initCraneElements(crane);
-        createCranePhysics();
+        super(crane, 9.5f,1f);
+        initCraneCabinElements(crane);
         hookHandleDisplacement = calculateDisplacementAfterScaling(rectractableCranePart, 
                 new Vector3f(1f, 1f, stretchingOut + STRETCHING_OUT_SPEED), false,
                 true, true);
-        propDisplacement =  calculateDisplacementAfterScaling((Node)mobileCrane
+        propDisplacement =  calculateDisplacementAfterScaling((Node)crane
                 .getChild("protractileProp1"), new Vector3f(1f, propsLowering + PROP_LOWERING_SPEED,
                 1f), false, true, false);
     }
@@ -50,7 +48,7 @@ public class MobileCraneCabin extends Cabin{
      * @param lowering true jeśli podpory mają być opuszczane, false jeśli podnioszone
      */
     public void controlProps(boolean lowering){
-        List<Spatial> mobileCraneChildren = mobileCrane.getChildren();
+        List<Spatial> mobileCraneChildren = crane.getChildren();
         int i = 0, changed = 0;
         String[] props = {"propParts1", "propParts2", "propParts3",
             "propParts4"};
@@ -77,7 +75,7 @@ public class MobileCraneCabin extends Cabin{
     @Override
     protected void rotate(float yAngle){
         boolean obstacle = yAngle < 0 ? obstacleRight : obstacleLeft;
-        if(!obstacle) craneCabin.rotate(0f, yAngle, 0f);
+        if(!obstacle) craneControl.rotate(0f, yAngle, 0f);
         else{
             if(yAngle < 0) obstacleRight = false; 
             else obstacleLeft = false;
@@ -101,29 +99,33 @@ public class MobileCraneCabin extends Cabin{
             controlCrane(lowering);
     }
     
-    private void initCraneElements(Node crane){
-        mobileCrane = crane;
-        craneCabin = (Node)mobileCrane.getChild("crane");
-        lift = (Node)craneCabin.getChild("lift");
+    @Override
+    protected void initCraneCabinElements(Node crane){
+        super.initCraneCabinElements(crane);
+        lift = (Node)craneControl.getChild("lift");
         rectractableCranePart = (Node)lift.getChild("retractableCranePart");
-        craneProps = (Node)craneCabin.getChild("craneProps");
+        craneProps = (Node)craneControl.getChild("craneProps");
         leftProtractilePropGeometry = (Geometry)((Node)craneProps
                 .getChild("leftProtractileProp")).getChild(0);
         rightProtractilePropGeometry = (Geometry)((Node)craneProps
                 .getChild("rightProtractileProp")).getChild(0);
         // do aktualnej kolizji dołącza kolizję z grupą 1
-        hook = new OneRopeHook((Node)mobileCrane.getChild("ropeHook"), lift.getChild("hookHandle"));
+        hookHandle = lift.getChild("hookHandle");
+        hook = new OneRopeHook((Node)crane.getChild("ropeHook"), hookHandle);
+        createCranePhysics();
     }
+    
     private void createCranePhysics(){
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
                 .getBulletAppState().getPhysicsSpace();
-        createObjectPhysics(craneCabin, 1f, true, "outsideCabin", "turntable");
+        physics.add(hookHandle.getControl(0));
+        createObjectPhysics(craneControl, 1f, true, "outsideCabin", "turntable");
         createObjectPhysics(rectractableCranePart, 1f, true, rectractableCranePart
                 .getChild(0).getName());
         rectractableCranePart.getControl(RigidBodyControl.class).setCollisionGroup(3);
-        HingeJoint cabinAndMobilecraneJoin = new HingeJoint(mobileCrane
-                .getControl(VehicleControl.class),craneCabin
-                .getControl(RigidBodyControl.class), craneCabin.getLocalTranslation(),
+        HingeJoint cabinAndMobilecraneJoin = new HingeJoint(crane
+                .getControl(VehicleControl.class),craneControl
+                .getControl(RigidBodyControl.class), craneControl.getLocalTranslation(),
                 Vector3f.ZERO,Vector3f.ZERO, Vector3f.ZERO);
         physics.add(cabinAndMobilecraneJoin);
         physics.add(lift.getChild("longCraneElement").getControl(0));
@@ -176,13 +178,13 @@ public class MobileCraneCabin extends Cabin{
         float rotate;
         if(object.equals(rectractableCranePart)) rotate = getFPS() <= 10 ? 0.09f : 0.04f;
         else rotate = getFPS() <= 10 ? 0.09f : 0.02f;
-        float yRotation = craneCabin.getLocalRotation().getY();
+        float yRotation = craneControl.getLocalRotation().getY();
         if(yRotation > 0){
             obstacleLeft = true;
-            craneCabin.rotate(0f, -rotate, 0f);
+            craneControl.rotate(0f, -rotate, 0f);
         }else{
             obstacleRight = true; 
-            craneCabin.rotate(0f, rotate, 0f);
+            craneControl.rotate(0f, rotate, 0f);
         }
     }
 }

@@ -1,6 +1,9 @@
 package buildingsimulator;
 
+import com.jme3.bullet.PhysicsSpace;
 import com.jme3.input.controls.AnalogListener;
+import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 
 /**
  * Klasa <code>Cabin</code> jest klasą abstrakcyjną dla wszystkich klas kabin 
@@ -12,19 +15,22 @@ public abstract class Cabin implements AnalogListener{
     protected float maxHandleHookDisplacement, minHandleHookDisplacement;
     protected final float maxArmHeight = 0.6f, minArmHeight = 0f;
     private boolean usedNotUsingKey = false; 
+    protected Node crane, craneControl;
+    protected Spatial hookHandle;
     /**
      * Konstruktor tworzący kabinę. Używany, gdy wartość maksymalnego i 
      * minimalnego przesunięcia uchwytu nie jest znana od początku. Należy 
      * pamiętać, aby przed użyciem kabiny ustawić te wartości. 
      */
-    public Cabin(){}
+    public Cabin(Node crane){ this.crane = crane; }
     /**
      * Konstruktor tworzący kabinę. Używany, gdy wartość maksymalnego i 
      * minimalnego przesunięcia uchwytu haka jest znana od początku. 
      * @param maxHandleHookDisplacement maksymalne przesunięcie uchwytu haka 
      * @param minHandleHookDisplacement minimalne przesunięcie uchwytu haka 
      */
-    public Cabin(float maxHandleHookDisplacement, float minHandleHookDisplacement){
+    public Cabin(Node crane, float maxHandleHookDisplacement, float minHandleHookDisplacement){
+        this.crane = crane;
         this.maxHandleHookDisplacement = maxHandleHookDisplacement; 
         this.minHandleHookDisplacement = minHandleHookDisplacement;
     }
@@ -98,5 +104,9 @@ public abstract class Cabin implements AnalogListener{
      */
     public Hook getHook(){
         return hook;
+    }
+    
+    protected void initCraneCabinElements(Node crane){
+        craneControl = (Node)crane.getChild("craneControl");
     }
 }

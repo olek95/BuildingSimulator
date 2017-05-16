@@ -25,8 +25,8 @@ public class OneRopeHook extends Hook{
                 false, true, false);
         hookDisplacement.y *= 2; // wyrównuje poruszanie się haka wraz z liną 
         createRopeHookPhysics();
-        BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
-                .add(hookHandle.getControl(0));
+        //BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
+          //      .add(hookHandle.getControl(0));
     }
     
     /**

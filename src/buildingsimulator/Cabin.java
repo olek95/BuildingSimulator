@@ -10,27 +10,37 @@ import com.jme3.scene.Spatial;
  * w grze. Implementuje ona interfejs AnalogListener, dzięki czemu sterowanie 
  * kabiny każdego typu odbywa się w metodzie onAnalog tej klasy. 
  */
-public abstract class Cabin implements AnalogListener{
+public abstract class Cabin extends PlayableObject implements AnalogListener{
     protected Hook hook;
     protected float maxHandleHookDisplacement, minHandleHookDisplacement;
     protected final float maxArmHeight = 0.6f, minArmHeight = 0f;
     private boolean usedNotUsingKey = false; 
     protected Node crane, craneControl;
     protected Spatial hookHandle;
+    private String[] actions = {"Right", "Left", "Pull out", "Pull in", "Lower hook",
+        "Heighten hook", "Up", "Down"};
     /**
      * Konstruktor tworzący kabinę. Używany, gdy wartość maksymalnego i 
      * minimalnego przesunięcia uchwytu nie jest znana od początku. Należy 
      * pamiętać, aby przed użyciem kabiny ustawić te wartości. 
+     * @param crane dźwig będący właścicielem sterowanego ramienia 
      */
-    public Cabin(Node crane){ this.crane = crane; }
+    public Cabin(Node crane){ 
+        this.crane = crane; 
+        setAvailableActions(actions);
+        initCraneCabinElements();
+    }
     /**
      * Konstruktor tworzący kabinę. Używany, gdy wartość maksymalnego i 
      * minimalnego przesunięcia uchwytu haka jest znana od początku. 
+     * @param crane dźwig będący właścicielem sterowanego ramienia 
      * @param maxHandleHookDisplacement maksymalne przesunięcie uchwytu haka 
      * @param minHandleHookDisplacement minimalne przesunięcie uchwytu haka 
      */
     public Cabin(Node crane, float maxHandleHookDisplacement, float minHandleHookDisplacement){
         this.crane = crane;
+        initCraneCabinElements();
+        setAvailableActions(actions);
         this.maxHandleHookDisplacement = maxHandleHookDisplacement; 
         this.minHandleHookDisplacement = minHandleHookDisplacement;
     }
@@ -106,7 +116,11 @@ public abstract class Cabin implements AnalogListener{
         return hook;
     }
     
-    protected void initCraneCabinElements(Node crane){
+    /**
+     * Metoda inicjuje węzeł posiadający elementy składające się na całe sterowane 
+     * ramię dźwigu. 
+     */
+    protected void initCraneCabinElements(){
         craneControl = (Node)crane.getChild("craneControl");
     }
 }

@@ -1,5 +1,7 @@
 package buildingsimulator;
 
+import static buildingsimulator.GameManager.calculateDisplacementAfterScaling;
+import static buildingsimulator.GameManager.moveWithScallingObject;
 import com.jme3.scene.Spatial;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
@@ -12,6 +14,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.texture.Texture;
 import com.jme3.water.SimpleWaterProcessor;
+import java.util.Arrays;
 import java.util.List;
 /**
  * Obiekt klasy <code>MobileCrane</code> reprezentuje mobilny dźwig. Dźwig
@@ -19,15 +22,17 @@ import java.util.List;
  * obsługi ramienia dźwigu. 
  * @author AleksanderSklorz
  */
-public class MobileCrane implements ActionListener, Playable{
+public class MobileCrane extends PlayableObject implements ActionListener, Playable{
     private BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
     private Node crane = (Node)game.getAssetManager().loadModel("Models/dzwig/dzwig.j3o");
     private VehicleControl craneControl = crane.getControl(VehicleControl.class);
     private MobileCraneCabin cabin;
     private static final float ACCELERATION_FORCE = 100.0f, BRAKE_FORCE = 20.0f,
-            FRICTION_FORCE = 10.0f;
-    private float steeringValue = 0f;
+            FRICTION_FORCE = 10.0f, PROP_LOWERING_SPEED = 0.05f;
+    public static final float MAX_PROP_PROTRUSION = 6.35f, MIN_PROP_PROTRUSION = 1f;
+    private float steeringValue = 0f, propsLowering = 1f;
     private String key = "";
+    private Vector3f propDisplacement;
     public static final boolean WEAK = true;
     boolean using = true;
     public MobileCrane(){
@@ -39,7 +44,12 @@ public class MobileCrane implements ActionListener, Playable{
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
         physics.add(craneControl);
         cabin = new MobileCraneCabin(crane);
+        propDisplacement =  calculateDisplacementAfterScaling((Node)crane
+                .getChild("protractileProp1"), new Vector3f(1f, propsLowering + PROP_LOWERING_SPEED,
+                1f), false, true, false);
+        setAvailableActions(new String[]{"Up", "Down", "Left", "Right"});
     }
+    
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
         switch(name){
@@ -72,6 +82,7 @@ public class MobileCrane implements ActionListener, Playable{
             case "Right": craneControl.steer(steeringValue += isPressed ? -0.5f : 0.5f);
         }
     }
+    
     /**
      * Aktualizuje stan pojazdu. Możliwe stany to: stop, jazda w przód i jazda
      * w tył. 
@@ -92,6 +103,7 @@ public class MobileCrane implements ActionListener, Playable{
                 }
             }
     }
+    
     /**
      * Zwraca kabinę operatora ramienia dźwigu. 
      * @return kabina operatora ramienia dźwigu. 
@@ -99,6 +111,7 @@ public class MobileCrane implements ActionListener, Playable{
     public MobileCraneCabin getCabin(){
         return cabin;
     }
+    
     /**
      * Zwraca aktualną prędkość dźwigu. 
      * @return prędkość
@@ -106,6 +119,7 @@ public class MobileCrane implements ActionListener, Playable{
     public float getSpeed(){
         return craneControl.getCurrentVehicleSpeedKmHour();
     }
+    
     private void stop(){
         key = "";
         craneControl.accelerate(0f);
@@ -113,6 +127,7 @@ public class MobileCrane implements ActionListener, Playable{
         // jeśli jeszcze jest jakaś mała prędkość, to zeruje
         craneControl.setLinearVelocity(Vector3f.ZERO); 
     }
+    
     private void scaleTiresTexture(){
         List<Spatial> craneElements = crane.getChildren();
         Texture tireTexture = null;
@@ -127,6 +142,7 @@ public class MobileCrane implements ActionListener, Playable{
                 }else tireMaterial.setTexture("DiffuseMap", tireTexture);
             }
     }
+    
     private void createMirrors(){
         Geometry mirror;
         float x = 0.2f;
@@ -144,14 +160,46 @@ public class MobileCrane implements ActionListener, Playable{
             mirror.setMaterial(mirrorProcessor.getMaterial());
         }
     }
+    
     private void createMobileCranePhysics(){
         GameManager.addNewCollisionShapeToCompound((CompoundCollisionShape)craneControl
                 .getCollisionShape(),crane, "outsideMobileCraneCabin", Vector3f.ZERO, null);
         GameManager.addNewCollisionShapeToCompound((CompoundCollisionShape)craneControl
                 .getCollisionShape(),crane, "bollardsShape", Vector3f.ZERO, null);
     }
+    
     @Override
     public Hook getHook(){
         return cabin.getHook();
+    }
+    
+    /**
+     * Pozwala na kontrolowanie podporami (na opuszczanie i podnioszenie ich). 
+     * @param lowering true jeśli podpory mają być opuszczane, false jeśli podnioszone
+     */
+    public void controlProps(boolean lowering){
+        List<Spatial> mobileCraneChildren = crane.getChildren();
+        int i = 0, changed = 0;
+        String[] props = {"propParts1", "propParts2", "propParts3",
+            "propParts4"};
+        Vector3f scallingVector = new Vector3f(1f, propsLowering += lowering ? 
+                PROP_LOWERING_SPEED : -PROP_LOWERING_SPEED, 1f);
+        do{
+            Node prop = (Node)mobileCraneChildren.get(i);
+            if(Arrays.binarySearch(props, prop.getName()) >= 0){
+                    changed++;
+                    moveWithScallingObject(!lowering, propDisplacement, scallingVector, (Node)prop
+                            .getChild(0), prop.getChild(1));
+            }
+            i++;
+        }while(changed < 4);
+    }
+    
+    /**
+     * Zwraca wartość określającą jak bardzo opuszczone są podpory. 
+     * @return wartość określającą opuszczenie podpór 
+     */
+    public float getPropsLowering(){
+        return propsLowering;
     }
 }

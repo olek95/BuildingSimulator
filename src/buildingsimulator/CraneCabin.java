@@ -10,7 +10,6 @@ public class CraneCabin extends Cabin{
     private Node hookHandleControl;
     public CraneCabin(Node crane){
         super(crane);
-        initCraneCabinElements(crane);
         maxHandleHookDisplacement = -63f;
         minHandleHookDisplacement = hookHandleControl.getLocalTranslation().z;
     }
@@ -31,8 +30,8 @@ public class CraneCabin extends Cabin{
     }
     
     @Override
-    protected void initCraneCabinElements(Node crane){
-        super.initCraneCabinElements(crane);
+    protected void initCraneCabinElements(){
+        super.initCraneCabinElements();
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
                 .getBulletAppState().getPhysicsSpace();
         Vector3f craneLocation = crane.getLocalTranslation();

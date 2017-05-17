@@ -4,7 +4,6 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.control.VehicleControl;
 import com.jme3.bullet.joints.HingeJoint;
-import com.jme3.input.controls.AnalogListener;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -12,8 +11,6 @@ import com.jme3.scene.Spatial;
 import static buildingsimulator.GameManager.*;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Obiekt klasy <code>MobileCraneCabin</code> reprezentuje kabinę operatora ramienia 
@@ -23,53 +20,18 @@ import java.util.List;
  */
 public class MobileCraneCabin extends Cabin{
     private Node lift, rectractableCranePart, craneProps;
-    private float yCraneOffset = 0f, stretchingOut = 1f, propsLowering = 1f,
-            cranePropsProtrusion = 1f;
-    private Vector3f hookHandleDisplacement, propDisplacement;
-    private static final float LIFTING_SPEED = 0.005f, STRETCHING_OUT_SPEED = 0.05f, PROP_LOWERING_SPEED = 0.05f,
+    private float yCraneOffset = 0f, stretchingOut = 1f, cranePropsProtrusion = 1f;
+    private Vector3f hookHandleDisplacement;
+    private static final float LIFTING_SPEED = 0.005f, STRETCHING_OUT_SPEED = 0.05f,
             CRANE_PROP_GOING_OUT_SPEED = 0.07f,
             MIN_CRANE_PROP_PROTRUSION = 1f;
-    public static final float MAX_PROP_PROTRUSION = 6.35f, MIN_PROP_PROTRUSION = 1f;
     private Geometry leftProtractilePropGeometry, rightProtractilePropGeometry;
     private boolean obstacleLeft = false, obstacleRight = false;
     public MobileCraneCabin(Node crane){
-        super(crane, 9.5f,1f);
-        initCraneCabinElements(crane);
+        super(crane, 9.5f, 1f);
         hookHandleDisplacement = calculateDisplacementAfterScaling(rectractableCranePart, 
                 new Vector3f(1f, 1f, stretchingOut + STRETCHING_OUT_SPEED), false,
                 true, true);
-        propDisplacement =  calculateDisplacementAfterScaling((Node)crane
-                .getChild("protractileProp1"), new Vector3f(1f, propsLowering + PROP_LOWERING_SPEED,
-                1f), false, true, false);
-    }
-    
-    /**
-     * Pozwala na kontrolowanie podporami (na opuszczanie i podnioszenie ich). 
-     * @param lowering true jeśli podpory mają być opuszczane, false jeśli podnioszone
-     */
-    public void controlProps(boolean lowering){
-        List<Spatial> mobileCraneChildren = crane.getChildren();
-        int i = 0, changed = 0;
-        String[] props = {"propParts1", "propParts2", "propParts3",
-            "propParts4"};
-        Vector3f scallingVector = new Vector3f(1f, propsLowering += lowering ? 
-                PROP_LOWERING_SPEED : -PROP_LOWERING_SPEED, 1f);
-        do{
-            Node prop = (Node)mobileCraneChildren.get(i);
-            if(Arrays.binarySearch(props, prop.getName()) >= 0){
-                    changed++;
-                    moveWithScallingObject(!lowering, propDisplacement, scallingVector, (Node)prop
-                            .getChild(0), prop.getChild(1));
-            }
-            i++;
-        }while(changed < 4);
-    }
-    /**
-     * Zwraca wartość określającą jak bardzo opuszczone są podpory. 
-     * @return wartość określającą opuszczenie podpór 
-     */
-    public float getPropsLowering(){
-        return propsLowering;
     }
     
     @Override
@@ -100,8 +62,8 @@ public class MobileCraneCabin extends Cabin{
     }
     
     @Override
-    protected void initCraneCabinElements(Node crane){
-        super.initCraneCabinElements(crane);
+    protected void initCraneCabinElements(){
+        super.initCraneCabinElements();
         lift = (Node)craneControl.getChild("lift");
         rectractableCranePart = (Node)lift.getChild("retractableCranePart");
         craneProps = (Node)craneControl.getChild("craneProps");
@@ -149,6 +111,7 @@ public class MobileCraneCabin extends Cabin{
             }
         });
     }
+    
     private void changeHandleHookPosition(Node scallingGeometryParent, 
             Vector3f scallingVector, boolean pullingOut){
         Geometry rectractableCranePartGeometry = (Geometry)scallingGeometryParent.getChild(0);
@@ -158,6 +121,7 @@ public class MobileCraneCabin extends Cabin{
                 .getName());
         rectractableCranePart.getControl(RigidBodyControl.class).setCollisionGroup(3);
     }
+    
     private void controlCrane(boolean lowering){
         if(lowering){
             yCraneOffset -= LIFTING_SPEED;
@@ -174,6 +138,7 @@ public class MobileCraneCabin extends Cabin{
         leftProtractilePropGeometry.setLocalScale(1f, cranePropsProtrusion, 1f);
         rightProtractilePropGeometry.setLocalScale(1f, cranePropsProtrusion, 1f);
     }
+    
     private void rotateAfterImpact(Spatial object){
         float rotate;
         if(object.equals(rectractableCranePart)) rotate = getFPS() <= 10 ? 0.09f : 0.04f;

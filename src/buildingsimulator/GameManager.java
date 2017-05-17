@@ -12,6 +12,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import java.util.ArrayList;
 
 /**
  * Klasa <code>GameManager</code> reprezentuje zarządcę gry, posiadającego 
@@ -22,6 +23,7 @@ public class GameManager {
     private static String lastAction;
     private static Spatial craneRack;
     private static Playable actualUnit;
+    private static ArrayList<Playable> units;
     
     /**
      * Tworzy fizykę dla danego obiektu. Stosuje ona klasę RigidBodyControl, 
@@ -252,5 +254,13 @@ public class GameManager {
      */
     public static Playable getActualUnit(){
         return actualUnit;
+    }
+    
+    public static void addUnit(Playable unit){
+        units.add(unit);
+    }
+    
+    public static void getUnit(int i){
+        units.get(i);
     }
 }

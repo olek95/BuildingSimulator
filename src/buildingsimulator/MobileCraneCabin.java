@@ -26,7 +26,7 @@ public class MobileCraneCabin extends Cabin{
             CRANE_PROP_GOING_OUT_SPEED = 0.07f,
             MIN_CRANE_PROP_PROTRUSION = 1f;
     private Geometry leftProtractilePropGeometry, rightProtractilePropGeometry;
-    private boolean obstacleLeft = false, obstacleRight = false;
+    private boolean obstacleLeft = false, obstacleRight = false, using = false;
     public MobileCraneCabin(Node crane){
         super(crane, 9.5f, 1f);
         hookHandleDisplacement = calculateDisplacementAfterScaling(rectractableCranePart, 
@@ -151,5 +151,13 @@ public class MobileCraneCabin extends Cabin{
             obstacleRight = true; 
             craneControl.rotate(0f, rotate, 0f);
         }
+    }
+    
+    public boolean isUsing(){
+        return using;
+    }
+    
+    public void setUsing(boolean using){
+        this.using = using;
     }
 }

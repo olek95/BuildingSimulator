@@ -2,6 +2,7 @@ package buildingsimulator;
 
 import static buildingsimulator.GameManager.calculateDisplacementAfterScaling;
 import static buildingsimulator.GameManager.moveWithScallingObject;
+import buildingsimulator.Control.Actions;
 import com.jme3.scene.Spatial;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
@@ -22,7 +23,7 @@ import java.util.List;
  * obsługi ramienia dźwigu. 
  * @author AleksanderSklorz
  */
-public class MobileCrane extends PlayableObject implements ActionListener, Playable{
+public class MobileCrane implements ActionListener, CraneInterface, Controllable{
     private BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
     private Node crane = (Node)game.getAssetManager().loadModel("Models/dzwig/dzwig.j3o");
     private VehicleControl craneControl = crane.getControl(VehicleControl.class);
@@ -34,7 +35,9 @@ public class MobileCrane extends PlayableObject implements ActionListener, Playa
     private String key = "";
     private Vector3f propDisplacement;
     public static final boolean WEAK = true;
-    boolean using = true;
+    private boolean using = true;
+    private Actions[] availableActions = {Actions.UP, Actions.DOWN, Actions.LEFT,
+        Actions.RIGHT};
     public MobileCrane(){
         crane.setLocalTranslation(0, 1.15f, 0);
         createMobileCranePhysics();
@@ -47,13 +50,12 @@ public class MobileCrane extends PlayableObject implements ActionListener, Playa
         propDisplacement =  calculateDisplacementAfterScaling((Node)crane
                 .getChild("protractileProp1"), new Vector3f(1f, propsLowering + PROP_LOWERING_SPEED,
                 1f), false, true, false);
-        setAvailableActions(new String[]{"Up", "Down", "Left", "Right"});
     }
     
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
-        switch(name){
-            case "Up":
+        switch(Actions.valueOf(name)){
+            case UP:
                 if(isPressed){
                     key = name;
                     craneControl.accelerate(0f);
@@ -64,7 +66,7 @@ public class MobileCrane extends PlayableObject implements ActionListener, Playa
                             -FRICTION_FORCE : FRICTION_FORCE);
                 }
                 break;
-            case "Down":
+            case DOWN:
                 if(isPressed){
                     key = name;
                     craneControl.accelerate(0f);
@@ -76,10 +78,10 @@ public class MobileCrane extends PlayableObject implements ActionListener, Playa
                             FRICTION_FORCE : -FRICTION_FORCE);
                 }
                 break;
-            case "Left":
+            case LEFT:
                 craneControl.steer(steeringValue += isPressed ? 0.5f : -0.5f);
                 break;
-            case "Right": craneControl.steer(steeringValue += isPressed ? -0.5f : 0.5f);
+            case RIGHT: craneControl.steer(steeringValue += isPressed ? -0.5f : 0.5f);
         }
     }
     
@@ -93,11 +95,11 @@ public class MobileCrane extends PlayableObject implements ActionListener, Playa
                     && craneControl.getCurrentVehicleSpeedKmHour() > -1)
                 stop();
         }else if(!key.equals(""))
-            if(key.equals("Down") && craneControl.getCurrentVehicleSpeedKmHour() < 0){
+            if(key.equals(Actions.DOWN.toString()) && craneControl.getCurrentVehicleSpeedKmHour() < 0){
                 craneControl.brake(0f);
                 craneControl.accelerate(-ACCELERATION_FORCE * 0.5f); // prędkość w tył jest mniejsza 
             }else{
-                if(key.equals("Up") && Math.ceil(craneControl.getCurrentVehicleSpeedKmHour()) >= 0){
+                if(key.equals(Actions.UP.toString()) && Math.ceil(craneControl.getCurrentVehicleSpeedKmHour()) >= 0){
                     craneControl.brake(0f);
                     craneControl.accelerate(ACCELERATION_FORCE);
                 }
@@ -201,5 +203,17 @@ public class MobileCrane extends PlayableObject implements ActionListener, Playa
      */
     public float getPropsLowering(){
         return propsLowering;
+    }
+    
+    public boolean isUsing(){
+        return using;
+    }
+    
+    public void setUsing(boolean using){
+        this.using = using;
+    }
+    
+    public Control.Actions[] getAvailableActions(){
+        return availableActions;
     }
 }

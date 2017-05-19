@@ -3,10 +3,7 @@ package buildingsimulator;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.AnalogListener;
-import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -19,8 +16,6 @@ import com.jme3.scene.shape.Box;
 public class BuildingSimulator extends SimpleApplication implements ActionListener{
     private static BuildingSimulator game;
     private BulletAppState bulletAppState = new BulletAppState();
-    private Crane player2;
-    private MobileCrane player;
     private boolean debug = false;
     boolean kabina;
     public static void main(String[] args) {
@@ -38,11 +33,12 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         rootNode.attachChild(scene);
         stateManager.attach(bulletAppState);
         bulletAppState.getPhysicsSpace().add(rgc);
-        player2 = new Crane();
-        player = new MobileCrane();
-        GameManager.setActualUnit(player);
+        MobileCrane crane = new MobileCrane();
+        GameManager.addUnit(crane);
+        GameManager.addUnit(new Crane());
+        crane.setUsing(true);
         GameManager.initHookCollisionListener();
-        Control.setupKeys(player);
+        Control.setupKeys(crane);
         Control.setupKeys(this);
         DirectionalLight sun = new DirectionalLight();
         sun.setColor(ColorRGBA.White);
@@ -88,26 +84,27 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
 
     @Override
     public void simpleUpdate(float tpf) {
-        player.updateState();
-        MobileCraneCabin cabin = player.getCabin();
-        if(!player.using){
-            if(player.getPropsLowering() <= MobileCrane.MAX_PROP_PROTRUSION)
-                player.controlProps(true);
+        MobileCrane unit = (MobileCrane)GameManager.getUnit(0);
+        unit.updateState();
+        MobileCraneCabin cabin = unit.getCabin();
+        if(cabin.isUsing()){
+            if(unit.getPropsLowering() <= MobileCrane.MAX_PROP_PROTRUSION)
+                unit.controlProps(true);
             else{
                 /* metoda wywołana na łańcuchu "Action", gdyż ostatnia akcja może być nullem.
                 Może być bez tego ifa, ale dodany w celu optymalizacji aby nie powtarzać
                 dodawania listenerów klawiszy*/
-                if("Action".equals(GameManager.getLastAction())){
+                if(Control.Actions.ACTION.toString().equals(GameManager.getLastAction())){
                     Control.setupKeys(cabin);
                     GameManager.setLastAction(null);
                 }
             }
         }else{
-            if(player.getPropsLowering() > MobileCrane.MIN_PROP_PROTRUSION)
-                player.controlProps(false);
+            if(unit.getPropsLowering() > MobileCrane.MIN_PROP_PROTRUSION)
+                unit.controlProps(false);
             else{
-                if("Action".equals(GameManager.getLastAction())){
-                    Control.setupKeys(player);
+                if(Control.Actions.ACTION.toString().equals(GameManager.getLastAction())){
+                    Control.setupKeys(unit);
                     GameManager.setLastAction(null);
                 }
             }
@@ -134,43 +131,46 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     }
     public void onAction(String name, boolean isPressed, float tpf){
         boolean craneStop = true;
-        if(isPressed && name.equals("Action")){
-            if(player.using){
-                float craneSpeed = player.getSpeed();
+        MobileCrane unit = (MobileCrane)GameManager.getUnit(0);
+        MobileCraneCabin cabin = (MobileCraneCabin)GameManager.getUnit(0).getCabin();
+        if(isPressed && name.equals(Control.Actions.ACTION.toString())){
+            if(!cabin.isUsing()){
+                float craneSpeed = unit.getSpeed();
                 craneStop = Math.floor(craneSpeed) == 0f && craneSpeed >= 0f 
                         || Math.ceil(craneSpeed) == 0f && craneSpeed < 0f;
                 // zezwala na opuszczenie podpór tylko gdy dźwig nie porusza się
-                if(craneStop) inputManager.removeListener(player);
+                if(craneStop) inputManager.removeListener(unit);
             }
             else{
-                inputManager.removeListener(player.getCabin());
+                inputManager.removeListener(unit.getCabin());
             }
             if(craneStop){
-                player.using = !player.using;
+                cabin.setUsing(!cabin.isUsing());
                 GameManager.setLastAction(name);
             }
         }else{
             if(isPressed){
-                if(name.equals("Physics")){
+                if(name.equals(Control.Actions.PHYSICS.toString())){
                     if(!debug) bulletAppState.getPhysicsSpace().enableDebug(assetManager);
                     else bulletAppState.getPhysicsSpace().disableDebug();
                     debug = !debug;
                 }else{
-                    if(name.equals("First")){
-                        inputManager.removeListener(player2.getCabin());
-                        Control.setupKeys(player);
+                    if(name.equals(Control.Actions.FIRST.toString())){
+                        CraneInterface crane = GameManager.getUnit(1);
+                        inputManager.removeListener(crane.getCabin());
+                        crane.setUsing(false);
+                        Control.setupKeys(unit);
+                        unit.setUsing(true);
                     }else{
-                        inputManager.removeListener(player);
-                        Control.setupKeys(player2.getCabin());
+                        inputManager.removeListener(unit);
+                        unit.setUsing(false);
+                        CraneInterface crane = GameManager.getUnit(1);
+                        Control.setupKeys(crane.getCabin());
+                        crane.setUsing(true);
                     }
                 }
             }
         }
-        /*if(isPressed && name.equals("Physics")){
-                if(!debug) bulletAppState.getPhysicsSpace().enableDebug(assetManager);
-                else bulletAppState.getPhysicsSpace().disableDebug();
-                debug = !debug;
-            }*/
     }
     /**
      * Pobiera tekstową reprezentację liczby klatek na sekundę. 

@@ -147,7 +147,7 @@ public abstract class Hook {
         /* zabezpiecza przypadek gdy hak dotyka jednocześnie elementu pionowego
         i poziomego*/
         if(Math.abs(y1 - y2) >= 0 && Math.abs(y1 - y2) < 0.1f)
-            GameManager.getActualUnit().getHook().recentlyHitObject = b;
+            GameManager.findActualUnit().getHook().recentlyHitObject = b;
         // PhysicsCollisionObject bo control nie musi być tylko typu RigidBodyControl 
         int collisionGroup = ((PhysicsCollisionObject)b.getControl(0)).getCollisionGroup();
         return collisionGroup == 3 || collisionGroup == 1;

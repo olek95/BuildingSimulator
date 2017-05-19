@@ -1,24 +1,25 @@
 package buildingsimulator;
 
-import com.jme3.bullet.PhysicsSpace;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import buildingsimulator.Control.Actions;
 
 /**
  * Klasa <code>Cabin</code> jest klasą abstrakcyjną dla wszystkich klas kabin 
  * w grze. Implementuje ona interfejs AnalogListener, dzięki czemu sterowanie 
  * kabiny każdego typu odbywa się w metodzie onAnalog tej klasy. 
  */
-public abstract class Cabin extends PlayableObject implements AnalogListener{
+public abstract class Cabin implements AnalogListener, Controllable{
     protected Hook hook;
     protected float maxHandleHookDisplacement, minHandleHookDisplacement;
     protected final float maxArmHeight = 0.6f, minArmHeight = 0f;
     private boolean usedNotUsingKey = false; 
     protected Node crane, craneControl;
     protected Spatial hookHandle;
-    private String[] actions = {"Right", "Left", "Pull out", "Pull in", "Lower hook",
-        "Heighten hook", "Up", "Down"};
+    private Actions[] availableActions = {Actions.RIGHT, Actions.LEFT,
+        Actions.PULL_OUT, Actions.PULL_IN, Actions.LOWER_HOOK, Actions.HEIGHTEN_HOOK,
+        Actions.UP, Actions.DOWN};
     /**
      * Konstruktor tworzący kabinę. Używany, gdy wartość maksymalnego i 
      * minimalnego przesunięcia uchwytu nie jest znana od początku. Należy 
@@ -27,7 +28,6 @@ public abstract class Cabin extends PlayableObject implements AnalogListener{
      */
     public Cabin(Node crane){ 
         this.crane = crane; 
-        setAvailableActions(actions);
         initCraneCabinElements();
     }
     /**
@@ -40,7 +40,6 @@ public abstract class Cabin extends PlayableObject implements AnalogListener{
     public Cabin(Node crane, float maxHandleHookDisplacement, float minHandleHookDisplacement){
         this.crane = crane;
         initCraneCabinElements();
-        setAvailableActions(actions);
         this.maxHandleHookDisplacement = maxHandleHookDisplacement; 
         this.minHandleHookDisplacement = minHandleHookDisplacement;
     }
@@ -55,30 +54,30 @@ public abstract class Cabin extends PlayableObject implements AnalogListener{
      */
     @Override
     public void onAnalog(String name, float value, float tpf) {
-        switch(name){
-            case "Right":
+        switch(Actions.valueOf(name)){
+            case RIGHT:
                 rotate(-tpf / 5);
                 break;
-            case "Left":
+            case LEFT:
                 rotate(tpf / 5);
                 break;
-            case "Pull out":
+            case PULL_OUT:
                 moveHandleHook(maxHandleHookDisplacement, true, -tpf);
                 break;
-            case "Pull in":
+            case PULL_IN:
                 moveHandleHook(minHandleHookDisplacement, false, tpf);
                 break;
-            case "Lower hook":
+            case LOWER_HOOK:
                 hook.lower();
                 break;
-            case "Heighten hook":
+            case HEIGHTEN_HOOK:
                 if(hook.getHookLowering() > 1f)
                     hook.heighten();
                 break;
-            case "Up":
+            case UP:
                 changeArmHeight(maxArmHeight, false);
                 break;
-            case "Down":
+            case DOWN:
                 changeArmHeight(minArmHeight, true); 
         }
         if(!name.equals("Lower hook") && !usedNotUsingKey) hook.setRecentlyHitObject(null);
@@ -122,5 +121,10 @@ public abstract class Cabin extends PlayableObject implements AnalogListener{
      */
     protected void initCraneCabinElements(){
         craneControl = (Node)crane.getChild("craneControl");
+    }
+    
+    @Override
+    public Control.Actions[] getAvailableActions(){
+        return availableActions;
     }
 }

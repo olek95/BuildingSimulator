@@ -86,29 +86,6 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     public void simpleUpdate(float tpf) {
         MobileCrane unit = (MobileCrane)GameManager.getUnit(0);
         unit.updateState();
-        MobileCraneCabin cabin = unit.getCabin();
-        if(cabin.isUsing()){
-            if(unit.getPropsLowering() <= MobileCrane.MAX_PROP_PROTRUSION)
-                unit.controlProps(true);
-            else{
-                /* metoda wywołana na łańcuchu "Action", gdyż ostatnia akcja może być nullem.
-                Może być bez tego ifa, ale dodany w celu optymalizacji aby nie powtarzać
-                dodawania listenerów klawiszy*/
-                if(Control.Actions.ACTION.toString().equals(GameManager.getLastAction())){
-                    Control.setupKeys(cabin);
-                    GameManager.setLastAction(null);
-                }
-            }
-        }else{
-            if(unit.getPropsLowering() > MobileCrane.MIN_PROP_PROTRUSION)
-                unit.controlProps(false);
-            else{
-                if(Control.Actions.ACTION.toString().equals(GameManager.getLastAction())){
-                    Control.setupKeys(unit);
-                    GameManager.setLastAction(null);
-                }
-            }
-        }
     }
 
     @Override
@@ -138,16 +115,16 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     debug = !debug;
                 }else{
                     if(name.equals(Control.Actions.FIRST.toString())){
-                        CraneInterface crane = GameManager.getUnit(1);
-                        inputManager.removeListener(crane.getCabin());
+                        CraneAbstract crane = GameManager.getUnit(1);
+                        inputManager.removeListener(crane.getArmControl());
                         crane.setUsing(false);
                         Control.setupKeys(unit);
                         unit.setUsing(true);
                     }else{
                         inputManager.removeListener(unit);
                         unit.setUsing(false);
-                        CraneInterface crane = GameManager.getUnit(1);
-                        Control.setupKeys(crane.getCabin());
+                        CraneAbstract crane = GameManager.getUnit(1);
+                        Control.setupKeys(crane.getArmControl());
                         crane.setUsing(true);
                     }
                 }

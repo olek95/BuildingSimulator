@@ -11,17 +11,15 @@ import com.jme3.scene.Spatial;
  * Obiekt klasy <code>Crane</code> reprezentuje żuraw. 
  * @author AleksanderSklorz
  */
-public class Crane implements CraneInterface{
+public class Crane extends CraneAbstract{
     private BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-    private Node crane, hookHandleControl;
-    private Spatial rack, craneArm, hookHandle;
-    private Cabin cabin;
+    private Node crane;
+    private Spatial rack;
     public static final boolean WEAK = false;
-    private boolean using;
     public Crane(){
         initCraneElements((Node)game.getAssetManager().loadModel("Models/zuraw/zuraw.j3o"));
         GameManager.setCraneRack(rack);
-        cabin = new CraneCabin(crane);
+        setArmControl(new CraneArmControl(crane));
         game.getRootNode().attachChild(crane);
     }
     private RigidBodyControl setProperLocation(Spatial object, Vector3f displacement){
@@ -37,22 +35,5 @@ public class Crane implements CraneInterface{
         physics.add(setProperLocation(crane.getChild("prop0"), craneLocation));
         physics.add(setProperLocation(crane.getChild("prop1"), craneLocation));
         physics.add(setProperLocation(rack = crane.getChild("rack"), craneLocation));
-    }
-    
-    @Override
-    public Hook getHook() {
-        return cabin.getHook();
-    }
-    
-    public Cabin getCabin(){
-        return cabin;
-    }
-    
-    public boolean isUsing(){
-        return using;
-    }
-    
-    public void setUsing(boolean using){
-        this.using = using;
     }
 }

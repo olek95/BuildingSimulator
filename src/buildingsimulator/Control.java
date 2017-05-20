@@ -42,7 +42,6 @@ public class Control {
             for(int i = 0; i < names.length; i++)
                 inputManager.addListener(listener, names[i].toString());
         }else{
-            //inputManager.addListener((BuildingSimulator)o, Actions.ACTION.toString());
             inputManager.addListener((BuildingSimulator)o, Actions.PHYSICS.toString());
             inputManager.addListener((BuildingSimulator)o, Actions.FIRST.toString());
             inputManager.addListener((BuildingSimulator)o, Actions.SECOND.toString());

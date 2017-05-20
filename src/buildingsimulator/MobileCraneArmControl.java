@@ -13,12 +13,12 @@ import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
 
 /**
- * Obiekt klasy <code>MobileCraneCabin</code> reprezentuje kabinę operatora ramienia 
+ * Obiekt klasy <code>MobileCraneArmControl</code> reprezentuje kabinę operatora ramienia 
  * dźwigu. Posiada on umiejętność obracania ramienia w pionie i poziomie, 
  * wysuwania go i wsuwania, a także opuszczania i podnoszenia liny z hakiem. 
  * @author AleksanderSklorz
  */
-public class MobileCraneCabin extends Cabin{
+public class MobileCraneArmControl extends ArmControl{
     private Node lift, rectractableCranePart, craneProps;
     private float yCraneOffset = 0f, stretchingOut = 1f, cranePropsProtrusion = 1f;
     private Vector3f hookHandleDisplacement;
@@ -27,7 +27,7 @@ public class MobileCraneCabin extends Cabin{
             MIN_CRANE_PROP_PROTRUSION = 1f;
     private Geometry leftProtractilePropGeometry, rightProtractilePropGeometry;
     private boolean obstacleLeft = false, obstacleRight = false, using = false;
-    public MobileCraneCabin(Node crane){
+    public MobileCraneArmControl(Node crane){
         super(crane, 9.5f, 1f);
         hookHandleDisplacement = calculateDisplacementAfterScaling(rectractableCranePart, 
                 new Vector3f(1f, 1f, stretchingOut + STRETCHING_OUT_SPEED), false,
@@ -63,7 +63,7 @@ public class MobileCraneCabin extends Cabin{
     
     @Override
     protected void getOff(String actionName){
-        Control.removeListener(GameManager.getUnit(0).getCabin());
+        Control.removeListener(GameManager.getUnit(0).getArmControl());
         using = !using;
         GameManager.setLastAction(actionName);
     }

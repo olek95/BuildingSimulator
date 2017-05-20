@@ -22,8 +22,8 @@ import java.util.ArrayList;
 public class GameManager {
     private static String lastAction;
     private static Spatial craneRack;
-    private static CraneInterface actualUnit;
-    private static ArrayList<CraneInterface> units = new ArrayList();
+    private static CraneAbstract actualUnit;
+    private static ArrayList<CraneAbstract> units = new ArrayList();
     
     /**
      * Tworzy fizykę dla danego obiektu. Stosuje ona klasę RigidBodyControl, 
@@ -244,7 +244,7 @@ public class GameManager {
      * Ustawia aktualnie używaną jednostkę. 
      * @param unit jednostka 
      */
-    public static void setActualUnit(CraneInterface unit){
+    public static void setActualUnit(CraneAbstract unit){
         actualUnit = unit; 
     }
     
@@ -252,21 +252,21 @@ public class GameManager {
      * Zwraca aktualnie używaną jednostkę. 
      * @return aktualnie używana jednostka.
      */
-    public static CraneInterface getActualUnit(){
+    public static CraneAbstract getActualUnit(){
         return actualUnit;
     }
     
-    public static void addUnit(CraneInterface unit){
+    public static void addUnit(CraneAbstract unit){
         units.add(unit);
     }
     
-    public static CraneInterface getUnit(int i){
+    public static CraneAbstract getUnit(int i){
         return units.get(i);
     }
     
-    public static CraneInterface findActualUnit(){
+    public static CraneAbstract findActualUnit(){
         for(int i = 0; i < units.size(); i++){
-            CraneInterface unit = units.get(i);
+            CraneAbstract unit = units.get(i);
             if(unit.isUsing()) return unit;
         }
         return null;

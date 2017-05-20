@@ -6,9 +6,9 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
-public class CraneCabin extends Cabin{
+public class CraneArmControl extends ArmControl{
     private Node hookHandleControl;
-    public CraneCabin(Node crane){
+    public CraneArmControl(Node crane){
         super(crane);
         maxHandleHookDisplacement = -63f;
         minHandleHookDisplacement = hookHandleControl.getLocalTranslation().z;

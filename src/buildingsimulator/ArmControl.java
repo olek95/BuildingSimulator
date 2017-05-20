@@ -6,11 +6,12 @@ import com.jme3.scene.Spatial;
 import buildingsimulator.Control.Actions;
 
 /**
- * Klasa <code>Cabin</code> jest klasą abstrakcyjną dla wszystkich klas kabin 
- * w grze. Implementuje ona interfejs AnalogListener, dzięki czemu sterowanie 
- * kabiny każdego typu odbywa się w metodzie onAnalog tej klasy. 
+ * Klasa <code>ArmControl</code> jest klasą abstrakcyjną dla wszystkich klas 
+ * reprezentujących sterowanie ramieniem dźwigu w grze. Implementuje ona interfejs
+ * AnalogListener, dzięki czemu sterowanie ramieniem dźwigu każdego typu odbywa 
+ * się w metodzie onAnalog tej klasy. 
  */
-public abstract class Cabin implements AnalogListener, Controllable{
+public abstract class ArmControl implements AnalogListener, Controllable{
     protected Hook hook;
     protected float maxHandleHookDisplacement, minHandleHookDisplacement;
     protected final float maxArmHeight = 0.6f, minArmHeight = 0f;
@@ -26,7 +27,7 @@ public abstract class Cabin implements AnalogListener, Controllable{
      * pamiętać, aby przed użyciem kabiny ustawić te wartości. 
      * @param crane dźwig będący właścicielem sterowanego ramienia 
      */
-    public Cabin(Node crane){ 
+    public ArmControl(Node crane){ 
         this.crane = crane; 
         initCraneCabinElements();
     }
@@ -37,7 +38,7 @@ public abstract class Cabin implements AnalogListener, Controllable{
      * @param maxHandleHookDisplacement maksymalne przesunięcie uchwytu haka 
      * @param minHandleHookDisplacement minimalne przesunięcie uchwytu haka 
      */
-    public Cabin(Node crane, float maxHandleHookDisplacement, float minHandleHookDisplacement){
+    public ArmControl(Node crane, float maxHandleHookDisplacement, float minHandleHookDisplacement){
         this.crane = crane;
         initCraneCabinElements();
         this.maxHandleHookDisplacement = maxHandleHookDisplacement; 
@@ -83,7 +84,8 @@ public abstract class Cabin implements AnalogListener, Controllable{
             case ACTION:
                 getOff(name);
         }
-        if(!name.equals("Lower hook") && !usedNotUsingKey) hook.setRecentlyHitObject(null);
+        if(!name.equals(Actions.LOWER_HOOK.toString()) && !usedNotUsingKey) 
+            hook.setRecentlyHitObject(null);
         else usedNotUsingKey = false;
     }
     
@@ -110,7 +112,9 @@ public abstract class Cabin implements AnalogListener, Controllable{
         usedNotUsingKey = true;
     } 
     
-    protected void getOff(String actionName){};
+    protected void getOff(String actionName){
+        usedNotUsingKey = true;
+    };
     
     /**
      * Zwraca hak dźwigu. 

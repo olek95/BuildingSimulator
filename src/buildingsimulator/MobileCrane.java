@@ -23,11 +23,10 @@ import java.util.List;
  * obsługi ramienia dźwigu. 
  * @author AleksanderSklorz
  */
-public class MobileCrane implements ActionListener, CraneInterface, Controllable{
+public class MobileCrane extends CraneAbstract implements ActionListener, Controllable{
     private BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
     private Node crane = (Node)game.getAssetManager().loadModel("Models/dzwig/dzwig.j3o");
     private VehicleControl craneControl = crane.getControl(VehicleControl.class);
-    private MobileCraneCabin cabin;
     private static final float ACCELERATION_FORCE = 100.0f, BRAKE_FORCE = 20.0f,
             FRICTION_FORCE = 10.0f, PROP_LOWERING_SPEED = 0.05f;
     public static final float MAX_PROP_PROTRUSION = 6.35f, MIN_PROP_PROTRUSION = 1f;
@@ -35,7 +34,6 @@ public class MobileCrane implements ActionListener, CraneInterface, Controllable
     private String key = "";
     private Vector3f propDisplacement;
     public static final boolean WEAK = true;
-    private boolean using = true;
     private Actions[] availableActions = {Actions.UP, Actions.DOWN, Actions.LEFT,
         Actions.RIGHT, Actions.ACTION};
     public MobileCrane(){
@@ -46,7 +44,7 @@ public class MobileCrane implements ActionListener, CraneInterface, Controllable
         game.getRootNode().attachChild(crane);
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
         physics.add(craneControl);
-        cabin = new MobileCraneCabin(crane);
+        setArmControl(new MobileCraneArmControl(crane));
         propDisplacement =  calculateDisplacementAfterScaling((Node)crane
                 .getChild("protractileProp1"), new Vector3f(1f, propsLowering + PROP_LOWERING_SPEED,
                 1f), false, true, false);
@@ -97,32 +95,24 @@ public class MobileCrane implements ActionListener, CraneInterface, Controllable
             if(craneControl.getCurrentVehicleSpeedKmHour() < 1 
                     && craneControl.getCurrentVehicleSpeedKmHour() > -1)
                 stop();
-        }else if(!key.equals(""))
-            if(key.equals(Actions.DOWN.toString()) && craneControl.getCurrentVehicleSpeedKmHour() < 0){
-                craneControl.brake(0f);
-                craneControl.accelerate(-ACCELERATION_FORCE * 0.5f); // prędkość w tył jest mniejsza 
-            }else{
-                if(key.equals(Actions.UP.toString()) && Math.ceil(craneControl.getCurrentVehicleSpeedKmHour()) >= 0){
+        }else{ 
+            if(!key.equals("")){
+                if(key.equals(Actions.DOWN.toString()) && craneControl
+                        .getCurrentVehicleSpeedKmHour() < 0){
                     craneControl.brake(0f);
-                    craneControl.accelerate(ACCELERATION_FORCE);
+                    craneControl.accelerate(-ACCELERATION_FORCE * 0.5f); // prędkość w tył jest mniejsza 
+                }else{
+                    if(key.equals(Actions.UP.toString()) && Math.ceil(craneControl
+                            .getCurrentVehicleSpeedKmHour()) >= 0){
+                        craneControl.brake(0f);
+                        craneControl.accelerate(ACCELERATION_FORCE);
+                    }
                 }
+            }else{
+                if(((MobileCraneArmControl)getArmControl()).isUsing()) getInCabin();
+                else getInMobileCrane();
             }
-    }
-    
-    /**
-     * Zwraca kabinę operatora ramienia dźwigu. 
-     * @return kabina operatora ramienia dźwigu. 
-     */
-    public MobileCraneCabin getCabin(){
-        return cabin;
-    }
-    
-    /**
-     * Zwraca aktualną prędkość dźwigu. 
-     * @return prędkość
-     */
-    public float getSpeed(){
-        return craneControl.getCurrentVehicleSpeedKmHour();
+        }
     }
     
     private void stop(){
@@ -173,11 +163,6 @@ public class MobileCrane implements ActionListener, CraneInterface, Controllable
                 .getCollisionShape(),crane, "bollardsShape", Vector3f.ZERO, null);
     }
     
-    @Override
-    public Hook getHook(){
-        return cabin.getHook();
-    }
-    
     /**
      * Pozwala na kontrolowanie podporami (na opuszczanie i podnioszenie ich). 
      * @param lowering true jeśli podpory mają być opuszczane, false jeśli podnioszone
@@ -208,23 +193,39 @@ public class MobileCrane implements ActionListener, CraneInterface, Controllable
         return propsLowering;
     }
     
-    public void getOff(String name){
-        float craneSpeed = getSpeed();
+    private void getOff(String name){
         // zezwala na opuszczenie podpór tylko gdy dźwig nie porusza się
-        if(Math.floor(craneSpeed) == 0f && craneSpeed >= 0f
-                || Math.ceil(craneSpeed) == 0f && craneSpeed < 0f){
+        if("".equals(key)){
             Control.removeListener((MobileCrane)GameManager.getUnit(0));
-            cabin.setUsing(!cabin.isUsing());
+            MobileCraneArmControl control = (MobileCraneArmControl)getArmControl();
+            control.setUsing(!control.isUsing());
             GameManager.setLastAction(name);
         }
     }
     
-    public boolean isUsing(){
-        return using;
+    private void getInCabin(){
+        if(propsLowering <= MAX_PROP_PROTRUSION){
+            controlProps(true);
+        }else{
+            /* metoda wywołana na łańcuchu "Action", gdyż ostatnia akcja może być nullem.
+            Może być bez tego ifa, ale dodany w celu optymalizacji aby nie powtarzać
+            dodawania listenerów klawiszy*/
+            if(Control.Actions.ACTION.toString().equals(GameManager.getLastAction())){
+                Control.setupKeys(getArmControl());
+                GameManager.setLastAction(null);
+            }
+        }
     }
     
-    public void setUsing(boolean using){
-        this.using = using;
+    private void getInMobileCrane(){
+        if(propsLowering > MIN_PROP_PROTRUSION)
+            controlProps(false);
+        else{
+            if(Control.Actions.ACTION.toString().equals(GameManager.getLastAction())){
+                Control.setupKeys(this);
+                GameManager.setLastAction(null);
+            }
+        }
     }
     
     public Control.Actions[] getAvailableActions(){

@@ -37,7 +37,7 @@ public class MobileCrane implements ActionListener, CraneInterface, Controllable
     public static final boolean WEAK = true;
     private boolean using = true;
     private Actions[] availableActions = {Actions.UP, Actions.DOWN, Actions.LEFT,
-        Actions.RIGHT};
+        Actions.RIGHT, Actions.ACTION};
     public MobileCrane(){
         crane.setLocalTranslation(0, 1.15f, 0);
         createMobileCranePhysics();
@@ -81,7 +81,10 @@ public class MobileCrane implements ActionListener, CraneInterface, Controllable
             case LEFT:
                 craneControl.steer(steeringValue += isPressed ? 0.5f : -0.5f);
                 break;
-            case RIGHT: craneControl.steer(steeringValue += isPressed ? -0.5f : 0.5f);
+            case RIGHT: 
+                craneControl.steer(steeringValue += isPressed ? -0.5f : 0.5f);
+                break;
+            case ACTION: if(isPressed) getOff(name);
         }
     }
     
@@ -203,6 +206,17 @@ public class MobileCrane implements ActionListener, CraneInterface, Controllable
      */
     public float getPropsLowering(){
         return propsLowering;
+    }
+    
+    public void getOff(String name){
+        float craneSpeed = getSpeed();
+        // zezwala na opuszczenie podpór tylko gdy dźwig nie porusza się
+        if(Math.floor(craneSpeed) == 0f && craneSpeed >= 0f
+                || Math.ceil(craneSpeed) == 0f && craneSpeed < 0f){
+            Control.removeListener((MobileCrane)GameManager.getUnit(0));
+            cabin.setUsing(!cabin.isUsing());
+            GameManager.setLastAction(name);
+        }
     }
     
     public boolean isUsing(){

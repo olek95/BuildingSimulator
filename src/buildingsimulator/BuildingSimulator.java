@@ -130,25 +130,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         return bulletAppState;
     }
     public void onAction(String name, boolean isPressed, float tpf){
-        boolean craneStop = true;
         MobileCrane unit = (MobileCrane)GameManager.getUnit(0);
-        MobileCraneCabin cabin = (MobileCraneCabin)GameManager.getUnit(0).getCabin();
-        if(isPressed && name.equals(Control.Actions.ACTION.toString())){
-            if(!cabin.isUsing()){
-                float craneSpeed = unit.getSpeed();
-                craneStop = Math.floor(craneSpeed) == 0f && craneSpeed >= 0f 
-                        || Math.ceil(craneSpeed) == 0f && craneSpeed < 0f;
-                // zezwala na opuszczenie podpór tylko gdy dźwig nie porusza się
-                if(craneStop) inputManager.removeListener(unit);
-            }
-            else{
-                inputManager.removeListener(unit.getCabin());
-            }
-            if(craneStop){
-                cabin.setUsing(!cabin.isUsing());
-                GameManager.setLastAction(name);
-            }
-        }else{
             if(isPressed){
                 if(name.equals(Control.Actions.PHYSICS.toString())){
                     if(!debug) bulletAppState.getPhysicsSpace().enableDebug(assetManager);
@@ -170,7 +152,6 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     }
                 }
             }
-        }
     }
     /**
      * Pobiera tekstową reprezentację liczby klatek na sekundę. 

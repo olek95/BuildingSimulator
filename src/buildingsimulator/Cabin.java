@@ -19,7 +19,7 @@ public abstract class Cabin implements AnalogListener, Controllable{
     protected Spatial hookHandle;
     private Actions[] availableActions = {Actions.RIGHT, Actions.LEFT,
         Actions.PULL_OUT, Actions.PULL_IN, Actions.LOWER_HOOK, Actions.HEIGHTEN_HOOK,
-        Actions.UP, Actions.DOWN};
+        Actions.UP, Actions.DOWN, Actions.ACTION};
     /**
      * Konstruktor tworzący kabinę. Używany, gdy wartość maksymalnego i 
      * minimalnego przesunięcia uchwytu nie jest znana od początku. Należy 
@@ -79,6 +79,9 @@ public abstract class Cabin implements AnalogListener, Controllable{
                 break;
             case DOWN:
                 changeArmHeight(minArmHeight, true); 
+                break;
+            case ACTION:
+                getOff(name);
         }
         if(!name.equals("Lower hook") && !usedNotUsingKey) hook.setRecentlyHitObject(null);
         else usedNotUsingKey = false;
@@ -106,6 +109,8 @@ public abstract class Cabin implements AnalogListener, Controllable{
     protected void changeArmHeight(float limit, boolean lowering){
         usedNotUsingKey = true;
     } 
+    
+    protected void getOff(String actionName){};
     
     /**
      * Zwraca hak dźwigu. 

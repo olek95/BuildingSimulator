@@ -62,6 +62,13 @@ public class MobileCraneCabin extends Cabin{
     }
     
     @Override
+    protected void getOff(String actionName){
+        Control.removeListener(GameManager.getUnit(0).getCabin());
+        using = !using;
+        GameManager.setLastAction(actionName);
+    }
+    
+    @Override
     protected void initCraneCabinElements(){
         super.initCraneCabinElements();
         lift = (Node)craneControl.getChild("lift");

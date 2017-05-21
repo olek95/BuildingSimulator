@@ -207,7 +207,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
             Może być bez tego ifa, ale dodany w celu optymalizacji aby nie powtarzać
             dodawania listenerów klawiszy*/
             if(Control.Actions.ACTION.toString().equals(GameManager.getLastAction())){
-                Control.setupKeys(getArmControl());
+                Control.addListener(getArmControl());
                 GameManager.setLastAction(null);
             }
         }
@@ -218,7 +218,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
             controlProps(false);
         else{
             if(Control.Actions.ACTION.toString().equals(GameManager.getLastAction())){
-                Control.setupKeys(this);
+                Control.addListener(this);
                 GameManager.setLastAction(null);
             }
         }

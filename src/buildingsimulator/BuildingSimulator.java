@@ -38,8 +38,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         GameManager.addUnit(new Crane());
         crane.setUsing(true);
         GameManager.initHookCollisionListener();
-        Control.setupKeys(crane);
-        Control.setupKeys(this);
+        Control.addListener(crane);
+        Control.addListener(this);
         DirectionalLight sun = new DirectionalLight();
         sun.setColor(ColorRGBA.White);
         sun.setDirection(new Vector3f(-.5f,-.5f,-.5f).normalizeLocal());
@@ -118,13 +118,13 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                         CraneAbstract crane = GameManager.getUnit(1);
                         inputManager.removeListener(crane.getArmControl());
                         crane.setUsing(false);
-                        Control.setupKeys(unit);
+                        Control.addListener(unit);
                         unit.setUsing(true);
                     }else{
                         inputManager.removeListener(unit);
                         unit.setUsing(false);
                         CraneAbstract crane = GameManager.getUnit(1);
-                        Control.setupKeys(crane.getArmControl());
+                        Control.addListener(crane.getArmControl());
                         crane.setUsing(true);
                     }
                 }

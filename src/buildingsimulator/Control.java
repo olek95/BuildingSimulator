@@ -7,51 +7,40 @@ import com.jme3.input.controls.KeyTrigger;
 
 /**
  * Klasa <code>Control</code> reprezentuje sterowanie elementami gry. Zezwala
- * na przypisywanie klawiszy do akcji oraz na przydzielanie lub odbieranie 
- * słuchaczy klawiszy do danego obiektu. Klasa zawiera typ wyliczeniowy 
- * zawierający wszystkie możliwe akcje. 
+ * na przydzielanie lub odbieranie słuchaczy klawiszy do danego obiektu.
+ * Klasa zawiera typ wyliczeniowy zawierający wszystkie możliwe akcje. 
  * @author AleksanderSklorz
  */
 public class Control {
+    private static InputManager inputManager = BuildingSimulator.getBuildingSimulator()
+            .getInputManager();
     /**
      * Typ wyliczeniowy zawierający wszystkie możliwe akcje, które może wykonać 
-     * użytkownik w grze. 
+     * użytkownik w grze. Do każdej możliwej akcji przypisany jest jakiś klawisz. 
      */
     public enum Actions{
-        LEFT, 
-        RIGHT, 
-        UP,
-        DOWN,
-        ACTION,
-        PULL_OUT,
-        PULL_IN,
-        LOWER_HOOK,
-        HEIGHTEN_HOOK,
-        PHYSICS,
-        FIRST,
-        SECOND;
+        LEFT(KeyInput.KEY_H), 
+        RIGHT(KeyInput.KEY_K), 
+        UP(KeyInput.KEY_U),
+        DOWN(KeyInput.KEY_J),
+        ACTION(KeyInput.KEY_F),
+        PULL_OUT(KeyInput.KEY_E),
+        PULL_IN(KeyInput.KEY_SPACE),
+        LOWER_HOOK(KeyInput.KEY_R),
+        HEIGHTEN_HOOK(KeyInput.KEY_T),
+        PHYSICS(KeyInput.KEY_P),
+        FIRST(KeyInput.KEY_1),
+        SECOND(KeyInput.KEY_2);
+        private Actions(int key){ 
+            inputManager.addMapping(toString(), new KeyTrigger(key));
+        }
     }
     
     /**
-     * Przypisuje klawisz do nazwy akcji oraz określa aktualnego słuchacza akcji. 
-     * @param o obiekt który zostaje nowym słuchaczem 
+     * Dodaje nowego słuchacza klawiszy. 
+     * @param o słuchacz 
      */
-    public static void setupKeys(Object o){
-        InputManager inputManager = BuildingSimulator.getBuildingSimulator().getInputManager();
-        if(!inputManager.hasMapping(Actions.LEFT.toString())){
-            inputManager.addMapping(Actions.LEFT.toString(), new KeyTrigger(KeyInput.KEY_H));
-            inputManager.addMapping(Actions.RIGHT.toString(), new KeyTrigger(KeyInput.KEY_K));
-            inputManager.addMapping(Actions.UP.toString(), new KeyTrigger(KeyInput.KEY_U));
-            inputManager.addMapping(Actions.DOWN.toString(), new KeyTrigger(KeyInput.KEY_J));
-            inputManager.addMapping(Actions.ACTION.toString(), new KeyTrigger(KeyInput.KEY_F));
-            inputManager.addMapping(Actions.PULL_OUT.toString(), new KeyTrigger(KeyInput.KEY_E));
-            inputManager.addMapping(Actions.PULL_IN.toString(), new KeyTrigger(KeyInput.KEY_SPACE));
-            inputManager.addMapping(Actions.LOWER_HOOK.toString(), new KeyTrigger(KeyInput.KEY_R));
-            inputManager.addMapping(Actions.HEIGHTEN_HOOK.toString(), new KeyTrigger(KeyInput.KEY_T));
-            inputManager.addMapping(Actions.PHYSICS.toString(), new KeyTrigger(KeyInput.KEY_P));
-            inputManager.addMapping(Actions.FIRST.toString(), new KeyTrigger(KeyInput.KEY_1));
-            inputManager.addMapping(Actions.SECOND.toString(), new KeyTrigger(KeyInput.KEY_2));
-        }
+    public static void addListener(Object o){
         if(o instanceof Controllable){
             InputListener listener = (InputListener)o;
             Actions[] names = ((Controllable)o).getAvailableActions();
@@ -69,7 +58,6 @@ public class Control {
      * @param listener słuchacz 
      */
     public static void removeListener(InputListener listener){
-        InputManager inputManager = BuildingSimulator.getBuildingSimulator().getInputManager();
         inputManager.removeListener(listener);
     }
 }

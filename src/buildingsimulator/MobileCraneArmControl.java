@@ -34,33 +34,55 @@ public class MobileCraneArmControl extends ArmControl{
                 true, true);
     }
     
+    /**
+     * Obraca ramieniem dźwigu wraz z kabiną, o podany kąt, jeżeli nie ma 
+     * żadnej przeszkody. 
+     * @param yAngle kąt obrotu 
+     */
     @Override
     protected void rotate(float yAngle){
         boolean obstacle = yAngle < 0 ? obstacleRight : obstacleLeft;
-        if(!obstacle) craneControl.rotate(0f, yAngle, 0f);
+        if(!obstacle) getCraneControl().rotate(0f, yAngle, 0f);
         else{
             if(yAngle < 0) obstacleRight = false; 
             else obstacleLeft = false;
         }
     }
     
+    /**
+     * Przesuwa uchwyt haka w przód lub w tył. 
+     * @param limit określa jak daleko w przód lub w tył można przesunąć uchwyt haka 
+     * @param movingForward true jeśli przesuwamy w przód, false w przeciwnym razie 
+     * @param speed prędkość (w tym przypadku niewykorzystana, gdyż użyto zależności 
+     * o ile wysuwa się ramię dźwigu podczas wysuwania)
+     */
     @Override
     protected void moveHandleHook(float limit, boolean movingForward, float speed){
-        if(movingForward && stretchingOut <= limit)
-            changeHandleHookPosition(rectractableCranePart, new Vector3f(1f, 1f, 
-                    stretchingOut += STRETCHING_OUT_SPEED), movingForward);
-        else if(!movingForward && stretchingOut > limit)
+        if(movingForward && stretchingOut <= limit){
+            if(stretchingOut <= limit)
+                changeHandleHookPosition(rectractableCranePart, new Vector3f(1f, 1f, 
+                        stretchingOut += STRETCHING_OUT_SPEED), movingForward);
+        }else if(stretchingOut > limit)
             changeHandleHookPosition(rectractableCranePart, new Vector3f(1f, 1f, 
                     stretchingOut -= STRETCHING_OUT_SPEED), movingForward);
     }
     
+    /**
+     * Podnosi lub opuszcza ramię dźwigu. 
+     * @param limit wysokość na jaką można podnieść lub opuścić ramię 
+     * @param lowering true jeśli opuszczamy, false jeśli podnosimy ramię 
+     */
     @Override 
     protected void changeArmHeight(float limit, boolean lowering){
-        if(limit == maxArmHeight && yCraneOffset + LIFTING_SPEED < limit
-                || limit == minArmHeight && yCraneOffset - LIFTING_SPEED >= limit)
+        if(limit == getMaxArmHeight() && yCraneOffset + LIFTING_SPEED < limit
+                || limit == getMinArmHeight() && yCraneOffset - LIFTING_SPEED >= limit)
             controlCrane(lowering);
     }
     
+    /**
+     * Wychodzi z trybu kontroli ramienia dźwigu. 
+     * @param actionName nazwa akcji która powoduje wyjście 
+     */
     @Override
     protected void getOff(String actionName){
         Control.removeListener(GameManager.getUnit(0).getArmControl());
@@ -68,33 +90,56 @@ public class MobileCraneArmControl extends ArmControl{
         GameManager.setLastAction(actionName);
     }
     
+    /**
+     * Inicjuje wszystkie elementy związane z ramieniem dźwigu, czyli 
+     * ramię dźwigu, podpory ramienia dźwigu, uchwyt haka oraz linę z hakiem. 
+     */
     @Override
-    protected void initCraneCabinElements(){
-        super.initCraneCabinElements();
-        lift = (Node)craneControl.getChild("lift");
+    protected void initCraneArmElements(){
+        super.initCraneArmElements();
+        Node craneControlNode = getCraneControl();
+        lift = (Node)craneControlNode.getChild("lift");
         rectractableCranePart = (Node)lift.getChild("retractableCranePart");
-        craneProps = (Node)craneControl.getChild("craneProps");
+        craneProps = (Node)craneControlNode.getChild("craneProps");
         leftProtractilePropGeometry = (Geometry)((Node)craneProps
                 .getChild("leftProtractileProp")).getChild(0);
         rightProtractilePropGeometry = (Geometry)((Node)craneProps
                 .getChild("rightProtractileProp")).getChild(0);
         // do aktualnej kolizji dołącza kolizję z grupą 1
-        hookHandle = lift.getChild("hookHandle");
-        hook = new OneRopeHook((Node)crane.getChild("ropeHook"), hookHandle);
+        Spatial hookHandle = lift.getChild("hookHandle");
+        setHookHandle(hookHandle);
+        setHook(new OneRopeHook((Node)getCrane().getChild("ropeHook"), hookHandle));
         createCranePhysics();
+    }
+    
+    /**
+     * Zwraca informację o tym czy gracz jest w trybie kontroli ramienia dźwigu. 
+     * @return true jeśli tryb kontroli ramienia dźwigu, false w przeciwnym razie 
+     */
+    public boolean isUsing(){
+        return using;
+    }
+    
+    /**
+     * Określa czy włączony jest tryb kontroli ramienia dźwigu. 
+     * @param using true jeśli tryb kontroli ramienia dźwigu, false w przeciwnym razie 
+     */
+    public void setUsing(boolean using){
+        this.using = using;
     }
     
     private void createCranePhysics(){
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
                 .getBulletAppState().getPhysicsSpace();
-        physics.add(hookHandle.getControl(0));
-        createObjectPhysics(craneControl, 1f, true, "outsideCabin", "turntable");
+        physics.add(getHookHandle().getControl(0));
+        Node craneControlNode = getCraneControl();
+        createObjectPhysics(craneControlNode, 1f, true, "outsideCabin", "turntable");
         createObjectPhysics(rectractableCranePart, 1f, true, rectractableCranePart
                 .getChild(0).getName());
         rectractableCranePart.getControl(RigidBodyControl.class).setCollisionGroup(3);
-        HingeJoint cabinAndMobilecraneJoin = new HingeJoint(crane
-                .getControl(VehicleControl.class),craneControl
-                .getControl(RigidBodyControl.class), craneControl.getLocalTranslation(),
+        HingeJoint cabinAndMobilecraneJoin = new HingeJoint(getCrane()
+                .getControl(VehicleControl.class),craneControlNode
+                .getControl(RigidBodyControl.class), craneControlNode.getLocalTranslation(),
                 Vector3f.ZERO,Vector3f.ZERO, Vector3f.ZERO);
         physics.add(cabinAndMobilecraneJoin);
         physics.add(lift.getChild("longCraneElement").getControl(0));
@@ -107,10 +152,10 @@ public class MobileCraneArmControl extends ArmControl{
             public void collision(PhysicsCollisionEvent event) {
                 Spatial a = event.getNodeA(), b = event.getNodeB();
                 if(a != null && b != null){
-                    if(a.equals(rectractableCranePart) || a.equals(hook.getHookHandle())){
+                    if(a.equals(rectractableCranePart) || a.equals(getHook().getHookHandle())){
                         if(b.equals(GameManager.getCraneRack())) rotateAfterImpact(a);
                     }else{
-                        if(b.equals(rectractableCranePart) || b.equals(hook.getHookHandle())){
+                        if(b.equals(rectractableCranePart) || b.equals(getHook().getHookHandle())){
                             if(a.equals(GameManager.getCraneRack())) rotateAfterImpact(b);
                         }
                     }
@@ -123,7 +168,7 @@ public class MobileCraneArmControl extends ArmControl{
             Vector3f scallingVector, boolean pullingOut){
         Geometry rectractableCranePartGeometry = (Geometry)scallingGeometryParent.getChild(0);
         moveWithScallingObject(pullingOut, hookHandleDisplacement,scallingVector,
-                scallingGeometryParent, hook.getHookHandle());
+                scallingGeometryParent, getHook().getHookHandle());
         createObjectPhysics(rectractableCranePart, 1f, true, rectractableCranePartGeometry
                 .getName());
         rectractableCranePart.getControl(RigidBodyControl.class).setCollisionGroup(3);
@@ -150,21 +195,14 @@ public class MobileCraneArmControl extends ArmControl{
         float rotate;
         if(object.equals(rectractableCranePart)) rotate = getFPS() <= 10 ? 0.09f : 0.04f;
         else rotate = getFPS() <= 10 ? 0.09f : 0.02f;
-        float yRotation = craneControl.getLocalRotation().getY();
+        Node craneControlNode = getCraneControl();
+        float yRotation = craneControlNode.getLocalRotation().getY();
         if(yRotation > 0){
             obstacleLeft = true;
-            craneControl.rotate(0f, -rotate, 0f);
+            craneControlNode.rotate(0f, -rotate, 0f);
         }else{
             obstacleRight = true; 
-            craneControl.rotate(0f, rotate, 0f);
+            craneControlNode.rotate(0f, rotate, 0f);
         }
-    }
-    
-    public boolean isUsing(){
-        return using;
-    }
-    
-    public void setUsing(boolean using){
-        this.using = using;
     }
 }

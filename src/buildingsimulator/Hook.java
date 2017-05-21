@@ -139,6 +139,10 @@ public abstract class Hook {
      */
     protected abstract void changeHookPosition(Vector3f scallingVector, boolean heightening);
     
+    /**
+     * Metoda abstrakcyjna którą musi nadpisać każda klasa haka, aby określić 
+     * dodatkowe zasady sprawdzania kolizji podczas opuszczania haka. 
+     */
     protected abstract void lower();
     
     private static boolean setCollision(Spatial a, Spatial b){

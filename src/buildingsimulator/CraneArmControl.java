@@ -6,20 +6,38 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
+/**
+ * Obiekt klasy <code>CraneArmControl</code> reprezentuje obiekt kontrolujący 
+ * ramię żurawia. 
+ * @author AleksanderSklorz
+ */
 public class CraneArmControl extends ArmControl{
     private Node hookHandleControl;
     public CraneArmControl(Node crane){
         super(crane);
-        maxHandleHookDisplacement = -63f;
-        minHandleHookDisplacement = hookHandleControl.getLocalTranslation().z;
+        setMaxHandleHookDisplacement(-63f);
+        setMinHandleHookDisplacement(hookHandleControl.getLocalTranslation().z);
     }
+    
+    /**
+     * Obraca ramię żurawia i przyczepione do niego elementy, a także kabinę 
+     * żurawia o podany kąt. 
+     * @param yAngle kąt obrotu 
+     */
     @Override
     protected void rotate(float yAngle) {
-        craneControl.rotate(0f, yAngle, 0f);
-        hook.getRopeHook().getControl(RigidBodyControl.class).setPhysicsRotation(
-                craneControl.getLocalRotation());
+        Node craneControlNode = getCraneControl();
+        craneControlNode.rotate(0f, yAngle, 0f);
+        getHook().getRopeHook().getControl(RigidBodyControl.class).setPhysicsRotation(
+                craneControlNode.getLocalRotation());
     }
-
+    
+    /**
+     * Przesuwa główny uchwyt na hak. 
+     * @param limit odległość na jaką można wysunąć uchwyt do przodu lub do tyłu 
+     * @param movingForward true jeśli przesuwamy uchwyt do przudu, false w przeciwnym razie 
+     * @param speed prędkość przesuwania 
+     */
     @Override
     protected void moveHandleHook(float limit, boolean movingForward, float speed) {
         Vector3f hookHandleTranslation = hookHandleControl.getLocalTranslation();
@@ -29,21 +47,28 @@ public class CraneArmControl extends ArmControl{
                     .addLocal(0 , 0, speed));
     }
     
+    /**
+     * Inicjuje elementy składowe ramienia żurawia. Są to platforma wejściowa 
+     * do kabiny żurawia, platforma obracająca ramieniem, ramię, kabina, uchwyt 
+     * na hak i liny wraz z hakiem. 
+     */
     @Override
-    protected void initCraneCabinElements(){
-        super.initCraneCabinElements();
+    protected void initCraneArmElements(){
+        super.initCraneArmElements();
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
                 .getBulletAppState().getPhysicsSpace();
-        Vector3f craneLocation = crane.getLocalTranslation();
-        physics.add(setProperLocation(crane.getChild("entrancePlatform"), craneLocation));
-        physics.add(setProperLocation(craneControl.getChild("turntable"), craneLocation));
-        physics.add(setProperLocation(craneControl.getChild("mainElement"), craneLocation));
-        physics.add(setProperLocation(craneControl.getChild("craneArm"), craneLocation));
-        physics.add(setProperLocation(craneControl.getChild("cabin"), craneLocation));
-        hookHandleControl = (Node)craneControl.getChild("hookHandleControl");
-        hookHandle = hookHandleControl.getChild("hookHandle");
+        Node craneControlNode = getCraneControl(), craneNode = getCrane();
+        Vector3f craneLocation = craneNode.getLocalTranslation();
+        physics.add(setProperLocation(craneNode.getChild("entrancePlatform"), craneLocation));
+        physics.add(setProperLocation(craneControlNode.getChild("turntable"), craneLocation));
+        physics.add(setProperLocation(craneControlNode.getChild("mainElement"), craneLocation));
+        physics.add(setProperLocation(craneControlNode.getChild("craneArm"), craneLocation));
+        physics.add(setProperLocation(craneControlNode.getChild("cabin"), craneLocation));
+        hookHandleControl = (Node)craneControlNode.getChild("hookHandleControl");
+        Spatial hookHandle = hookHandleControl.getChild("hookHandle");
+        setHookHandle(hookHandle);
         physics.add(setProperLocation(hookHandle, craneLocation));
-        hook = new FourRopesHook((Node)crane.getChild("ropeHook"), hookHandle);
+        setHook(new FourRopesHook((Node)craneNode.getChild("ropeHook"), hookHandle));
     }
     
     private RigidBodyControl setProperLocation(Spatial object, Vector3f displacement){

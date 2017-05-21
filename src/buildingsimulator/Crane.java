@@ -2,7 +2,6 @@ package buildingsimulator;
 
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.input.controls.AnalogListener;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -15,7 +14,6 @@ public class Crane extends CraneAbstract{
     private BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
     private Node crane;
     private Spatial rack;
-    public static final boolean WEAK = false;
     public Crane(){
         initCraneElements((Node)game.getAssetManager().loadModel("Models/zuraw/zuraw.j3o"));
         GameManager.setCraneRack(rack);

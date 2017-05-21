@@ -256,14 +256,27 @@ public class GameManager {
         return actualUnit;
     }
     
+    /**
+     * Doaje nową jednostkę do listy wszystkich jednostek w grze. 
+     * @param unit dodawana jednostka 
+     */
     public static void addUnit(CraneAbstract unit){
         units.add(unit);
     }
     
+    /**
+     * Zwraca jednostkę z listy wszystkich jednostek w grze, o podanym indeksie. 
+     * @param i indeks zwracanej jednostki 
+     * @return jednostka 
+     */
     public static CraneAbstract getUnit(int i){
         return units.get(i);
     }
     
+    /**
+     * Zwraca jednostkę, która jest aktualnie używana przez gracza. 
+     * @return aktualnie używana jednostka 
+     */
     public static CraneAbstract findActualUnit(){
         for(int i = 0; i < units.size(); i++){
             CraneAbstract unit = units.get(i);

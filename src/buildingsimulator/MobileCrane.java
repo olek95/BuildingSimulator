@@ -33,7 +33,6 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     private float steeringValue = 0f, propsLowering = 1f;
     private String key = "";
     private Vector3f propDisplacement;
-    public static final boolean WEAK = true;
     private Actions[] availableActions = {Actions.UP, Actions.DOWN, Actions.LEFT,
         Actions.RIGHT, Actions.ACTION};
     public MobileCrane(){
@@ -50,6 +49,13 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                 1f), false, true, false);
     }
     
+    /**
+     * Metoda określająca sterowanie dźwigu. Dźwig może jeździć w dowolnym 
+     * kierunku, a także opuszczać podpory. 
+     * @param name nazwa akcji 
+     * @param isPressed true jeśli klawisz został naciśnięty, false w przeciwnym razie  
+     * @param tpf 
+     */
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
         switch(Actions.valueOf(name)){
@@ -88,7 +94,9 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     
     /**
      * Aktualizuje stan pojazdu. Możliwe stany to: stop, jazda w przód i jazda
-     * w tył. 
+     * w tył. Oprócz tego decyduje czy gracz działa w trybie sterowania pojazdem 
+     * żurawia czy w trybie sterowania jego ramieniem z kabiny sterowania 
+     * remieniem żurawia. 
      */
     public void updateState(){
         if(key == null){
@@ -163,11 +171,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                 .getCollisionShape(),crane, "bollardsShape", Vector3f.ZERO, null);
     }
     
-    /**
-     * Pozwala na kontrolowanie podporami (na opuszczanie i podnioszenie ich). 
-     * @param lowering true jeśli podpory mają być opuszczane, false jeśli podnioszone
-     */
-    public void controlProps(boolean lowering){
+    private void controlProps(boolean lowering){
         List<Spatial> mobileCraneChildren = crane.getChildren();
         int i = 0, changed = 0;
         String[] props = {"propParts1", "propParts2", "propParts3",
@@ -183,14 +187,6 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
             }
             i++;
         }while(changed < 4);
-    }
-    
-    /**
-     * Zwraca wartość określającą jak bardzo opuszczone są podpory. 
-     * @return wartość określającą opuszczenie podpór 
-     */
-    public float getPropsLowering(){
-        return propsLowering;
     }
     
     private void getOff(String name){
@@ -228,6 +224,12 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         }
     }
     
+    /**
+     * Zwraca dostępne akcje dla dźwigu, czyli - jazda w przód, do tyłu, skręcanie 
+     * w lewo i w prawo, a także akcja opuszczania podpór.
+     * @return 
+     */
+    @Override
     public Control.Actions[] getAvailableActions(){
         return availableActions;
     }

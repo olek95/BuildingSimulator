@@ -25,8 +25,6 @@ public class OneRopeHook extends Hook{
                 false, true, false);
         hookDisplacement.y *= 2; // wyrównuje poruszanie się haka wraz z liną 
         createRopeHookPhysics();
-        //BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
-          //      .add(hookHandle.getControl(0));
     }
     
     /**
@@ -44,9 +42,13 @@ public class OneRopeHook extends Hook{
         super.lower(results);
     }
     
+    /**
+     * Podnosi lub opuszcza hak. 
+     * @param scallingVector wektor o jaki ma być przesunięty hak 
+     * @param heightening true jeśli podnosimy hak, false w przeciwnym przypadku 
+     */
     @Override
-    protected void changeHookPosition(Vector3f scallingVector,
-            boolean heightening){
+    protected void changeHookPosition(Vector3f scallingVector, boolean heightening){
         moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
                 rope, hook);
         createRopeHookPhysics();

@@ -10,6 +10,12 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.List;
 
+/**
+ * Obiekt klasy <code>FourRopesHook</code> reprezentuje hak zawieszony na 
+ * czterech liniach. W porównaniu z hakiem z jedną liną, ten ma jeszcze jeden 
+ * dodatkowy uchwyt, do którego przyczepione są te liny. 
+ * @author AleksanderSklorz 
+ */
 public class FourRopesHook extends Hook{
     private Node littleHookHandle;
     private Node[] ropes = new Node[4];
@@ -31,6 +37,12 @@ public class FourRopesHook extends Hook{
         hookDisplacement.y *= 2;
         createRopeHookPhysics();
     }
+    
+    /**
+     * Opuszcza hak. Aby zwiększyć dokładność sprawdzania kolizji, kolizja z 
+     * podstawą żurawia jest sprawdzania nie z obiektem BoundingBox podstawy, ale 
+     * z jej geometrią. 
+     */
     @Override
     public void lower(){
         CollisionResults results = new CollisionResults();
@@ -50,6 +62,18 @@ public class FourRopesHook extends Hook{
         super.lower(results);
     }
     
+    /**
+     * Opuszcza lub podnosi hak.  
+     * @param scallingVector wektor wskazujacy o ile ma się przesunąć hak 
+     * @param heightening true jeśli podnosimy hak, false w przeciwnym razie 
+     */
+    @Override
+    protected void changeHookPosition(Vector3f scallingVector, boolean heightening){
+        moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
+                ropes, hook, littleHookHandle);
+        createRopeHookPhysics();
+    }
+    
     private void createRopeHookPhysics(){
         CompoundCollisionShape ropeHookCompound = createCompound(((Node)ropeHook), ropes[0].getChild(0)
                 .getName());
@@ -60,13 +84,5 @@ public class FourRopesHook extends Hook{
         addNewCollisionShapeToCompound(ropeHookCompound, littleHookHandle, littleHookHandle
                 .getChild(0).getName(), littleHookHandle.getLocalTranslation(), null);
         super.createRopeHookPhysics(ropeHookCompound, new Vector3f(0, 0.6f,0));
-    }
-    
-    @Override
-    protected void changeHookPosition(Vector3f scallingVector,
-            boolean heightening){
-        moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
-                ropes, hook, littleHookHandle);
-        createRopeHookPhysics();
     }
 }

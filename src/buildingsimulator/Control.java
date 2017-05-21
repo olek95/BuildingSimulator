@@ -5,7 +5,18 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.InputListener;
 import com.jme3.input.controls.KeyTrigger;
 
+/**
+ * Klasa <code>Control</code> reprezentuje sterowanie elementami gry. Zezwala
+ * na przypisywanie klawiszy do akcji oraz na przydzielanie lub odbieranie 
+ * słuchaczy klawiszy do danego obiektu. Klasa zawiera typ wyliczeniowy 
+ * zawierający wszystkie możliwe akcje. 
+ * @author AleksanderSklorz
+ */
 public class Control {
+    /**
+     * Typ wyliczeniowy zawierający wszystkie możliwe akcje, które może wykonać 
+     * użytkownik w grze. 
+     */
     public enum Actions{
         LEFT, 
         RIGHT, 
@@ -20,6 +31,11 @@ public class Control {
         FIRST,
         SECOND;
     }
+    
+    /**
+     * Przypisuje klawisz do nazwy akcji oraz określa aktualnego słuchacza akcji. 
+     * @param o obiekt który zostaje nowym słuchaczem 
+     */
     public static void setupKeys(Object o){
         InputManager inputManager = BuildingSimulator.getBuildingSimulator().getInputManager();
         if(!inputManager.hasMapping(Actions.LEFT.toString())){
@@ -47,6 +63,11 @@ public class Control {
             inputManager.addListener((BuildingSimulator)o, Actions.SECOND.toString());
         }
     }
+    
+    /**
+     * Usuwa danego słuchacza. 
+     * @param listener słuchacz 
+     */
     public static void removeListener(InputListener listener){
         InputManager inputManager = BuildingSimulator.getBuildingSimulator().getInputManager();
         inputManager.removeListener(listener);

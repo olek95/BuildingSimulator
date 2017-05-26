@@ -16,8 +16,10 @@ public class Crane extends CraneAbstract{
     private BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
     private Node crane;
     private Spatial rack;
-    private int heightLevel = 4;
+    private Vector3f craneLocation;
+    private int heightLevel = 5;
     public Crane(){
+        craneLocation = new Vector3f(10f, -1f, 0f);
         initCraneElements((Node)game.getAssetManager().loadModel("Models/zuraw/zuraw.j3o"));
         GameManager.setCraneRack(rack);
         setArmControl(new CraneArmControl(crane));
@@ -34,48 +36,29 @@ public class Crane extends CraneAbstract{
     }
     private void initCraneElements(Node parent){
         crane = parent;
-        Vector3f craneLocation = new Vector3f(10f, -1f, 0f);
         crane.setLocalTranslation(craneLocation);
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
-        int floorsCount = 0;
         physics.add(setProperLocation(crane.getChild("prop0"), craneLocation));
         physics.add(setProperLocation(crane.getChild("prop1"), craneLocation));
         physics.add(setProperLocation(rack = crane.getChild("rack0"), craneLocation));
         Spatial rack1 = crane.getChild("rack1"),
-                rack2 = crane.getChild("rack2"), copyingRack = rack2.clone();
-        copyingRack.removeControl(RigidBodyControl.class);
+                rack2 = crane.getChild("rack2");
         Vector3f firstRackLocation = rack1.getLocalTranslation(), 
-                secondRackLocation = copyingRack.getLocalTranslation();
+                secondRackLocation = rack2.getLocalTranslation();
         float distanceBetweenRacks = secondRackLocation.y - firstRackLocation.y;
         physics.add(setProperLocation(rack1, craneLocation));
         physics.add(setProperLocation(rack2, craneLocation));
-        //firstRackLocation.addLocal(-5, distanceBetweenRacks * 3, 0);
-        //crane.attachChild(copyingRack);
-        //firstRackLocation.addLocal(-5, distanceBetweenRacks * 2, 0);
-        for(int i = 3; i < 4; i++){
-            //firstRackLocation.addLocal(-5, distanceBetweenRacks * (i - 1), 0);
-            secondRackLocation.addLocal(-5, distanceBetweenRacks, 0);
-            //copyingRack.setLocalTranslation(firstRackLocation);
-            crane.attachChild(copyingRack);
-            if(i != heightLevel - 1)
+        raiseHeight(rack2, distanceBetweenRacks);
+    }
+    private void raiseHeight(Spatial copyingRack, float distance){
+        PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
+        for(int i = 3; i < heightLevel; i++){
             copyingRack = copyingRack.clone();
-            //firstRackLocation.addLocal(-5, distanceBetweenRacks, 0);
+            copyingRack.getLocalTranslation().addLocal(-5, distance, 0);
+            RigidBodyControl control = copyingRack.getControl(RigidBodyControl.class);
+            control.setPhysicsLocation(copyingRack.getLocalTranslation().add(craneLocation));
+            crane.attachChild(copyingRack);
+            physics.add(control);
         }
-        
-        
-        
-        
-        //actualTranslation.y += actualY;
-        //System.out.println(actualTranslation.y);
-        //setProperLocation(copyingRack, actualTranslation);
-        /*for(int i = 0; i < craneChildren.size(); i++){
-            Spatial child = craneChildren.get(i);
-            if(child.getName().startsWith("prop")) 
-                physics.add(setProperLocation(child, craneLocation));
-            else if(child.getName().startsWith("rack")){
-                physics.add(setProperLocation(child, craneLocation));
-                if(rack == null) rack = child;
-            }
-        }*/
     }
 }

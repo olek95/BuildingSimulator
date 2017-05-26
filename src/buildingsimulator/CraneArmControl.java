@@ -59,7 +59,6 @@ public class CraneArmControl extends ArmControl{
                 .getBulletAppState().getPhysicsSpace();
         Node craneControlNode = getCraneControl(), craneNode = getCrane();
         Vector3f craneLocation = craneNode.getLocalTranslation();
-        physics.add(setProperLocation(craneNode.getChild("entrancePlatform"), craneLocation));
         physics.add(setProperLocation(craneControlNode.getChild("turntable"), craneLocation));
         physics.add(setProperLocation(craneControlNode.getChild("mainElement"), craneLocation));
         physics.add(setProperLocation(craneControlNode.getChild("craneArm"), craneLocation));

@@ -55,30 +55,29 @@ public class Crane extends CraneAbstract{
     private void raiseHeight(Spatial copyingRack, Vector3f firstRackLocation,
             Vector3f secondRackLocation, Spatial copyingLadder){
         float distanceBetweenRacks = secondRackLocation.y - firstRackLocation.y,
-                distanceRackLadder = copyingLadder.getLocalTranslation().y
+                distanceBetweenLadders = copyingLadder.getLocalTranslation().y
                         - secondRackLocation.y;
         Spatial temp = copyingRack;
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
         for(int i = 3; i < heightLevel; i++){
             copyingRack = copyingRack.clone();
             copyingRack.getLocalTranslation().addLocal(0, distanceBetweenRacks, 0);
-            RigidBodyControl control = copyingRack.getControl(RigidBodyControl.class);
-            control.setPhysicsLocation(copyingRack.getLocalTranslation().add(craneLocation));
             crane.attachChild(copyingRack);
-            physics.add(control);
-            copyingLadder = copyingLadder.clone();
-            copyingLadder.getLocalTranslation().addLocal(0, distanceBetweenRacks, 0);
-            crane.attachChild(copyingLadder);
+            physics.add(setProperLocation(copyingRack, craneLocation));
+            Spatial newLadder = copyingLadder.clone();
+            moveElementToEnd(distanceBetweenLadders, newLadder, copyingRack);
+            crane.attachChild(newLadder);
         }
-        addElementToEnd(temp, entrancePlatform, copyingRack);
-        addElementToEnd(temp, getArmControl().getCraneControl(), copyingRack);
+        moveElementToEnd(entrancePlatform.getLocalTranslation().y - temp
+                .getLocalTranslation().y, entrancePlatform, copyingRack);
+        Node craneControl = getArmControl().getCraneControl();
+        moveElementToEnd(craneControl.getLocalTranslation().y - temp
+                .getLocalTranslation().y, craneControl, copyingRack);
     }
-    private void addElementToEnd(Spatial s1, Spatial s2, Spatial lastElement){
-        float distance = s2.getLocalTranslation().y - s1.getLocalTranslation().y;
-        Vector3f distanceBetweenTwoElements = lastElement.getLocalTranslation()
-                .clone().addLocal(0, distance, 0);
-        s2.setLocalTranslation(distanceBetweenTwoElements);
-        if(s2.getControl(RigidBodyControl.class) != null) 
-            setProperLocation(s2, craneLocation);
+    private void moveElementToEnd(float yDistance, Spatial movingElement, Spatial lastElement){
+        movingElement.getLocalTranslation().setY(lastElement
+                .getLocalTranslation().y + yDistance);
+        if(movingElement.getControl(RigidBodyControl.class) != null) 
+            setProperLocation(movingElement, craneLocation);
     }
 }

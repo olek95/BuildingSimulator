@@ -35,7 +35,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         bulletAppState.getPhysicsSpace().add(rgc);
         MobileCrane crane = new MobileCrane();
         GameManager.addUnit(crane);
-        GameManager.addUnit(new Crane());
+        GameManager.addUnit(new Crane(5));
         crane.setUsing(true);
         GameManager.initHookCollisionListener();
         Control.addListener(crane);

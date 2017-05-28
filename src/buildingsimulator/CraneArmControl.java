@@ -59,18 +59,21 @@ public class CraneArmControl extends ArmControl{
                 .getBulletAppState().getPhysicsSpace();
         Node craneControlNode = getCraneControl(), craneNode = getCrane();
         Vector3f craneLocation = craneNode.getLocalTranslation();
-        physics.add(setProperLocation(craneControlNode.getChild("turntable"), craneLocation));
-        physics.add(setProperLocation(craneControlNode.getChild("mainElement"), craneLocation));
-        physics.add(setProperLocation(craneControlNode.getChild("craneArm"), craneLocation));
-        physics.add(setProperLocation(craneControlNode.getChild("cabin"), craneLocation));
+        physics.add(setProperControlLocation(craneControlNode.getChild("turntable"),
+                craneLocation));
+        physics.add(setProperControlLocation(craneControlNode.getChild("mainElement"),
+                craneLocation));
+        physics.add(setProperControlLocation(craneControlNode.getChild("craneArm"),
+                craneLocation));
+        physics.add(setProperControlLocation(craneControlNode.getChild("cabin"), craneLocation));
         hookHandleControl = (Node)craneControlNode.getChild("hookHandleControl");
         Spatial hookHandle = hookHandleControl.getChild("hookHandle");
         setHookHandle(hookHandle);
-        physics.add(setProperLocation(hookHandle, craneLocation));
+        physics.add(setProperControlLocation(hookHandle, craneLocation));
         setHook(new FourRopesHook((Node)craneNode.getChild("ropeHook"), hookHandle));
     }
     
-    private RigidBodyControl setProperLocation(Spatial object, Vector3f displacement){
+    private RigidBodyControl setProperControlLocation(Spatial object, Vector3f displacement){
         RigidBodyControl control = object.getControl(RigidBodyControl.class);
         control.setPhysicsLocation(object.getLocalTranslation().add(displacement));
         return control;

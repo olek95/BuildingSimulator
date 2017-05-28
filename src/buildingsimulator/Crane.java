@@ -15,69 +15,73 @@ import java.util.List;
 public class Crane extends CraneAbstract{
     private BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
     private Node crane;
-    private Spatial rack, entrancePlatform, mainElement;
+    private Spatial rack, entrancePlatform;
     private Vector3f craneLocation;
-    private int heightLevel = 5;
+    private int heightLevel = 3;
     public Crane(){
+        initCrane();
+    }
+    
+    public Crane(int heightLevel){
+        this.heightLevel = heightLevel;
+        initCrane();
+    }
+    
+    private void initCrane(){
         craneLocation = new Vector3f(10f, -1f, 0f);
         initCraneElements((Node)game.getAssetManager().loadModel("Models/zuraw/zuraw.j3o"));
         GameManager.setCraneRack(rack);
         game.getRootNode().attachChild(crane);
     }
-    public Crane(int heightLevel){
-        this();
-        this.heightLevel = heightLevel;
-    }
-    private RigidBodyControl setProperLocation(Spatial object, Vector3f displacement){
+    
+    private RigidBodyControl setProperControlLocation(Spatial object, Vector3f displacement){
         RigidBodyControl control = object.getControl(RigidBodyControl.class);
         control.setPhysicsLocation(object.getLocalTranslation().add(displacement));
         return control;
     }
+    
     private void initCraneElements(Node parent){
         crane = parent;
         crane.setLocalTranslation(craneLocation);
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
-        physics.add(setProperLocation(crane.getChild("prop0"), craneLocation));
-        physics.add(setProperLocation(crane.getChild("prop1"), craneLocation));
-        physics.add(setProperLocation(rack = crane.getChild("rack0"), craneLocation));
-        Spatial rack1 = crane.getChild("rack1"),
-                rack2 = crane.getChild("rack2");
-        Vector3f firstRackLocation = rack1.getLocalTranslation(), 
-                secondRackLocation = rack2.getLocalTranslation();
-        physics.add(setProperLocation(rack1, craneLocation));
-        physics.add(setProperLocation(rack2, craneLocation));
+        physics.add(setProperControlLocation(crane.getChild("prop0"), craneLocation));
+        physics.add(setProperControlLocation(crane.getChild("prop1"), craneLocation));
+        physics.add(setProperControlLocation(rack = crane.getChild("rack0"), craneLocation));
+        Spatial rack1 = crane.getChild("rack1"), rack2 = crane.getChild("rack2");
+        physics.add(setProperControlLocation(rack1, craneLocation));
+        physics.add(setProperControlLocation(rack2, craneLocation));
         entrancePlatform = crane.getChild("entrancePlatform");
-        mainElement = crane.getChild("mainElement");
-        physics.add(setProperLocation(entrancePlatform, craneLocation));
+        physics.add(setProperControlLocation(entrancePlatform, craneLocation));
         setArmControl(new CraneArmControl(crane));
-        raiseHeight(rack2, firstRackLocation, secondRackLocation, crane.getChild("ladder2"));
+        raiseHeight(rack1, rack2);
     }
-    private void raiseHeight(Spatial copyingRack, Vector3f firstRackLocation,
-            Vector3f secondRackLocation, Spatial copyingLadder){
-        float distanceBetweenRacks = secondRackLocation.y - firstRackLocation.y,
-                distanceBetweenLadders = copyingLadder.getLocalTranslation().y
-                        - secondRackLocation.y;
-        Spatial temp = copyingRack;
+    
+    private void raiseHeight(Spatial penultimateRack, Spatial lastRack){
+        Vector3f firstRackLocation = penultimateRack.getLocalTranslation(),
+                secondRackLocation = lastRack.getLocalTranslation();
+        Spatial copyingLadder = crane.getChild("ladder2");
+        float y = secondRackLocation.y, distanceBetweenRacks = y - firstRackLocation.y,
+                distanceBetweenLadders = copyingLadder.getLocalTranslation().y - y;
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
         for(int i = 3; i < heightLevel; i++){
-            copyingRack = copyingRack.clone();
-            copyingRack.getLocalTranslation().addLocal(0, distanceBetweenRacks, 0);
-            crane.attachChild(copyingRack);
-            physics.add(setProperLocation(copyingRack, craneLocation));
-            Spatial newLadder = copyingLadder.clone();
-            moveElementToEnd(distanceBetweenLadders, newLadder, copyingRack);
+            Spatial newRack = lastRack.clone(), newLadder = copyingLadder.clone(); 
+            moveElementToEnd(distanceBetweenRacks, newRack, lastRack);
+            crane.attachChild(newRack);
+            physics.add(newRack.getControl(0));
+            moveElementToEnd(distanceBetweenLadders, newLadder, newRack);
+            lastRack = newRack;
             crane.attachChild(newLadder);
         }
-        moveElementToEnd(entrancePlatform.getLocalTranslation().y - temp
-                .getLocalTranslation().y, entrancePlatform, copyingRack);
+        moveElementToEnd(entrancePlatform.getLocalTranslation().y - y,
+                entrancePlatform, lastRack);
         Node craneControl = getArmControl().getCraneControl();
-        moveElementToEnd(craneControl.getLocalTranslation().y - temp
-                .getLocalTranslation().y, craneControl, copyingRack);
+        moveElementToEnd(craneControl.getLocalTranslation().y - y, craneControl, lastRack);
     }
+    
     private void moveElementToEnd(float yDistance, Spatial movingElement, Spatial lastElement){
         movingElement.getLocalTranslation().setY(lastElement
                 .getLocalTranslation().y + yDistance);
         if(movingElement.getControl(RigidBodyControl.class) != null) 
-            setProperLocation(movingElement, craneLocation);
+            setProperControlLocation(movingElement, craneLocation);
     }
 }

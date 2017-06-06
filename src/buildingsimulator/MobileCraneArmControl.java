@@ -58,7 +58,7 @@ public class MobileCraneArmControl extends ArmControl{
      */
     @Override
     protected void moveHandleHook(float limit, boolean movingForward, float speed){
-        if(movingForward && stretchingOut <= limit){
+        if(movingForward){
             if(stretchingOut <= limit)
                 changeHandleHookPosition(rectractableCranePart, new Vector3f(1f, 1f, 
                         stretchingOut += STRETCHING_OUT_SPEED), movingForward);

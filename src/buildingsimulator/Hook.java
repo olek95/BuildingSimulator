@@ -105,11 +105,12 @@ public abstract class Hook {
                 Object a = nodeA.getUserObject(), b = nodeB.getUserObject();
                 Spatial aSpatial = (Spatial)a, bSpatial = (Spatial)b;
                 String aName = aSpatial.getName(), bName = bSpatial.getName();
+                if(!isProperCollisionGroup(bSpatial)) return false;
                 if(aName.equals("ropeHook") && !bName.equals("hookHandle")){
-                    return setCollision(aSpatial, bSpatial);
+                    setCollision(aSpatial, bSpatial);
                 }
                 else if(bName.equals("ropeHook") && !aName.equals("hookHandle")){
-                    return setCollision(bSpatial, aSpatial);
+                    setCollision(bSpatial, aSpatial);
                 }
                 return true;
             }
@@ -145,15 +146,19 @@ public abstract class Hook {
      */
     protected abstract void lower();
     
-    private static boolean setCollision(Spatial a, Spatial b){
-        float y1 = ((BoundingBox)a.getWorldBound()).getMin(null).y,
-                y2 = ((BoundingBox)b.getWorldBound()).getMax(null).y;
+    private static void setCollision(Spatial a, Spatial b){
+        Hook actualHook = GameManager.findActualUnit().getHook();
+        Spatial object = actualHook.recentlyHitObject;
         /* zabezpiecza przypadek gdy hak dotyka jednocześnie elementu pionowego
         i poziomego*/
-        if(Math.abs(y1 - y2) >= 0 && Math.abs(y1 - y2) < 0.1f)
-            GameManager.findActualUnit().getHook().recentlyHitObject = b;
-        // PhysicsCollisionObject bo control nie musi być tylko typu RigidBodyControl 
+        if(object == null || ((BoundingBox)object.getWorldBound()).getMax(null).y 
+                > ((BoundingBox)b.getWorldBound()).getMax(null).y)
+            actualHook.recentlyHitObject = b;
+    }
+    
+    private static boolean isProperCollisionGroup(Spatial b){
+        // PhysicsCollisionObject bo control nie musi być tylko typu RigidBodyControl
         int collisionGroup = ((PhysicsCollisionObject)b.getControl(0)).getCollisionGroup();
-        return collisionGroup == 3 || collisionGroup == 1;
+        return collisionGroup != 4;
     }
 }

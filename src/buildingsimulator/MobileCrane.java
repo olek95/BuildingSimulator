@@ -196,6 +196,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
             MobileCraneArmControl control = (MobileCraneArmControl)getArmControl();
             control.setUsing(!control.isUsing());
             GameManager.setLastAction(name);
+            setSteeringAngle(0f); 
         }
     }
     
@@ -232,5 +233,9 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     @Override
     public Control.Actions[] getAvailableActions(){
         return availableActions;
+    }
+    
+    public void setSteeringAngle(float angle){
+        craneControl.steer(steeringValue = angle);
     }
 }

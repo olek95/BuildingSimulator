@@ -125,7 +125,10 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     }else{
                         if(((MobileCraneArmControl)unit.getArmControl()).isUsing())
                             inputManager.removeListener(unit.getArmControl());
-                        else inputManager.removeListener(unit);
+                        else{
+                            unit.setSteeringAngle(0f);
+                            inputManager.removeListener(unit);
+                        }
                         unit.setUsing(false);
                         CraneAbstract crane = GameManager.getUnit(1);
                         Control.addListener(crane.getArmControl());

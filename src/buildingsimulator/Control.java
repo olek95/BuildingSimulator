@@ -40,16 +40,15 @@ public class Control {
      * Dodaje nowego słuchacza klawiszy. 
      * @param o słuchacz 
      */
-    public static void addListener(Object o){
+    public static void addListener(InputListener o){
         if(o instanceof Controllable){
-            InputListener listener = (InputListener)o;
             Actions[] names = ((Controllable)o).getAvailableActions();
             for(int i = 0; i < names.length; i++)
-                inputManager.addListener(listener, names[i].toString());
+                inputManager.addListener(o, names[i].toString());
         }else{
-            inputManager.addListener((BuildingSimulator)o, Actions.PHYSICS.toString());
-            inputManager.addListener((BuildingSimulator)o, Actions.FIRST.toString());
-            inputManager.addListener((BuildingSimulator)o, Actions.SECOND.toString());
+            inputManager.addListener(o, Actions.PHYSICS.toString());
+            inputManager.addListener(o, Actions.FIRST.toString());
+            inputManager.addListener(o, Actions.SECOND.toString());
         }
     }
     

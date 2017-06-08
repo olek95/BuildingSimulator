@@ -17,7 +17,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     private static BuildingSimulator game;
     private BulletAppState bulletAppState = new BulletAppState();
     private boolean debug = false;
-    boolean kabina;
+    //private Control.Actions[] availableActions = {Control.Actions.PHYSICS,
+        ///Control.Actions.FIRST, Control.Actions.SECOND};
     public static void main(String[] args) {
         game = new BuildingSimulator();
         game.start();
@@ -107,7 +108,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         return bulletAppState;
     }
     public void onAction(String name, boolean isPressed, float tpf){
-        MobileCrane unit = (MobileCrane)GameManager.getUnit(0);
+        MobileCrane mobileCrane = (MobileCrane)GameManager.getUnit(0);
+        CraneAbstract crane = GameManager.getUnit(1);
             if(isPressed){
                 if(name.equals(Control.Actions.PHYSICS.toString())){
                     if(!debug) bulletAppState.getPhysicsSpace().enableDebug(assetManager);
@@ -115,22 +117,20 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     debug = !debug;
                 }else{
                     if(name.equals(Control.Actions.FIRST.toString())){
-                        CraneAbstract crane = GameManager.getUnit(1);
                         inputManager.removeListener(crane.getArmControl());
                         crane.setUsing(false);
-                        if(((MobileCraneArmControl)unit.getArmControl()).isUsing())
-                            Control.addListener(unit.getArmControl());
-                        else Control.addListener(unit);
-                        unit.setUsing(true);
+                        Control.addListener(((MobileCraneArmControl)mobileCrane
+                                .getArmControl()).isUsing() ? mobileCrane.getArmControl()
+                                : mobileCrane);
+                        mobileCrane.setUsing(true);
                     }else{
-                        if(((MobileCraneArmControl)unit.getArmControl()).isUsing())
-                            inputManager.removeListener(unit.getArmControl());
+                        if(((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing())
+                            inputManager.removeListener(mobileCrane.getArmControl());
                         else{
-                            unit.setSteeringAngle(0f);
-                            inputManager.removeListener(unit);
+                            mobileCrane.setSteeringAngle(0f);
+                            inputManager.removeListener(mobileCrane);
                         }
-                        unit.setUsing(false);
-                        CraneAbstract crane = GameManager.getUnit(1);
+                        mobileCrane.setUsing(false);
                         Control.addListener(crane.getArmControl());
                         crane.setUsing(true);
                     }

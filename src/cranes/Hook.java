@@ -1,5 +1,6 @@
-package buildingsimulator;
+package cranes;
 
+import buildingsimulator.GameManager;
 import static buildingsimulator.GameManager.addNewCollisionShapeToCompound;
 import static buildingsimulator.GameManager.createPhysics;
 import static buildingsimulator.GameManager.joinsElementToOtherElement;

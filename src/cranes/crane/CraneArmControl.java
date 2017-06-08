@@ -1,5 +1,7 @@
-package buildingsimulator;
+package cranes.crane;
 
+import buildingsimulator.BuildingSimulator;
+import cranes.ArmControl;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;

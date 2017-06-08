@@ -1,5 +1,6 @@
-package buildingsimulator;
+package cranes.crane;
 
+import cranes.Hook;
 import static buildingsimulator.GameManager.*;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;

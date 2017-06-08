@@ -1,5 +1,9 @@
-package buildingsimulator;
+package cranes.mobileCrane;
 
+import buildingsimulator.BuildingSimulator;
+import buildingsimulator.Control;
+import buildingsimulator.GameManager;
+import cranes.ArmControl;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.control.VehicleControl;

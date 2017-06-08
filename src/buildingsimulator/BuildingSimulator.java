@@ -1,5 +1,9 @@
 package buildingsimulator;
 
+import cranes.mobileCrane.MobileCraneArmControl;
+import cranes.mobileCrane.MobileCrane;
+import cranes.crane.Crane;
+import cranes.CraneAbstract;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.RigidBodyControl;

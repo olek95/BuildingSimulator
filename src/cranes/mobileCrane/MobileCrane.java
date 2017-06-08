@@ -1,8 +1,13 @@
-package buildingsimulator;
+package cranes.mobileCrane;
 
+import buildingsimulator.BuildingSimulator;
+import buildingsimulator.Control;
+import cranes.CraneAbstract;
 import static buildingsimulator.GameManager.calculateDisplacementAfterScaling;
 import static buildingsimulator.GameManager.moveWithScallingObject;
 import buildingsimulator.Control.Actions;
+import buildingsimulator.Controllable;
+import buildingsimulator.GameManager;
 import com.jme3.scene.Spatial;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;

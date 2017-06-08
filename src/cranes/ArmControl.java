@@ -1,9 +1,11 @@
-package buildingsimulator;
+package cranes;
 
+import buildingsimulator.Control;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import buildingsimulator.Control.Actions;
+import buildingsimulator.Controllable;
 
 /**
  * Klasa <code>ArmControl</code> jest klasą abstrakcyjną dla wszystkich klas 

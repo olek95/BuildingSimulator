@@ -1,4 +1,4 @@
-package buildingsimulator;
+package cranes;
 
 /**
  * Klasa abstrakcyjna <code>CraneAbstract</code>jest klasą abstrakcyjną dla 

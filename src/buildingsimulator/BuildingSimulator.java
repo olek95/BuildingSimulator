@@ -21,8 +21,6 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     private static BuildingSimulator game;
     private BulletAppState bulletAppState = new BulletAppState();
     private boolean debug = false;
-    //private Control.Actions[] availableActions = {Control.Actions.PHYSICS,
-        ///Control.Actions.FIRST, Control.Actions.SECOND};
     public static void main(String[] args) {
         game = new BuildingSimulator();
         game.start();
@@ -59,10 +57,10 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         mat.setColor("Color", ColorRGBA.Blue);   // set color of material to blue
         geom.setMaterial(mat);                   // set the cube's material
         rootNode.attachChild(geom);              // make the cube appear in the scene
-        RigidBodyControl rg = new RigidBodyControl(0.1f);
+        RigidBodyControl rg = new RigidBodyControl(0.00001f);
         geom.addControl(rg);
         bulletAppState.getPhysicsSpace().add(rg);
-        Box b2 = new Box(1, 1, 1); // create cube shape
+        /*Box b2 = new Box(1, 1, 1); // create cube shape
         Geometry geom2 = new Geometry("Box", b2);  // create cube geometry from the shape
         geom2.setLocalTranslation(0, 2.1f, 20);
         Material mat2 = new Material(assetManager,
@@ -72,7 +70,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         rootNode.attachChild(geom2);              // make the cube appear in the scene
         RigidBodyControl rg2 = new RigidBodyControl(0.1f);
         geom2.addControl(rg2);
-        bulletAppState.getPhysicsSpace().add(rg2);
+        bulletAppState.getPhysicsSpace().add(rg2);*/
         /*Box b3 = new Box(1, 1, 1); // create cube shape
         Geometry geom3 = new Geometry("Box", b3);  // create cube geometry from the shape
         geom3.setLocalTranslation(0, 4.1f, 20);

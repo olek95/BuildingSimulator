@@ -47,6 +47,7 @@ public class FourRopesHook extends Hook{
     @Override
     public void lower(){
         CollisionResults results = new CollisionResults();
+        Spatial recentlyHitObject = getRecentlyHitObject();
         /* jeśli nie dotknęło żadnego obiektu, to zbędne jest sprawdzanie 
         kolizji w dół*/
         if(recentlyHitObject != null){

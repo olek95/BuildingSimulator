@@ -1,9 +1,11 @@
 package cranes;
 
+import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import static buildingsimulator.GameManager.addNewCollisionShapeToCompound;
 import static buildingsimulator.GameManager.createPhysics;
 import static buildingsimulator.GameManager.joinsElementToOtherElement;
+import static buildingsimulator.GameManager.createObjectPhysics;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
@@ -21,78 +23,18 @@ import com.jme3.scene.Spatial;
  */
 public abstract class Hook {
     protected Node ropeHook;
-    protected Spatial hook, hookHandle, recentlyHitObject;
+    protected Spatial hook, hookHandle;
     protected Vector3f hookDisplacement;
     protected float hookLowering = 1f;
     protected static final float HOOK_LOWERING_SPEED = 0.05f;
-    private HingeJoint lineAndHookHandleJoint = null;
+    private Spatial recentlyHitObject;
+    public Spatial ac;
+    private HingeJoint lineAndHookHandleJoint = null, buildingMaterialJoint;
     public Hook(Node ropeHook, Spatial hookHandle){
         this.ropeHook = ropeHook;
         hook = ropeHook.getChild("hook");
         this.hookHandle = hookHandle;
-    }
-    
-    /**
-     * Opuszcza hak, jeśli nic nie znajduje się pod nim. W przeciwnym razie 
-     * hak nie zmienia pozycji. 
-     * @param results wyniki kolizji, dzięki którym sprawdza się w ilu punktach 
-     * jest kolizja z danym obiektem 
-     */
-    protected void lower(CollisionResults results){
-        // obniża hak, jeśli w żadnym punkcie z dołu nie dotyka jakiegoś obiektu
-        if(results.size() == 0){
-            changeHookPosition(new Vector3f(1f,hookLowering += HOOK_LOWERING_SPEED, 1f),
-                    false);
-            recentlyHitObject = null;
-        }
-    }
-    
-    /**
-     * Podnosi hak. 
-     */
-    public void heighten(){
-        changeHookPosition(new Vector3f(1f, hookLowering -= HOOK_LOWERING_SPEED, 1f),
-                true);
-    }
-    
-    /**
-     * Ustawia ostatnio dotknięty przez hak obiekt.
-     * @param object dotknięty obiekt 
-     */
-    public void setRecentlyHitObject(Spatial object){
-        recentlyHitObject = object;
-    }
-    
-    /**
-     * Zwraca wartość określającą jak bardzo opuszczony jest hak. 
-     * @return wartość opuszczenia haka 
-     */
-    public float getHookLowering(){
-        return hookLowering;
-    }
-    
-    /**
-     * Dołącza do podanego złożonego kształtu kolizji kształty kolizji innych 
-     * elementów haka, wspólnych dla wszystkich haków. Ponadto dołącza fizykę 
-     * dla tego obiektu do gry, ustawia odpowiednie grupy kolizji, a także 
-     * łączy hak z uchwytem na hak. 
-     * @param ropeHookCompound złożony kształt kolizji do którego dołącza się 
-     * kształty kolizji dla haka. 
-     * @param distanceHookHandleAndRopeHook wektor decydujący w jakiej odległości 
-     * ma być zawieszony hak od uchwytu na hak. 
-     */
-    protected  void createRopeHookPhysics(CompoundCollisionShape ropeHookCompound,
-            Vector3f distanceHookHandleAndRopeHook){
-        addNewCollisionShapeToCompound(ropeHookCompound, (Node)hook, ((Node)hook).getChild(0).getName(),
-                hook.getLocalTranslation(), hook.getLocalRotation());
-        createPhysics(ropeHookCompound, ropeHook, 4f, false);
-        RigidBodyControl ropeHookControl = ropeHook.getControl(RigidBodyControl.class);
-        ropeHookControl.setCollisionGroup(2); 
-        ropeHookControl.addCollideWithGroup(1); // tylko mobilny???
-        ropeHookControl.setCollideWithGroups(3); // tylko mobilny???
-        lineAndHookHandleJoint = joinsElementToOtherElement(lineAndHookHandleJoint,
-                hookHandle, ropeHook, Vector3f.ZERO, distanceHookHandleAndRopeHook);
-    }
+    } 
     
     /**
      * Tworzy obiekt kolizji dla haków. Ustawia on ostatnio dotkniety przez hak 
@@ -119,19 +61,103 @@ public abstract class Hook {
     }
     
     /**
+     * Podnosi hak. 
+     */
+    public void heighten(){
+        changeHookPosition(new Vector3f(1f, hookLowering -= HOOK_LOWERING_SPEED, 1f),
+                true);
+    }
+    
+    public void join(){
+        if(buildingMaterialJoint == null){
+        //createObjectPhysics((Node)hook, 0, true, "hookGeometry");
+            ac = recentlyHitObject;
+        ropeHook.attachChild(ac);
+        /*ropeHook.getControl(RigidBodyControl.class).setAngularDamping(1f);
+        ropeHook.getControl(RigidBodyControl.class).setAngularVelocity(Vector3f.ZERO);
+        ropeHook.getControl(RigidBodyControl.class).setLinearDamping(1f);
+        ropeHook.getControl(RigidBodyControl.class).setLinearVelocity(Vector3f.ZERO);
+        ropeHook.getControl(RigidBodyControl.class).setAngularFactor(0);
+        buildingMaterialJoint = new HingeJoint(recentlyHitObject
+                .getControl(RigidBodyControl.class), hook.getControl(RigidBodyControl.class), 
+                new Vector3f(0,1.5f,0), Vector3f.ZERO,
+                Vector3f.ZERO, Vector3f.ZERO);
+        hook.getControl(RigidBodyControl.class).setAngularDamping(1f);
+        hook.getControl(RigidBodyControl.class).setAngularVelocity(Vector3f.ZERO);
+        hook.getControl(RigidBodyControl.class).setLinearDamping(1f);
+        hook.getControl(RigidBodyControl.class).setLinearVelocity(Vector3f.ZERO);
+        hook.getControl(RigidBodyControl.class).setAngularFactor(0);
+        recentlyHitObject.getControl(RigidBodyControl.class).setAngularDamping(1f);
+        recentlyHitObject.getControl(RigidBodyControl.class).setAngularVelocity(Vector3f.ZERO);
+        recentlyHitObject.getControl(RigidBodyControl.class).setLinearDamping(1f);
+        recentlyHitObject.getControl(RigidBodyControl.class).setLinearVelocity(Vector3f.ZERO);
+        recentlyHitObject.getControl(RigidBodyControl.class).setAngularFactor(0);
+        BuildingSimulator.getBuildingSimulator().getBulletAppState()
+                .getPhysicsSpace().add(buildingMaterialJoint)*/;}
+    }
+    
+    public Spatial getRecentlyHitObject(){ return recentlyHitObject; }
+    
+    /**
+     * Ustawia ostatnio dotknięty przez hak obiekt.
+     * @param object dotknięty obiekt 
+     */
+    public void setRecentlyHitObject(Spatial object){ recentlyHitObject = object; }
+    
+    /**
+     * Zwraca wartość określającą jak bardzo opuszczony jest hak. 
+     * @return wartość opuszczenia haka 
+     */
+    public float getHookLowering(){ return hookLowering; }
+    
+    /**
      * Zwraca uchwyt do jakiego przyczepiona jest lina. 
      * @return uchwyt liny
      */
-    public Spatial getHookHandle(){
-        return hookHandle;
-    }
+    public Spatial getHookHandle(){ return hookHandle; }
     
     /**
      * Zwraca węzeł z hakiem z liniami. 
      * @return węzeł z hakiem z liniami 
      */
-    public Node getRopeHook(){
-        return ropeHook;
+    public Node getRopeHook(){ return ropeHook; }
+    
+    /**
+     * Opuszcza hak, jeśli nic nie znajduje się pod nim. W przeciwnym razie 
+     * hak nie zmienia pozycji. 
+     * @param results wyniki kolizji, dzięki którym sprawdza się w ilu punktach 
+     * jest kolizja z danym obiektem 
+     */
+    protected void lower(CollisionResults results){
+        // obniża hak, jeśli w żadnym punkcie z dołu nie dotyka jakiegoś obiektu
+        if(results.size() == 0){
+            changeHookPosition(new Vector3f(1f,hookLowering += HOOK_LOWERING_SPEED, 1f),
+                    false);
+            recentlyHitObject = null;
+        }
+    }
+    
+    /**
+     * Dołącza do podanego złożonego kształtu kolizji kształty kolizji innych 
+     * elementów haka, wspólnych dla wszystkich haków. Ponadto dołącza fizykę 
+     * dla tego obiektu do gry, ustawia odpowiednie grupy kolizji, a także 
+     * łączy hak z uchwytem na hak. 
+     * @param ropeHookCompound złożony kształt kolizji do którego dołącza się 
+     * kształty kolizji dla haka. 
+     * @param distanceHookHandleAndRopeHook wektor decydujący w jakiej odległości 
+     * ma być zawieszony hak od uchwytu na hak. 
+     */
+    protected  void createRopeHookPhysics(CompoundCollisionShape ropeHookCompound,
+            Vector3f distanceHookHandleAndRopeHook){
+        addNewCollisionShapeToCompound(ropeHookCompound, (Node)hook, ((Node)hook).getChild(0).getName(),
+                hook.getLocalTranslation(), hook.getLocalRotation());
+        createPhysics(ropeHookCompound, ropeHook, 4f, false);
+        RigidBodyControl ropeHookControl = ropeHook.getControl(RigidBodyControl.class);
+        ropeHookControl.setCollisionGroup(2); 
+        ropeHookControl.addCollideWithGroup(1); // tylko mobilny???
+        ropeHookControl.setCollideWithGroups(3); // tylko mobilny???
+        lineAndHookHandleJoint = joinsElementToOtherElement(lineAndHookHandleJoint,
+                hookHandle, ropeHook, Vector3f.ZERO, distanceHookHandleAndRopeHook);
     }
     
     /**

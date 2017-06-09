@@ -34,6 +34,7 @@ public class OneRopeHook extends Hook{
     @Override
     public void lower(){
         CollisionResults results = new CollisionResults();
+        Spatial recentlyHitObject = getRecentlyHitObject();
         /* jeśli nie dotknęło żadnego obiektu, to zbędne jest sprawdzanie 
         kolizji w dół*/
         if(recentlyHitObject != null)
@@ -52,6 +53,12 @@ public class OneRopeHook extends Hook{
     protected void changeHookPosition(Vector3f scallingVector, boolean heightening){
         moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
                 rope, hook);
+        if(ac != null && ropeHook.hasChild(ac)){
+            System.out.println("TUTAJ");
+            ac.getControl(RigidBodyControl.class).setPhysicsLocation(
+                    ac.getControl(RigidBodyControl.class).getPhysicsLocation()
+                    .addLocal(hookDisplacement));
+        }
         createRopeHookPhysics();
     }
     

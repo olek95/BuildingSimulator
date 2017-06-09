@@ -28,6 +28,7 @@ public class Control {
         PULL_IN(KeyInput.KEY_SPACE),
         LOWER_HOOK(KeyInput.KEY_R),
         HEIGHTEN_HOOK(KeyInput.KEY_T),
+        JOIN(KeyInput.KEY_Y),
         PHYSICS(KeyInput.KEY_P),
         FIRST(KeyInput.KEY_1),
         SECOND(KeyInput.KEY_2);

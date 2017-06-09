@@ -22,7 +22,7 @@ public abstract class ArmControl implements AnalogListener, Controllable{
     private Spatial hookHandle;
     private Actions[] availableActions = {Actions.RIGHT, Actions.LEFT,
         Actions.PULL_OUT, Actions.PULL_IN, Actions.LOWER_HOOK, Actions.HEIGHTEN_HOOK,
-        Actions.UP, Actions.DOWN, Actions.ACTION};
+        Actions.UP, Actions.DOWN, Actions.ACTION, Actions.JOIN};
     /**
      * Konstruktor tworzący kabinę. Używany, gdy wartość maksymalnego i 
      * minimalnego przesunięcia uchwytu nie jest znana od początku. Należy 
@@ -77,6 +77,10 @@ public abstract class ArmControl implements AnalogListener, Controllable{
                 if(hook.getHookLowering() > 1f)
                     hook.heighten();
                 break;
+            case JOIN: 
+                if(hook.getRecentlyHitObject() != null)
+                    hook.join();
+                break; 
             case UP:
                 changeArmHeight(maxArmHeight, false);
                 break;
@@ -208,19 +212,19 @@ public abstract class ArmControl implements AnalogListener, Controllable{
     }
     
     /**
-     * Metoda inicjuje węzeł posiadający elementy składające się na całe sterowane 
-     * ramię dźwigu. 
-     */
-    protected void initCraneArmElements(){
-        craneControl = (Node)crane.getChild("craneControl");
-    }
-    
-    /**
      * Zwraca wszystkie dostępne akcje, które może wykonać dźwig. 
      * @return wszystkie akcje dźwigu
      */
     @Override
     public Control.Actions[] getAvailableActions(){
         return availableActions;
+    }
+    
+    /**
+     * Metoda inicjuje węzeł posiadający elementy składające się na całe sterowane 
+     * ramię dźwigu. 
+     */
+    protected void initCraneArmElements(){
+        craneControl = (Node)crane.getChild("craneControl");
     }
 }

@@ -32,10 +32,10 @@ public class FourRopesHook extends Hook{
             }
         }
         littleHookHandle = (Node)ropeHook.getChild("littleHookHandle");
-        hookDisplacement = calculateDisplacementAfterScaling(ropes[0], 
+        setHookDisplacement(calculateDisplacementAfterScaling(ropes[0], 
                 new Vector3f(1f, hookLowering + HOOK_LOWERING_SPEED, 1f),
-                false, true, false);
-        hookDisplacement.y *= 2;
+                false, true, false));
+        getHookDisplacement().y *= 2;
         createRopeHookPhysics();
     }
     
@@ -71,18 +71,13 @@ public class FourRopesHook extends Hook{
      */
     @Override
     protected void changeHookPosition(Vector3f scallingVector, boolean heightening){
-        Spatial attachedObject = getAttachedObject();
-        if(attachedObject != null){
-            moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
-                    ropes, hook, littleHookHandle, attachedObject);
-        }else{
-            moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
-                    ropes, hook, littleHookHandle);
-        }
-        createRopeHookPhysics();
+        littleHookHandle.getLocalTranslation().addLocal(!heightening ? 
+                getHookDisplacement().clone().negateLocal() : getHookDisplacement().clone());
+        super.changeHookPosition(scallingVector, heightening);
     }
     
-    private void createRopeHookPhysics(){
+    @Override
+    protected void createRopeHookPhysics(){
         CompoundCollisionShape ropeHookCompound = createCompound(((Node)ropeHook), ropes[0].getChild(0)
                 .getName());
         ropeHookCompound.getChildren().get(0).location = ropes[0].getLocalTranslation();
@@ -91,6 +86,11 @@ public class FourRopesHook extends Hook{
                     .getChild(0).getName(), ropes[i].getLocalTranslation(), null);
         addNewCollisionShapeToCompound(ropeHookCompound, littleHookHandle, littleHookHandle
                 .getChild(0).getName(), littleHookHandle.getLocalTranslation(), null);
-        super.createRopeHookPhysics(ropeHookCompound, new Vector3f(0, 0.6f,0));
+        super.addHookPhysics(ropeHookCompound, new Vector3f(0, 0.6f,0));
+    }
+    
+    @Override 
+    protected Node[] getRopes(){
+        return ropes; 
     }
 }

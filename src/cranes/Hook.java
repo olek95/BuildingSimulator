@@ -1,11 +1,10 @@
 package cranes;
 
-import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import static buildingsimulator.GameManager.addNewCollisionShapeToCompound;
 import static buildingsimulator.GameManager.createPhysics;
 import static buildingsimulator.GameManager.joinsElementToOtherElement;
-import static buildingsimulator.GameManager.createObjectPhysics;
+import static buildingsimulator.GameManager.moveWithScallingObject;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
@@ -24,9 +23,9 @@ import com.jme3.scene.Spatial;
 public abstract class Hook {
     protected Node ropeHook;
     protected Spatial hook, hookHandle;
-    protected Vector3f hookDisplacement;
     protected float hookLowering = 1f;
     protected static final float HOOK_LOWERING_SPEED = 0.05f;
+    private Vector3f hookDisplacement;
     private Spatial recentlyHitObject, attachedObject = null;
     private HingeJoint lineAndHookHandleJoint = null, buildingMaterialJoint;
     public Hook(Node ropeHook, Spatial hookHandle){
@@ -102,6 +101,12 @@ public abstract class Hook {
     
     public Spatial getAttachedObject() { return attachedObject; }
     
+    public Vector3f getHookDisplacement() { return hookDisplacement; }
+    
+    public void setHookDisplacement(Vector3f displacement){
+        this.hookDisplacement = displacement;
+    }
+    
     /**
      * Opuszcza hak, jeśli nic nie znajduje się pod nim. W przeciwnym razie 
      * hak nie zmienia pozycji. 
@@ -127,7 +132,7 @@ public abstract class Hook {
      * @param distanceHookHandleAndRopeHook wektor decydujący w jakiej odległości 
      * ma być zawieszony hak od uchwytu na hak. 
      */
-    protected  void createRopeHookPhysics(CompoundCollisionShape ropeHookCompound,
+    protected  void addHookPhysics(CompoundCollisionShape ropeHookCompound,
             Vector3f distanceHookHandleAndRopeHook){
         addNewCollisionShapeToCompound(ropeHookCompound, (Node)hook, ((Node)hook).getChild(0).getName(),
                 hook.getLocalTranslation(), hook.getLocalRotation());
@@ -141,17 +146,30 @@ public abstract class Hook {
     }
     
     /**
-     * Zmienia pozycję haka w górę lub w dół równocześnie skalując liny haka. 
-     * @param scallingVector wektor skalowania lin 
-     * @param heightening true jeśli podnosimy hak, false w przeciwnym razie 
+     * Podnosi lub opuszcza hak. 
+     * @param scallingVector wektor o jaki ma być przesunięty hak 
+     * @param heightening true jeśli podnosimy hak, false w przeciwnym przypadku 
      */
-    protected abstract void changeHookPosition(Vector3f scallingVector, boolean heightening);
+    protected void changeHookPosition(Vector3f scallingVector, boolean heightening){
+        if(attachedObject != null){
+            moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
+                    getRopes(), hook, attachedObject);
+        }else{
+            moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
+                    getRopes(), hook);
+        }
+        createRopeHookPhysics();
+    }
     
     /**
      * Metoda abstrakcyjna którą musi nadpisać każda klasa haka, aby określić 
      * dodatkowe zasady sprawdzania kolizji podczas opuszczania haka. 
      */
     protected abstract void lower();
+    
+    protected abstract void createRopeHookPhysics();
+    
+    protected abstract Node[] getRopes();
     
     private static void setCollision(Spatial a, Spatial b){
         Hook actualHook = GameManager.findActualUnit().getHook();

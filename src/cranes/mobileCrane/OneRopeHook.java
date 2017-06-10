@@ -21,10 +21,10 @@ public class OneRopeHook extends Hook{
         super(ropeHook, hookHandle);
         rope = (Node)ropeHook.getChild("rope");
         hookHandle.getControl(RigidBodyControl.class).addCollideWithGroup(1);
-        hookDisplacement = calculateDisplacementAfterScaling(rope, 
+       setHookDisplacement(calculateDisplacementAfterScaling(rope, 
                 new Vector3f(1f, hookLowering + HOOK_LOWERING_SPEED, 1f),
-                false, true, false);
-        hookDisplacement.y *= 2; // wyrównuje poruszanie się haka wraz z liną 
+                false, true, false));
+        getHookDisplacement().y *= 2; // wyrównuje poruszanie się haka wraz z liną 
         createRopeHookPhysics();
     }
     
@@ -44,26 +44,14 @@ public class OneRopeHook extends Hook{
         super.lower(results);
     }
     
-    /**
-     * Podnosi lub opuszcza hak. 
-     * @param scallingVector wektor o jaki ma być przesunięty hak 
-     * @param heightening true jeśli podnosimy hak, false w przeciwnym przypadku 
-     */
     @Override
-    protected void changeHookPosition(Vector3f scallingVector, boolean heightening){
-        Spatial attachedObject = getAttachedObject();
-        if(attachedObject != null){
-            moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
-                    new Node[] { rope }, hook, attachedObject);
-        }else{
-            moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
-                    new Node[] { rope }, hook);
-        }
-        createRopeHookPhysics();
+    protected void createRopeHookPhysics(){
+        super.addHookPhysics(createCompound(rope, rope.getChild(0).getName()),
+                new Vector3f(0, 0.06f,0));
     }
     
-    private void createRopeHookPhysics(){
-        super.createRopeHookPhysics(createCompound(rope, rope.getChild(0).getName()),
-                new Vector3f(0, 0.06f,0));
+    @Override
+    protected Node[] getRopes(){
+        return new Node[] {rope};
     }
 }

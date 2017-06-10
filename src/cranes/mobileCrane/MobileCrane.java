@@ -187,8 +187,8 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
             Node prop = (Node)mobileCraneChildren.get(i);
             if(Arrays.binarySearch(props, prop.getName()) >= 0){
                     changed++;
-                    moveWithScallingObject(!lowering, propDisplacement, scallingVector, (Node)prop
-                            .getChild(0), prop.getChild(1));
+                    moveWithScallingObject(!lowering, propDisplacement, scallingVector,
+                            new Node[] { (Node)prop.getChild(0) }, prop.getChild(1));
             }
             i++;
         }while(changed < 4);

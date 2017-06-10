@@ -71,8 +71,14 @@ public class FourRopesHook extends Hook{
      */
     @Override
     protected void changeHookPosition(Vector3f scallingVector, boolean heightening){
-        moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
-                ropes, hook, littleHookHandle);
+        Spatial attachedObject = getAttachedObject();
+        if(attachedObject != null){
+            moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
+                    ropes, hook, littleHookHandle, attachedObject);
+        }else{
+            moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
+                    ropes, hook, littleHookHandle);
+        }
         createRopeHookPhysics();
     }
     

@@ -171,8 +171,8 @@ public class MobileCraneArmControl extends ArmControl{
     private void changeHandleHookPosition(Node scallingGeometryParent, 
             Vector3f scallingVector, boolean pullingOut){
         Geometry rectractableCranePartGeometry = (Geometry)scallingGeometryParent.getChild(0);
-        moveWithScallingObject(pullingOut, hookHandleDisplacement,scallingVector,
-                scallingGeometryParent, getHook().getHookHandle());
+        moveWithScallingObject(pullingOut, hookHandleDisplacement, scallingVector,
+                new Node[] { scallingGeometryParent }, getHook().getHookHandle());
         createObjectPhysics(rectractableCranePart, 1f, true, rectractableCranePartGeometry
                 .getName());
         rectractableCranePart.getControl(RigidBodyControl.class).setCollisionGroup(3);

@@ -79,7 +79,7 @@ public abstract class ArmControl implements AnalogListener, Controllable{
                 break;
             case JOIN: 
                 if(hook.getRecentlyHitObject() != null)
-                    hook.join();
+                    hook.attach();
                 break; 
             case UP:
                 changeArmHeight(maxArmHeight, false);

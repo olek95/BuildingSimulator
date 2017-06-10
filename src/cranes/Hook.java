@@ -27,8 +27,7 @@ public abstract class Hook {
     protected Vector3f hookDisplacement;
     protected float hookLowering = 1f;
     protected static final float HOOK_LOWERING_SPEED = 0.05f;
-    private Spatial recentlyHitObject;
-    public Spatial ac;
+    private Spatial recentlyHitObject, attachedObject = null;
     private HingeJoint lineAndHookHandleJoint = null, buildingMaterialJoint;
     public Hook(Node ropeHook, Spatial hookHandle){
         this.ropeHook = ropeHook;
@@ -68,32 +67,11 @@ public abstract class Hook {
                 true);
     }
     
-    public void join(){
-        if(buildingMaterialJoint == null){
-        //createObjectPhysics((Node)hook, 0, true, "hookGeometry");
-            ac = recentlyHitObject;
-        ropeHook.attachChild(ac);
-        /*ropeHook.getControl(RigidBodyControl.class).setAngularDamping(1f);
-        ropeHook.getControl(RigidBodyControl.class).setAngularVelocity(Vector3f.ZERO);
-        ropeHook.getControl(RigidBodyControl.class).setLinearDamping(1f);
-        ropeHook.getControl(RigidBodyControl.class).setLinearVelocity(Vector3f.ZERO);
-        ropeHook.getControl(RigidBodyControl.class).setAngularFactor(0);
-        buildingMaterialJoint = new HingeJoint(recentlyHitObject
-                .getControl(RigidBodyControl.class), hook.getControl(RigidBodyControl.class), 
-                new Vector3f(0,1.5f,0), Vector3f.ZERO,
-                Vector3f.ZERO, Vector3f.ZERO);
-        hook.getControl(RigidBodyControl.class).setAngularDamping(1f);
-        hook.getControl(RigidBodyControl.class).setAngularVelocity(Vector3f.ZERO);
-        hook.getControl(RigidBodyControl.class).setLinearDamping(1f);
-        hook.getControl(RigidBodyControl.class).setLinearVelocity(Vector3f.ZERO);
-        hook.getControl(RigidBodyControl.class).setAngularFactor(0);
-        recentlyHitObject.getControl(RigidBodyControl.class).setAngularDamping(1f);
-        recentlyHitObject.getControl(RigidBodyControl.class).setAngularVelocity(Vector3f.ZERO);
-        recentlyHitObject.getControl(RigidBodyControl.class).setLinearDamping(1f);
-        recentlyHitObject.getControl(RigidBodyControl.class).setLinearVelocity(Vector3f.ZERO);
-        recentlyHitObject.getControl(RigidBodyControl.class).setAngularFactor(0);
-        BuildingSimulator.getBuildingSimulator().getBulletAppState()
-                .getPhysicsSpace().add(buildingMaterialJoint)*/;}
+    public void attach(){
+        if(attachedObject == null){
+            attachedObject = recentlyHitObject;
+            ropeHook.attachChild(attachedObject);
+        }
     }
     
     public Spatial getRecentlyHitObject(){ return recentlyHitObject; }
@@ -121,6 +99,8 @@ public abstract class Hook {
      * @return węzeł z hakiem z liniami 
      */
     public Node getRopeHook(){ return ropeHook; }
+    
+    public Spatial getAttachedObject() { return attachedObject; }
     
     /**
      * Opuszcza hak, jeśli nic nie znajduje się pod nim. W przeciwnym razie 

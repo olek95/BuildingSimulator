@@ -117,31 +117,27 @@ public class GameManager {
      * @param movingElements przesuwane elementy  
      */
     public static void moveWithScallingObject(boolean direction, Vector3f elementDisplacement,
-            Vector3f scallingVector, Node scallingElement, Spatial... movingElements){
-        ((Geometry)scallingElement.getChild(0)).setLocalScale(scallingVector);
-        Vector3f displacement = elementDisplacement.clone();
-        if(!direction) displacement.negateLocal();
-            for(int i = 0; i < movingElements.length; i++)
-                movingElements[i].getLocalTranslation().addLocal(displacement);
-    }
-    
-    /**
-     * Przesuwa elementy o podany wektor, jednocześnie skalując ich sąsiadów. 
-     * @param direction true jeśli ma się przesuwać w kierunku dodatnim, false 
-     * w przeciwnym kierunku 
-     * @param elementDisplacement wektor przesunięcia 
-     * @param scallingVector wektor skalowania 
-     * @param scallingElements skalowane elementy 
-     * @param movingElements przesuwane elementy 
-     */
-    public static void moveWithScallingObject(boolean direction, Vector3f elementDisplacement,
             Vector3f scallingVector, Node[] scallingElements, Spatial... movingElements){
         for(int i = 0; i < scallingElements.length; i++)
             ((Geometry)scallingElements[i].getChild(0)).setLocalScale(scallingVector);
         Vector3f displacement = elementDisplacement.clone();
         if(!direction) displacement.negateLocal();
             for(int i = 0; i < movingElements.length; i++)
-                movingElements[i].getLocalTranslation().addLocal(displacement);
+                if(isNonDynamicSpatial(movingElements[i]))
+                    movingElements[i].getLocalTranslation().addLocal(displacement);
+                else 
+                    moveDynamicObject(movingElements[i], displacement);
+    }
+    
+    private static void moveDynamicObject(Spatial element, Vector3f displacement){
+        RigidBodyControl elementControl = element.getControl(RigidBodyControl.class);
+        elementControl.setPhysicsLocation(elementControl.getPhysicsLocation()
+                .addLocal(displacement));
+    }
+    
+    private static boolean isNonDynamicSpatial(Spatial element){
+        RigidBodyControl elementControl = element.getControl(RigidBodyControl.class);
+        return elementControl == null || elementControl.isKinematic();
     }
     
     /**

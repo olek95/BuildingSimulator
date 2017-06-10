@@ -51,13 +51,13 @@ public class OneRopeHook extends Hook{
      */
     @Override
     protected void changeHookPosition(Vector3f scallingVector, boolean heightening){
-        moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
-                rope, hook);
-        if(ac != null && ropeHook.hasChild(ac)){
-            System.out.println("TUTAJ");
-            ac.getControl(RigidBodyControl.class).setPhysicsLocation(
-                    ac.getControl(RigidBodyControl.class).getPhysicsLocation()
-                    .addLocal(hookDisplacement));
+        Spatial attachedObject = getAttachedObject();
+        if(attachedObject != null){
+            moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
+                    new Node[] { rope }, hook, attachedObject);
+        }else{
+            moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
+                    new Node[] { rope }, hook);
         }
         createRopeHookPhysics();
     }

@@ -1,5 +1,6 @@
 package cranes;
 
+import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import static buildingsimulator.GameManager.addNewCollisionShapeToCompound;
 import static buildingsimulator.GameManager.createPhysics;
@@ -27,7 +28,8 @@ public abstract class Hook {
     protected static final float HOOK_LOWERING_SPEED = 0.05f;
     private Vector3f hookDisplacement;
     private Spatial recentlyHitObject, attachedObject = null;
-    private HingeJoint lineAndHookHandleJoint = null, buildingMaterialJoint;
+    private HingeJoint lineAndHookHandleJoint = null, buildingMaterialJoint, as;
+    public Spatial attachmentPoint; 
     public Hook(Node ropeHook, Spatial hookHandle){
         this.ropeHook = ropeHook;
         hook = ropeHook.getChild("hook");
@@ -67,9 +69,15 @@ public abstract class Hook {
     }
     
     public void attach(){
+        
         if(attachedObject == null){
             attachedObject = recentlyHitObject;
-            ropeHook.attachChild(attachedObject);
+            ((Node)attachmentPoint).attachChild(attachedObject);
+            as = joinsElementToOtherElement(as,
+                hook, attachedObject, Vector3f.ZERO, new Vector3f(0, 1.5f, 0));
+            BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
+                    .add(as);
+            //createRopeHookPhysics(); 
         }
     }
     
@@ -136,11 +144,19 @@ public abstract class Hook {
             Vector3f distanceHookHandleAndRopeHook){
         addNewCollisionShapeToCompound(ropeHookCompound, (Node)hook, ((Node)hook).getChild(0).getName(),
                 hook.getLocalTranslation(), hook.getLocalRotation());
+        /*addNewCollisionShapeToCompound(ropeHookCompound, (Node)attachmentPoint, 
+                ((Node)attachmentPoint).getChild(0).getName(), attachmentPoint.getLocalTranslation(),
+                attachmentPoint.getLocalRotation());*/
         createPhysics(ropeHookCompound, ropeHook, 4f, false);
         RigidBodyControl ropeHookControl = ropeHook.getControl(RigidBodyControl.class);
         ropeHookControl.setCollisionGroup(2); 
         ropeHookControl.addCollideWithGroup(1); // tylko mobilny???
         ropeHookControl.setCollideWithGroups(3); // tylko mobilny???
+        /*if(attachedObject != null){
+         as = joinsElementToOtherElement(as,
+                hook, attachedObject, Vector3f.ZERO, new Vector3f(0, 3f, 0));
+            BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
+                    .add(as);}*/
         lineAndHookHandleJoint = joinsElementToOtherElement(lineAndHookHandleJoint,
                 hookHandle, ropeHook, Vector3f.ZERO, distanceHookHandleAndRopeHook);
     }
@@ -153,7 +169,7 @@ public abstract class Hook {
     protected void changeHookPosition(Vector3f scallingVector, boolean heightening){
         if(attachedObject != null){
             moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
-                    getRopes(), hook, attachedObject);
+                    getRopes(), hook);
         }else{
             moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
                     getRopes(), hook);

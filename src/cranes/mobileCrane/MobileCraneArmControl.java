@@ -15,6 +15,7 @@ import com.jme3.scene.Spatial;
 import static buildingsimulator.GameManager.*;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
+import cranes.Hook;
 
 /**
  * Obiekt klasy <code>MobileCraneArmControl</code> reprezentuje kabinę operatora ramienia 

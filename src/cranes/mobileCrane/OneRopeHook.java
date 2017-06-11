@@ -25,6 +25,7 @@ public class OneRopeHook extends Hook{
                 new Vector3f(1f, hookLowering + HOOK_LOWERING_SPEED, 1f),
                 false, true, false));
         getHookDisplacement().y *= 2; // wyrównuje poruszanie się haka wraz z liną 
+        attachmentPoint = ropeHook.getChild("attachmentPoint");
         createRopeHookPhysics();
     }
     

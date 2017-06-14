@@ -71,10 +71,9 @@ public abstract class Hook {
         if(buildingMaterialJoint == null){
             attachedObject = recentlyHitObject;
             buildingMaterialJoint = joinsElementToOtherElement(buildingMaterialJoint,
-                hook, attachedObject, Vector3f.ZERO, new Vector3f(0, 1.5f, 0));
+                hook, attachedObject, Vector3f.ZERO, new Vector3f(0, 1.2f, 0)); // 1.5 mobil
             BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
                     .add(buildingMaterialJoint);
-            System.out.println("WSZEDLEM");
         }
     }
     

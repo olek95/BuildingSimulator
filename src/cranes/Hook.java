@@ -74,6 +74,7 @@ public abstract class Hook {
                 hook, attachedObject, Vector3f.ZERO, new Vector3f(0, 1.5f, 0));
             BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
                     .add(buildingMaterialJoint);
+            System.out.println("WSZEDLEM");
         }
     }
     

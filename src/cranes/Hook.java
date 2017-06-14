@@ -28,8 +28,7 @@ public abstract class Hook {
     protected static final float HOOK_LOWERING_SPEED = 0.05f;
     private Vector3f hookDisplacement;
     private Spatial recentlyHitObject, attachedObject = null;
-    private HingeJoint lineAndHookHandleJoint = null, buildingMaterialJoint, as;
-    public Spatial attachmentPoint; 
+    private HingeJoint lineAndHookHandleJoint = null, buildingMaterialJoint;
     public Hook(Node ropeHook, Spatial hookHandle){
         this.ropeHook = ropeHook;
         hook = ropeHook.getChild("hook");
@@ -50,10 +49,10 @@ public abstract class Hook {
                 String aName = aSpatial.getName(), bName = bSpatial.getName();
                 if(!isProperCollisionGroup(bSpatial)) return false;
                 if(aName.equals("ropeHook") && !bName.equals("hookHandle")){
-                    setCollision(aSpatial, bSpatial);
+                    setCollision(bSpatial);
                 }
                 else if(bName.equals("ropeHook") && !aName.equals("hookHandle")){
-                    setCollision(bSpatial, aSpatial);
+                    setCollision(aSpatial);
                 }
                 return true;
             }
@@ -69,15 +68,12 @@ public abstract class Hook {
     }
     
     public void attach(){
-        
-        if(attachedObject == null){
+        if(buildingMaterialJoint == null){
             attachedObject = recentlyHitObject;
-            ((Node)attachmentPoint).attachChild(attachedObject);
-            as = joinsElementToOtherElement(as,
+            buildingMaterialJoint = joinsElementToOtherElement(buildingMaterialJoint,
                 hook, attachedObject, Vector3f.ZERO, new Vector3f(0, 1.5f, 0));
             BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
-                    .add(as);
-            //createRopeHookPhysics(); 
+                    .add(buildingMaterialJoint);
         }
     }
     
@@ -144,19 +140,11 @@ public abstract class Hook {
             Vector3f distanceHookHandleAndRopeHook){
         addNewCollisionShapeToCompound(ropeHookCompound, (Node)hook, ((Node)hook).getChild(0).getName(),
                 hook.getLocalTranslation(), hook.getLocalRotation());
-        /*addNewCollisionShapeToCompound(ropeHookCompound, (Node)attachmentPoint, 
-                ((Node)attachmentPoint).getChild(0).getName(), attachmentPoint.getLocalTranslation(),
-                attachmentPoint.getLocalRotation());*/
         createPhysics(ropeHookCompound, ropeHook, 4f, false);
         RigidBodyControl ropeHookControl = ropeHook.getControl(RigidBodyControl.class);
         ropeHookControl.setCollisionGroup(2); 
         ropeHookControl.addCollideWithGroup(1); // tylko mobilny???
         ropeHookControl.setCollideWithGroups(3); // tylko mobilny???
-        /*if(attachedObject != null){
-         as = joinsElementToOtherElement(as,
-                hook, attachedObject, Vector3f.ZERO, new Vector3f(0, 3f, 0));
-            BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
-                    .add(as);}*/
         lineAndHookHandleJoint = joinsElementToOtherElement(lineAndHookHandleJoint,
                 hookHandle, ropeHook, Vector3f.ZERO, distanceHookHandleAndRopeHook);
     }
@@ -169,7 +157,7 @@ public abstract class Hook {
     protected void changeHookPosition(Vector3f scallingVector, boolean heightening){
         if(attachedObject != null){
             moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
-                    getRopes(), hook);
+                    getRopes(), hook, attachedObject);
         }else{
             moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
                     getRopes(), hook);
@@ -187,13 +175,13 @@ public abstract class Hook {
     
     protected abstract Node[] getRopes();
     
-    private static void setCollision(Spatial a, Spatial b){
+    private static void setCollision(Spatial b){
         Hook actualHook = GameManager.findActualUnit().getHook();
-        Spatial object = actualHook.recentlyHitObject;
+        Spatial object = actualHook.recentlyHitObject, attached = actualHook.attachedObject;
         /* zabezpiecza przypadek gdy hak dotyka jednocześnie elementu pionowego
         i poziomego*/
-        if(object == null || ((BoundingBox)object.getWorldBound()).getMax(null).y 
-                > ((BoundingBox)b.getWorldBound()).getMax(null).y)
+        if((object == null || ((BoundingBox)object.getWorldBound()).getMax(null).y 
+                > ((BoundingBox)b.getWorldBound()).getMax(null).y) && attached == null)
             actualHook.recentlyHitObject = b;
     }
     

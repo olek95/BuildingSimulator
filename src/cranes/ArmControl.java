@@ -6,6 +6,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import buildingsimulator.Control.Actions;
 import buildingsimulator.Controllable;
+import com.jme3.scene.shape.Box;
 
 /**
  * Klasa <code>ArmControl</code> jest klasą abstrakcyjną dla wszystkich klas 
@@ -78,7 +79,8 @@ public abstract class ArmControl implements AnalogListener, Controllable{
                     hook.heighten();
                 break;
             case JOIN: 
-                if(hook.getRecentlyHitObject() != null)
+                Spatial recentlyHitObject = hook.getRecentlyHitObject();
+                if(recentlyHitObject != null && recentlyHitObject.getName().equals("Box"))
                     hook.attach();
                 break; 
             case UP:

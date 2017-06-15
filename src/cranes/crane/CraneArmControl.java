@@ -46,7 +46,7 @@ public class CraneArmControl extends ArmControl{
         if(movingForward && hookHandleTranslation.z >= limit 
                 || !movingForward && hookHandleTranslation.z < limit)
             hookHandleControl.setLocalTranslation(hookHandleTranslation
-                    .addLocal(0 , 0, speed));
+                    .addLocal(0 , 0, speed * 3));
     }
     
     /**
@@ -72,7 +72,8 @@ public class CraneArmControl extends ArmControl{
         Spatial hookHandle = hookHandleControl.getChild("hookHandle");
         setHookHandle(hookHandle);
         physics.add(setProperControlLocation(hookHandle, craneLocation));
-        setHook(new FourRopesHook((Node)craneNode.getChild("ropeHook"), hookHandle));
+        setHook(new FourRopesHook((Node)craneNode.getChild("ropeHook"), hookHandle,
+                0.1f));
     }
     
     private RigidBodyControl setProperControlLocation(Spatial object, Vector3f displacement){

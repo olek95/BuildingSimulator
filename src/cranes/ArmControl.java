@@ -14,8 +14,8 @@ import buildingsimulator.Controllable;
  */
 public abstract class ArmControl implements AnalogListener, Controllable{
     private Hook hook;
-    private float maxHandleHookDisplacement, minHandleHookDisplacement;
-    private final float maxArmHeight = 0.6f, minArmHeight = 0f;
+    private float maxHandleHookDisplacement, minHandleHookDisplacement,
+            maxArmHeight = 0, minArmHeight = 0;
     private boolean usedNotUsingKey = false; 
     private Node crane, craneControl;
     private Spatial hookHandle;
@@ -39,11 +39,14 @@ public abstract class ArmControl implements AnalogListener, Controllable{
      * @param maxHandleHookDisplacement maksymalne przesunięcie uchwytu haka 
      * @param minHandleHookDisplacement minimalne przesunięcie uchwytu haka 
      */
-    public ArmControl(Node crane, float maxHandleHookDisplacement, float minHandleHookDisplacement){
+    public ArmControl(Node crane, float maxHandleHookDisplacement, float minHandleHookDisplacement,
+            float maxArmHeight, float minArmHeight){
         this.crane = crane;
         initCraneArmElements();
         this.maxHandleHookDisplacement = maxHandleHookDisplacement; 
         this.minHandleHookDisplacement = minHandleHookDisplacement;
+        this.maxArmHeight = maxArmHeight; 
+        this.minArmHeight = minArmHeight;
     }
     /**
      * Zezwala na sterowanie ramieniem żurawia. Żuraw może się obracać, 
@@ -73,7 +76,7 @@ public abstract class ArmControl implements AnalogListener, Controllable{
                 hook.lower();
                 break;
             case HEIGHTEN_HOOK:
-                if(hook.getHookLowering() > 1f)
+                if(hook.getActualLowering() > 1f)
                     hook.heighten();
                 break;
             case JOIN: 

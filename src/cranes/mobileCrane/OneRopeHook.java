@@ -17,13 +17,12 @@ import com.jme3.scene.Spatial;
  */
 public class OneRopeHook extends Hook{
     private Node rope;
-    public OneRopeHook(Node ropeHook, Spatial hookHandle){
-        super(ropeHook, hookHandle);
+    public OneRopeHook(Node ropeHook, Spatial hookHandle, float speed){
+        super(ropeHook, hookHandle, speed);
         rope = (Node)ropeHook.getChild("rope");
         hookHandle.getControl(RigidBodyControl.class).addCollideWithGroup(1);
        setHookDisplacement(calculateDisplacementAfterScaling(rope, 
-                new Vector3f(1f, hookLowering + HOOK_LOWERING_SPEED, 1f),
-                false, true, false));
+                new Vector3f(1f, getActualLowering() + speed, 1f), false, true, false));
         getHookDisplacement().y *= 2; // wyrównuje poruszanie się haka wraz z liną 
         createRopeHookPhysics();
     }
@@ -39,7 +38,7 @@ public class OneRopeHook extends Hook{
         kolizji w dół*/
         if(recentlyHitObject != null)
             // tworzy pomocniczy promień sprawdzający kolizję w dół
-            new Ray(hook.getWorldTranslation(), new Vector3f(0,-0.5f,0))
+            new Ray(getHook().getWorldTranslation(), new Vector3f(0,-0.5f,0))
                     .collideWith((BoundingBox)recentlyHitObject.getWorldBound(), results);
         super.lower(results);
     }

@@ -20,8 +20,8 @@ import java.util.List;
 public class FourRopesHook extends Hook{
     private Node littleHookHandle;
     private Node[] ropes = new Node[4];
-    public FourRopesHook(Node ropeHook, Spatial hookHandle){
-        super(ropeHook, hookHandle);
+    public FourRopesHook(Node ropeHook, Spatial hookHandle, float speed){
+        super(ropeHook, hookHandle, speed);
         List<Spatial> ropeHookChildren = ropeHook.getChildren();
         int index = 0;
         for(int i = 0; i < ropeHookChildren.size(); i++){
@@ -33,8 +33,7 @@ public class FourRopesHook extends Hook{
         }
         littleHookHandle = (Node)ropeHook.getChild("littleHookHandle");
         setHookDisplacement(calculateDisplacementAfterScaling(ropes[0], 
-                new Vector3f(1f, hookLowering + HOOK_LOWERING_SPEED, 1f),
-                false, true, false));
+                new Vector3f(1f, getActualLowering() + speed, 1f), false, true, false));
         getHookDisplacement().y *= 2;
         createRopeHookPhysics();
     }
@@ -51,7 +50,7 @@ public class FourRopesHook extends Hook{
         /* jeśli nie dotknęło żadnego obiektu, to zbędne jest sprawdzanie 
         kolizji w dół*/
         if(recentlyHitObject != null){
-            Ray ray = new Ray(hook.getWorldTranslation(), new Vector3f(0,-0.5f,0));
+            Ray ray = new Ray(getHook().getWorldTranslation(), new Vector3f(0,-0.5f,0));
             if(recentlyHitObject.getName().startsWith("prop")){
                 // new Ray tworzy pomocniczy promień sprawdzający kolizję w dół
                 Node crane = recentlyHitObject.getParent();
@@ -78,7 +77,7 @@ public class FourRopesHook extends Hook{
     
     @Override
     protected void createRopeHookPhysics(){
-        CompoundCollisionShape ropeHookCompound = createCompound(((Node)ropeHook), ropes[0].getChild(0)
+        CompoundCollisionShape ropeHookCompound = createCompound(getRopeHook(), ropes[0].getChild(0)
                 .getName());
         ropeHookCompound.getChildren().get(0).location = ropes[0].getLocalTranslation();
         for(int i = 1; i < ropes.length; i++)

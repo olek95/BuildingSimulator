@@ -22,17 +22,16 @@ import com.jme3.scene.Spatial;
  * @author AleksanderSklorz
  */
 public abstract class Hook {
-    protected Node ropeHook;
-    protected Spatial hook, hookHandle;
-    protected float hookLowering = 1f;
-    protected static final float HOOK_LOWERING_SPEED = 0.05f;
+    private Node ropeHook;
+    private Spatial hook, hookHandle, recentlyHitObject, attachedObject = null;
+    private float actualLowering = 1f, speed;
     private Vector3f hookDisplacement;
-    private Spatial recentlyHitObject, attachedObject = null;
     private HingeJoint lineAndHookHandleJoint = null, buildingMaterialJoint;
-    public Hook(Node ropeHook, Spatial hookHandle){
+    public Hook(Node ropeHook, Spatial hookHandle, float speed){
         this.ropeHook = ropeHook;
         hook = ropeHook.getChild("hook");
         this.hookHandle = hookHandle;
+        this.speed = speed;
     } 
     
     /**
@@ -63,7 +62,7 @@ public abstract class Hook {
      * Podnosi hak. 
      */
     public void heighten(){
-        changeHookPosition(new Vector3f(1f, hookLowering -= HOOK_LOWERING_SPEED, 1f),
+        changeHookPosition(new Vector3f(1f, actualLowering -= speed, 1f),
                 true);
     }
     
@@ -74,7 +73,9 @@ public abstract class Hook {
         if(buildingMaterialJoint == null){
             attachedObject = recentlyHitObject;
             buildingMaterialJoint = joinsElementToOtherElement(buildingMaterialJoint,
-                hook, attachedObject, Vector3f.ZERO, new Vector3f(0, 1.2f, 0)); // 1.5 mobil
+                    hook, attachedObject, Vector3f.ZERO, new Vector3f(0, 
+                    ((BoundingBox)attachedObject.getWorldBound()).getYExtent()
+                    + ((BoundingBox)hook.getWorldBound()).getYExtent() + 0.2f, 0)); // 1.5 mobil, 1.2 zuraw
             BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
                     .add(buildingMaterialJoint);
         }
@@ -96,7 +97,7 @@ public abstract class Hook {
      * Zwraca wartość określającą jak bardzo opuszczony jest hak. 
      * @return wartość opuszczenia haka 
      */
-    public float getHookLowering(){ return hookLowering; }
+    public float getActualLowering(){ return actualLowering; }
     
     /**
      * Zwraca uchwyt do jakiego przyczepiona jest lina. 
@@ -131,6 +132,12 @@ public abstract class Hook {
     }
     
     /**
+     * Zwraca hak. 
+     * @return hak 
+     */
+    public Spatial getHook() { return hook; }
+    
+    /**
      * Opuszcza hak, jeśli nic nie znajduje się pod nim. W przeciwnym razie 
      * hak nie zmienia pozycji. 
      * @param results wyniki kolizji, dzięki którym sprawdza się w ilu punktach 
@@ -139,7 +146,7 @@ public abstract class Hook {
     protected void lower(CollisionResults results){
         // obniża hak, jeśli w żadnym punkcie z dołu nie dotyka jakiegoś obiektu
         if(results.size() == 0){
-            changeHookPosition(new Vector3f(1f,hookLowering += HOOK_LOWERING_SPEED, 1f),
+            changeHookPosition(new Vector3f(1f, actualLowering += speed, 1f),
                     false);
             recentlyHitObject = null;
         }

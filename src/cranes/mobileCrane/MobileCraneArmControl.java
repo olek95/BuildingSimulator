@@ -32,7 +32,7 @@ public class MobileCraneArmControl extends ArmControl{
     private Geometry leftProtractilePropGeometry, rightProtractilePropGeometry;
     private boolean obstacleLeft = false, obstacleRight = false, using = false;
     public MobileCraneArmControl(Node crane){
-        super(crane, 9.5f, 1f);
+        super(crane, 9.5f, 1f, 0.6f, 0f);
         hookHandleDisplacement = calculateDisplacementAfterScaling(rectractableCranePart, 
                 new Vector3f(1f, 1f, stretchingOut + STRETCHING_OUT_SPEED), false,
                 true, true);
@@ -112,7 +112,8 @@ public class MobileCraneArmControl extends ArmControl{
         // do aktualnej kolizji dołącza kolizję z grupą 1
         Spatial hookHandle = lift.getChild("hookHandle");
         setHookHandle(hookHandle);
-        setHook(new OneRopeHook((Node)getCrane().getChild("ropeHook"), hookHandle));
+        setHook(new OneRopeHook((Node)getCrane().getChild("ropeHook"), hookHandle,
+                0.05f));
         createCranePhysics();
     }
     

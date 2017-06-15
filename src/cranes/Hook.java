@@ -67,6 +67,9 @@ public abstract class Hook {
                 true);
     }
     
+    /**
+     * Łączy hak z dotknieym obiektem. 
+     */
     public void attach(){
         if(buildingMaterialJoint == null){
             attachedObject = recentlyHitObject;
@@ -77,6 +80,10 @@ public abstract class Hook {
         }
     }
     
+    /**
+     * Zwraca ostatnio dotknięty obiekt. 
+     * @return ostatnio dotknięy obiekt
+     */
     public Spatial getRecentlyHitObject(){ return recentlyHitObject; }
     
     /**
@@ -103,10 +110,22 @@ public abstract class Hook {
      */
     public Node getRopeHook(){ return ropeHook; }
     
+    /**
+     * Zwraca zaczepiony obiekt. 
+     * @return zaczepiony obiekt 
+     */
     public Spatial getAttachedObject() { return attachedObject; }
     
+    /**
+     * Zwraca przesunięcie haka po opuszczeniu liny. 
+     * @return przesunięcie haka 
+     */
     public Vector3f getHookDisplacement() { return hookDisplacement; }
     
+    /**
+     * Ustawia przesunięcie haka po opuszczeniu liny. 
+     * @param displacement przesunięcie haka 
+     */
     public void setHookDisplacement(Vector3f displacement){
         this.hookDisplacement = displacement;
     }
@@ -171,8 +190,15 @@ public abstract class Hook {
      */
     protected abstract void lower();
     
+    /**
+     * Tworzy fizykę dla całego haka wraz z linami go trzymającymi. 
+     */
     protected abstract void createRopeHookPhysics();
     
+    /**
+     * Zwraca tablicę wszystkich lin trzymających hak. 
+     * @return tablica lin 
+     */
     protected abstract Node[] getRopes();
     
     private static void setCollision(Spatial b){

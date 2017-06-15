@@ -128,6 +128,24 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         }
     }
     
+    /**
+     * Zwraca dostępne akcje dla dźwigu, czyli - jazda w przód, do tyłu, skręcanie 
+     * w lewo i w prawo, a także akcja opuszczania podpór.
+     * @return tablicę dostępnych akcji dla dźwigu mobilnego 
+     */
+    @Override
+    public Control.Actions[] getAvailableActions(){
+        return availableActions;
+    }
+    
+    /**
+     * Ustawia kąt skrętu kół pojazdu. 
+     * @param angle kąt 
+     */
+    public void setSteeringAngle(float angle){
+        craneControl.steer(steeringValue = angle);
+    }
+    
     private void stop(){
         key = "";
         craneControl.accelerate(0f);
@@ -228,19 +246,5 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                 GameManager.setLastAction(null);
             }
         }
-    }
-    
-    /**
-     * Zwraca dostępne akcje dla dźwigu, czyli - jazda w przód, do tyłu, skręcanie 
-     * w lewo i w prawo, a także akcja opuszczania podpór.
-     * @return 
-     */
-    @Override
-    public Control.Actions[] getAvailableActions(){
-        return availableActions;
-    }
-    
-    public void setSteeringAngle(float angle){
-        craneControl.steer(steeringValue = angle);
     }
 }

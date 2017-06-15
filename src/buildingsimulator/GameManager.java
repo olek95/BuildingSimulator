@@ -129,17 +129,6 @@ public class GameManager {
                     moveDynamicObject(movingElements[i], displacement);
     }
     
-    private static void moveDynamicObject(Spatial element, Vector3f displacement){
-        RigidBodyControl elementControl = element.getControl(RigidBodyControl.class);
-        elementControl.setPhysicsLocation(elementControl.getPhysicsLocation()
-                .addLocal(displacement));
-    }
-    
-    private static boolean isNonDynamicSpatial(Spatial element){
-        RigidBodyControl elementControl = element.getControl(RigidBodyControl.class);
-        return elementControl == null || elementControl.isKinematic();
-    }
-    
     /**
      * Tworzy połączenie dwóch obiektów. 
      * @param joint obiekt przechowujący połączenie. Może mieć wartość null, wtedy 
@@ -281,5 +270,16 @@ public class GameManager {
             if(unit.isUsing()) return unit;
         }
         return null;
+    }
+    
+    private static void moveDynamicObject(Spatial element, Vector3f displacement){
+        RigidBodyControl elementControl = element.getControl(RigidBodyControl.class);
+        elementControl.setPhysicsLocation(elementControl.getPhysicsLocation()
+                .addLocal(displacement));
+    }
+    
+    private static boolean isNonDynamicSpatial(Spatial element){
+        RigidBodyControl elementControl = element.getControl(RigidBodyControl.class);
+        return elementControl == null || elementControl.isKinematic();
     }
 }

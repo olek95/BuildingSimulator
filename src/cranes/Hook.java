@@ -76,9 +76,18 @@ public abstract class Hook {
                     hook, attachedObject, Vector3f.ZERO, new Vector3f(0, 
                     ((BoundingBox)attachedObject.getWorldBound()).getYExtent()
                     + ((BoundingBox)hook.getWorldBound()).getYExtent() + 0.2f, 0)); // 1.5 mobil, 1.2 zuraw
-            BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
-                    .add(buildingMaterialJoint);
+            //BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
+                    //.add(buildingMaterialJoint);
         }
+    }
+    
+    /**
+     * Odłącza od haka przyczepiony obiekt. 
+     */
+    public void detach(){
+        BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
+                .remove(buildingMaterialJoint);
+        attachedObject = null;
     }
     
     /**

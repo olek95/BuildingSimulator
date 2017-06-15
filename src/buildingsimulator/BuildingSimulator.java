@@ -1,5 +1,6 @@
 package buildingsimulator;
 
+import buildingmaterials.Wall;
 import cranes.mobileCrane.MobileCraneArmControl;
 import cranes.mobileCrane.MobileCrane;
 import cranes.crane.Crane;
@@ -49,17 +50,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         rootNode.addLight(sun);
         
         // KOD DLA TESTU!!
-        Box b = new Box(1, 1, 1); // create cube shape
-        Geometry geom = new Geometry("Box", b);  // create cube geometry from the shape
-        geom.setLocalTranslation(0, 0f, 20);
-        Material mat = new Material(assetManager,
-          "Common/MatDefs/Misc/Unshaded.j3md");  // create a simple material
-        mat.setColor("Color", ColorRGBA.Blue);   // set color of material to blue
-        geom.setMaterial(mat);                   // set the cube's material
-        rootNode.attachChild(geom);              // make the cube appear in the scene
-        RigidBodyControl rg = new RigidBodyControl(0.00001f);
-        geom.addControl(rg);
-        bulletAppState.getPhysicsSpace().add(rg);
+        Wall wall = new Wall(new Box(1, 1, 1), new Vector3f(0f, 0f, 20f));
         /*Box b2 = new Box(1, 1, 1); // create cube shape
         Geometry geom2 = new Geometry("Box", b2);  // create cube geometry from the shape
         geom2.setLocalTranslation(0, 2.1f, 20);

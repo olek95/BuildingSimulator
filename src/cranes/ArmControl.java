@@ -19,9 +19,9 @@ public abstract class ArmControl implements AnalogListener, Controllable{
     private boolean usedNotUsingKey = false; 
     private Node crane, craneControl;
     private Spatial hookHandle;
-    private Actions[] availableActions = {Actions.RIGHT, Actions.LEFT,
+    private Actions[] availableActions = { Actions.RIGHT, Actions.LEFT,
         Actions.PULL_OUT, Actions.PULL_IN, Actions.LOWER_HOOK, Actions.HEIGHTEN_HOOK,
-        Actions.UP, Actions.DOWN, Actions.ACTION, Actions.ATTACH, Actions.DETACH};
+        Actions.UP, Actions.DOWN, Actions.ACTION, Actions.ATTACH, Actions.DETACH };
     /**
      * Konstruktor tworzący kabinę. Używany, gdy wartość maksymalnego i 
      * minimalnego przesunięcia uchwytu nie jest znana od początku. Należy 

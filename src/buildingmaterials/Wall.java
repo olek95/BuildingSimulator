@@ -6,6 +6,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 
 public class Wall {
@@ -17,9 +18,13 @@ public class Wall {
                 "Common/MatDefs/Misc/Unshaded.j3md");  
         mat.setColor("Color", ColorRGBA.Blue);   
         wall.setMaterial(mat);                   
-        game.getRootNode().attachChild(wall);              
+        //game.getRootNode().attachChild(wall);              
         RigidBodyControl wallControl = new RigidBodyControl(0.00001f);
-        wall.addControl(wallControl);
+        //wall.addControl(wallControl);
+        Node wallNode = new Node("Wall0");
+        game.getRootNode().attachChild(wallNode);
+        wallNode.attachChild(wall);
+        wallNode.addControl(wallControl);
         game.getBulletAppState().getPhysicsSpace().add(wallControl);
     }
 }

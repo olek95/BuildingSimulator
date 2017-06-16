@@ -13,7 +13,7 @@ public class Wall {
     public Wall(Box shape, Vector3f location){
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         Geometry wall = new Geometry("Box", shape);  
-        wall.setLocalTranslation(location);
+        //wall.setLocalTranslation(location);
         Material mat = new Material(game.getAssetManager(), 
                 "Common/MatDefs/Misc/Unshaded.j3md");  
         mat.setColor("Color", ColorRGBA.Blue);   
@@ -22,9 +22,10 @@ public class Wall {
         RigidBodyControl wallControl = new RigidBodyControl(0.00001f);
         //wall.addControl(wallControl);
         Node wallNode = new Node("Wall0");
-        game.getRootNode().attachChild(wallNode);
         wallNode.attachChild(wall);
         wallNode.addControl(wallControl);
+        wallControl.setPhysicsLocation(location);
+        game.getRootNode().attachChild(wallNode);
         game.getBulletAppState().getPhysicsSpace().add(wallControl);
     }
 }

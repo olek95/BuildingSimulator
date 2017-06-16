@@ -9,9 +9,11 @@ import static buildingsimulator.GameManager.moveWithScallingObject;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
+import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.joints.HingeJoint;
+import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.collision.CollisionResults;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -76,29 +78,50 @@ public abstract class Hook {
      */
     public void attach(){
         if(buildingMaterialJoint == null){
-            attachedObject = recentlyHitObject.getParent();
+            attachedObject = recentlyHitObject;
+            addSafetyRopes(hook, attachedObject);
             buildingMaterialJoint = joinsElementToOtherElement(buildingMaterialJoint,
                     hook, attachedObject, Vector3f.ZERO, new Vector3f(0, 
                     ((BoundingBox)attachedObject.getWorldBound()).getYExtent()
                     + ((BoundingBox)hook.getWorldBound()).getYExtent() + 0.2f, 0)); // 1.5 mobil, 1.2 zuraw
-            addSafetyRopes(hook, attachedObject);
+            //addSafetyRopes(hook, attachedObject);
         }
     }
     
     public void addSafetyRopes(Spatial hook, Spatial attachedObject){
         Vector3f max = ((BoundingBox)attachedObject.getWorldBound()).getMax(null);
+        System.out.println("MAX: " + max);
         Vector3f end = hook.getWorldTranslation();
         end.subtract(0f, 0.5f, 0f);
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         Cylinder c = new Cylinder(4, 8, 0.02f, max.distance(end));
         Geometry rope = new Geometry("Cylinder", c);  
-        rope.setLocalTranslation(FastMath.interpolateLinear(0.5f, max, end));
+        Vector3f v = FastMath.interpolateLinear(0.5f, max, end);
+        
         Material mat = new Material(game.getAssetManager(), 
                 "Common/MatDefs/Misc/Unshaded.j3md");  
         mat.setColor("Color", ColorRGBA.Black);   
         rope.setMaterial(mat);         
         rope.lookAt(end, Vector3f.UNIT_Y);
-        ((Node)attachedObject).attachChild(rope);              
+        System.out.println("FIRST: " + rope.getLocalTranslation());
+        game.getBulletAppState().getPhysicsSpace().remove(attachedObject.getControl(0));
+        attachedObject.removeControl(RigidBodyControl.class);
+        ((Node)attachedObject).attachChild(rope);
+        CompoundCollisionShape ca = new CompoundCollisionShape(); 
+        CollisionShape elementCollisionShape = CollisionShapeFactory.createDynamicMeshShape(((Node)attachedObject).getChild("Box"));
+        CollisionShape elementCollisionShape2 = CollisionShapeFactory.createDynamicMeshShape(((Node)attachedObject).getChild("Cylinder"));
+        ca.addChildShape(elementCollisionShape, Vector3f.ZERO);
+        ca.addChildShape(elementCollisionShape2, Vector3f.ZERO);
+        RigidBodyControl rgc = new RigidBodyControl(ca, 0.00001f);
+        attachedObject.addControl(rgc); 
+        game.getBulletAppState().getPhysicsSpace().add(rgc);
+        
+        //rope.lookAt(end, Vector3f.UNIT_Y);
+        rope.setLocalTranslation(v.subtract(rgc.getPhysicsLocation()));
+        
+        rope.lookAt(end, Vector3f.UNIT_Y);
+        ca.getChildren().get(1).location = (rope.getLocalTranslation());
+        ca.getChildren().get(1).rotation = rope.getLocalRotation().toRotationMatrix();
         //RigidBodyControl wallControl = new RigidBodyControl(0.00001f);
         //rope.addControl(wallControl);
         //game.getBulletAppState().getPhysicsSpace().add(wallControl);

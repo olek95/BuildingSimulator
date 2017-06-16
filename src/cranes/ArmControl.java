@@ -81,7 +81,8 @@ public abstract class ArmControl implements AnalogListener, Controllable{
                 break;
             case ATTACH: 
                 Spatial recentlyHitObject = hook.getRecentlyHitObject();
-                if(recentlyHitObject != null && recentlyHitObject.getName().equals("Box"))
+                if(recentlyHitObject != null && recentlyHitObject.getName()
+                        .startsWith("Wall"))
                     hook.attach();
                 break; 
             case DETACH: 

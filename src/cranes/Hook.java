@@ -1,5 +1,6 @@
 package cranes;
 
+import buildingmaterials.Wall;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import static buildingsimulator.GameManager.addNewCollisionShapeToCompound;
@@ -24,6 +25,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Cylinder;
+import java.util.List;
 
 /**
  * Klasa <code>Hook</code> jest klasą abstrakcji dla wszystkich haków w grze. 
@@ -88,28 +90,30 @@ public abstract class Hook {
         }
     }
     
-    public void addSafetyRopes(float y, Spatial attachedObject){
-        Vector3f end = attachedObject.getWorldTranslation().clone().setY(y);
+    private void addSafetyRopes(float y, Spatial attachedObject){
+        Wall wall = (Wall)attachedObject; 
+        Vector3f end = wall.getWorldTranslation().clone().setY(y),
+                start = wall.getProperPoint(0);
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         Geometry[] ropes = new Geometry[4];
         Vector3f[] ropesLocations = new Vector3f[4];
         Material mat = new Material(game.getAssetManager(),
                 "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", ColorRGBA.Black); 
+        float length = start.distance(end);
         for(int i = 0; i < ropes.length; i++){
-            Vector3f start = getProperPoint(i);
-            float length = start.distance(end);
             ropes[i] = new Geometry("Cylinder" + i, new Cylinder(4, 8, 0.02f, length));
             ropesLocations[i] = FastMath.interpolateLinear(0.5f, start, end);
             ropes[i].setMaterial(mat); 
-            ((Node)attachedObject).attachChild(ropes[i]);
+            wall.attachChild(ropes[i]);
+            start = wall.getProperPoint(i + 1);
         }          
         CompoundCollisionShape wallRopesShape = GameManager
-                .createCompound((Node)attachedObject, new String[] {"Box", "Cylinder0",
+                .createCompound(wall, new String[] {"Box", "Cylinder0",
                 "Cylinder1", "Cylinder2", "Cylinder3"});
-        GameManager.createPhysics(wallRopesShape, attachedObject, 0.00001f, false);
+        GameManager.createPhysics(wallRopesShape, wall, 0.00001f, false);
         for(int i = 0; i < ropes.length; i++){
-            ropes[i].setLocalTranslation(ropesLocations[i].subtract(attachedObject
+            ropes[i].setLocalTranslation(ropesLocations[i].subtract(wall
                     .getControl(RigidBodyControl.class).getPhysicsLocation()));
             ropes[i].lookAt(end, Vector3f.UNIT_Y);
             ChildCollisionShape gotShape = wallRopesShape.getChildren().get(1 + i);
@@ -118,30 +122,19 @@ public abstract class Hook {
         }
     }
     
-    private Vector3f getProperPoint(int pointNumber){
-        BoundingBox bounding = (BoundingBox)attachedObject.getWorldBound();
-        Vector3f max = bounding.getMax(null);
-        switch(pointNumber){
-            case 0:
-                return max;
-            case 1:
-                return max.subtract(0, 0, bounding.getZExtent() * 2);
-            case 2: 
-                return max.subtract(bounding.getXExtent() * 2, 0, 0);
-            case 3: 
-                return max.subtract(bounding.getXExtent() * 2, 0, bounding
-                        .getZExtent() * 2); 
-            default: return null;
-        }
-    }
-    
     /**
      * Odłącza od haka przyczepiony obiekt. 
      */
     public void detach(){
-        BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
-                .remove(buildingMaterialJoint);
-        attachedObject = null;
+        if(attachedObject != null){
+            BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
+                    .remove(buildingMaterialJoint);
+            Node attachedObjectNode = (Node)attachedObject; 
+            for(int i = 1; i < 5; i++)
+                attachedObjectNode.detachChildAt(1);
+            ((Wall)attachedObject).initPhysics(attachedObject.getWorldTranslation());
+            attachedObject = null;
+        }
     }
     
     /**

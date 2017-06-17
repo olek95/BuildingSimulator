@@ -1,5 +1,6 @@
 package cranes;
 
+import buildingmaterials.Wall;
 import buildingsimulator.Control;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.scene.Node;
@@ -91,10 +92,6 @@ public abstract class ArmControl implements AnalogListener, Controllable{
                 break; 
             case UP:
                 changeArmHeight(maxArmHeight, false);
-                if(hook.getAttachedObject() != null){
-                    hook.getAttachedObject().getControl(RigidBodyControl.class)
-                            .activate();
-                }
                 break;
             case DOWN:
                 changeArmHeight(minArmHeight, true); 
@@ -105,7 +102,7 @@ public abstract class ArmControl implements AnalogListener, Controllable{
         Spatial attachedObject = hook.getAttachedObject(); 
         if(!usedNotUsingKey){
             if(attachedObject != null) 
-                attachedObject.getControl(RigidBodyControl.class).activate();
+                ((Wall)attachedObject).activateIfInactive();
             if(!name.equals(Actions.LOWER_HOOK.toString()) && !usedNotUsingKey) 
                 hook.setRecentlyHitObject(null);
         }else usedNotUsingKey = false;

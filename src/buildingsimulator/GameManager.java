@@ -72,10 +72,12 @@ public class GameManager {
      */
     public static void createPhysics(CompoundCollisionShape compound, Spatial controlOwner,
             float mass, boolean kinematic){
-        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace();
-        if(controlOwner.getControl(RigidBodyControl.class) != null){
-            physics.remove(controlOwner.getControl(0));
-            controlOwner.removeControl(RigidBodyControl.class);
+        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
+                .getBulletAppState().getPhysicsSpace();
+        RigidBodyControl oldControl = controlOwner.getControl(RigidBodyControl.class);
+        if(oldControl != null){
+            physics.remove(oldControl);
+            controlOwner.removeControl(oldControl);
         }
         RigidBodyControl control = new RigidBodyControl(compound, mass);
         control.setKinematic(kinematic);

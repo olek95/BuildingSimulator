@@ -90,48 +90,51 @@ public abstract class Hook {
     }
     
     public void addSafetyRopes(Spatial hook, Spatial attachedObject){
-        Vector3f max = ((BoundingBox)attachedObject.getWorldBound()).getMax(null),
-                end = hook.getWorldTranslation();
-        float length = max.distance(end);
+        Vector3f end = hook.getWorldTranslation();
         //end.subtract(0f, 0.5f, 0f);
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         Geometry[] ropes = new Geometry[4];
         Vector3f[] ropesLocations = new Vector3f[4];
-        for(int i = 0; i < ropes.length; i++){
-            ropes[i] = new Geometry("Cylinder", new Cylinder(4, 8, 0.02f, length));
-            ropesLocations[i] = FastMath.interpolateLinear(0.5f, max, end);
-        }
-        Geometry rope = new Geometry("Cylinder", new Cylinder(4, 8, 0.02f, 
-                max.distance(end)));  
-        Vector3f ropeLocation = FastMath.interpolateLinear(0.5f, max, end);
         Material mat = new Material(game.getAssetManager(),
-                "Common/MatDefs/Misc/Unshaded.j3md");  
-        mat.setColor("Color", ColorRGBA.Black);   
-        rope.setMaterial(mat);         
-        game.getBulletAppState().getPhysicsSpace().remove(attachedObject.getControl(0));
-        attachedObject.removeControl(RigidBodyControl.class);
-        ((Node)attachedObject).attachChild(rope);
+                "Common/MatDefs/Misc/Unshaded.j3md");
+        mat.setColor("Color", ColorRGBA.Black); 
+        for(int i = 0; i < ropes.length; i++){
+            Vector3f start = getProperPoint(i);
+            float length = start.distance(end);
+            ropes[i] = new Geometry("Cylinder" + i, new Cylinder(4, 8, 0.02f, length));
+            ropesLocations[i] = FastMath.interpolateLinear(0.5f, start, end);
+            ropes[i].setMaterial(mat); 
+            ((Node)attachedObject).attachChild(ropes[i]);
+        }          
         CompoundCollisionShape wallRopesShape = GameManager
-                .createCompound((Node)attachedObject, new String[] {"Box", "Cylinder"});
+                .createCompound((Node)attachedObject, new String[] {"Box", "Cylinder0",
+                "Cylinder1", "Cylinder2", "Cylinder3"});
         GameManager.createPhysics(wallRopesShape, attachedObject, 0.00001f, false);
-        
-        
-        /*CompoundCollisionShape wallRopesShape = new CompoundCollisionShape(); 
-        CollisionShape wallShape = CollisionShapeFactory
-                .createDynamicMeshShape(((Node)attachedObject).getChild("Box")),
-                ropeShape = CollisionShapeFactory
-                .createDynamicMeshShape(((Node)attachedObject).getChild("Cylinder"));
-        wallRopesShape.addChildShape(wallShape, Vector3f.ZERO);
-        wallRopesShape.addChildShape(ropeShape, Vector3f.ZERO);
-        RigidBodyControl wallRopesControl = new RigidBodyControl(wallRopesShape, 0.00001f);
-        attachedObject.addControl(wallRopesControl); 
-        game.getBulletAppState().getPhysicsSpace().add(wallRopesControl);*/
-        rope.setLocalTranslation(ropeLocation.subtract(attachedObject
-                .getControl(RigidBodyControl.class).getPhysicsLocation()));
-        rope.lookAt(end, Vector3f.UNIT_Y);
-        ChildCollisionShape gotShape = wallRopesShape.getChildren().get(1);
-        gotShape.location = (rope.getLocalTranslation());
-        gotShape.rotation = rope.getLocalRotation().toRotationMatrix();
+        for(int i = 0; i < ropes.length; i++){
+            ropes[i].setLocalTranslation(ropesLocations[i].subtract(attachedObject
+                    .getControl(RigidBodyControl.class).getPhysicsLocation()));
+            ropes[i].lookAt(end, Vector3f.UNIT_Y);
+            ChildCollisionShape gotShape = wallRopesShape.getChildren().get(1 + i);
+            gotShape.location = ropes[i].getLocalTranslation();
+            gotShape.rotation = ropes[i].getLocalRotation().toRotationMatrix();
+        }
+    }
+    
+    private Vector3f getProperPoint(int pointNumber){
+        BoundingBox bounding = (BoundingBox)attachedObject.getWorldBound();
+        Vector3f max = bounding.getMax(null);
+        switch(pointNumber){
+            case 0:
+                return max;
+            case 1:
+                return max.subtract(0, 0, bounding.getZExtent() * 2);
+            case 2: 
+                return max.subtract(bounding.getXExtent() * 2, 0, 0);
+            case 3: 
+                return max.subtract(bounding.getXExtent() * 2, 0, bounding
+                        .getZExtent() * 2); 
+            default: return null;
+        }
     }
     
     /**

@@ -80,18 +80,16 @@ public abstract class Hook {
     public void attach(){
         if(buildingMaterialJoint == null){
             attachedObject = recentlyHitObject;
-            addSafetyRopes(hook, attachedObject);
+            float y =  ((BoundingBox)attachedObject.getWorldBound()).getYExtent()
+                    + ((BoundingBox)hook.getWorldBound()).getYExtent() + 0.2f;
+            addSafetyRopes(y, attachedObject);
             buildingMaterialJoint = joinsElementToOtherElement(buildingMaterialJoint,
-                    hook, attachedObject, Vector3f.ZERO, new Vector3f(0, 
-                    ((BoundingBox)attachedObject.getWorldBound()).getYExtent()
-                    + ((BoundingBox)hook.getWorldBound()).getYExtent() + 0.2f, 0)); // 1.5 mobil, 1.2 zuraw
-            //addSafetyRopes(hook, attachedObject);
+                    hook, attachedObject, Vector3f.ZERO, new Vector3f(0, y, 0)); // 1.5 mobil, 1.2 zuraw
         }
     }
     
-    public void addSafetyRopes(Spatial hook, Spatial attachedObject){
-        Vector3f end = hook.getWorldTranslation();
-        //end.subtract(0f, 0.5f, 0f);
+    public void addSafetyRopes(float y, Spatial attachedObject){
+        Vector3f end = attachedObject.getWorldTranslation().clone().setY(y);
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         Geometry[] ropes = new Geometry[4];
         Vector3f[] ropesLocations = new Vector3f[4];

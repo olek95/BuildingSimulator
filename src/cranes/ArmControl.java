@@ -6,6 +6,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import buildingsimulator.Control.Actions;
 import buildingsimulator.Controllable;
+import com.jme3.bullet.control.RigidBodyControl;
 /**
  * Klasa <code>ArmControl</code> jest klasą abstrakcyjną dla wszystkich klas 
  * reprezentujących sterowanie ramieniem dźwigu w grze. Implementuje ona interfejs
@@ -90,6 +91,10 @@ public abstract class ArmControl implements AnalogListener, Controllable{
                 break; 
             case UP:
                 changeArmHeight(maxArmHeight, false);
+                if(hook.getAttachedObject() != null){
+                    hook.getAttachedObject().getControl(RigidBodyControl.class)
+                            .activate();
+                }
                 break;
             case DOWN:
                 changeArmHeight(minArmHeight, true); 
@@ -97,9 +102,13 @@ public abstract class ArmControl implements AnalogListener, Controllable{
             case ACTION:
                 getOff(name);
         }
-        if(!name.equals(Actions.LOWER_HOOK.toString()) && !usedNotUsingKey) 
-            hook.setRecentlyHitObject(null);
-        else usedNotUsingKey = false;
+        Spatial attachedObject = hook.getAttachedObject(); 
+        if(!usedNotUsingKey){
+            if(attachedObject != null) 
+                attachedObject.getControl(RigidBodyControl.class).activate();
+            if(!name.equals(Actions.LOWER_HOOK.toString()) && !usedNotUsingKey) 
+                hook.setRecentlyHitObject(null);
+        }else usedNotUsingKey = false;
     }
     
     /**

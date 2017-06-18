@@ -18,6 +18,7 @@ import com.jme3.collision.CollisionResults;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
+import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -168,6 +169,18 @@ public abstract class Hook {
      * jest kolizja z danym obiektem 
      */
     protected void lower(CollisionResults results){
+        if(recentlyHitObject == null){
+            if(attachedObject != null){
+                Spatial hitObjectByAttachedObject = ((Wall)attachedObject)
+                        .getRecentlyHitObject(); 
+                if(hitObjectByAttachedObject != null){
+                    new Ray(attachedObject.getWorldTranslation(), new Vector3f(0, 
+                            -((BoundingBox)attachedObject.getWorldBound()).getYExtent(), 0))
+                            .collideWith((BoundingBox)hitObjectByAttachedObject
+                            .getWorldBound(), results);
+                }
+            }
+        }
         // obniża hak, jeśli w żadnym punkcie z dołu nie dotyka jakiegoś obiektu
         if(results.size() == 0){
             changeHookPosition(new Vector3f(1f, actualLowering += speed, 1f),

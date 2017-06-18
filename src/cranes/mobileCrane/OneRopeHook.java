@@ -42,13 +42,18 @@ public class OneRopeHook extends Hook{
             new Ray(getHook().getWorldTranslation(), new Vector3f(0,-0.5f,0))
                     .collideWith((BoundingBox)recentlyHitObject.getWorldBound(), results);
         else{
-            Spatial attachedObject = getAttachedObject(), 
-                    hitObjectByAttachedObject = ((Wall)attachedObject).getRecentlyHitObject(); 
-            if(attachedObject != null && hitObjectByAttachedObject != null)
-                new Ray(attachedObject.getWorldTranslation(), new Vector3f(0, 
-                        ((BoundingBox)attachedObject.getWorldBound()).getYExtent(), 0))
-                        .collideWith((BoundingBox)hitObjectByAttachedObject
-                        .getWorldBound(), results);
+            Spatial attachedObject = getAttachedObject(); 
+            if(attachedObject != null){
+                Spatial hitObjectByAttachedObject = ((Wall)attachedObject)
+                        .getRecentlyHitObject(); 
+                if(hitObjectByAttachedObject != null){
+                    new Ray(attachedObject.getWorldTranslation(), new Vector3f(0, 
+                            -((BoundingBox)attachedObject.getWorldBound()).getYExtent(), 0))
+                            .collideWith((BoundingBox)hitObjectByAttachedObject
+                            .getWorldBound(), results);
+                    System.out.println(results.size());
+                }
+            }
         }
         super.lower(results);
     }

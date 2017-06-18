@@ -91,6 +91,10 @@ public class Wall extends Node{
         return recentlyHitObject; 
     }
     
+    public void setRecentlyHitObject(Spatial object){
+        recentlyHitObject = object; 
+    }
+    
     private void setCollision(Spatial b){
         /* zabezpiecza przypadek gdy hak dotyka jednocześnie elementu pionowego
         i poziomego*/

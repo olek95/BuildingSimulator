@@ -79,8 +79,9 @@ public class GameManager {
             physics.remove(oldControl);
             controlOwner.removeControl(oldControl);
         }
-        RigidBodyControl control = new RigidBodyControl(compound, mass);
-        control.setKinematic(kinematic);
+        RigidBodyControl control = compound != null ? 
+                new RigidBodyControl(compound, mass) : new RigidBodyControl(mass);
+        if(kinematic) control.setKinematic(kinematic);
         controlOwner.addControl(control);
         physics.add(control);
     }

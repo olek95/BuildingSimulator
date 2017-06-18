@@ -1,9 +1,8 @@
 package buildingmaterials;
 
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.GameManager;
 import com.jme3.bounding.BoundingBox;
-import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -12,6 +11,11 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 
+/**
+ * Obiekt klasy <code>Wall</code> reprezentuje kawałek ściany. Obiekt ten może 
+ * służyć do budowy budynków. 
+ * @author AleksanderSklorz
+ */
 public class Wall extends Node{
     public Wall(Box shape, Vector3f location){
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
@@ -22,7 +26,8 @@ public class Wall extends Node{
         wall.setMaterial(mat);                               
         setName("Wall0");
         attachChild(wall);
-        initPhysics(location);
+        GameManager.createPhysics(null, this, 0.00001f, false);
+        getControl(RigidBodyControl.class).setPhysicsLocation(location);
         game.getRootNode().attachChild(this);
     }
     
@@ -56,23 +61,5 @@ public class Wall extends Node{
      */
     public void activateIfInactive(){
         getControl(RigidBodyControl.class).activate();
-    }
-    
-    /**
-     * Inicjuje fizykę dla tego obiektu. 
-     * @param location położenie fizyki 
-     */
-    public void initPhysics(Vector3f location){
-        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
-                .getBulletAppState().getPhysicsSpace();
-        RigidBodyControl control = getControl(RigidBodyControl.class);
-        if(control != null){
-            removeControl(control);
-            physics.remove(control);
-        }
-        RigidBodyControl wallControl = new RigidBodyControl(0.00001f);
-        addControl(wallControl);
-        wallControl.setPhysicsLocation(location);
-        physics.add(wallControl);
     }
 }

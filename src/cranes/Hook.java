@@ -10,12 +10,10 @@ import static buildingsimulator.GameManager.moveWithScallingObject;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
-import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.joints.HingeJoint;
-import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.collision.CollisionResults;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -25,7 +23,6 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Cylinder;
-import java.util.List;
 
 /**
  * Klasa <code>Hook</code> jest klasą abstrakcji dla wszystkich haków w grze. 
@@ -90,38 +87,6 @@ public abstract class Hook {
         }
     }
     
-    private void addSafetyRopes(float y, Spatial attachedObject){
-        Wall wall = (Wall)attachedObject; 
-        Vector3f end = wall.getWorldTranslation().clone().setY(y),
-                start = wall.getProperPoint(0);
-        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-        Geometry[] ropes = new Geometry[4];
-        Vector3f[] ropesLocations = new Vector3f[4];
-        Material mat = new Material(game.getAssetManager(),
-                "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setColor("Color", ColorRGBA.Black); 
-        float length = start.distance(end);
-        for(int i = 0; i < ropes.length; i++){
-            ropes[i] = new Geometry("Cylinder" + i, new Cylinder(4, 8, 0.02f, length));
-            ropesLocations[i] = FastMath.interpolateLinear(0.5f, start, end);
-            ropes[i].setMaterial(mat); 
-            wall.attachChild(ropes[i]);
-            start = wall.getProperPoint(i + 1);
-        }          
-        CompoundCollisionShape wallRopesShape = GameManager
-                .createCompound(wall, new String[] {"Box", "Cylinder0",
-                "Cylinder1", "Cylinder2", "Cylinder3"});
-        GameManager.createPhysics(wallRopesShape, wall, 0.00001f, false);
-        for(int i = 0; i < ropes.length; i++){
-            ropes[i].setLocalTranslation(ropesLocations[i].subtract(wall
-                    .getControl(RigidBodyControl.class).getPhysicsLocation()));
-            ropes[i].lookAt(end, Vector3f.UNIT_Y);
-            ChildCollisionShape gotShape = wallRopesShape.getChildren().get(1 + i);
-            gotShape.location = ropes[i].getLocalTranslation();
-            gotShape.rotation = ropes[i].getLocalRotation().toRotationMatrix();
-        }
-    }
-    
     /**
      * Odłącza od haka przyczepiony obiekt. 
      */
@@ -132,7 +97,9 @@ public abstract class Hook {
             Node attachedObjectNode = (Node)attachedObject; 
             for(int i = 1; i < 5; i++)
                 attachedObjectNode.detachChildAt(1);
-            ((Wall)attachedObject).initPhysics(attachedObject.getWorldTranslation());
+            Vector3f location = attachedObject.getWorldTranslation();
+            createPhysics(null, attachedObject, 0.00001f, false);
+            attachedObject.getControl(RigidBodyControl.class).setPhysicsLocation(location);
             attachedObject = null;
         }
     }
@@ -278,5 +245,37 @@ public abstract class Hook {
         // PhysicsCollisionObject bo control nie musi być tylko typu RigidBodyControl
         int collisionGroup = ((PhysicsCollisionObject)b.getControl(0)).getCollisionGroup();
         return collisionGroup != 4;
+    }
+    
+    private void addSafetyRopes(float y, Spatial attachedObject){
+        Wall wall = (Wall)attachedObject; 
+        Vector3f end = wall.getWorldTranslation().clone().setY(y),
+                start = wall.getProperPoint(0);
+        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
+        Geometry[] ropes = new Geometry[4];
+        Vector3f[] ropesLocations = new Vector3f[4];
+        Material mat = new Material(game.getAssetManager(),
+                "Common/MatDefs/Misc/Unshaded.j3md");
+        mat.setColor("Color", ColorRGBA.Black); 
+        float length = start.distance(end);
+        for(int i = 0; i < ropes.length; i++){
+            ropes[i] = new Geometry("Cylinder" + i, new Cylinder(4, 8, 0.02f, length));
+            ropesLocations[i] = FastMath.interpolateLinear(0.5f, start, end);
+            ropes[i].setMaterial(mat); 
+            wall.attachChild(ropes[i]);
+            start = wall.getProperPoint(i + 1);
+        }          
+        CompoundCollisionShape wallRopesShape = GameManager
+                .createCompound(wall, new String[] {"Box", "Cylinder0",
+                "Cylinder1", "Cylinder2", "Cylinder3"});
+        GameManager.createPhysics(wallRopesShape, wall, 0.00001f, false);
+        for(int i = 0; i < ropes.length; i++){
+            ropes[i].setLocalTranslation(ropesLocations[i].subtract(wall
+                    .getControl(RigidBodyControl.class).getPhysicsLocation()));
+            ropes[i].lookAt(end, Vector3f.UNIT_Y);
+            ChildCollisionShape gotShape = wallRopesShape.getChildren().get(1 + i);
+            gotShape.location = ropes[i].getLocalTranslation();
+            gotShape.rotation = ropes[i].getLocalRotation().toRotationMatrix();
+        }
     }
 }

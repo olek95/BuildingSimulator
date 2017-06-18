@@ -7,7 +7,6 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import buildingsimulator.Control.Actions;
 import buildingsimulator.Controllable;
-import com.jme3.bullet.control.RigidBodyControl;
 /**
  * Klasa <code>ArmControl</code> jest klasą abstrakcyjną dla wszystkich klas 
  * reprezentujących sterowanie ramieniem dźwigu w grze. Implementuje ona interfejs

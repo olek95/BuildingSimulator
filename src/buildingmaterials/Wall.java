@@ -3,13 +3,17 @@ package buildingmaterials;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import com.jme3.bounding.BoundingBox;
+import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
+import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
+import cranes.Hook;
 
 /**
  * Obiekt klasy <code>Wall</code> reprezentuje kawałek ściany. Obiekt ten może 
@@ -17,6 +21,7 @@ import com.jme3.scene.shape.Box;
  * @author AleksanderSklorz
  */
 public class Wall extends Node{
+    private Spatial recentlyHitObject; 
     public Wall(Box shape, Vector3f location){
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         Geometry wall = new Geometry("Box", shape); 
@@ -61,5 +66,43 @@ public class Wall extends Node{
      */
     public void activateIfInactive(){
         getControl(RigidBodyControl.class).activate();
+    }
+    
+    public PhysicsCollisionGroupListener createCollisionListener(){
+        return new PhysicsCollisionGroupListener(){
+            @Override
+            public boolean collide(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB){
+                Object a = nodeA.getUserObject(), b = nodeB.getUserObject();
+                Spatial aSpatial = (Spatial)a, bSpatial = (Spatial)b;
+                String aName = aSpatial.getName(), bName = bSpatial.getName();
+                if(!isProperCollisionGroup(bSpatial)) return false;
+                if(aName.equals("Wall0")){
+                    setCollision(bSpatial);
+                }
+                else if(bName.equals("Wall0")){
+                    setCollision(aSpatial);
+                }
+                return true;
+            }
+        };
+    }
+    
+    public Spatial getRecentlyHitObject(){
+        return recentlyHitObject; 
+    }
+    
+    private void setCollision(Spatial b){
+        /* zabezpiecza przypadek gdy hak dotyka jednocześnie elementu pionowego
+        i poziomego*/
+        if((recentlyHitObject == null || ((BoundingBox)recentlyHitObject
+                .getWorldBound()).getMax(null).y > ((BoundingBox)b.getWorldBound())
+                .getMax(null).y))
+            recentlyHitObject = b;
+    }
+    
+    private static boolean isProperCollisionGroup(Spatial b){
+        // PhysicsCollisionObject bo control nie musi być tylko typu RigidBodyControl
+        int collisionGroup = ((PhysicsCollisionObject)b.getControl(0)).getCollisionGroup();
+        return collisionGroup != 4;
     }
 }

@@ -1,5 +1,6 @@
 package cranes.mobileCrane;
 
+import buildingmaterials.Wall;
 import cranes.Hook;
 import static buildingsimulator.GameManager.*;
 import com.jme3.bounding.BoundingBox;
@@ -31,7 +32,7 @@ public class OneRopeHook extends Hook{
      * Opuszcza hak do momentu wykrycia przeszkody. 
      */
     @Override
-    public void lower(){
+    public void lower(){ 
         CollisionResults results = new CollisionResults();
         Spatial recentlyHitObject = getRecentlyHitObject();
         /* jeśli nie dotknęło żadnego obiektu, to zbędne jest sprawdzanie 
@@ -40,6 +41,15 @@ public class OneRopeHook extends Hook{
             // tworzy pomocniczy promień sprawdzający kolizję w dół
             new Ray(getHook().getWorldTranslation(), new Vector3f(0,-0.5f,0))
                     .collideWith((BoundingBox)recentlyHitObject.getWorldBound(), results);
+        else{
+            Spatial attachedObject = getAttachedObject(), 
+                    hitObjectByAttachedObject = ((Wall)attachedObject).getRecentlyHitObject(); 
+            if(attachedObject != null && hitObjectByAttachedObject != null)
+                new Ray(attachedObject.getWorldTranslation(), new Vector3f(0, 
+                        ((BoundingBox)attachedObject.getWorldBound()).getYExtent(), 0))
+                        .collideWith((BoundingBox)hitObjectByAttachedObject
+                        .getWorldBound(), results);
+        }
         super.lower(results);
     }
     

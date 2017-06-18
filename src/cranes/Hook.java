@@ -23,6 +23,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Cylinder;
+import java.util.List;
 
 /**
  * Klasa <code>Hook</code> jest klasą abstrakcji dla wszystkich haków w grze. 
@@ -269,11 +270,14 @@ public abstract class Hook {
                 .createCompound(wall, new String[] {"Box", "Cylinder0",
                 "Cylinder1", "Cylinder2", "Cylinder3"});
         GameManager.createPhysics(wallRopesShape, wall, 0.00001f, false);
+        RigidBodyControl control = wall.getControl(RigidBodyControl.class); 
+        control.setCollisionGroup(5);
+        Vector3f physicsLocation = control.getPhysicsLocation();
+        List<ChildCollisionShape> children = wallRopesShape.getChildren();
         for(int i = 0; i < ropes.length; i++){
-            ropes[i].setLocalTranslation(ropesLocations[i].subtract(wall
-                    .getControl(RigidBodyControl.class).getPhysicsLocation()));
+            ropes[i].setLocalTranslation(ropesLocations[i].subtract(physicsLocation));
             ropes[i].lookAt(end, Vector3f.UNIT_Y);
-            ChildCollisionShape gotShape = wallRopesShape.getChildren().get(1 + i);
+            ChildCollisionShape gotShape = children.get(1 + i);
             gotShape.location = ropes[i].getLocalTranslation();
             gotShape.rotation = ropes[i].getLocalRotation().toRotationMatrix();
         }

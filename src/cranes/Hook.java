@@ -57,9 +57,11 @@ public abstract class Hook {
                 String aName = aSpatial.getName(), bName = bSpatial.getName();
                 if(!isProperCollisionGroup(bSpatial)) return false;
                 if(aName.equals("ropeHook") && !bName.equals("hookHandle")){
+                    if(b instanceof Wall && !((Wall)b).isMoving || !(b instanceof Wall))
                     setCollision(bSpatial);
                 }
                 else if(bName.equals("ropeHook") && !aName.equals("hookHandle")){
+                    if(a instanceof Wall && !((Wall)a).isMoving || !(a instanceof Wall))
                     setCollision(aSpatial);
                 }
                 return true;
@@ -86,6 +88,7 @@ public abstract class Hook {
             addSafetyRopes(y, attachedObject);
             buildingMaterialJoint = joinsElementToOtherElement(buildingMaterialJoint,
                     hook, attachedObject, Vector3f.ZERO, new Vector3f(0, y, 0)); // 1.5 mobil, 1.2 zuraw
+            ((Wall)attachedObject).isMoving = true; 
         }
     }
     
@@ -102,6 +105,7 @@ public abstract class Hook {
             Vector3f location = attachedObject.getWorldTranslation();
             createPhysics(null, attachedObject, 0.00001f, false);
             attachedObject.getControl(RigidBodyControl.class).setPhysicsLocation(location);
+            attachedObject.getControl(RigidBodyControl.class).setCollisionGroup(5);
             attachedObject = null;
         }
     }

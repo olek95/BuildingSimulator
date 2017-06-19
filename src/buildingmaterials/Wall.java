@@ -22,6 +22,7 @@ import cranes.Hook;
  */
 public class Wall extends Node{
     private Spatial recentlyHitObject; 
+    public boolean isMoving = false; 
     public Wall(Box shape, Vector3f location){
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         Geometry wall = new Geometry("Box", shape); 
@@ -76,11 +77,14 @@ public class Wall extends Node{
                 Spatial aSpatial = (Spatial)a, bSpatial = (Spatial)b;
                 String aName = aSpatial.getName(), bName = bSpatial.getName();
                 if(!isProperCollisionGroup(bSpatial)) return false;
-                if(aName.equals("Wall0")){
+                if(aName.equals("Wall0") && !bName.equals("ropeHook")){
                     setCollision(bSpatial);
                 }
-                else if(bName.equals("Wall0")){
+                else if(bName.equals("Wall0") && !aName.equals("ropeHook")){
                     setCollision(aSpatial);
+                }
+                if(bName.equals("New Scene") || aName.equals("New Scene")){
+                    isMoving = false; 
                 }
                 return true;
             }

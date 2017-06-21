@@ -104,7 +104,6 @@ public abstract class ArmControl implements AnalogListener, Controllable{
             if(attachedObjectNotNull) 
                 ((Wall)attachedObject).activateIfInactive();
             if(!name.equals(Actions.LOWER_HOOK.toString()) && !usedNotUsingKey){ 
-                System.out.println(name); 
                 hook.setRecentlyHitObject(null);
                 if(attachedObjectNotNull) 
                     ((Wall)attachedObject).setRecentlyHitObject(null);

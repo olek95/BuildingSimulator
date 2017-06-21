@@ -13,7 +13,6 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
-import cranes.Hook;
 
 /**
  * Obiekt klasy <code>Wall</code> reprezentuje kawałek ściany. Obiekt ten może 
@@ -21,8 +20,8 @@ import cranes.Hook;
  * @author AleksanderSklorz
  */
 public class Wall extends Node{
-    private Spatial recentlyHitObject; 
-    public boolean isMoving = false; 
+    private Spatial recentlyHitObject;
+    private boolean attached = false; 
     public Wall(Box shape, Vector3f location){
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         Geometry wall = new Geometry("Box", shape); 
@@ -79,13 +78,11 @@ public class Wall extends Node{
                 if(!isProperCollisionGroup(bSpatial)) return false;
                 if(aName.equals("Wall0") && !bName.equals("ropeHook")){
                     setCollision(bSpatial);
-                }
-                else if(bName.equals("Wall0") && !aName.equals("ropeHook")){
+                } else if(bName.equals("Wall0") && !aName.equals("ropeHook")){
                     setCollision(aSpatial);
                 }
-                if(bName.equals("New Scene") || aName.equals("New Scene")){
-                    isMoving = false; 
-                }
+                if(recentlyHitObject != null && !attached)
+                    getControl(RigidBodyControl.class).setCollisionGroup(1);
                 return true;
             }
         };
@@ -97,6 +94,14 @@ public class Wall extends Node{
     
     public void setRecentlyHitObject(Spatial object){
         recentlyHitObject = object; 
+    }
+    
+    public boolean getAttached(){
+        return attached; 
+    }
+    
+    public void setAttached(boolean attached){
+        this.attached = attached; 
     }
     
     private void setCollision(Spatial b){

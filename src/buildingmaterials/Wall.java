@@ -1,7 +1,9 @@
 package buildingmaterials;
 
+import buildingsimulator.BottomCollisionListener;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
+import buildingsimulator.RememberingRecentlyHitObject;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
@@ -19,9 +21,10 @@ import com.jme3.scene.shape.Box;
  * służyć do budowy budynków. 
  * @author AleksanderSklorz
  */
-public class Wall extends Node{
+public class Wall extends Node implements RememberingRecentlyHitObject{
     private Spatial recentlyHitObject;
     private boolean attached = false; 
+    private static BottomCollisionListener collisionListener = null; 
     public Wall(Box shape, Vector3f location){
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         Geometry wall = new Geometry("Box", shape); 
@@ -34,6 +37,11 @@ public class Wall extends Node{
         GameManager.createPhysics(null, this, 0.00001f, false);
         getControl(RigidBodyControl.class).setPhysicsLocation(location);
         game.getRootNode().attachChild(this);
+        if(collisionListener == null){
+            collisionListener = new BottomCollisionListener(this, "Wall0", "ropeHook");
+            game.getBulletAppState().getPhysicsSpace()
+                    .addCollisionGroupListener(collisionListener, 5);
+        }
     }
     
     /**
@@ -88,10 +96,12 @@ public class Wall extends Node{
         };
     }
     
+    @Override
     public Spatial getRecentlyHitObject(){
         return recentlyHitObject; 
     }
     
+    @Override
     public void setRecentlyHitObject(Spatial object){
         recentlyHitObject = object; 
     }
@@ -104,7 +114,8 @@ public class Wall extends Node{
         this.attached = attached; 
     }
     
-    private void setCollision(Spatial b){
+    @Override
+    public void setCollision(Spatial b){
         /* zabezpiecza przypadek gdy hak dotyka jednocześnie elementu pionowego
         i poziomego*/
         if((recentlyHitObject == null || ((BoundingBox)recentlyHitObject

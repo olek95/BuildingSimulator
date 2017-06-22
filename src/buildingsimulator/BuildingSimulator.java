@@ -10,11 +10,9 @@ import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.light.DirectionalLight;
-import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 
@@ -51,8 +49,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         
         // KOD DLA TESTU!!
         Wall wall = new Wall(new Box(1, 1, 1), new Vector3f(0f, 0f, 20f));
-        getBulletAppState().getPhysicsSpace().addCollisionGroupListener(wall
-                .createCollisionListener(), 5);
+        /*getBulletAppState().getPhysicsSpace().addCollisionGroupListener(wall
+                .createCollisionListener(), 5);*/
         /*Box b2 = new Box(1, 1, 1); // create cube shape
         Geometry geom2 = new Geometry("Box", b2);  // create cube geometry from the shape
         geom2.setLocalTranslation(0, 2.1f, 20);

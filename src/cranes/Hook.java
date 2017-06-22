@@ -63,7 +63,9 @@ public abstract class Hook implements RememberingRecentlyHitObject{
      * Łączy hak z dotknieym obiektem. 
      */
     public void attach(){
+        System.out.println("attached");
         if(buildingMaterialJoint == null){
+            System.out.println("if");
             attachedObject = recentlyHitObject;
             float y =  ((BoundingBox)attachedObject.getWorldBound()).getYExtent()
                     + ((BoundingBox)hook.getWorldBound()).getYExtent() + 0.2f;
@@ -92,6 +94,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
             attachedObjectControl.setCollisionGroup(5);
             ((Wall)attachedObject).setAttached(false); 
             attachedObject = null;
+            buildingMaterialJoint = null; 
         }
     }
     
@@ -237,7 +240,6 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         if((object == null || ((BoundingBox)object.getWorldBound()).getMax(null).y 
                 > ((BoundingBox)b.getWorldBound()).getMax(null).y) && attached == null)
             actualHook.recentlyHitObject = b;
-        System.out.println(b); 
     }
     
     private void addSafetyRopes(float y, Spatial attachedObject){

@@ -222,13 +222,7 @@ public class GameManager {
         return Integer.parseInt(tempFPSString);
     }
     
-    /**
-     * Inicjuje słuchacza dla kolizji haków. 
-     */
-    public static void initHookCollisionListener(){
-        BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
-                .addCollisionGroupListener(Hook.createCollisionListener(), 2);
-    }
+    
     
     /**
      * Ustawia aktualnie używaną jednostkę. 

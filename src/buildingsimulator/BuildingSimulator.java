@@ -39,7 +39,6 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         GameManager.addUnit(crane);
         GameManager.addUnit(new Crane());
         crane.setUsing(true);
-        GameManager.initHookCollisionListener();
         Control.addListener(crane);
         Control.addListener(this);
         DirectionalLight sun = new DirectionalLight();
@@ -49,8 +48,6 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         
         // KOD DLA TESTU!!
         Wall wall = new Wall(new Box(1, 1, 1), new Vector3f(0f, 0f, 20f));
-        /*getBulletAppState().getPhysicsSpace().addCollisionGroupListener(wall
-                .createCollisionListener(), 5);*/
         /*Box b2 = new Box(1, 1, 1); // create cube shape
         Geometry geom2 = new Geometry("Box", b2);  // create cube geometry from the shape
         geom2.setLocalTranslation(0, 2.1f, 20);

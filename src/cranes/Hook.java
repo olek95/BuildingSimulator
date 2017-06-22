@@ -1,12 +1,14 @@
 package cranes;
 
 import buildingmaterials.Wall;
+import buildingsimulator.BottomCollisionListener;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import static buildingsimulator.GameManager.addNewCollisionShapeToCompound;
 import static buildingsimulator.GameManager.createPhysics;
 import static buildingsimulator.GameManager.joinsElementToOtherElement;
 import static buildingsimulator.GameManager.moveWithScallingObject;
+import buildingsimulator.RememberingRecentlyHitObject;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
@@ -30,41 +32,24 @@ import java.util.List;
  * Klasa <code>Hook</code> jest klasą abstrakcji dla wszystkich haków w grze. 
  * @author AleksanderSklorz
  */
-public abstract class Hook {
+public abstract class Hook implements RememberingRecentlyHitObject{
     private Node ropeHook;
     private Spatial hook, hookHandle, recentlyHitObject, attachedObject = null;
     private float actualLowering = 1f, speed;
     private Vector3f hookDisplacement;
     private HingeJoint lineAndHookHandleJoint = null, buildingMaterialJoint;
+    private static BottomCollisionListener collisionListener = null; 
     public Hook(Node ropeHook, Spatial hookHandle, float speed){
         this.ropeHook = ropeHook;
         hook = ropeHook.getChild("hook");
         this.hookHandle = hookHandle;
         this.speed = speed;
+        if(collisionListener == null){
+            collisionListener = new BottomCollisionListener(this, "ropeHook", "hookHandle");
+            BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
+                    .addCollisionGroupListener(collisionListener, 2);
+        }
     } 
-    
-    /**
-     * Tworzy obiekt kolizji dla haków. Ustawia on ostatnio dotkniety przez hak 
-     * obiekt. 
-     * @return obiekt kolizji dla haków 
-     */
-    public static PhysicsCollisionGroupListener createCollisionListener(){
-        return new PhysicsCollisionGroupListener(){
-            @Override
-            public boolean collide(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB){
-                Object a = nodeA.getUserObject(), b = nodeB.getUserObject();
-                Spatial aSpatial = (Spatial)a, bSpatial = (Spatial)b;
-                String aName = aSpatial.getName(), bName = bSpatial.getName();
-                if(!isProperCollisionGroup(bSpatial)) return false;
-                if(aName.equals("ropeHook") && !bName.equals("hookHandle")){
-                    setCollision(bSpatial);
-                }else if(bName.equals("ropeHook") && !aName.equals("hookHandle")){
-                    setCollision(aSpatial);
-                }
-                return true;
-            }
-        };
-    }
     
     /**
      * Podnosi hak. 
@@ -110,16 +95,10 @@ public abstract class Hook {
         }
     }
     
-    /**
-     * Zwraca ostatnio dotknięty obiekt. 
-     * @return ostatnio dotknięy obiekt
-     */
+    @Override
     public Spatial getRecentlyHitObject(){ return recentlyHitObject; }
     
-    /**
-     * Ustawia ostatnio dotknięty przez hak obiekt.
-     * @param object dotknięty obiekt 
-     */
+    @Override
     public void setRecentlyHitObject(Spatial object){ recentlyHitObject = object; }
     
     /**
@@ -249,7 +228,8 @@ public abstract class Hook {
      */
     protected abstract Node[] getRopes();
     
-    private static void setCollision(Spatial b){
+    @Override
+    public void setCollision(Spatial b){
         Hook actualHook = GameManager.findActualUnit().getHook();
         Spatial object = actualHook.recentlyHitObject, attached = actualHook.attachedObject;
         /* zabezpiecza przypadek gdy hak dotyka jednocześnie elementu pionowego
@@ -257,12 +237,7 @@ public abstract class Hook {
         if((object == null || ((BoundingBox)object.getWorldBound()).getMax(null).y 
                 > ((BoundingBox)b.getWorldBound()).getMax(null).y) && attached == null)
             actualHook.recentlyHitObject = b;
-    }
-    
-    private static boolean isProperCollisionGroup(Spatial b){
-        // PhysicsCollisionObject bo control nie musi być tylko typu RigidBodyControl
-        int collisionGroup = ((PhysicsCollisionObject)b.getControl(0)).getCollisionGroup();
-        return collisionGroup != 4;
+        System.out.println(b); 
     }
     
     private void addSafetyRopes(float y, Spatial attachedObject){

@@ -76,26 +76,6 @@ public class Wall extends Node implements RememberingRecentlyHitObject{
         getControl(RigidBodyControl.class).activate();
     }
     
-    public PhysicsCollisionGroupListener createCollisionListener(){
-        return new PhysicsCollisionGroupListener(){
-            @Override
-            public boolean collide(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB){
-                Object a = nodeA.getUserObject(), b = nodeB.getUserObject();
-                Spatial aSpatial = (Spatial)a, bSpatial = (Spatial)b;
-                String aName = aSpatial.getName(), bName = bSpatial.getName();
-                if(!isProperCollisionGroup(bSpatial)) return false;
-                if(aName.equals("Wall0") && !bName.equals("ropeHook")){
-                    setCollision(bSpatial);
-                } else if(bName.equals("Wall0") && !aName.equals("ropeHook")){
-                    setCollision(aSpatial);
-                }
-                if(recentlyHitObject != null && !attached)
-                    getControl(RigidBodyControl.class).setCollisionGroup(1);
-                return true;
-            }
-        };
-    }
-    
     @Override
     public Spatial getRecentlyHitObject(){
         return recentlyHitObject; 
@@ -106,7 +86,7 @@ public class Wall extends Node implements RememberingRecentlyHitObject{
         recentlyHitObject = object; 
     }
     
-    public boolean getAttached(){
+    public boolean isAttached(){
         return attached; 
     }
     
@@ -122,11 +102,5 @@ public class Wall extends Node implements RememberingRecentlyHitObject{
                 .getWorldBound()).getMax(null).y > ((BoundingBox)b.getWorldBound())
                 .getMax(null).y))
             recentlyHitObject = b;
-    }
-    
-    private static boolean isProperCollisionGroup(Spatial b){
-        // PhysicsCollisionObject bo control nie musi być tylko typu RigidBodyControl
-        int collisionGroup = ((PhysicsCollisionObject)b.getControl(0)).getCollisionGroup();
-        return collisionGroup != 4;
     }
 }

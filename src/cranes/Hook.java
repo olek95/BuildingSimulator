@@ -22,15 +22,17 @@ import com.jme3.scene.Spatial;
 public abstract class Hook implements RememberingRecentlyHitObject{
     private Node ropeHook;
     private Spatial hook, hookHandle, recentlyHitObject, attachedObject = null;
-    private float actualLowering = 1f, speed;
+    private float actualLowering = 1f, speed, gapBetweenHookAndAttachedObject;
     private Vector3f hookDisplacement;
     private HingeJoint lineAndHookHandleJoint = null, buildingMaterialJoint;
     private static BottomCollisionListener collisionListener = null; 
-    public Hook(Node ropeHook, Spatial hookHandle, float speed){
+    public Hook(Node ropeHook, Spatial hookHandle, float speed, 
+            float gapBetweenHookAndAttachedObject){
         this.ropeHook = ropeHook;
         hook = ropeHook.getChild("hook");
         this.hookHandle = hookHandle;
         this.speed = speed;
+        this.gapBetweenHookAndAttachedObject = gapBetweenHookAndAttachedObject; 
         if(collisionListener == null){
             collisionListener = new BottomCollisionListener(this, "ropeHook", "hookHandle");
             BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
@@ -53,7 +55,8 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         if(buildingMaterialJoint == null){
             attachedObject = recentlyHitObject;
             float y =  ((BoundingBox)attachedObject.getWorldBound()).getYExtent()
-                    + ((BoundingBox)hook.getWorldBound()).getYExtent() + 0.2f;
+                    + ((BoundingBox)hook.getWorldBound()).getYExtent()
+                    + gapBetweenHookAndAttachedObject;
             Wall wall = (Wall)attachedObject;
             wall.swapControl(true);
             buildingMaterialJoint = joinsElementToOtherElement(buildingMaterialJoint,
@@ -129,6 +132,12 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     public Spatial getHook() { return hook; }
     
     /**
+     * Zwraca słuchacza dla sprawdzający kolizje z hakiem od dołu. 
+     * @return słuchacz dla kolizji od dołu 
+     */
+    public BottomCollisionListener getCollisionListener(){ return collisionListener; }
+    
+    /**
      * Opuszcza hak, jeśli nic nie znajduje się pod nim. W przeciwnym razie 
      * hak nie zmienia pozycji. 
      * @param results wyniki kolizji, dzięki którym sprawdza się w ilu punktach 
@@ -141,9 +150,9 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                         .getRecentlyHitObject(); 
                 if(hitObjectByAttachedObject != null){
                     new Ray(attachedObject.getWorldTranslation(), new Vector3f(0, 
-                            -((BoundingBox)attachedObject.getWorldBound()).getYExtent(), 0))
-                            .collideWith((BoundingBox)hitObjectByAttachedObject
-                            .getWorldBound(), results);
+                            -((BoundingBox)attachedObject.getWorldBound()).getYExtent()
+                            - 0.1f, 0)).collideWith((BoundingBox)hitObjectByAttachedObject
+                            .getWorldBound(), results); // -0.1 aby zmniejszyć przerwę
                 }
             }
         }

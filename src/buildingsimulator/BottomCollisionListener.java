@@ -24,11 +24,6 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
         }else if(bName.equals(hittingObjectName) && !aName.equals(hitObjectName)){
             hittingObject.setCollision(aSpatial);
         }
-        /*if(hittingObject instanceof Wall && hittingObject.getRecentlyHitObject() != null){
-            Wall wall = (Wall)hittingObject; 
-            if(!wall.isAttached())
-                    wall.getControl(RigidBodyControl.class).setCollisionGroup(1);
-        }*/
         return true;
    }
     
@@ -36,5 +31,9 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
         // PhysicsCollisionObject bo control nie musi być tylko typu RigidBodyControl
         int collisionGroup = ((PhysicsCollisionObject)b.getControl(0)).getCollisionGroup();
         return collisionGroup != 4;
+    }
+    
+    public  void setHittingObject(RememberingRecentlyHitObject hittingObject){
+        this.hittingObject = hittingObject; 
     }
 }

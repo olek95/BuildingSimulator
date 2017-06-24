@@ -22,7 +22,7 @@ public class FourRopesHook extends Hook{
     private Node littleHookHandle;
     private Node[] ropes = new Node[4];
     public FourRopesHook(Node ropeHook, Spatial hookHandle, float speed){
-        super(ropeHook, hookHandle, speed);
+        super(ropeHook, hookHandle, speed, -0.3f);
         List<Spatial> ropeHookChildren = ropeHook.getChildren();
         int index = 0;
         for(int i = 0; i < ropeHookChildren.size(); i++){

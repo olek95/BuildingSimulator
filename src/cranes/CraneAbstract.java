@@ -38,7 +38,7 @@ public abstract class CraneAbstract {
      */
     public boolean isUsing(){
         return using;
-    };
+    }
     
     /**
      * Określa czy dany dźwig jest aktualnie używany. 
@@ -46,5 +46,7 @@ public abstract class CraneAbstract {
      */
     public void setUsing(boolean using){
         this.using = using;
-    };
+        Hook hook = armControl.getHook();
+        if(using) hook.getCollisionListener().setHittingObject(hook);
+    }
 }

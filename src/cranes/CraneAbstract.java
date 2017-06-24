@@ -41,7 +41,8 @@ public abstract class CraneAbstract {
     }
     
     /**
-     * Określa czy dany dźwig jest aktualnie używany. 
+     * Określa czy dany dźwig jest aktualnie używany. Jeśli dźwig jest używany, 
+     * to dodatkowo ustawia dla jego haka słuchacza kolizji od dołu. 
      * @param using true jeśli dźwig jest używany, false w przeciwnym razie 
      */
     public void setUsing(boolean using){

@@ -67,7 +67,6 @@ public class GameManager {
      * @param controlOwner właściciel fizyki w obiekcie 
      * @param mass masa obiektu 
      * @param kinematic true jeśli używamy fizyki kinematycznej, false jeśli dynamicznej
-     * @param elementGeometry obiekt będący właścicielem fizyki, gdy controlOwner
      * ma wartość null
      */
     public static void createPhysics(CompoundCollisionShape compound, Spatial controlOwner,
@@ -116,7 +115,7 @@ public class GameManager {
      * w przeciwnym kierunku 
      * @param elementDisplacement wektor przesunięcia 
      * @param scallingVector wektor skalowania 
-     * @param scallingElement skalowany element 
+     * @param scallingElements skalowane elementy 
      * @param movingElements przesuwane elementy  
      */
     public static void moveWithScallingObject(boolean direction, Vector3f elementDisplacement,
@@ -185,7 +184,7 @@ public class GameManager {
     
     /**
      * Ustawia ostatnio wykonaną akcję. 
-     * @param key ostatnio wykonana akcja
+     * @param action ostatnio wykonana akcja
      */
     public static void setLastAction(String action){
         lastAction = action;

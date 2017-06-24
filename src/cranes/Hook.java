@@ -67,7 +67,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
             Wall wall = (Wall)attachedObject;
             wall.swapControl(true);
             buildingMaterialJoint = joinsElementToOtherElement(buildingMaterialJoint,
-                    hook, attachedObject, Vector3f.ZERO, new Vector3f(0, y, 0)); // 1.5 mobil, 1.2 zuraw
+                    hook, wall, Vector3f.ZERO, new Vector3f(0, y, 0)); // 1.5 mobil, 1.2 zuraw
             wall.setAttached(true); 
         }
     }
@@ -81,7 +81,6 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                     .remove(buildingMaterialJoint);
             Wall wall = (Wall)attachedObject;
             wall.swapControl(false);
-            //attachedObject.getControl(RigidBodyControl.class).setCollisionGroup(5);
             wall.setAttached(false); 
             wall.activateIfInactive();
             attachedObject = null;

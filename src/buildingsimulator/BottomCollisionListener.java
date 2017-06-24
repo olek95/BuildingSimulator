@@ -1,9 +1,7 @@
 package buildingsimulator;
 
-import buildingmaterials.Wall;
 import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
-import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.scene.Spatial;
 
 public class BottomCollisionListener implements PhysicsCollisionGroupListener{
@@ -22,10 +20,8 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
         String aName = aSpatial.getName(), bName = bSpatial.getName();
         if(!isProperCollisionGroup(bSpatial)) return false;
         if(aName.equals(hittingObjectName) && !bName.equals(hitObjectName)){
-            System.out.println(hittingObjectName); 
             hittingObject.setCollision(bSpatial);
         }else if(bName.equals(hittingObjectName) && !aName.equals(hitObjectName)){
-            System.out.println(hittingObjectName); 
             hittingObject.setCollision(aSpatial);
         }
         /*if(hittingObject instanceof Wall && hittingObject.getRecentlyHitObject() != null){

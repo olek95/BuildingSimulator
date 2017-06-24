@@ -47,7 +47,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         rootNode.addLight(sun);
         
         // KOD DLA TESTU!!
-        Wall wall = new Wall(new Box(1, 1, 1), new Vector3f(0f, 0f, 20f));
+        Wall wall1 = new Wall(new Box(1, 1, 1), new Vector3f(0f, 0f, 20f));
+        Wall wall2 = new Wall(new Box(1, 1, 1), new Vector3f(0f, 1.1f, 20f));
         /*Box b2 = new Box(1, 1, 1); // create cube shape
         Geometry geom2 = new Geometry("Box", b2);  // create cube geometry from the shape
         geom2.setLocalTranslation(0, 2.1f, 20);

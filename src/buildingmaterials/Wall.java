@@ -31,6 +31,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private boolean attached = false; 
     private static BottomCollisionListener collisionListener = null; 
     private Geometry[] ropes = new Geometry[4];
+    private static int counter = 0; 
     
     @SuppressWarnings("LeakingThisInConstructor")
     public Wall(Box shape, Vector3f location){
@@ -40,11 +41,11 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
                 "Common/MatDefs/Misc/Unshaded.j3md");  
         mat.setColor("Color", ColorRGBA.Blue);   
         wall.setMaterial(mat);                               
-        setName("Wall0");
+        setName("Wall" + counter);
         attachChild(wall);
         game.getRootNode().attachChild(this);
         if(collisionListener == null){
-            collisionListener = new BottomCollisionListener(this, "Wall0", "ropeHook");
+            collisionListener = new BottomCollisionListener(this, getName(), "ropeHook");
             game.getBulletAppState().getPhysicsSpace()
                     .addCollisionGroupListener(collisionListener, 5);
         }

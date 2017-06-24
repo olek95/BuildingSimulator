@@ -52,6 +52,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         createAttachingControl(location); 
         createLooseControl(location); 
         swapControl(false); 
+        counter++;
     }
     
     /**

@@ -4,10 +4,7 @@ import buildingmaterials.Wall;
 import buildingsimulator.BottomCollisionListener;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
-import static buildingsimulator.GameManager.addNewCollisionShapeToCompound;
-import static buildingsimulator.GameManager.createPhysics;
-import static buildingsimulator.GameManager.joinsElementToOtherElement;
-import static buildingsimulator.GameManager.moveWithScallingObject;
+import static buildingsimulator.GameManager.*;
 import buildingsimulator.RememberingRecentlyHitObject;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
@@ -63,16 +60,16 @@ public abstract class Hook implements RememberingRecentlyHitObject{
      * Łączy hak z dotknieym obiektem. 
      */
     public void attach(){
-        System.out.println("attached");
         if(buildingMaterialJoint == null){
-            System.out.println("if");
             attachedObject = recentlyHitObject;
             float y =  ((BoundingBox)attachedObject.getWorldBound()).getYExtent()
                     + ((BoundingBox)hook.getWorldBound()).getYExtent() + 0.2f;
-            addSafetyRopes(y, attachedObject);
+            Wall wall = (Wall)attachedObject; 
+            wall.setRopesVisibility(true); 
+            wall.changeControl(true);
             buildingMaterialJoint = joinsElementToOtherElement(buildingMaterialJoint,
                     hook, attachedObject, Vector3f.ZERO, new Vector3f(0, y, 0)); // 1.5 mobil, 1.2 zuraw
-            ((Wall)attachedObject).setAttached(true); 
+            wall.setAttached(true); 
         }
     }
     
@@ -83,16 +80,12 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         if(attachedObject != null){
             BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
                     .remove(buildingMaterialJoint);
-            Node attachedObjectNode = (Node)attachedObject; 
-            for(int i = 1; i < 5; i++)
-                attachedObjectNode.detachChildAt(1);
-            Vector3f location = attachedObject.getWorldTranslation();
-            createPhysics(null, attachedObject, 0.00001f, false);
-            RigidBodyControl attachedObjectControl = attachedObject
-                    .getControl(RigidBodyControl.class); 
-            attachedObjectControl.setPhysicsLocation(location);
-            attachedObjectControl.setCollisionGroup(5);
-            ((Wall)attachedObject).setAttached(false); 
+            Wall wall = (Wall)attachedObject; 
+            wall.setRopesVisibility(false);
+            wall.changeControl(false);
+            //attachedObject.getControl(RigidBodyControl.class).setCollisionGroup(5);
+            wall.setAttached(false); 
+            wall.activateIfInactive();
             attachedObject = null;
             buildingMaterialJoint = null; 
         }
@@ -233,47 +226,11 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     
     @Override
     public void setCollision(Spatial b){
-        Hook actualHook = GameManager.findActualUnit().getHook();
-        Spatial object = actualHook.recentlyHitObject, attached = actualHook.attachedObject;
         /* zabezpiecza przypadek gdy hak dotyka jednocześnie elementu pionowego
         i poziomego*/
-        if((object == null || ((BoundingBox)object.getWorldBound()).getMax(null).y 
-                > ((BoundingBox)b.getWorldBound()).getMax(null).y) && attached == null)
-            actualHook.recentlyHitObject = b;
-    }
-    
-    private void addSafetyRopes(float y, Spatial attachedObject){
-        Wall wall = (Wall)attachedObject; 
-        Vector3f end = wall.getWorldTranslation().clone().setY(y),
-                start = wall.getProperPoint(0);
-        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-        Geometry[] ropes = new Geometry[4];
-        Vector3f[] ropesLocations = new Vector3f[4];
-        Material mat = new Material(game.getAssetManager(),
-                "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setColor("Color", ColorRGBA.Black); 
-        float length = start.distance(end);
-        for(int i = 0; i < ropes.length; i++){
-            ropes[i] = new Geometry("Cylinder" + i, new Cylinder(4, 8, 0.02f, length));
-            ropesLocations[i] = FastMath.interpolateLinear(0.5f, start, end);
-            ropes[i].setMaterial(mat); 
-            wall.attachChild(ropes[i]);
-            start = wall.getProperPoint(i + 1);
-        }          
-        CompoundCollisionShape wallRopesShape = GameManager
-                .createCompound(wall, new String[] {"Box", "Cylinder0",
-                "Cylinder1", "Cylinder2", "Cylinder3"});
-        GameManager.createPhysics(wallRopesShape, wall, 0.00001f, false);
-        RigidBodyControl control = wall.getControl(RigidBodyControl.class); 
-        control.setCollisionGroup(5);
-        Vector3f physicsLocation = control.getPhysicsLocation();
-        List<ChildCollisionShape> children = wallRopesShape.getChildren();
-        for(int i = 0; i < ropes.length; i++){
-            ropes[i].setLocalTranslation(ropesLocations[i].subtract(physicsLocation));
-            ropes[i].lookAt(end, Vector3f.UNIT_Y);
-            ChildCollisionShape gotShape = children.get(1 + i);
-            gotShape.location = ropes[i].getLocalTranslation();
-            gotShape.rotation = ropes[i].getLocalRotation().toRotationMatrix();
-        }
+        if((recentlyHitObject == null || ((BoundingBox)recentlyHitObject
+                .getWorldBound()).getMax(null).y > ((BoundingBox)b.getWorldBound())
+                .getMax(null).y) && attachedObject == null)
+            recentlyHitObject = b;
     }
 }

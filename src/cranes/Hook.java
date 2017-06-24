@@ -64,9 +64,8 @@ public abstract class Hook implements RememberingRecentlyHitObject{
             attachedObject = recentlyHitObject;
             float y =  ((BoundingBox)attachedObject.getWorldBound()).getYExtent()
                     + ((BoundingBox)hook.getWorldBound()).getYExtent() + 0.2f;
-            Wall wall = (Wall)attachedObject; 
-            wall.setRopesVisibility(true); 
-            wall.changeControl(true);
+            Wall wall = (Wall)attachedObject;
+            wall.swapControl(true);
             buildingMaterialJoint = joinsElementToOtherElement(buildingMaterialJoint,
                     hook, attachedObject, Vector3f.ZERO, new Vector3f(0, y, 0)); // 1.5 mobil, 1.2 zuraw
             wall.setAttached(true); 
@@ -80,9 +79,8 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         if(attachedObject != null){
             BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
                     .remove(buildingMaterialJoint);
-            Wall wall = (Wall)attachedObject; 
-            wall.setRopesVisibility(false);
-            wall.changeControl(false);
+            Wall wall = (Wall)attachedObject;
+            wall.swapControl(false);
             //attachedObject.getControl(RigidBodyControl.class).setCollisionGroup(5);
             wall.setAttached(false); 
             wall.activateIfInactive();

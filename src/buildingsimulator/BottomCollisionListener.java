@@ -22,15 +22,17 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
         String aName = aSpatial.getName(), bName = bSpatial.getName();
         if(!isProperCollisionGroup(bSpatial)) return false;
         if(aName.equals(hittingObjectName) && !bName.equals(hitObjectName)){
+            System.out.println(hittingObjectName); 
             hittingObject.setCollision(bSpatial);
         }else if(bName.equals(hittingObjectName) && !aName.equals(hitObjectName)){
+            System.out.println(hittingObjectName); 
             hittingObject.setCollision(aSpatial);
         }
-        if(hittingObject instanceof Wall && hittingObject.getRecentlyHitObject() != null){
+        /*if(hittingObject instanceof Wall && hittingObject.getRecentlyHitObject() != null){
             Wall wall = (Wall)hittingObject; 
             if(!wall.isAttached())
                     wall.getControl(RigidBodyControl.class).setCollisionGroup(1);
-        }
+        }*/
         return true;
    }
     

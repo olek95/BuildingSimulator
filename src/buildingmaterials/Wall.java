@@ -39,8 +39,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         Geometry wall = new Geometry("Box", shape); 
         Material mat = new Material(game.getAssetManager(), 
-                "Common/MatDefs/Misc/Unshaded.j3md");  
-        //mat.setColor("Color", ColorRGBA.Blue); 
+                "Common/MatDefs/Misc/Unshaded.j3md");
         Texture gypsumTexture = game.getAssetManager().loadTexture("Textures/gips.jpg");
         mat.setTexture("ColorMap", gypsumTexture);
         wall.setMaterial(mat);                               
@@ -133,7 +132,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     private void createAttachingControl(Vector3f location){
-        Vector3f end = getWorldTranslation().clone().setY(1.3f),
+        Vector3f end = getWorldTranslation().clone().setY(1f),
                 start = getProperPoint(0);
         ropes = new Geometry[4];
         Vector3f[] ropesLocations = new Vector3f[4];
@@ -154,6 +153,11 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
                 "Cylinder1", "Cylinder2", "Cylinder3"});
         GameManager.createPhysics(wallRopesShape, this, 0.00001f, false);
         RigidBodyControl controlAttaching = getControl(RigidBodyControl.class); 
+        controlAttaching.setAngularDamping(1);
+        controlAttaching.setAngularFactor(0);
+        controlAttaching.setAngularVelocity(Vector3f.ZERO);
+        controlAttaching.setLinearDamping(1);
+        controlAttaching.setLinearVelocity(Vector3f.ZERO);
         controlAttaching.setCollisionGroup(5);
         Vector3f physicsLocation = controlAttaching.getPhysicsLocation();
         List<ChildCollisionShape> collisionShapeChildren = wallRopesShape.getChildren();

@@ -19,6 +19,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Cylinder;
+import com.jme3.texture.Texture;
 import java.util.List;
 
 /**
@@ -39,7 +40,9 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         Geometry wall = new Geometry("Box", shape); 
         Material mat = new Material(game.getAssetManager(), 
                 "Common/MatDefs/Misc/Unshaded.j3md");  
-        mat.setColor("Color", ColorRGBA.Blue);   
+        //mat.setColor("Color", ColorRGBA.Blue); 
+        Texture gypsumTexture = game.getAssetManager().loadTexture("Textures/gips.jpg");
+        mat.setTexture("ColorMap", gypsumTexture);
         wall.setMaterial(mat);                               
         setName("Wall" + counter);
         attachChild(wall);

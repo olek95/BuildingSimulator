@@ -54,6 +54,8 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     public void attach(){
         if(buildingMaterialJoint == null){
             attachedObject = recentlyHitObject;
+            // obraca obiekt w strone haka, w razie gdyby liny były po innej stronie
+            attachedObject.lookAt(new Vector3f(0, 1, 0), Vector3f.UNIT_Y);
             float y =  ((BoundingBox)attachedObject.getWorldBound()).getYExtent()
                     + ((BoundingBox)hook.getWorldBound()).getYExtent()
                     + gapBetweenHookAndAttachedObject;

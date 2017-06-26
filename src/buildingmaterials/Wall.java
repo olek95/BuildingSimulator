@@ -152,12 +152,8 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
                 .createCompound(this, new String[] {"Box", "Cylinder0",
                 "Cylinder1", "Cylinder2", "Cylinder3"});
         GameManager.createPhysics(wallRopesShape, this, 0.00001f, false);
-        RigidBodyControl controlAttaching = getControl(RigidBodyControl.class); 
-        controlAttaching.setAngularDamping(1);
+        RigidBodyControl controlAttaching = getControl(RigidBodyControl.class);
         controlAttaching.setAngularFactor(0);
-        controlAttaching.setAngularVelocity(Vector3f.ZERO);
-        controlAttaching.setLinearDamping(1);
-        controlAttaching.setLinearVelocity(Vector3f.ZERO);
         controlAttaching.setCollisionGroup(5);
         Vector3f physicsLocation = controlAttaching.getPhysicsLocation();
         List<ChildCollisionShape> collisionShapeChildren = wallRopesShape.getChildren();

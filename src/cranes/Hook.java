@@ -55,8 +55,8 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         if(buildingMaterialJoint == null){
             attachedObject = recentlyHitObject;
             // obraca obiekt w strone haka, w razie gdyby liny były po innej stronie
-            for(int i = 0; i < 50; i++) this.heighten();
-            attachedObject.lookAt(new Vector3f(0, 1, 0), Vector3f.UNIT_Y);
+            //for(int i = 0; i < 50; i++) this.heighten();
+            //attachedObject.lookAt(new Vector3f(0, 1, 0), Vector3f.UNIT_Y);
             float y =  ((BoundingBox)attachedObject.getWorldBound()).getYExtent()
                     + ((BoundingBox)hook.getWorldBound()).getYExtent()
                     + gapBetweenHookAndAttachedObject;
@@ -64,7 +64,6 @@ public abstract class Hook implements RememberingRecentlyHitObject{
             wall.swapControl(true);
             buildingMaterialJoint = joinsElementToOtherElement(buildingMaterialJoint,
                     hook, wall, Vector3f.ZERO, new Vector3f(0, y, 0)); // 1.5 mobil, 1.2 zuraw
-            
             wall.setAttached(true); 
         }
     }

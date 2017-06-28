@@ -6,10 +6,12 @@ import buildingsimulator.BuildingSimulator;
 import static buildingsimulator.GameManager.*;
 import buildingsimulator.RememberingRecentlyHitObject;
 import com.jme3.bounding.BoundingBox;
+import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.joints.HingeJoint;
 import com.jme3.collision.CollisionResults;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -55,15 +57,41 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         if(buildingMaterialJoint == null){
             attachedObject = recentlyHitObject;
             // obraca obiekt w strone haka, w razie gdyby liny były po innej stronie
-            //for(int i = 0; i < 50; i++) this.heighten();
-            //attachedObject.lookAt(new Vector3f(0, 1, 0), Vector3f.UNIT_Y);
+            attachedObject.lookAt(new Vector3f(0, 1, 0), Vector3f.UNIT_Y);
             float y =  ((BoundingBox)attachedObject.getWorldBound()).getYExtent()
                     + ((BoundingBox)hook.getWorldBound()).getYExtent()
                     + gapBetweenHookAndAttachedObject;
             Wall wall = (Wall)attachedObject;
-            wall.swapControl(true);
+            wall.swapControl(0);
             buildingMaterialJoint = joinsElementToOtherElement(buildingMaterialJoint,
                     hook, wall, Vector3f.ZERO, new Vector3f(0, y, 0)); // 1.5 mobil, 1.2 zuraw
+            wall.setAttached(true); 
+        }
+    }
+    
+    public void attachVertical(){
+        if(buildingMaterialJoint == null){
+            attachedObject = recentlyHitObject;
+            // obraca obiekt w strone haka, w razie gdyby liny były po innej stronie
+            //attachedObject.lookAt(new Vector3f(0, 0, -1), Vector3f.UNIT_Y);
+            for(int i = 0; i < 50; i++) this.heighten();
+            float y =  ((BoundingBox)attachedObject.getWorldBound()).getZExtent()
+                    + ((BoundingBox)hook.getWorldBound()).getYExtent()
+                    + gapBetweenHookAndAttachedObject;
+            Wall wall = (Wall)attachedObject;
+            wall.swapControl(1);
+            ((RigidBodyControl)wall.getControl(1)).setPhysicsRotation(wall
+                    .getVerticalRotation());
+            //((RigidBodyControl)wall.getControl(1)).setPhysicsRotation(wall.q);
+//            ((RigidBodyControl)wall.getControl(1)).setPhysicsLocation(new Vector3f(0, 10, 0));
+            PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
+                        .getBulletAppState().getPhysicsSpace();
+        buildingMaterialJoint = new HingeJoint(hook.getControl(RigidBodyControl.class),
+                (RigidBodyControl)wall.getControl(1), Vector3f.ZERO, new Vector3f(0, 0, y),
+                Vector3f.ZERO,Vector3f.ZERO);
+        physics.add(buildingMaterialJoint);
+           // buildingMaterialJoint = joinsElementToOtherElement(buildingMaterialJoint,
+             //       hook, wall, Vector3f.ZERO, new Vector3f(0, y, 0)); 
             wall.setAttached(true); 
         }
     }
@@ -76,7 +104,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
             BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
                     .remove(buildingMaterialJoint);
             Wall wall = (Wall)attachedObject;
-            wall.swapControl(false);
+            wall.swapControl(2);
             wall.setAttached(false); 
             wall.activateIfInactive();
             attachedObject = null;

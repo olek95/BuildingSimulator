@@ -22,7 +22,8 @@ public abstract class ArmControl implements AnalogListener, Controllable{
     private Spatial hookHandle;
     private Actions[] availableActions = { Actions.RIGHT, Actions.LEFT,
         Actions.PULL_OUT, Actions.PULL_IN, Actions.LOWER_HOOK, Actions.HEIGHTEN_HOOK,
-        Actions.UP, Actions.DOWN, Actions.ACTION, Actions.ATTACH, Actions.DETACH };
+        Actions.UP, Actions.DOWN, Actions.ACTION, Actions.ATTACH,
+        Actions.VERTICAL_ATTACH, Actions.DETACH };
     /**
      * Konstruktor tworzący kabinę. Używany, gdy wartość maksymalnego i 
      * minimalnego przesunięcia uchwytu nie jest znana od początku. Należy 
@@ -60,6 +61,7 @@ public abstract class ArmControl implements AnalogListener, Controllable{
      */
     @Override
     public void onAnalog(String name, float value, float tpf) {
+        Spatial recentlyHitObject;
         switch(Actions.valueOf(name)){
             case RIGHT:
                 rotate(-tpf / 5);
@@ -81,11 +83,17 @@ public abstract class ArmControl implements AnalogListener, Controllable{
                     hook.heighten();
                 break;
             case ATTACH: 
-                Spatial recentlyHitObject = hook.getRecentlyHitObject();
+                recentlyHitObject = hook.getRecentlyHitObject();
                 if(recentlyHitObject != null && recentlyHitObject.getName()
                         .startsWith("Wall"))
                     hook.attach();
                 break; 
+            case VERTICAL_ATTACH: 
+                recentlyHitObject = hook.getRecentlyHitObject();
+                if(recentlyHitObject != null && recentlyHitObject.getName()
+                        .startsWith("Wall"))
+                    hook.attachVertical();
+                break;
             case DETACH: 
                 hook.detach();
                 break; 

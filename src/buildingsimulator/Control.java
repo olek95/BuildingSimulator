@@ -29,6 +29,7 @@ public class Control {
         LOWER_HOOK(KeyInput.KEY_R),
         HEIGHTEN_HOOK(KeyInput.KEY_T),
         ATTACH(KeyInput.KEY_Y),
+        VERTICAL_ATTACH(KeyInput.KEY_V),
         DETACH(KeyInput.KEY_B),
         PHYSICS(KeyInput.KEY_P),
         FIRST(KeyInput.KEY_1),

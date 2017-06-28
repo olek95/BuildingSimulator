@@ -13,6 +13,7 @@ import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -33,7 +34,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private static BottomCollisionListener collisionListener = null; 
     private Geometry[] ropes = new Geometry[4];
     private static int counter = 0; 
-    
+    private Quaternion verticalRotation; 
     @SuppressWarnings("LeakingThisInConstructor")
     public Wall(Box shape, Vector3f location){
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
@@ -46,14 +47,20 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         setName("Wall" + counter);
         attachChild(wall);
         game.getRootNode().attachChild(this);
+        //lookAt(new Vector3f(0, 1, 0), Vector3f.UNIT_Y);
+        //System.out.println(this.getLocalRotation());
         if(collisionListener == null){
             collisionListener = new BottomCollisionListener(this, getName(), "ropeHook");
             game.getBulletAppState().getPhysicsSpace()
                     .addCollisionGroupListener(collisionListener, 5);
         }
+        verticalRotation = new Quaternion(-1.570796f, 0, 0, 1.570796f);
         createAttachingControl(location); 
+        createAttachingVerticalControl(location); 
         createLooseControl(location); 
-        swapControl(false); 
+        swapControl(2); 
+        //((RigidBodyControl)getControl(1)).setPhysicsRotation(
+          //      new Quaternion(-0.70710677f, 0.0f, 0.0f, 0.70710677f));
         counter++;
     }
     
@@ -82,10 +89,13 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      * @param shouldBeAttached true dla fizyki dla obiektu przyczepionego, 
      * false dla nieprzyczepionego 
      */
-    public void swapControl(boolean shouldBeAttached){
-        getControl(RigidBodyControl.class).setEnabled(shouldBeAttached);
-        ((RigidBodyControl)getControl(1)).setEnabled(!shouldBeAttached);
-        setRopesVisibility(shouldBeAttached); 
+    public void swapControl(int type){
+        for(int i = 0; i < 3; i++){
+            if(i == type) ((RigidBodyControl)getControl(i)).setEnabled(true);
+            else ((RigidBodyControl)getControl(i)).setEnabled(false);
+        }
+        if(type == 0 || type == 1) setRopesVisibility(true); 
+        else setRopesVisibility(false); 
     }
     
     @Override
@@ -100,6 +110,10 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     
     public void setAttached(boolean attached){
         this.attached = attached; 
+    }
+    
+    public Quaternion getVerticalRotation(){
+        return verticalRotation; 
     }
     
     /**
@@ -153,7 +167,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
                 "Cylinder1", "Cylinder2", "Cylinder3"});
         GameManager.createPhysics(wallRopesShape, this, 0.00001f, false);
         RigidBodyControl controlAttaching = getControl(RigidBodyControl.class);
-        controlAttaching.setAngularFactor(0);
+        //controlAttaching.setAngularFactor(0);
         controlAttaching.setCollisionGroup(5);
         Vector3f physicsLocation = controlAttaching.getPhysicsLocation();
         List<ChildCollisionShape> collisionShapeChildren = wallRopesShape.getChildren();
@@ -177,5 +191,24 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         control.setPhysicsLocation(location);
         BuildingSimulator.getBuildingSimulator().getBulletAppState()
                 .getPhysicsSpace().add(control);
+    }
+    
+    private void createAttachingVerticalControl(Vector3f location){
+        CompoundCollisionShape compound = new CompoundCollisionShape(); 
+        CollisionShape wallCollisionShape = CollisionShapeFactory
+                .createDynamicMeshShape(getChild("Box"));
+        compound.addChildShape(wallCollisionShape, Vector3f.ZERO);
+        RigidBodyControl control = new RigidBodyControl(compound, 0.00001f);
+        addControl(control); 
+        control.setPhysicsLocation(location);
+        BuildingSimulator.getBuildingSimulator().getBulletAppState()
+                .getPhysicsSpace().add(control);
+        Node copiedNode = clone(false); 
+        //copiedNode.lookAt(new Vector3f(0, 1, 0), Vector3f.UNIT_Y);
+        //((RigidBodyControl)getControl(1)).setPhysicsRotation(copiedNode.getLocalRotation());
+        //((RigidBodyControl)getControl(1)).setPhysicsRotation(
+          //      new Quaternion(-1.570796f, 0, 0, 1.570796f));
+        //verticalRotation = copiedNode.getLocalRotation();
+        
     }
 }

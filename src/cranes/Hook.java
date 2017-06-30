@@ -89,11 +89,10 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                     .getVerticalRotation());
             PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
                         .getBulletAppState().getPhysicsSpace();
-        buildingMaterialJoint = new HingeJoint(hook.getControl(RigidBodyControl.class),
-                (RigidBodyControl)wall.getControl(1), Vector3f.ZERO, new Vector3f(0, 0, y),
-                Vector3f.ZERO,Vector3f.ZERO);
-        buildingMaterialJoint.setCollisionBetweenLinkedBodys(false);
-        physics.add(buildingMaterialJoint);
+            buildingMaterialJoint = new HingeJoint(hook.getControl(RigidBodyControl.class),
+                    (RigidBodyControl)wall.getControl(1), Vector3f.ZERO, new Vector3f(0, 0, y),
+                    Vector3f.ZERO,Vector3f.ZERO);
+            physics.add(buildingMaterialJoint);
         }
     }
     

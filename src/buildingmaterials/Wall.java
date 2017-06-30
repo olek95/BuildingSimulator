@@ -5,6 +5,7 @@ import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import buildingsimulator.RememberingRecentlyHitObject;
 import com.jme3.bounding.BoundingBox;
+import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
@@ -121,16 +122,23 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      * @param pointNumber numer punktu do pobrania 
      * @return współrzędne wybranego rogu 
      */
-    private Vector3f getProperPoint(int pointNumber){
+    private Vector3f getProperPoint(int pointNumber, boolean vertical){
         BoundingBox bounding = (BoundingBox)getWorldBound();
         Vector3f max = bounding.getMax(null);
         switch(pointNumber){
             case 0:
-                return max;
-            case 1:
-                return max.subtract(0, 0, bounding.getZExtent() * 2);
-            case 2: 
-                return max.subtract(bounding.getXExtent() * 2, 0, 0);
+                if(!vertical)
+                    return max;
+                else 
+                    return max.subtract(0f, max.y , 0f);
+            case 1: 
+                if(!vertical)
+                    return max.subtract(bounding.getXExtent() * 2, 0, 0);
+                else 
+                    return max.subtract(bounding.getXExtent() * 2, max.y , 0);
+            case 2:
+                    return max.subtract(0, 0, bounding.getZExtent() * 2);
+            
             case 3: 
                 return max.subtract(bounding.getXExtent() * 2, 0, bounding
                         .getZExtent() * 2); 
@@ -145,7 +153,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     
     private void createAttachingControl(Vector3f location){
         Vector3f end = getWorldTranslation().clone().setY(1f),
-                start = getProperPoint(0);
+                start = getProperPoint(0, false);
         ropes = new Geometry[4];
         Vector3f[] ropesLocations = new Vector3f[4];
         Material ropeMaterial = new Material(BuildingSimulator.getBuildingSimulator()
@@ -157,7 +165,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
             ropesLocations[i] = FastMath.interpolateLinear(0.5f, start, end);
             ropes[i].setMaterial(ropeMaterial); 
             attachChild(ropes[i]);
-            start = getProperPoint(i + 1);
+            start = getProperPoint(i + 1, false);
             ropes[i].setCullHint(CullHint.Always);
         }          
         CompoundCollisionShape wallRopesShape = GameManager
@@ -192,22 +200,40 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     private void createAttachingVerticalControl(Vector3f location){
-        CompoundCollisionShape compound = new CompoundCollisionShape(); 
-        CollisionShape wallCollisionShape = CollisionShapeFactory
-                .createDynamicMeshShape(getChild("Box"));
-        compound.addChildShape(wallCollisionShape, Vector3f.ZERO);
-        RigidBodyControl control = new RigidBodyControl(compound, 0.00001f);
-        addControl(control); 
-        control.setPhysicsLocation(location);
-        control.setAngularFactor(0);
-        BuildingSimulator.getBuildingSimulator().getBulletAppState()
-                .getPhysicsSpace().add(control);
-        Node copiedNode = clone(false); 
-        //copiedNode.lookAt(new Vector3f(0, 1, 0), Vector3f.UNIT_Y);
-        //((RigidBodyControl)getControl(1)).setPhysicsRotation(copiedNode.getLocalRotation());
-        //((RigidBodyControl)getControl(1)).setPhysicsRotation(
-          //      new Quaternion(-1.570796f, 0, 0, 1.570796f));
-        //verticalRotation = copiedNode.getLocalRotation();
-        
+        Vector3f end = getWorldTranslation().clone().add(0f, 0f, 3f),
+                start = getProperPoint(0, true);
+        ropes = new Geometry[2];
+        Vector3f[] ropesLocations = new Vector3f[2];
+        Material ropeMaterial = new Material(BuildingSimulator.getBuildingSimulator()
+                .getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        ropeMaterial.setColor("Color", ColorRGBA.Black); 
+        float length = start.distance(end);
+        for(int i = 0; i < ropes.length; i++){
+            ropes[i] = new Geometry("Cylinder" + i, new Cylinder(4, 8, 0.02f, length));
+            ropesLocations[i] = FastMath.interpolateLinear(0.5f, start, end);
+            ropes[i].setMaterial(ropeMaterial); 
+            attachChild(ropes[i]);
+            start = getProperPoint(i + 1, true);
+            ropes[i].setCullHint(CullHint.Always);
+        }   
+        CompoundCollisionShape wallRopesShape = GameManager
+                .createCompound(this, new String[] {"Box", "Cylinder0", "Cylinder1"});
+        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
+                .getBulletAppState().getPhysicsSpace();
+        RigidBodyControl controlAttaching = new RigidBodyControl(wallRopesShape, 0.00001f);
+        addControl(controlAttaching); 
+        physics.add(controlAttaching);
+        controlAttaching.setAngularFactor(0);
+        controlAttaching.setCollisionGroup(5);
+        Vector3f physicsLocation = controlAttaching.getPhysicsLocation();
+        List<ChildCollisionShape> collisionShapeChildren = wallRopesShape.getChildren();
+        for(int i = 0; i < ropes.length; i++){
+            ropes[i].setLocalTranslation(ropesLocations[i].subtract(physicsLocation));
+            ropes[i].lookAt(end, Vector3f.UNIT_Y);
+            ChildCollisionShape gotShape = collisionShapeChildren.get(1 + i);
+            gotShape.location = ropes[i].getLocalTranslation();
+            gotShape.rotation = ropes[i].getLocalRotation().toRotationMatrix();
+        }
+        controlAttaching.setPhysicsLocation(location);
     }
 }

@@ -30,7 +30,6 @@ import java.util.List;
  */
 final public class Wall extends Node implements RememberingRecentlyHitObject{
     private Spatial recentlyHitObject;
-    private boolean attached = false; 
     private static BottomCollisionListener collisionListener = null; 
     private Geometry[] ropes = new Geometry[4];
     private static int counter = 0; 
@@ -65,17 +64,20 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     /**
-     * Aktywuje fizykę obiektu, jeśli nie jest ona aktywna w danej chwili (czyli 
-     * jeśli obiekt się nie porusza). 
+     * Aktywuje aktualnie używaną fizykę obiektu, jeśli nie jest ona aktywna w 
+     * danej chwili (czyli jeśli obiekt się nie porusza). 
      */
     public void activateIfInactive(){
-        ((RigidBodyControl)getControl(attached ? 0 : 1)).activate();
+        for(int i = 0; i < 3; i++){
+            RigidBodyControl control = (RigidBodyControl)getControl(i); 
+            if(control.isEnabled()) control.activate();
+        }
     }
     
     @Override
     public void setCollision(Spatial b){
         /* zabezpiecza przypadek gdy hak dotyka jednocześnie elementu pionowego
-        i poziomego*/
+        i poziomego */
         if((recentlyHitObject == null || ((BoundingBox)recentlyHitObject
                 .getWorldBound()).getMax(null).y > ((BoundingBox)b.getWorldBound())
                 .getMax(null).y))
@@ -106,10 +108,6 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     @Override
     public void setRecentlyHitObject(Spatial object){
         recentlyHitObject = object; 
-    }
-    
-    public void setAttached(boolean attached){
-        this.attached = attached; 
     }
     
     public Quaternion getVerticalRotation(){
@@ -167,7 +165,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
                 "Cylinder1", "Cylinder2", "Cylinder3"});
         GameManager.createPhysics(wallRopesShape, this, 0.00001f, false);
         RigidBodyControl controlAttaching = getControl(RigidBodyControl.class);
-        //controlAttaching.setAngularFactor(0);
+        controlAttaching.setAngularFactor(0);
         controlAttaching.setCollisionGroup(5);
         Vector3f physicsLocation = controlAttaching.getPhysicsLocation();
         List<ChildCollisionShape> collisionShapeChildren = wallRopesShape.getChildren();
@@ -201,6 +199,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         RigidBodyControl control = new RigidBodyControl(compound, 0.00001f);
         addControl(control); 
         control.setPhysicsLocation(location);
+        control.setAngularFactor(0);
         BuildingSimulator.getBuildingSimulator().getBulletAppState()
                 .getPhysicsSpace().add(control);
         Node copiedNode = clone(false); 

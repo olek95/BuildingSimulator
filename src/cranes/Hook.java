@@ -62,16 +62,15 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                     + ((BoundingBox)hook.getWorldBound()).getYExtent()
                     + gapBetweenHookAndAttachedObject;
             Wall wall = (Wall)attachedObject;
-            wall.swapControl(0);
-            buildingMaterialJoint = joinsElementToOtherElement(buildingMaterialJoint,
-                    hook, wall, Vector3f.ZERO, new Vector3f(0, y, 0)); // 1.5 mobil, 1.2 zuraw
-            /*PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
+            wall.swapControl(1);
+            //buildingMaterialJoint = joinsElementToOtherElement(buildingMaterialJoint,
+                    //hook, wall, Vector3f.ZERO, new Vector3f(0, y, 0)); // 1.5 mobil, 1.2 zuraw
+            PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
                         .getBulletAppState().getPhysicsSpace();
         buildingMaterialJoint = new HingeJoint(hook.getControl(RigidBodyControl.class),
-                (RigidBodyControl)wall.getControl(0), Vector3f.ZERO, new Vector3f(0, y, 0),
+                (RigidBodyControl)wall.getControl(1), Vector3f.ZERO, new Vector3f(0, y, 0),
                 Vector3f.ZERO,Vector3f.ZERO);
-        buildingMaterialJoint.setCollisionBetweenLinkedBodys(false);
-        physics.add(buildingMaterialJoint);*/
+        physics.add(buildingMaterialJoint);
         }
     }
     
@@ -84,13 +83,13 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                     + ((BoundingBox)hook.getWorldBound()).getYExtent()
                     + gapBetweenHookAndAttachedObject;
             Wall wall = (Wall)attachedObject;
-            wall.swapControl(1);
-            ((RigidBodyControl)wall.getControl(1)).setPhysicsRotation(wall
-                    .getVerticalRotation());
+            wall.swapControl(2);
+            ((RigidBodyControl)wall.getControl(2))
+                    .setPhysicsRotation(new Quaternion(-1.570796f, 0, 0, 1.570796f));
             PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
                         .getBulletAppState().getPhysicsSpace();
             buildingMaterialJoint = new HingeJoint(hook.getControl(RigidBodyControl.class),
-                    (RigidBodyControl)wall.getControl(1), Vector3f.ZERO, new Vector3f(0, 0, y),
+                    (RigidBodyControl)wall.getControl(2), Vector3f.ZERO, new Vector3f(0, 0, y),
                     Vector3f.ZERO,Vector3f.ZERO);
             physics.add(buildingMaterialJoint);
         }
@@ -104,7 +103,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
             BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
                     .remove(buildingMaterialJoint);
             Wall wall = (Wall)attachedObject;
-            wall.swapControl(2);
+            wall.swapControl(0);
             wall.activateIfInactive();
             attachedObject = null;
             buildingMaterialJoint = null; 

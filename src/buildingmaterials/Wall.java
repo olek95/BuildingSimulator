@@ -32,7 +32,7 @@ import java.util.List;
 final public class Wall extends Node implements RememberingRecentlyHitObject{
     private Spatial recentlyHitObject;
     private static BottomCollisionListener collisionListener = null; 
-    private Geometry[] ropes = new Geometry[4];
+    private Geometry[] ropesHorizontal = new Geometry[4], ropesVertical = new Geometry[2];
     private static int counter = 0; 
     private Quaternion verticalRotation; 
     @SuppressWarnings("LeakingThisInConstructor")
@@ -55,8 +55,8 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
                     .addCollisionGroupListener(collisionListener, 5);
         }
         verticalRotation = new Quaternion(-1.570796f, 0, 0, 1.570796f);
-        createAttachingControl(location); 
-        createAttachingVerticalControl(location); 
+        createAttachingControl(location, false); 
+        createAttachingControl(location, true); 
         createLooseControl(location); 
         swapControl(2); 
         //((RigidBodyControl)getControl(1)).setPhysicsRotation(
@@ -97,8 +97,10 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
             if(i == type) ((RigidBodyControl)getControl(i)).setEnabled(true);
             else ((RigidBodyControl)getControl(i)).setEnabled(false);
         }
-        if(type == 0 || type == 1) setRopesVisibility(true); 
-        else setRopesVisibility(false); 
+        if(type == 0) setRopesVisibility(ropesHorizontal, true); 
+        else if(type == 1) setRopesVisibility(ropesVertical, true); 
+        else setRopesVisibility(ropesHorizontal[0].getCullHint()
+                .equals(CullHint.Never) ? ropesHorizontal : ropesVertical ,false); 
     }
     
     @Override
@@ -127,18 +129,12 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         Vector3f max = bounding.getMax(null);
         switch(pointNumber){
             case 0:
-                if(!vertical)
-                    return max;
-                else 
-                    return max.subtract(0f, max.y , 0f);
+                return vertical ? max.subtract(0f, max.y, 0f) : max;
             case 1: 
-                if(!vertical)
-                    return max.subtract(bounding.getXExtent() * 2, 0, 0);
-                else 
-                    return max.subtract(bounding.getXExtent() * 2, max.y , 0);
+                return vertical ? max.subtract(bounding.getXExtent() * 2, max.y, 0f)
+                        : max.subtract(bounding.getXExtent() * 2, 0f, 0f);
             case 2:
                     return max.subtract(0, 0, bounding.getZExtent() * 2);
-            
             case 3: 
                 return max.subtract(bounding.getXExtent() * 2, 0, bounding
                         .getZExtent() * 2); 
@@ -146,33 +142,38 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         }
     }
     
-    private void setRopesVisibility(boolean visibility){
+    private void setRopesVisibility(Geometry[] ropes, boolean visibility){
         for(int i = 0; i < ropes.length; i++)
             ropes[i].setCullHint(visibility ? CullHint.Never : CullHint.Always);
     }
     
-    private void createAttachingControl(Vector3f location){
-        Vector3f end = getWorldTranslation().clone().setY(1f),
-                start = getProperPoint(0, false);
-        ropes = new Geometry[4];
-        Vector3f[] ropesLocations = new Vector3f[4];
+    private void createAttachingControl(Vector3f location, boolean vertical){
+        Vector3f end = getWorldTranslation().clone().add(vertical ? 
+                new Vector3f(0f, 0f, 3f) : new Vector3f(0f, 1f, 0f)),
+                start = getProperPoint(0, vertical);
+        Geometry[] ropes = vertical ? ropesVertical : ropesHorizontal; 
+        Vector3f[] ropesLocations = new Vector3f[ropes.length];
         Material ropeMaterial = new Material(BuildingSimulator.getBuildingSimulator()
                 .getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         ropeMaterial.setColor("Color", ColorRGBA.Black); 
         float length = start.distance(end);
+        String[] elementsName = new String[ropes.length + 1];
+        elementsName[0] = "Box";
         for(int i = 0; i < ropes.length; i++){
-            ropes[i] = new Geometry("Cylinder" + i, new Cylinder(4, 8, 0.02f, length));
+            elementsName[i + 1] = "Cylinder" + i;
+            ropes[i] = new Geometry(elementsName[i + 1], new Cylinder(4, 8, 0.02f, length));
             ropesLocations[i] = FastMath.interpolateLinear(0.5f, start, end);
             ropes[i].setMaterial(ropeMaterial); 
             attachChild(ropes[i]);
-            start = getProperPoint(i + 1, false);
+            start = getProperPoint(i + 1, vertical);
             ropes[i].setCullHint(CullHint.Always);
         }          
-        CompoundCollisionShape wallRopesShape = GameManager
-                .createCompound(this, new String[] {"Box", "Cylinder0",
-                "Cylinder1", "Cylinder2", "Cylinder3"});
-        GameManager.createPhysics(wallRopesShape, this, 0.00001f, false);
-        RigidBodyControl controlAttaching = getControl(RigidBodyControl.class);
+        CompoundCollisionShape wallRopesShape = GameManager.createCompound(this, elementsName);
+        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
+                .getBulletAppState().getPhysicsSpace();
+        RigidBodyControl controlAttaching = new RigidBodyControl(wallRopesShape, 0.00001f);
+        addControl(controlAttaching); 
+        physics.add(controlAttaching);
         controlAttaching.setAngularFactor(0);
         controlAttaching.setCollisionGroup(5);
         Vector3f physicsLocation = controlAttaching.getPhysicsLocation();
@@ -202,19 +203,19 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private void createAttachingVerticalControl(Vector3f location){
         Vector3f end = getWorldTranslation().clone().add(0f, 0f, 3f),
                 start = getProperPoint(0, true);
-        ropes = new Geometry[2];
+        ropesHorizontal = new Geometry[2];
         Vector3f[] ropesLocations = new Vector3f[2];
         Material ropeMaterial = new Material(BuildingSimulator.getBuildingSimulator()
                 .getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         ropeMaterial.setColor("Color", ColorRGBA.Black); 
         float length = start.distance(end);
-        for(int i = 0; i < ropes.length; i++){
-            ropes[i] = new Geometry("Cylinder" + i, new Cylinder(4, 8, 0.02f, length));
+        for(int i = 0; i < ropesHorizontal.length; i++){
+            ropesHorizontal[i] = new Geometry("Cylinder" + i, new Cylinder(4, 8, 0.02f, length));
             ropesLocations[i] = FastMath.interpolateLinear(0.5f, start, end);
-            ropes[i].setMaterial(ropeMaterial); 
-            attachChild(ropes[i]);
+            ropesHorizontal[i].setMaterial(ropeMaterial); 
+            attachChild(ropesHorizontal[i]);
             start = getProperPoint(i + 1, true);
-            ropes[i].setCullHint(CullHint.Always);
+            ropesHorizontal[i].setCullHint(CullHint.Always);
         }   
         CompoundCollisionShape wallRopesShape = GameManager
                 .createCompound(this, new String[] {"Box", "Cylinder0", "Cylinder1"});
@@ -227,12 +228,12 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         controlAttaching.setCollisionGroup(5);
         Vector3f physicsLocation = controlAttaching.getPhysicsLocation();
         List<ChildCollisionShape> collisionShapeChildren = wallRopesShape.getChildren();
-        for(int i = 0; i < ropes.length; i++){
-            ropes[i].setLocalTranslation(ropesLocations[i].subtract(physicsLocation));
-            ropes[i].lookAt(end, Vector3f.UNIT_Y);
+        for(int i = 0; i < ropesHorizontal.length; i++){
+            ropesHorizontal[i].setLocalTranslation(ropesLocations[i].subtract(physicsLocation));
+            ropesHorizontal[i].lookAt(end, Vector3f.UNIT_Y);
             ChildCollisionShape gotShape = collisionShapeChildren.get(1 + i);
-            gotShape.location = ropes[i].getLocalTranslation();
-            gotShape.rotation = ropes[i].getLocalRotation().toRotationMatrix();
+            gotShape.location = ropesHorizontal[i].getLocalTranslation();
+            gotShape.rotation = ropesHorizontal[i].getLocalRotation().toRotationMatrix();
         }
         controlAttaching.setPhysicsLocation(location);
     }

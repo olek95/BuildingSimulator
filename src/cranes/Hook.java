@@ -6,7 +6,6 @@ import buildingsimulator.BuildingSimulator;
 import static buildingsimulator.GameManager.*;
 import buildingsimulator.RememberingRecentlyHitObject;
 import com.jme3.bounding.BoundingBox;
-import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.joints.HingeJoint;
@@ -42,6 +41,16 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         }
     } 
     
+    @Override
+    public void setCollision(Spatial b){
+        /* zabezpiecza przypadek gdy hak dotyka jednocześnie elementu pionowego
+        i poziomego*/
+        if((recentlyHitObject == null || ((BoundingBox)recentlyHitObject
+                .getWorldBound()).getMax(null).y > ((BoundingBox)b.getWorldBound())
+                .getMax(null).y) && attachedObject == null)
+            recentlyHitObject = b;
+    }
+    
     /**
      * Podnosi hak. 
      */
@@ -51,47 +60,32 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     }
     
     /**
-     * Łączy hak z dotknieym obiektem. 
+     * Łączy hak z dotknieym obiektem. Może połączyć hak z linami pionowo lub 
+     * poziomo. 
+     * @param vertical true łączy pionowo, false poziomo 
      */
-    public void attach(){
+    public void attach(boolean vertical){
         if(buildingMaterialJoint == null){
             attachedObject = recentlyHitObject;
-            // obraca obiekt w strone haka, w razie gdyby liny były po innej stronie
-            attachedObject.lookAt(new Vector3f(0, 1, 0), Vector3f.UNIT_Y);
-            float y =  ((BoundingBox)attachedObject.getWorldBound()).getYExtent()
-                    + ((BoundingBox)hook.getWorldBound()).getYExtent()
-                    + gapBetweenHookAndAttachedObject;
-            Wall wall = (Wall)attachedObject;
-            wall.swapControl(1);
-            //buildingMaterialJoint = joinsElementToOtherElement(buildingMaterialJoint,
-                    //hook, wall, Vector3f.ZERO, new Vector3f(0, y, 0)); // 1.5 mobil, 1.2 zuraw
-            PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
-                        .getBulletAppState().getPhysicsSpace();
-        buildingMaterialJoint = new HingeJoint(hook.getControl(RigidBodyControl.class),
-                (RigidBodyControl)wall.getControl(1), Vector3f.ZERO, new Vector3f(0, y, 0),
-                Vector3f.ZERO,Vector3f.ZERO);
-        physics.add(buildingMaterialJoint);
-        }
-    }
-    
-    public void attachVertical(){
-        if(buildingMaterialJoint == null){
-            attachedObject = recentlyHitObject;
-            // obraca obiekt w strone haka, w razie gdyby liny były po innej stronie
-            for(int i = 0; i < 50; i++) this.heighten();
-            float y =  ((BoundingBox)attachedObject.getWorldBound()).getZExtent()
-                    + ((BoundingBox)hook.getWorldBound()).getYExtent()
-                    + gapBetweenHookAndAttachedObject;
-            Wall wall = (Wall)attachedObject;
-            wall.swapControl(2);
-            ((RigidBodyControl)wall.getControl(2))
-                    .setPhysicsRotation(new Quaternion(-1.570796f, 0, 0, 1.570796f));
-            PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
-                        .getBulletAppState().getPhysicsSpace();
-            buildingMaterialJoint = new HingeJoint(hook.getControl(RigidBodyControl.class),
-                    (RigidBodyControl)wall.getControl(2), Vector3f.ZERO, new Vector3f(0, 0, y),
-                    Vector3f.ZERO,Vector3f.ZERO);
-            physics.add(buildingMaterialJoint);
+            float distanceBetweenHookAndObject = + ((BoundingBox)hook.getWorldBound())
+                    .getYExtent() + gapBetweenHookAndAttachedObject, height;
+            BoundingBox objectBounding = ((BoundingBox)attachedObject.getWorldBound());
+            if(!vertical){
+                // obraca obiekt w strone haka, w razie gdyby liny były po innej stronie
+                attachedObject.lookAt(new Vector3f(0, 1, 0), Vector3f.UNIT_Y);
+                joinObject(new Vector3f(0, objectBounding.getYExtent() 
+                        + distanceBetweenHookAndObject, 0), 1, null);
+                height = objectBounding.getYExtent() * 2;
+            }else{
+                joinObject(new Vector3f(0, 0, objectBounding.getZExtent() 
+                        + distanceBetweenHookAndObject), 2,
+                        new Quaternion(-1.570796f, 0, 0, 1.570796f));
+                // pomnożone przez 4 bo liczę dla dolnej podstawy
+                height = objectBounding.getZExtent() * 4 + 1; 
+            }
+            do{
+                heighten();
+            }while((height -= speed) > 0);
         }
     }
     
@@ -249,13 +243,14 @@ public abstract class Hook implements RememberingRecentlyHitObject{
      */
     protected abstract Node[] getRopes();
     
-    @Override
-    public void setCollision(Spatial b){
-        /* zabezpiecza przypadek gdy hak dotyka jednocześnie elementu pionowego
-        i poziomego*/
-        if((recentlyHitObject == null || ((BoundingBox)recentlyHitObject
-                .getWorldBound()).getMax(null).y > ((BoundingBox)b.getWorldBound())
-                .getMax(null).y) && attachedObject == null)
-            recentlyHitObject = b;
+    private void joinObject(Vector3f distanceBetweenHookAndObjectCenter, int mode, 
+            Quaternion rotation){
+        RigidBodyControl selectedControl = ((Wall)attachedObject).swapControl(mode);
+        if(rotation != null) selectedControl.setPhysicsRotation(rotation);
+        buildingMaterialJoint = new HingeJoint(hook.getControl(RigidBodyControl.class),
+                selectedControl, Vector3f.ZERO, distanceBetweenHookAndObjectCenter,
+                Vector3f.ZERO, Vector3f.ZERO);
+        BuildingSimulator.getBuildingSimulator().getBulletAppState()
+                .getPhysicsSpace().add(buildingMaterialJoint);
     }
 }

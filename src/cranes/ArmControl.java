@@ -86,13 +86,13 @@ public abstract class ArmControl implements AnalogListener, Controllable{
                 recentlyHitObject = hook.getRecentlyHitObject();
                 if(recentlyHitObject != null && recentlyHitObject.getName()
                         .startsWith("Wall"))
-                    hook.attach();
+                    hook.attach(false);
                 break; 
             case VERTICAL_ATTACH: 
                 recentlyHitObject = hook.getRecentlyHitObject();
                 if(recentlyHitObject != null && recentlyHitObject.getName()
                         .startsWith("Wall"))
-                    hook.attachVertical();
+                    hook.attach(true);
                 break;
             case DETACH: 
                 hook.detach();

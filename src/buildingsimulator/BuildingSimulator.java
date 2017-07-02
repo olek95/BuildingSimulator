@@ -28,7 +28,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     @Override
     public void simpleInitApp() {
         Spatial scene = assetManager.loadModel("Scenes/gameMap.j3o");
-        scene.setLocalTranslation(0, -1, 0);
+        scene.setLocalTranslation(0, 0, 0);
         flyCam.setMoveSpeed(100);
         RigidBodyControl rgc = new RigidBodyControl(0.0f);
         scene.addControl(rgc);

@@ -5,16 +5,12 @@ import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import buildingsimulator.RememberingRecentlyHitObject;
 import com.jme3.bounding.BoundingBox;
-import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -71,21 +67,26 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     
     /**
      * Zamienia aktualną fizykę. Jeśli 0, to obiekt otrzymuje fizykę dla 
-     * obiektu przyczepionego do haka poziomo, jeśtli 1, to obiekt otrzymuje 
-     * fizykę dla obiektu przyczepionego do haka pionowo, natomiast jeśli 2 to 
-     * obiekt otrzymuje fizykę dla obiektu nieprzyczepionego (luźnego). 
-     * @param type typ fizyki: 0 - przyczepiony poziomo, 1 przyczepiony pionowo,
-     * 2 nieprzyczepiony
+     * obiektu nieprzyczepionego (luźnego), jeśtli 1, to obiekt otrzymuje 
+     * fizykę dla obiektu przyczepionego do haka poziomo, natomiast jeśli 2 to 
+     * obiekt otrzymuje fizykę dla obiektu przyczepionego do haka pionowo. 
+     * @param type typ fizyki: 0 - nieprzyczepiony, 1 - przyczepiony poziomo,
+     * 2 - przyczepiony pionowo
+     * @return 
      */
-    public void swapControl(int type){
+    public RigidBodyControl swapControl(int type){
+        RigidBodyControl selectedControl = null;
         for(int i = 0; i < 3; i++){
-            if(i == type) ((RigidBodyControl)getControl(i)).setEnabled(true);
-            else ((RigidBodyControl)getControl(i)).setEnabled(false);
+            if(i == type){
+                selectedControl = ((RigidBodyControl)getControl(i));
+                selectedControl.setEnabled(true);
+            }else ((RigidBodyControl)getControl(i)).setEnabled(false);
         }
         if(type == 0) setRopesVisibility(ropesHorizontal[0].getCullHint()
                 .equals(CullHint.Never) ? ropesHorizontal : ropesVertical ,false); 
         else if(type == 1) setRopesVisibility(ropesHorizontal, true); 
         else setRopesVisibility(ropesVertical, true);  
+        return selectedControl; 
     }
     
     @Override
@@ -128,7 +129,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
                 return vertical ? max.subtract(bounding.getXExtent() * 2, max.y, 0f)
                         : max.subtract(bounding.getXExtent() * 2, 0f, 0f);
             case 2:
-                    return max.subtract(0, 0, bounding.getZExtent() * 2);
+                return max.subtract(0, 0, bounding.getZExtent() * 2);
             case 3: 
                 return max.subtract(bounding.getXExtent() * 2, 0, bounding
                         .getZExtent() * 2); 

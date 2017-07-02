@@ -41,7 +41,6 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     private Actions[] availableActions = {Actions.UP, Actions.DOWN, Actions.LEFT,
         Actions.RIGHT, Actions.ACTION};
     public MobileCrane(){
-        crane.setLocalTranslation(0, 1.15f, 0);
         createMobileCranePhysics();
         scaleTiresTexture();
         createMirrors();

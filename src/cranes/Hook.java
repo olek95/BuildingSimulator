@@ -68,24 +68,59 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         if(buildingMaterialJoint == null){
             attachedObject = recentlyHitObject;
             float distanceBetweenHookAndObject = + ((BoundingBox)hook.getWorldBound())
-                    .getYExtent() + gapBetweenHookAndAttachedObject, height;
-            BoundingBox objectBounding = ((BoundingBox)attachedObject.getWorldBound());
+                    .getYExtent() + gapBetweenHookAndAttachedObject, height=0;
+            BoundingBox objectBounding=null;
+            float x = ((RigidBodyControl)attachedObject.getControl(2))
+                    .getPhysicsRotation().getX();
             if(!vertical){
                 // obraca obiekt w strone haka, w razie gdyby liny były po innej stronie
-                attachedObject.lookAt(new Vector3f(0, 1, 0), Vector3f.UNIT_Y);
+               /* attachedObject.lookAt(new Vector3f(0, 1, 0), Vector3f.UNIT_Y);
+                objectBounding = (BoundingBox)attachedObject.getWorldBound();
                 joinObject(new Vector3f(0, objectBounding.getYExtent() 
-                        + distanceBetweenHookAndObject, 0), 1, null);
-                height = objectBounding.getYExtent() * 2;
+                        + distanceBetweenHookAndObject, 0), 1, null);*/
+                //height = objectBounding.getYExtent() * 2;
             }else{
+               /* objectBounding = (BoundingBox)attachedObject.getWorldBound();
                 joinObject(new Vector3f(0, 0, objectBounding.getZExtent() 
                         + distanceBetweenHookAndObject), 2,
-                        new Quaternion(-1.570796f, 0, 0, 1.570796f));
+                        new Quaternion(-1.570796f, 0, 0, 1.570796f));*/
                 // pomnożone przez 4 bo liczę dla dolnej podstawy
-                height = objectBounding.getZExtent() * 4 + 1; 
+                Quaternion rotation = new Quaternion(-1.570796f, 0, 0, 1.570796f);
+                RigidBodyControl selectedControl = ((Wall)attachedObject).swapControl(2);
+        if(rotation != null) selectedControl.setPhysicsRotation(rotation);
+        objectBounding = (BoundingBox)attachedObject.getWorldBound();
+        Vector3f distanceBetweenHookAndObjectCenter = new Vector3f(0,0,objectBounding.getZExtent() 
+                        + distanceBetweenHookAndObject);
+        buildingMaterialJoint = new HingeJoint(hook.getControl(RigidBodyControl.class),
+                selectedControl, Vector3f.ZERO, distanceBetweenHookAndObjectCenter,
+                Vector3f.ZERO, Vector3f.ZERO);
+        BuildingSimulator.getBuildingSimulator().getBulletAppState()
+                .getPhysicsSpace().add(buildingMaterialJoint);
+                
+                
+                //height = objectBounding.getZExtent() * 4 + 1; 
+                height = objectBounding.getZExtent() * 2 + gapBetweenHookAndAttachedObject; 
+                //height = objectBounding.getMin(null).y;
             }
-            do{
+            /*attachedObject.updateGeometricState();
+            attachedObject.updateModelBound();
+            Spatial r = ((Wall)attachedObject).getRecentlyHitObject();
+            System.out.println(((BoundingBox)attachedObject.getWorldBound())
+                    .getCenter() + " " + ((BoundingBox)attachedObject.getWorldBound()).getExtent(null)
+                    + " " + attachedObject.getWorldTranslation());
+            float f = ((BoundingBox)attachedObject.getWorldBound())
+                    .getCenter().y + ((BoundingBox)attachedObject.getWorldBound())
+                    .getYExtent() * 1;*/ 
+                    
+            //if(x == 0)
+            float y = hook.getWorldTranslation().y;
+            ((RigidBodyControl)attachedObject.getControl(2))
+                    .setPhysicsLocation(((RigidBodyControl)attachedObject.getControl(2))
+                    .getPhysicsLocation().clone().setY(2.5f));
+            while(y <= height){
                 heighten();
-            }while((height -= speed) > 0);
+                y += hookDisplacement.y;
+            }
         }
     }
     

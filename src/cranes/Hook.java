@@ -3,6 +3,7 @@ package cranes;
 import buildingmaterials.Wall;
 import buildingsimulator.BottomCollisionListener;
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.GameManager;
 import static buildingsimulator.GameManager.*;
 import buildingsimulator.RememberingRecentlyHitObject;
 import com.jme3.bounding.BoundingBox;
@@ -77,7 +78,22 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 joinObject(new Vector3f(0, objectBounding.getYExtent() 
                         + distanceBetweenHookAndObject, 0), 1, null);*/
                 //height = objectBounding.getYExtent() * 2;
+                //Quaternion rotation = Quaternion.IDENTITY;
                 Quaternion rotation = Quaternion.IDENTITY;
+                Vector3f v1 = ((RigidBodyControl)attachedObject.getControl(1))
+                        .getPhysicsLocation();
+                
+                System.out.println(GameManager.getUnit(0));
+                Vector3f v2 = GameManager.getUnit(0).getArmControl()
+                        .getCraneControl().getWorldTranslation();
+                rotation = GameManager.getUnit(0).getArmControl()
+                        .getCraneControl().getWorldRotation();
+               // v2 = v2.clone().setZ(((BoundingBox)GameManager.getUnit(0).getArmControl()
+                ///        .getCrane().getWorldBound()).getZExtent()
+                 //       + v2.z);
+                //v1 = v1.clone().normalize(); 
+               // v2 = v2.clone().normalize(); 
+                //rotation = rotation.clone().fromAngleAxis(v1.angleBetween(v2), new Vector3f(0, 1,0));
                 RigidBodyControl selectedControl = ((Wall)attachedObject).swapControl(1);
                 if(rotation != null) selectedControl.setPhysicsRotation(rotation);
                 objectBounding = (BoundingBox)attachedObject.getWorldBound();

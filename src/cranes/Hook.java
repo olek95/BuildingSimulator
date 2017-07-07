@@ -72,28 +72,9 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                     .getYExtent() + gapBetweenHookAndAttachedObject, height=0;
             BoundingBox objectBounding=null;
             if(!vertical){
-                // obraca obiekt w strone haka, w razie gdyby liny były po innej stronie
-               /* attachedObject.lookAt(new Vector3f(0, 1, 0), Vector3f.UNIT_Y);
-                objectBounding = (BoundingBox)attachedObject.getWorldBound();
-                joinObject(new Vector3f(0, objectBounding.getYExtent() 
-                        + distanceBetweenHookAndObject, 0), 1, null);*/
-                //height = objectBounding.getYExtent() * 2;
-                //Quaternion rotation = Quaternion.IDENTITY;
                 Quaternion rotation = Quaternion.IDENTITY;
-                Vector3f v1 = ((RigidBodyControl)attachedObject.getControl(1))
-                        .getPhysicsLocation();
-                
-                System.out.println(GameManager.getUnit(0));
-                Vector3f v2 = GameManager.getUnit(0).getArmControl()
-                        .getCraneControl().getWorldTranslation();
                 rotation = GameManager.getUnit(0).getArmControl()
                         .getCraneControl().getWorldRotation();
-               // v2 = v2.clone().setZ(((BoundingBox)GameManager.getUnit(0).getArmControl()
-                ///        .getCrane().getWorldBound()).getZExtent()
-                 //       + v2.z);
-                //v1 = v1.clone().normalize(); 
-               // v2 = v2.clone().normalize(); 
-                //rotation = rotation.clone().fromAngleAxis(v1.angleBetween(v2), new Vector3f(0, 1,0));
                 RigidBodyControl selectedControl = ((Wall)attachedObject).swapControl(1);
                 if(rotation != null) selectedControl.setPhysicsRotation(rotation);
                 objectBounding = (BoundingBox)attachedObject.getWorldBound();
@@ -113,14 +94,22 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 selectedControl.setPhysicsLocation(selectedControl
                         .getPhysicsLocation().clone().setY(0.2f));
             }else{
-               /* objectBounding = (BoundingBox)attachedObject.getWorldBound();
-                joinObject(new Vector3f(0, 0, objectBounding.getZExtent() 
-                        + distanceBetweenHookAndObject), 2,
-                        new Quaternion(-1.570796f, 0, 0, 1.570796f));*/
-                // pomnożone przez 4 bo liczę dla dolnej podstawy
-                Quaternion rotation = new Quaternion(-1.570796f, 0, 0, 1.570796f);
+                //Quaternion rotation = new Quaternion(-1.570796f, 0, 0, 1.570796f);
+                /*Quaternion r = Quaternion.IDENTITY;
+                r = (GameManager.getUnit(0).getArmControl()
+                        .getCraneControl().getWorldRotation());
+                Quaternion rotation = new Quaternion(-1.570796f, r.getY(), r.getZ(), 1.570796f);
+                RigidBodyControl selectedControl = ((Wall)attachedObject).swapControl(2);
+                if(rotation != null) selectedControl.setPhysicsRotation(rotation);*/
+                
+                Quaternion rotation = Quaternion.IDENTITY;
+                rotation = GameManager.getUnit(0).getArmControl()
+                        .getCraneControl().getWorldRotation();
                 RigidBodyControl selectedControl = ((Wall)attachedObject).swapControl(2);
                 if(rotation != null) selectedControl.setPhysicsRotation(rotation);
+                selectedControl.setPhysicsRotation(selectedControl.getPhysicsRotation().multLocal(new Quaternion(-1.570796f, 
+                        0, 0, 1.570796f)));
+                System.out.println(selectedControl.getPhysicsRotation());
                 objectBounding = (BoundingBox)attachedObject.getWorldBound();
                 Vector3f distanceBetweenHookAndObjectCenter;
                 if(objectBounding.getYExtent() < objectBounding.getZExtent())
@@ -137,6 +126,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                         height = objectBounding.getZExtent() * 2 + gapBetweenHookAndAttachedObject; 
                 selectedControl.setPhysicsLocation(selectedControl
                         .getPhysicsLocation().clone().setY(2.5f));
+                System.out.println(selectedControl.getPhysicsRotation());
             }
             float y = hook.getWorldTranslation().y;
             while(y <= height){

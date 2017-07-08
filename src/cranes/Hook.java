@@ -68,71 +68,8 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     public void attach(boolean vertical){
         if(buildingMaterialJoint == null){
             attachedObject = recentlyHitObject;
-            float distanceBetweenHookAndObject = + ((BoundingBox)hook.getWorldBound())
-                    .getYExtent() + gapBetweenHookAndAttachedObject, height=0;
-            BoundingBox objectBounding=null;
-            if(!vertical){
-                Quaternion rotation = Quaternion.IDENTITY;
-                rotation = GameManager.getUnit(0).getArmControl()
-                        .getCraneControl().getWorldRotation();
-                RigidBodyControl selectedControl = ((Wall)attachedObject).swapControl(1);
-                if(rotation != null) selectedControl.setPhysicsRotation(rotation);
-                objectBounding = (BoundingBox)attachedObject.getWorldBound();
-                Vector3f distanceBetweenHookAndObjectCenter;
-                if(objectBounding.getYExtent() < objectBounding.getZExtent())
-                    distanceBetweenHookAndObjectCenter = new Vector3f(0,objectBounding.getYExtent() 
-                                + distanceBetweenHookAndObject, 0);
-                else
-                    distanceBetweenHookAndObjectCenter = new Vector3f(0,objectBounding.getZExtent() 
-                                + distanceBetweenHookAndObject, 0);
-                buildingMaterialJoint = new HingeJoint(hook.getControl(RigidBodyControl.class),
-                        selectedControl, Vector3f.ZERO, distanceBetweenHookAndObjectCenter,
-                        Vector3f.ZERO, Vector3f.ZERO);
-                BuildingSimulator.getBuildingSimulator().getBulletAppState()
-                        .getPhysicsSpace().add(buildingMaterialJoint);
-                        height = objectBounding.getYExtent() * 2 + gapBetweenHookAndAttachedObject; 
-                selectedControl.setPhysicsLocation(selectedControl
-                        .getPhysicsLocation().clone().setY(0.2f));
-            }else{
-                //Quaternion rotation = new Quaternion(-1.570796f, 0, 0, 1.570796f);
-                /*Quaternion r = Quaternion.IDENTITY;
-                r = (GameManager.getUnit(0).getArmControl()
-                        .getCraneControl().getWorldRotation());
-                Quaternion rotation = new Quaternion(-1.570796f, r.getY(), r.getZ(), 1.570796f);
-                RigidBodyControl selectedControl = ((Wall)attachedObject).swapControl(2);
-                if(rotation != null) selectedControl.setPhysicsRotation(rotation);*/
-                
-                Quaternion rotation = Quaternion.IDENTITY;
-                rotation = GameManager.getUnit(0).getArmControl()
-                        .getCraneControl().getWorldRotation();
-                RigidBodyControl selectedControl = ((Wall)attachedObject).swapControl(2);
-                if(rotation != null) selectedControl.setPhysicsRotation(rotation);
-                selectedControl.setPhysicsRotation(selectedControl.getPhysicsRotation().multLocal(new Quaternion(-1.570796f, 
-                        0, 0, 1.570796f)));
-                System.out.println(selectedControl.getPhysicsRotation());
-                objectBounding = (BoundingBox)attachedObject.getWorldBound();
-                Vector3f distanceBetweenHookAndObjectCenter;
-                if(objectBounding.getYExtent() < objectBounding.getZExtent())
-                    distanceBetweenHookAndObjectCenter = new Vector3f(0,0,objectBounding.getZExtent() 
-                                + distanceBetweenHookAndObject);
-                else
-                    distanceBetweenHookAndObjectCenter = new Vector3f(0,0,objectBounding.getYExtent() 
-                                + distanceBetweenHookAndObject);
-                buildingMaterialJoint = new HingeJoint(hook.getControl(RigidBodyControl.class),
-                        selectedControl, Vector3f.ZERO, distanceBetweenHookAndObjectCenter,
-                        Vector3f.ZERO, Vector3f.ZERO);
-                BuildingSimulator.getBuildingSimulator().getBulletAppState()
-                        .getPhysicsSpace().add(buildingMaterialJoint);
-                        height = objectBounding.getZExtent() * 2 + gapBetweenHookAndAttachedObject; 
-                selectedControl.setPhysicsLocation(selectedControl
-                        .getPhysicsLocation().clone().setY(2.5f));
-                System.out.println(selectedControl.getPhysicsRotation());
-            }
-            float y = hook.getWorldTranslation().y;
-            while(y <= height){
-                heighten();
-                y += hookDisplacement.y;
-            }
+            if(!vertical) joinObject(false, 1, null, 0.2f);
+            else joinObject(true, 2, new Quaternion(-1.570796f, 0, 0, 1.570796f), 2.5f);
         }
     }
     
@@ -290,14 +227,40 @@ public abstract class Hook implements RememberingRecentlyHitObject{
      */
     protected abstract Node[] getRopes();
     
-    private void joinObject(Vector3f distanceBetweenHookAndObjectCenter, int mode, 
-            Quaternion rotation){
+    private void joinObject(boolean vertical, int mode, Quaternion rotation, float y){
+        float distanceBetweenHookAndObject = + ((BoundingBox)hook.getWorldBound())
+                    .getYExtent();
+        Quaternion turnToCrane = GameManager.getUnit(0).getArmControl()
+                        .getCraneControl().getWorldRotation();
+        if(rotation != null) turnToCrane.multLocal(rotation);
         RigidBodyControl selectedControl = ((Wall)attachedObject).swapControl(mode);
-        if(rotation != null) selectedControl.setPhysicsRotation(rotation);
+        selectedControl.setPhysicsRotation(rotation);
+        BoundingBox objectBounding = (BoundingBox)attachedObject.getWorldBound();
+        Vector3f distanceBetweenHookAndObjectCenter;
+        if(objectBounding.getYExtent() < objectBounding.getZExtent()){
+            distanceBetweenHookAndObjectCenter = vertical ? 
+                    new Vector3f(0,0,objectBounding.getZExtent() 
+                    + distanceBetweenHookAndObject) : new Vector3f(0,objectBounding
+                    .getYExtent() + distanceBetweenHookAndObject, 0);
+        } else {
+            distanceBetweenHookAndObjectCenter = vertical ? 
+                    new Vector3f(0,0,objectBounding.getYExtent() 
+                    + distanceBetweenHookAndObject) : new Vector3f(0,objectBounding
+                    .getZExtent() + distanceBetweenHookAndObject, 0);
+        }
         buildingMaterialJoint = new HingeJoint(hook.getControl(RigidBodyControl.class),
                 selectedControl, Vector3f.ZERO, distanceBetweenHookAndObjectCenter,
                 Vector3f.ZERO, Vector3f.ZERO);
         BuildingSimulator.getBuildingSimulator().getBulletAppState()
                 .getPhysicsSpace().add(buildingMaterialJoint);
+        float height = gapBetweenHookAndAttachedObject + (vertical ? 
+                objectBounding.getZExtent() * 2 : objectBounding.getYExtent() * 2); 
+        selectedControl.setPhysicsLocation(selectedControl.getPhysicsLocation()
+                .clone().setY(y));
+        float yHook = hook.getWorldTranslation().y;
+        while(yHook <= height){
+            heighten();
+            yHook += hookDisplacement.y;
+        }
     }
 }

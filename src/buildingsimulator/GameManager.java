@@ -15,6 +15,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.ArrayList;
+import net.wcomohundro.jme3.csg.CSGGeometry;
 
 /**
  * Klasa <code>GameManager</code> reprezentuje zarządcę gry, posiadającego 
@@ -166,8 +167,12 @@ public class GameManager {
     public static void addNewCollisionShapeToCompound(CompoundCollisionShape compound,
             Node parent, String child, Vector3f location, Quaternion rotation){
         Geometry parentGeometry = (Geometry)parent.getChild(child);
-        CollisionShape elementCollisionShape = CollisionShapeFactory
-                .createDynamicMeshShape(parentGeometry);
+        CollisionShape elementCollisionShape;
+        if(!(parentGeometry instanceof CSGGeometry))
+        elementCollisionShape = CollisionShapeFactory.createDynamicMeshShape(parentGeometry);
+        else
+            elementCollisionShape = CollisionShapeFactory
+                    .createDynamicMeshShape(((CSGGeometry)parentGeometry).asSpatial());
         elementCollisionShape.setScale(parentGeometry.getWorldScale()); 
         if(rotation == null) compound.addChildShape(elementCollisionShape, location);
         else compound.addChildShape(elementCollisionShape, location, rotation

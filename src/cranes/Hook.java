@@ -234,7 +234,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                         .getCraneControl().getWorldRotation();
         if(rotation != null) turnToCrane.multLocal(rotation);
         RigidBodyControl selectedControl = ((Wall)attachedObject).swapControl(mode);
-        selectedControl.setPhysicsRotation(rotation);
+        selectedControl.setPhysicsRotation(turnToCrane);
         BoundingBox objectBounding = (BoundingBox)attachedObject.getWorldBound();
         Vector3f distanceBetweenHookAndObjectCenter;
         if(objectBounding.getYExtent() < objectBounding.getZExtent()){

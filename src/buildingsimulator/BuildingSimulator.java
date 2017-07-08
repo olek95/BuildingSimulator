@@ -1,6 +1,8 @@
 package buildingsimulator;
 
 import buildingmaterials.Wall;
+import buildingmaterials.WallType;
+import buildingmaterials.WallsFactory;
 import cranes.mobileCrane.MobileCraneArmControl;
 import cranes.mobileCrane.MobileCrane;
 import cranes.crane.Crane;
@@ -15,6 +17,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
+import net.wcomohundro.jme3.csg.CSGShape;
 
 public class BuildingSimulator extends SimpleApplication implements ActionListener{
     private static BuildingSimulator game;
@@ -47,7 +50,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         rootNode.addLight(sun);
         
         // KOD DLA TESTU!!
-        Wall wall1 = new Wall(new Box(4, 0.2f, 2.5f), new Vector3f(0f, 0.3f, 20f));
+        WallsFactory.createWall(WallType.DOOR, new Vector3f(0f, 0.3f, 20f));
         //Wall wall2 = new Wall(new Box(4f, 0.2f, 2.5f), new Vector3f(0f, 0.3f, 25));
         /*Box b2 = new Box(1, 1, 1); // create cube shape
         Geometry geom2 = new Geometry("Box", b2);  // create cube geometry from the shape

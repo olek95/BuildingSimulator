@@ -11,15 +11,15 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Cylinder;
 import com.jme3.texture.Texture;
 import java.util.List;
+import net.wcomohundro.jme3.csg.CSGGeometry;
+import net.wcomohundro.jme3.csg.CSGShape;
 
 /**
  * Obiekt klasy <code>Wall</code> reprezentuje kawałek ściany. Obiekt ten może 
@@ -32,22 +32,11 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private Geometry[] ropesHorizontal = new Geometry[4], ropesVertical = new Geometry[2];
     private static int counter = 0; 
     @SuppressWarnings("LeakingThisInConstructor")
-    public Wall(Box shape, Vector3f location){
-        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-        Geometry wall = new Geometry("Box", shape); 
-        Material mat = new Material(game.getAssetManager(), 
-                "Common/MatDefs/Misc/Unshaded.j3md");
-        Texture gypsumTexture = game.getAssetManager().loadTexture("Textures/gips.jpg");
-        mat.setTexture("ColorMap", gypsumTexture);
-        wall.setMaterial(mat);                               
-        setName("Wall" + counter);
-        attachChild(wall);
-        game.getRootNode().attachChild(this);
-        if(collisionListener == null){
-            collisionListener = new BottomCollisionListener(this, getName(), "ropeHook");
-            game.getBulletAppState().getPhysicsSpace()
-                    .addCollisionGroupListener(collisionListener, 5);
-        }
+    public Wall(CSGShape shape, Vector3f location, CSGShape... differenceShapes){
+        initShape(shape, differenceShapes);
+        BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(this);
+        initCollisionListener(); 
+        ((CSGGeometry)getChild(0)).regenerate();
         createLooseControl(location); 
         createAttachingControl(location, false); 
         createAttachingControl(location, true); 
@@ -181,6 +170,29 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
             gotShape.rotation = ropes[i].getLocalRotation().toRotationMatrix();
         }
         controlAttaching.setPhysicsLocation(location);
+    }
+    
+    private void initShape(CSGShape shape, CSGShape... differenceShapes){
+        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
+        CSGGeometry wall = new CSGGeometry("Box"); 
+        wall.addShape(shape);
+        Material mat = new Material(game.getAssetManager(), 
+                "Common/MatDefs/Misc/Unshaded.j3md");
+        Texture gypsumTexture = game.getAssetManager().loadTexture("Textures/gips.jpg");
+        mat.setTexture("ColorMap", gypsumTexture);
+        wall.setMaterial(mat);     
+        for(int i = 0; i < differenceShapes.length; i++)
+            wall.subtractShape(differenceShapes[i]);
+        setName("Wall" + counter);
+        attachChild(wall);
+    }
+    
+    private void initCollisionListener(){
+        if(collisionListener == null){
+            collisionListener = new BottomCollisionListener(this, getName(), "ropeHook");
+            BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
+                    .addCollisionGroupListener(collisionListener, 5);
+        }
     }
     
     private void createLooseControl(Vector3f location){

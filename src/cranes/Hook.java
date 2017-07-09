@@ -230,7 +230,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     private void joinObject(boolean vertical, int mode, Quaternion rotation, float y){
         float distanceBetweenHookAndObject = + ((BoundingBox)hook.getWorldBound())
                     .getYExtent();
-        Quaternion turnToCrane = GameManager.getUnit(0).getArmControl()
+        Quaternion turnToCrane = GameManager.findActualUnit().getArmControl()
                         .getCraneControl().getWorldRotation();
         if(rotation != null) turnToCrane.multLocal(rotation);
         RigidBodyControl selectedControl = ((Wall)attachedObject).swapControl(mode);

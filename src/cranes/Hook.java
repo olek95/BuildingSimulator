@@ -3,7 +3,6 @@ package cranes;
 import buildingmaterials.Wall;
 import buildingsimulator.BottomCollisionListener;
 import buildingsimulator.BuildingSimulator;
-import buildingsimulator.GameManager;
 import static buildingsimulator.GameManager.*;
 import buildingsimulator.RememberingRecentlyHitObject;
 import com.jme3.bounding.BoundingBox;
@@ -11,7 +10,6 @@ import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.joints.HingeJoint;
 import com.jme3.collision.CollisionResults;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -68,8 +66,8 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     public void attach(boolean vertical){
         if(buildingMaterialJoint == null){
             attachedObject = recentlyHitObject;
-            if(!vertical) joinObject(false, 1, null, 0.2f);
-            else joinObject(true, 2, new Quaternion(-1.570796f, 0, 0, 1.570796f), 2.5f);
+            if(!vertical) joinObject(false, 1, 0.2f);
+            else joinObject(true, 2, 2.5f);
         }
     }
     
@@ -227,14 +225,12 @@ public abstract class Hook implements RememberingRecentlyHitObject{
      */
     protected abstract Node[] getRopes();
     
-    private void joinObject(boolean vertical, int mode, Quaternion rotation, float y){
+    private void joinObject(boolean vertical, int mode, float y){
         float distanceBetweenHookAndObject = + ((BoundingBox)hook.getWorldBound())
                     .getYExtent();
-        Quaternion turnToCrane = GameManager.findActualUnit().getArmControl()
-                        .getCraneControl().getWorldRotation();
-        if(rotation != null) turnToCrane.multLocal(rotation);
-        RigidBodyControl selectedControl = ((Wall)attachedObject).swapControl(mode);
-        selectedControl.setPhysicsRotation(turnToCrane);
+        Wall wall = (Wall)attachedObject; 
+        RigidBodyControl selectedControl = wall.swapControl(mode);
+        wall.rotateToCrane();
         BoundingBox objectBounding = (BoundingBox)attachedObject.getWorldBound();
         Vector3f distanceBetweenHookAndObjectCenter;
         if(objectBounding.getYExtent() < objectBounding.getZExtent()){

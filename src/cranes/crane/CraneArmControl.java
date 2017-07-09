@@ -1,5 +1,6 @@
 package cranes.crane;
 
+import buildingmaterials.Wall;
 import buildingsimulator.BuildingSimulator;
 import cranes.ArmControl;
 import com.jme3.bullet.PhysicsSpace;
@@ -7,6 +8,7 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import cranes.Hook;
 
 /**
  * Obiekt klasy <code>CraneArmControl</code> reprezentuje obiekt kontrolujący 
@@ -28,10 +30,8 @@ public class CraneArmControl extends ArmControl{
      */
     @Override
     protected void rotate(float yAngle) {
-        Node craneControlNode = getCraneControl();
-        craneControlNode.rotate(0f, yAngle, 0f);
-        getHook().getRopeHook().getControl(RigidBodyControl.class).setPhysicsRotation(
-                craneControlNode.getLocalRotation());
+        getCraneControl().rotate(0f, yAngle, 0f);
+        rotateHook(); 
     }
     
     /**

@@ -7,6 +7,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import buildingsimulator.Control.Actions;
 import buildingsimulator.Controllable;
+import com.jme3.bullet.control.RigidBodyControl;
 /**
  * Klasa <code>ArmControl</code> jest klasą abstrakcyjną dla wszystkich klas 
  * reprezentujących sterowanie ramieniem dźwigu w grze. Implementuje ona interfejs
@@ -250,5 +251,13 @@ public abstract class ArmControl implements AnalogListener, Controllable{
      */
     protected void initCraneArmElements(){
         craneControl = (Node)crane.getChild("craneControl");
+    }
+    
+    protected void rotateHook(){
+        Hook hook = getHook();
+        hook.getRopeHook().getControl(RigidBodyControl.class).setPhysicsRotation(
+                getCraneControl().getWorldRotation());
+        Spatial attachedObject = hook.getAttachedObject(); 
+        if(attachedObject != null) ((Wall)attachedObject).rotateToCrane();
     }
 }

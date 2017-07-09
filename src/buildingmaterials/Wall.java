@@ -11,6 +11,7 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -30,6 +31,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private Spatial recentlyHitObject;
     private static BottomCollisionListener collisionListener = null; 
     private Geometry[] ropesHorizontal = new Geometry[4], ropesVertical = new Geometry[2];
+    private int actualMode; 
     private static int counter = 0; 
     @SuppressWarnings("LeakingThisInConstructor")
     public Wall(CSGShape shape, Vector3f location, CSGShape... differenceShapes){
@@ -60,23 +62,33 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      * obiektu nieprzyczepionego (luźnego), jeśtli 1, to obiekt otrzymuje 
      * fizykę dla obiektu przyczepionego do haka poziomo, natomiast jeśli 2 to 
      * obiekt otrzymuje fizykę dla obiektu przyczepionego do haka pionowo. 
-     * @param type typ fizyki: 0 - nieprzyczepiony, 1 - przyczepiony poziomo,
+     * @param mode typ fizyki: 0 - nieprzyczepiony, 1 - przyczepiony poziomo,
      * 2 - przyczepiony pionowo
      * @return 
      */
-    public RigidBodyControl swapControl(int type){
+    public RigidBodyControl swapControl(int mode){
         RigidBodyControl selectedControl = null;
         for(int i = 0; i < 3; i++){
-            if(i == type){
+            if(i == mode){
                 selectedControl = ((RigidBodyControl)getControl(i));
                 selectedControl.setEnabled(true);
             }else ((RigidBodyControl)getControl(i)).setEnabled(false);
         }
-        if(type == 0) setRopesVisibility(ropesHorizontal[0].getCullHint()
+        if(mode == 0) setRopesVisibility(ropesHorizontal[0].getCullHint()
                 .equals(CullHint.Never) ? ropesHorizontal : ropesVertical ,false); 
-        else if(type == 1) setRopesVisibility(ropesHorizontal, true); 
+        else if(mode == 1) setRopesVisibility(ropesHorizontal, true); 
         else setRopesVisibility(ropesVertical, true);  
+        actualMode = mode;
         return selectedControl; 
+    }
+    
+    public Quaternion rotateToCrane(){
+        RigidBodyControl control = (RigidBodyControl)getControl(actualMode); 
+        Quaternion turnToCrane = GameManager.findActualUnit().getArmControl()
+                        .getCraneControl().getWorldRotation();
+        if(actualMode == 2) turnToCrane.multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f));
+        control.setPhysicsRotation(turnToCrane);
+        return turnToCrane; 
     }
     
     @Override

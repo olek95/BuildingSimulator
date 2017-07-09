@@ -1,5 +1,6 @@
 package cranes.mobileCrane;
 
+import buildingmaterials.Wall;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.Control;
 import buildingsimulator.GameManager;
@@ -15,6 +16,7 @@ import com.jme3.scene.Spatial;
 import static buildingsimulator.GameManager.*;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
+import cranes.Hook;
 
 /**
  * Obiekt klasy <code>MobileCraneArmControl</code> reprezentuje kabinę operatora ramienia 
@@ -46,8 +48,10 @@ public class MobileCraneArmControl extends ArmControl{
     @Override
     protected void rotate(float yAngle){
         boolean obstacle = yAngle < 0 ? obstacleRight : obstacleLeft;
-        if(!obstacle) getCraneControl().rotate(0f, yAngle, 0f);
-        else{
+        if(!obstacle){
+            getCraneControl().rotate(0f, yAngle, 0f);
+            rotateHook(); 
+        }else{
             if(yAngle < 0) obstacleRight = false; 
             else obstacleLeft = false;
         }

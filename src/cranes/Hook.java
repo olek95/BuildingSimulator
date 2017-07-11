@@ -226,8 +226,8 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     protected abstract Node[] getRopes();
     
     private void joinObject(boolean vertical, int mode, float y){
-        float distanceBetweenHookAndObject = + ((BoundingBox)hook.getWorldBound())
-                    .getYExtent();
+        float distanceBetweenHookAndObject = ((BoundingBox)hook.getWorldBound())
+                    .getYExtent() + gapBetweenHookAndAttachedObject;
         Wall wall = (Wall)attachedObject; 
         RigidBodyControl selectedControl = wall.swapControl(mode);
         wall.rotateToCrane();
@@ -235,14 +235,14 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         Vector3f distanceBetweenHookAndObjectCenter;
         if(objectBounding.getYExtent() < objectBounding.getZExtent()){
             distanceBetweenHookAndObjectCenter = vertical ? 
-                    new Vector3f(0,0,objectBounding.getZExtent() 
-                    + distanceBetweenHookAndObject) : new Vector3f(0,objectBounding
-                    .getYExtent() + distanceBetweenHookAndObject, 0);
+                    new Vector3f(0,0, wall.getHeight()
+                    + distanceBetweenHookAndObject) : new Vector3f(0, wall.getWidth()
+                    + distanceBetweenHookAndObject, 0);
         } else {
             distanceBetweenHookAndObjectCenter = vertical ? 
-                    new Vector3f(0,0,objectBounding.getYExtent() 
-                    + distanceBetweenHookAndObject) : new Vector3f(0,objectBounding
-                    .getZExtent() + distanceBetweenHookAndObject, 0);
+                    new Vector3f(0,0, wall.getWidth()
+                    + distanceBetweenHookAndObject) : new Vector3f(0, wall.getHeight()
+                    + distanceBetweenHookAndObject, 0);
         }
         buildingMaterialJoint = new HingeJoint(hook.getControl(RigidBodyControl.class),
                 selectedControl, Vector3f.ZERO, distanceBetweenHookAndObjectCenter,

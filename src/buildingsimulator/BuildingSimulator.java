@@ -51,9 +51,12 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         
         // KOD DLA TESTU!!
         WallsFactory.createWall(WallType.DOOR, new Vector3f(0f, 0.3f, 20f));
-        WallsFactory.createWall(WallType.WINDOWS, new Vector3f(10f, 0.3f, 20f));
-        WallsFactory.createWall(WallType.ONE_BIG_WINDOW, new Vector3f(20f, 0.3f, 20f));
-        WallsFactory.createWall(WallType.ONE_BIGGER_WINDOW, new Vector3f(30f, 0.3f, 20f));
+        //WallsFactory.createWall(WallType.DOOR, new Vector3f(0f, 0.7f, 20f));
+       // WallsFactory.createWall(WallType.DOOR, new Vector3f(0f, 1.1f, 20f));
+        //WallsFactory.createWall(WallType.DOOR, new Vector3f(0f, 1.5f, 17f));
+        //WallsFactory.createWall(WallType.WINDOWS, new Vector3f(10f, 0.3f, 20f));
+        //WallsFactory.createWall(WallType.ONE_BIG_WINDOW, new Vector3f(20f, 0.3f, 20f));
+        //WallsFactory.createWall(WallType.ONE_BIGGER_WINDOW, new Vector3f(30f, 0.3f, 20f));
         //Wall wall2 = new Wall(new Box(4f, 0.2f, 2.5f), new Vector3f(0f, 0.3f, 25));
         /*Box b2 = new Box(1, 1, 1); // create cube shape
         Geometry geom2 = new Geometry("Box", b2);  // create cube geometry from the shape

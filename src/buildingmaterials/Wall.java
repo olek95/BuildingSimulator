@@ -31,10 +31,13 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private Spatial recentlyHitObject;
     private static BottomCollisionListener collisionListener = null; 
     private Geometry[] ropesHorizontal = new Geometry[4], ropesVertical = new Geometry[2];
-    private int actualMode; 
+    private float width, height; 
     private static int counter = 0; 
     @SuppressWarnings("LeakingThisInConstructor")
     public Wall(CSGShape shape, Vector3f location, CSGShape... differenceShapes){
+        BoundingBox bounding = (BoundingBox)shape.getWorldBound();
+        width = bounding.getYExtent() * 2; 
+        height = bounding.getZExtent() * 2; 
         initShape(shape, differenceShapes);
         BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(this);
         initCollisionListener(); 
@@ -78,17 +81,22 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
                 .equals(CullHint.Never) ? ropesHorizontal : ropesVertical ,false); 
         else if(mode == 1) setRopesVisibility(ropesHorizontal, true); 
         else setRopesVisibility(ropesVertical, true);  
-        actualMode = mode;
         return selectedControl; 
     }
     
-    public Quaternion rotateToCrane(){
-        RigidBodyControl control = (RigidBodyControl)getControl(actualMode); 
+    /**
+     * Obraca ścianę w kierunku dźwigu do którego jest przyczepiona. 
+     */
+    public void rotateToCrane(){
+        RigidBodyControl control;
+        int i = -1; 
+        do{
+            control = (RigidBodyControl)getControl(++i); 
+        }while(!control.isEnabled());
         Quaternion turnToCrane = GameManager.findActualUnit().getArmControl()
                         .getCraneControl().getWorldRotation();
-        if(actualMode == 2) turnToCrane.multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f));
+        if(i == 2) turnToCrane.multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f));
         control.setPhysicsRotation(turnToCrane);
-        return turnToCrane; 
     }
     
     @Override
@@ -110,6 +118,10 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     public void setRecentlyHitObject(Spatial object){
         recentlyHitObject = object; 
     }
+    
+    public float getWidth(){ return width; }
+    
+    public float getHeight(){ return height; }
     
     /**
      * Zwraca współrzędną wybranego rogu tego obiektu. Możliwe punkty do pobrania, 

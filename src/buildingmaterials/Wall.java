@@ -36,8 +36,8 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     @SuppressWarnings("LeakingThisInConstructor")
     public Wall(CSGShape shape, Vector3f location, CSGShape... differenceShapes){
         BoundingBox bounding = (BoundingBox)shape.getWorldBound();
-        width = bounding.getYExtent() * 2; 
-        height = bounding.getZExtent() * 2; 
+        width = bounding.getYExtent(); 
+        height = bounding.getZExtent(); 
         initShape(shape, differenceShapes);
         BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(this);
         initCollisionListener(); 

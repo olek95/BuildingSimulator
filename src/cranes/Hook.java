@@ -66,8 +66,8 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     public void attach(boolean vertical){
         if(buildingMaterialJoint == null){
             attachedObject = recentlyHitObject;
-            if(!vertical) joinObject(false, 1, 0.2f);
-            else joinObject(true, 2, 2.5f);
+            if(!vertical) joinObject(false, 1, ((Wall)attachedObject).getWidth());
+            else joinObject(true, 2, ((Wall)attachedObject).getHeight());
         }
     }
     
@@ -226,8 +226,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     protected abstract Node[] getRopes();
     
     private void joinObject(boolean vertical, int mode, float y){
-        float distanceBetweenHookAndObject = ((BoundingBox)hook.getWorldBound())
-                    .getYExtent() + gapBetweenHookAndAttachedObject;
+        float distanceBetweenHookAndObject = gapBetweenHookAndAttachedObject;
         Wall wall = (Wall)attachedObject; 
         RigidBodyControl selectedControl = wall.swapControl(mode);
         wall.rotateToCrane();

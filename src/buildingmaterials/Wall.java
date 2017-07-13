@@ -31,7 +31,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private Spatial recentlyHitObject;
     private static BottomCollisionListener collisionListener = null; 
     private Geometry[] ropesHorizontal = new Geometry[4], ropesVertical = new Geometry[2];
-    private float width, height; 
+    private float width, height, distanceToHandle, distanceToHandleVertical; 
     private static int counter = 0; 
     @SuppressWarnings("LeakingThisInConstructor")
     public Wall(CSGShape shape, Vector3f location, CSGShape... differenceShapes){
@@ -123,6 +123,10 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     
     public float getHeight(){ return height; }
     
+    public float getDistanceToHandle(boolean vertical){ 
+        return vertical ? distanceToHandleVertical : distanceToHandle;  
+    }
+    
     /**
      * Zwraca współrzędną wybranego rogu tego obiektu. Możliwe punkty do pobrania, 
      * to tylko te tworzące górną podstawę. Numeracja: 0 - lewy dolny róg (lub 
@@ -166,6 +170,8 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
                 .getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         ropeMaterial.setColor("Color", ColorRGBA.Black); 
         float length = start.distance(end);
+        if(!vertical) distanceToHandle = end.y - getWorldTranslation().y; 
+        else distanceToHandleVertical = end.z - getWorldTranslation().z;
         String[] elementsName = new String[ropes.length + 1];
         elementsName[0] = "Box";
         for(int i = 0; i < ropes.length; i++){

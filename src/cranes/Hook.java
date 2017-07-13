@@ -226,22 +226,21 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     protected abstract Node[] getRopes();
     
     private void joinObject(boolean vertical, int mode, float y){
-        float distanceBetweenHookAndObject = gapBetweenHookAndAttachedObject;
+       // float distanceBetweenHookAndObject = gapBetweenHookAndAttachedObject;
         Wall wall = (Wall)attachedObject; 
+        float distanceBetweenHookAndObject = calculateDistanceBetweenHookAndObject(vertical);
         RigidBodyControl selectedControl = wall.swapControl(mode);
         wall.rotateToCrane();
         BoundingBox objectBounding = (BoundingBox)attachedObject.getWorldBound();
         Vector3f distanceBetweenHookAndObjectCenter;
         if(objectBounding.getYExtent() < objectBounding.getZExtent()){
             distanceBetweenHookAndObjectCenter = vertical ? 
-                    new Vector3f(0,0, wall.getHeight()
-                    + distanceBetweenHookAndObject) : new Vector3f(0, wall.getWidth()
-                    + distanceBetweenHookAndObject, 0);
+                    new Vector3f(0,0, distanceBetweenHookAndObject) : new Vector3f(0, 
+                    distanceBetweenHookAndObject, 0);
         } else {
             distanceBetweenHookAndObjectCenter = vertical ? 
-                    new Vector3f(0,0, wall.getWidth()
-                    + distanceBetweenHookAndObject) : new Vector3f(0, wall.getHeight()
-                    + distanceBetweenHookAndObject, 0);
+                    new Vector3f(0,0, distanceBetweenHookAndObject) : new Vector3f(0, 
+                    distanceBetweenHookAndObject, 0);
         }
         buildingMaterialJoint = new HingeJoint(hook.getControl(RigidBodyControl.class),
                 selectedControl, Vector3f.ZERO, distanceBetweenHookAndObjectCenter,
@@ -257,5 +256,18 @@ public abstract class Hook implements RememberingRecentlyHitObject{
             heighten();
             yHook += hookDisplacement.y;
         }
+    }
+    
+    private float calculateDistanceBetweenHookAndObject(boolean vertical){
+        Wall wall = (Wall)attachedObject; 
+        float distanceBetweenHookAndObject = wall.getDistanceToHandle(vertical);
+        Node parent = hook.getParent();
+        do{
+            if(parent.getName().contains("dzwig"))
+                distanceBetweenHookAndObject += ((BoundingBox)hook.getWorldBound())
+                        .getYExtent(); 
+            parent = parent.getParent();
+        }while(parent != null);
+        return distanceBetweenHookAndObject; 
     }
 }

@@ -99,6 +99,28 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         control.setPhysicsRotation(turnToCrane);
     }
     
+    /**
+     * Zwraca szerokość ściany. 
+     * @return szerokość 
+     */
+    public float getWidth(){ return width; }
+    
+    /**
+     * Zwraca wysokość ściany. 
+     * @return wysokość 
+     */
+    public float getHeight(){ return height; }
+    
+    /**
+     * Zwraca odległość między środkiem ściany a przyszłym uchwytem na którym 
+     * będzie powieszona ta ściana (za pomocą lin). 
+     * @param vertical true jeśli ściana podnoszona pionowo, false jeśli poziomo 
+     * @return odległość między środkiem ściany a uchwytem 
+     */
+    public float getDistanceToHandle(boolean vertical){ 
+        return vertical ? distanceToHandleVertical : distanceToHandle;  
+    }
+    
     @Override
     public void setCollision(Spatial b){
         /* zabezpiecza przypadek gdy hak dotyka jednocześnie elementu pionowego
@@ -117,14 +139,6 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     @Override
     public void setRecentlyHitObject(Spatial object){
         recentlyHitObject = object; 
-    }
-    
-    public float getWidth(){ return width; }
-    
-    public float getHeight(){ return height; }
-    
-    public float getDistanceToHandle(boolean vertical){ 
-        return vertical ? distanceToHandleVertical : distanceToHandle;  
     }
     
     /**

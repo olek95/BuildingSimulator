@@ -226,7 +226,6 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     protected abstract Node[] getRopes();
     
     private void joinObject(boolean vertical, int mode, float y){
-       // float distanceBetweenHookAndObject = gapBetweenHookAndAttachedObject;
         Wall wall = (Wall)attachedObject; 
         float distanceBetweenHookAndObject = calculateDistanceBetweenHookAndObject(vertical);
         RigidBodyControl selectedControl = wall.swapControl(mode);
@@ -247,10 +246,18 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 Vector3f.ZERO, Vector3f.ZERO);
         BuildingSimulator.getBuildingSimulator().getBulletAppState()
                 .getPhysicsSpace().add(buildingMaterialJoint);
-        float height = gapBetweenHookAndAttachedObject + (vertical ? 
-                objectBounding.getZExtent() * 2 : objectBounding.getYExtent() * 2); 
-        selectedControl.setPhysicsLocation(selectedControl.getPhysicsLocation()
-                .clone().setY(y));
+        float height = gapBetweenHookAndAttachedObject + wall.getWorldTranslation().y + (vertical ? 
+                objectBounding.getZExtent() : objectBounding.getYExtent());
+        
+        //Spatial wallRecentlyHitObject;
+        //do{
+          //   wallRecentlyHitObject = wall.getRecentlyHitObject();
+        //}while(wallRecentlyHitObject == null);
+        //selectedControl.setPhysicsLocation(selectedControl.getPhysicsLocation()
+          //      .clone().setY(y + wall.getWorldTranslation().y));
+        //selectedControl.setPhysicsLocation(selectedControl.getPhysicsLocation()
+               // .clone().setY(10));
+        selectedControl.getPhysicsLocation().add(0, 50, 0);
         float yHook = hook.getWorldTranslation().y;
         while(yHook <= height){
             heighten();

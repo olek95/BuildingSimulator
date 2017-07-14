@@ -247,7 +247,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         BuildingSimulator.getBuildingSimulator().getBulletAppState()
                 .getPhysicsSpace().add(buildingMaterialJoint);
         float height = gapBetweenHookAndAttachedObject + wall.getWorldTranslation().y + (vertical ? 
-                objectBounding.getZExtent() : objectBounding.getYExtent());
+                objectBounding.getZExtent() * 2 : objectBounding.getYExtent() * 2);
         
         //Spatial wallRecentlyHitObject;
         //do{

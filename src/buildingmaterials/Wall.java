@@ -45,7 +45,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         createLooseControl(location); 
         createAttachingControl(location, false); 
         createAttachingControl(location, true); 
-        swapControl(0); 
+        swapControl(0);
         counter++;
     }
     
@@ -119,6 +119,10 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      */
     public float getDistanceToHandle(boolean vertical){ 
         return vertical ? distanceToHandleVertical : distanceToHandle;  
+    }
+    
+    public void runCollisionListener(){
+        collisionListener.setHittingObject(this);
     }
     
     @Override
@@ -233,7 +237,8 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     
     private void initCollisionListener(){
         if(collisionListener == null){
-            collisionListener = new BottomCollisionListener(this, getName(), "ropeHook");
+            collisionListener = new BottomCollisionListener(this, name
+                    .substring(0, name.length() - 1), "ropeHook");
             BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
                     .addCollisionGroupListener(collisionListener, 5);
         }

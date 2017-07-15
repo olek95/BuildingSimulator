@@ -35,9 +35,9 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
         Spatial aSpatial = (Spatial)a, bSpatial = (Spatial)b;
         String aName = aSpatial.getName(), bName = bSpatial.getName();
         if(!isProperCollisionGroup(bSpatial)) return false;
-        if(aName.equals(hittingObjectName) && !bName.equals(hitObjectName)){
+        if(aName.startsWith(hittingObjectName) && !bName.equals(hitObjectName)){
             hittingObject.setCollision(bSpatial);
-        }else if(bName.equals(hittingObjectName) && !aName.equals(hitObjectName)){
+        }else if(bName.startsWith(hittingObjectName) && !aName.equals(hitObjectName)){
             hittingObject.setCollision(aSpatial);
         }
         return true;
@@ -48,7 +48,7 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
      * @param hittingObject uderzający obiekt (obiekt potrafiący zapamiętać
      * ostatnio uderzony element)
      */
-    public  void setHittingObject(RememberingRecentlyHitObject hittingObject){
+    public void setHittingObject(RememberingRecentlyHitObject hittingObject){
         this.hittingObject = hittingObject; 
     }
     

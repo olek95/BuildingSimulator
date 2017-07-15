@@ -65,6 +65,10 @@ public class Control {
         inputManager.removeListener(listener);
     }
     
+    /**
+     * Zwraca słuchacza dla aktualnie używanej jednostki. 
+     * @return aktualny słuchacz 
+     */
     public static InputListener getActualListener(){
         return actualListener; 
     }

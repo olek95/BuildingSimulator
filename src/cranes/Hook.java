@@ -248,16 +248,15 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 .getPhysicsSpace().add(buildingMaterialJoint);
         //float height = wall.getWorldTranslation().y + (vertical ? 
             //    wall.getHeight() * 2 : wall.getWidth() * 2);
-        System.out.println(distanceBetweenHookAndObject + " " + wall.getDistanceToHandle(vertical)
-                + " " + wall.getHeight() + " " +  wall.getWorldTranslation().y);
-        float height = wall.getDistanceToHandle(vertical) + wall.getWorldTranslation().y;
+        float height = wall.getDistanceToHandle(vertical) + wall.getWorldTranslation().y,
+                yHook = hook.getWorldTranslation().y;
         // +0.1 w przypadku żurawia, aby nie było kolizji z obiektami pod tym obiektem 
         if(vertical) height += wall.getHeight() + 0.1f;  
-        float yHook = hook.getWorldTranslation().y;
         while(yHook <= height){
             heighten();
             yHook += hookDisplacement.y;
         }
+        wall.runCollisionListener();
     }
     
     private float calculateDistanceBetweenHookAndObject(boolean vertical){

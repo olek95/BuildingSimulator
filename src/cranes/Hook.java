@@ -246,18 +246,13 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 Vector3f.ZERO, Vector3f.ZERO);
         BuildingSimulator.getBuildingSimulator().getBulletAppState()
                 .getPhysicsSpace().add(buildingMaterialJoint);
-        float height = gapBetweenHookAndAttachedObject + wall.getWorldTranslation().y + (vertical ? 
-                objectBounding.getZExtent() * 2 : objectBounding.getYExtent() * 2);
-        
-        //Spatial wallRecentlyHitObject;
-        //do{
-          //   wallRecentlyHitObject = wall.getRecentlyHitObject();
-        //}while(wallRecentlyHitObject == null);
-        //selectedControl.setPhysicsLocation(selectedControl.getPhysicsLocation()
-          //      .clone().setY(y + wall.getWorldTranslation().y));
-        //selectedControl.setPhysicsLocation(selectedControl.getPhysicsLocation()
-               // .clone().setY(10));
-        selectedControl.getPhysicsLocation().add(0, 50, 0);
+        //float height = wall.getWorldTranslation().y + (vertical ? 
+            //    wall.getHeight() * 2 : wall.getWidth() * 2);
+        System.out.println(distanceBetweenHookAndObject + " " + wall.getDistanceToHandle(vertical)
+                + " " + wall.getHeight() + " " +  wall.getWorldTranslation().y);
+        float height = wall.getDistanceToHandle(vertical) + wall.getWorldTranslation().y;
+        // +0.1 w przypadku żurawia, aby nie było kolizji z obiektami pod tym obiektem 
+        if(vertical) height += wall.getHeight() + 0.1f;  
         float yHook = hook.getWorldTranslation().y;
         while(yHook <= height){
             heighten();

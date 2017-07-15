@@ -14,6 +14,7 @@ import com.jme3.input.controls.KeyTrigger;
 public class Control {
     private static InputManager inputManager = BuildingSimulator.getBuildingSimulator()
             .getInputManager();
+    private static InputListener actualListener;
     /**
      * Typ wyliczeniowy zawierający wszystkie możliwe akcje, które może wykonać 
      * użytkownik w grze. Do każdej możliwej akcji przypisany jest jakiś klawisz. 
@@ -48,6 +49,7 @@ public class Control {
             Actions[] names = ((Controllable)o).getAvailableActions();
             for(int i = 0; i < names.length; i++)
                 inputManager.addListener(o, names[i].toString());
+            actualListener = o;
         }else{
             inputManager.addListener(o, Actions.PHYSICS.toString());
             inputManager.addListener(o, Actions.FIRST.toString());
@@ -61,5 +63,9 @@ public class Control {
      */
     public static void removeListener(InputListener listener){
         inputManager.removeListener(listener);
+    }
+    
+    public static InputListener getActualListener(){
+        return actualListener; 
     }
 }

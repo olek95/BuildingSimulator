@@ -16,8 +16,6 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Box;
-import net.wcomohundro.jme3.csg.CSGShape;
 
 public class BuildingSimulator extends SimpleApplication implements ActionListener{
     private static BuildingSimulator game;
@@ -125,15 +123,18 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                                 : mobileCrane);
                         mobileCrane.setUsing(true);
                     }else{
-                        if(((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing())
+                        GameManager.setLastAction(name);
+                        if(((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing()){
                             inputManager.removeListener(mobileCrane.getArmControl());
-                        else{
+                        }else{
                             mobileCrane.setSteeringAngle(0f);
                             inputManager.removeListener(mobileCrane);
                         }
                         mobileCrane.setUsing(false);
                         Control.addListener(crane.getArmControl());
                         crane.setUsing(true);
+                        System.out.println("1" + mobileCrane.isUsing());
+                        System.out.println("2" + ((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing());
                     }
                 }
             }

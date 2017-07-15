@@ -217,6 +217,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
             Control.removeListener((MobileCrane)GameManager.getUnit(0));
             MobileCraneArmControl control = (MobileCraneArmControl)getArmControl();
             control.setUsing(!control.isUsing());
+            System.out.println("WCHODZE");
             GameManager.setLastAction(name);
             setSteeringAngle(0f); 
         }

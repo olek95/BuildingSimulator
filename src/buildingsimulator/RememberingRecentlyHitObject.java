@@ -1,5 +1,6 @@
 package buildingsimulator;
 
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 
 /**
@@ -25,4 +26,10 @@ public interface RememberingRecentlyHitObject {
      * @param b obiekt z którym nastąpiła kolizja 
      */
     public void setCollision(Spatial b);
+    
+    /**
+     * Zwraca aktualna pozycję obiektu. 
+     * @return aktualna pozycja 
+     */
+    public Vector3f getWorldTranslation();
 }

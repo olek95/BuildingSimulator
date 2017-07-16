@@ -1,0 +1,9 @@
+Grupy poprawne: 
+4 - elementy ktÛre nie moøna dotknπÊ od gÛry hakiem (düwigu mobilnego)
+2 - haki 
+
+
+rectractableCranePart - 3 (teraz 4)
+hookHandle (düwig mobilny) - addColideWithGroup(1)
+hookHandle (düwig mobilny) w kreatorze graficznym - collide with 2 
+

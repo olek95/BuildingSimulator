@@ -272,4 +272,8 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         }while(parent != null);
         return distanceBetweenHookAndObject; 
     }
+    
+    public Vector3f getWorldTranslation(){
+        return hook.getWorldTranslation();
+    }
 }

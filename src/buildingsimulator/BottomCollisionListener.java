@@ -1,11 +1,13 @@
 package buildingsimulator;
 
+import buildingmaterials.Wall;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.collision.CollisionResults;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
 /**
@@ -38,10 +40,11 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
         Object a = nodeA.getUserObject(), b = nodeB.getUserObject();
         Spatial aSpatial = (Spatial)a, bSpatial = (Spatial)b;
         String aName = aSpatial.getName(), bName = bSpatial.getName();
-        if(!isProperCollisionGroup(bSpatial)) return false;
         if(aName.startsWith(hittingObjectName) && !bName.equals(hitObjectName)){
+           // if(!isProperCollisionGroup(bSpatial)) return false;
             hittingObject.setCollision(bSpatial);
         }else if(bName.startsWith(hittingObjectName) && !aName.equals(hitObjectName)){
+            //if(!isProperCollisionGroup(aSpatial)) return false;
             hittingObject.setCollision(aSpatial);
         }
         return true;
@@ -69,9 +72,13 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
         Spatial recentlyHitObject = object.getRecentlyHitObject();
         /* jeśli nie dotknęło żadnego obiektu, to zbędne jest sprawdzanie 
         kolizji w dół*/
+       // if(recentlyHitObject != null)
+            // tworzy pomocniczy promień sprawdzający kolizję w dół
+           // new Ray(recentlyHitObject.getWorldTranslation(), new Vector3f(0,-0.5f,0))
+              //      .collideWith((BoundingBox)recentlyHitObject.getWorldBound(), results);
         if(recentlyHitObject != null)
             // tworzy pomocniczy promień sprawdzający kolizję w dół
-            new Ray(recentlyHitObject.getWorldTranslation(), new Vector3f(0,-0.5f,0))
+            new Ray(object.getWorldTranslation(), new Vector3f(0,-0.5f,0))
                     .collideWith((BoundingBox)recentlyHitObject.getWorldBound(), results);
         return results.size() == 0; 
     }
@@ -79,6 +86,12 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
     private static boolean isProperCollisionGroup(Spatial b){
         // PhysicsCollisionObject bo control nie musi być tylko typu RigidBodyControl
         int collisionGroup = ((PhysicsCollisionObject)b.getControl(0)).getCollisionGroup();
-        return collisionGroup != 4;
+        Node parent = b.getParent();
+        do{
+            if(parent.getName().contains("dzwig"))
+                return collisionGroup != 4; 
+            parent = parent.getParent();
+        }while(parent != null);
+        return true;
     }
 }

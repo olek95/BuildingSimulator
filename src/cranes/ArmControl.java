@@ -107,7 +107,15 @@ public abstract class ArmControl implements AnalogListener, Controllable{
                 changeArmHeight(maxArmHeight, false);
                 break;
             case DOWN:
-                if(BottomCollisionListener.isNothingBelow(hook)){
+                Spatial attachedObject = hook.getAttachedObject();
+                //System.out.println(BottomCollisionListener.isNothingBelow(hook));
+                    //if(attachedObject != null){
+                      //  System.out.println("NIENULL: " +  BottomCollisionListener
+                     //       .isNothingBelow((Wall)attachedObject));
+                    //} // true NIENULL: false
+                if((BottomCollisionListener.isNothingBelow(hook) && attachedObject == null)
+                        || (attachedObject != null && BottomCollisionListener
+                            .isNothingBelow((Wall)attachedObject))){
                     changeArmHeight(minArmHeight, true); 
                     hook.setRecentlyHitObject(null);
                 }
@@ -262,6 +270,9 @@ public abstract class ArmControl implements AnalogListener, Controllable{
         craneControl = (Node)crane.getChild("craneControl");
     }
     
+    /**
+     * Obraca hak wraz z przyczepionym do niego obiektem. 
+     */
     protected void rotateHook(){
         hook.getRopeHook().getControl(RigidBodyControl.class).setPhysicsRotation(
                 getCraneControl().getWorldRotation());

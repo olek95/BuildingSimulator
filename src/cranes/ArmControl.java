@@ -1,13 +1,18 @@
 package cranes;
 
 import buildingmaterials.Wall;
+import buildingsimulator.BottomCollisionListener;
 import buildingsimulator.Control;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import buildingsimulator.Control.Actions;
 import buildingsimulator.Controllable;
+import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.collision.CollisionResults;
+import com.jme3.math.Ray;
+import com.jme3.math.Vector3f;
 /**
  * Klasa <code>ArmControl</code> jest klasą abstrakcyjną dla wszystkich klas 
  * reprezentujących sterowanie ramieniem dźwigu w grze. Implementuje ona interfejs
@@ -102,7 +107,10 @@ public abstract class ArmControl implements AnalogListener, Controllable{
                 changeArmHeight(maxArmHeight, false);
                 break;
             case DOWN:
-                changeArmHeight(minArmHeight, true); 
+                if(BottomCollisionListener.isNothingBelow(hook)){
+                    changeArmHeight(minArmHeight, true); 
+                    hook.setRecentlyHitObject(null);
+                }
                 break;
             case ACTION:
                 getOff(name);
@@ -112,7 +120,8 @@ public abstract class ArmControl implements AnalogListener, Controllable{
             boolean attachedObjectNotNull = attachedObject != null; 
             if(attachedObjectNotNull) 
                 ((Wall)attachedObject).activateIfInactive();
-            if(!name.equals(Actions.LOWER_HOOK.toString()) && !usedNotUsingKey){ 
+            if(!name.equals(Actions.LOWER_HOOK.toString()) && !usedNotUsingKey
+                    && !name.equals((Actions.DOWN.toString()))){ 
                 hook.setRecentlyHitObject(null);
                 if(attachedObjectNotNull) 
                     ((Wall)attachedObject).setRecentlyHitObject(null);

@@ -1,7 +1,11 @@
 package buildingsimulator;
 
+import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
+import com.jme3.collision.CollisionResults;
+import com.jme3.math.Ray;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 
 /**
@@ -50,6 +54,26 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
      */
     public void setHittingObject(RememberingRecentlyHitObject hittingObject){
         this.hittingObject = hittingObject; 
+    }
+    
+    /**
+     * Sprawdza czy ostatnio uderzony obiekt znajduje się dokładnie poniżej 
+     * obiektu podanego jako argument czy np. obiekt podany jako argument uderzył 
+     * w tamten obiekt od boku. 
+     * @param object obiekt uderzający 
+     * @return false jeśli uderzony obiekt został uderzony dolną częścią obiektu 
+     * podanego jako argument, true w przeciwnym przypadku 
+     */
+    public static boolean isNothingBelow(RememberingRecentlyHitObject object){
+        CollisionResults results = new CollisionResults();
+        Spatial recentlyHitObject = object.getRecentlyHitObject();
+        /* jeśli nie dotknęło żadnego obiektu, to zbędne jest sprawdzanie 
+        kolizji w dół*/
+        if(recentlyHitObject != null)
+            // tworzy pomocniczy promień sprawdzający kolizję w dół
+            new Ray(recentlyHitObject.getWorldTranslation(), new Vector3f(0,-0.5f,0))
+                    .collideWith((BoundingBox)recentlyHitObject.getWorldBound(), results);
+        return results.size() == 0; 
     }
     
     private static boolean isProperCollisionGroup(Spatial b){

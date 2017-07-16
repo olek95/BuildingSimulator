@@ -254,7 +254,6 @@ public abstract class ArmControl implements AnalogListener, Controllable{
     }
     
     protected void rotateHook(){
-        Hook hook = getHook();
         hook.getRopeHook().getControl(RigidBodyControl.class).setPhysicsRotation(
                 getCraneControl().getWorldRotation());
         Spatial attachedObject = hook.getAttachedObject(); 

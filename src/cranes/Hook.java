@@ -246,12 +246,13 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 Vector3f.ZERO, Vector3f.ZERO);
         BuildingSimulator.getBuildingSimulator().getBulletAppState()
                 .getPhysicsSpace().add(buildingMaterialJoint);
-        //float height = wall.getWorldTranslation().y + (vertical ? 
-            //    wall.getHeight() * 2 : wall.getWidth() * 2);
-        float height = wall.getDistanceToHandle(vertical) + wall.getWorldTranslation().y,
+       // float height = wall.getWorldTranslation().y + (vertical ? 
+         //       wall.getHeight() * 2 + 0.1f : wall.getWidth() * 2),
+           //     yHook = hook.getWorldTranslation().y;
+        // +0.1 w przypadku żurawia, aby nie było kolizji z obiektami pod tym obiektem
+        float height = wall.getDistanceToHandle(vertical) + wall.getWorldTranslation().y
+                + (vertical ? wall.getHeight() + 0.1f : wall.getWidth()),
                 yHook = hook.getWorldTranslation().y;
-        // +0.1 w przypadku żurawia, aby nie było kolizji z obiektami pod tym obiektem 
-        if(vertical) height += wall.getHeight() + 0.1f;  
         while(yHook <= height){
             heighten();
             yHook += hookDisplacement.y;

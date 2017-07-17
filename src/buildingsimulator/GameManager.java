@@ -273,6 +273,10 @@ public class GameManager {
         return null;
     }
     
+    public static void addToGame(Node object){
+        BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(object);
+    }
+    
     private static void moveDynamicObject(Spatial element, Vector3f displacement){
         RigidBodyControl elementControl = element.getControl(RigidBodyControl.class);
         elementControl.setPhysicsLocation(elementControl.getPhysicsLocation()

@@ -3,7 +3,7 @@ Grupy poprawne:
 2 - haki 
 
 
-rectractableCranePart - 3 (teraz 4)
+rectractableCranePart - 3 
 hookHandle (düwig mobilny) - addColideWithGroup(1)
 hookHandle (düwig mobilny) w kreatorze graficznym - collide with 2 
 

@@ -3,6 +3,8 @@ package cranes;
 import buildingmaterials.Wall;
 import buildingsimulator.BottomCollisionListener;
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.Construction;
+import buildingsimulator.GameManager;
 import static buildingsimulator.GameManager.*;
 import buildingsimulator.RememberingRecentlyHitObject;
 import com.jme3.bounding.BoundingBox;
@@ -81,6 +83,12 @@ public abstract class Hook implements RememberingRecentlyHitObject{
             Wall wall = (Wall)attachedObject;
             wall.swapControl(0);
             wall.activateIfInactive();
+            Construction construction = new Construction(); 
+            construction.add(wall);
+            GameManager.addToGame(construction);
+            for(int i = 0; i < BuildingSimulator.getBuildingSimulator().getRootNode().getChildren().size(); i++){
+                System.out.println(BuildingSimulator.getBuildingSimulator().getRootNode().getChildren().get(i));
+            }
             attachedObject = null;
             buildingMaterialJoint = null; 
         }

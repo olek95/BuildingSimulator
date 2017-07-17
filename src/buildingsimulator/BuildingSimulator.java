@@ -48,10 +48,14 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         rootNode.addLight(sun);
         
         // KOD DLA TESTU!!
-        WallsFactory.createWall(WallType.DOOR, new Vector3f(0f, 0.3f, 20f));
-        WallsFactory.createWall(WallType.DOOR, new Vector3f(0f, 0.7f, 20f));
-        WallsFactory.createWall(WallType.DOOR, new Vector3f(0f, 1.1f, 20f));
-        WallsFactory.createWall(WallType.DOOR, new Vector3f(0f, 1.5f, 20f));
+        GameManager.addToGame(WallsFactory.createWall(WallType.DOOR,
+                new Vector3f(0f, 0.3f, 20f)));
+        GameManager.addToGame(WallsFactory.createWall(WallType.DOOR,
+                new Vector3f(0f, 0.7f, 20f)));
+        GameManager.addToGame(WallsFactory.createWall(WallType.DOOR,
+                new Vector3f(0f, 1.1f, 20f)));
+        GameManager.addToGame(WallsFactory.createWall(WallType.DOOR, 
+                new Vector3f(0f, 1.5f, 20f)));
         //WallsFactory.createWall(WallType.DOOR, new Vector3f(0f, 1.5f, 17f));
         //WallsFactory.createWall(WallType.WINDOWS, new Vector3f(10f, 0.3f, 20f));
         //WallsFactory.createWall(WallType.ONE_BIG_WINDOW, new Vector3f(20f, 0.3f, 20f));

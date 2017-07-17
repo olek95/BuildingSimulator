@@ -39,7 +39,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         width = bounding.getYExtent(); 
         height = bounding.getZExtent(); 
         initShape(shape, differenceShapes);
-        BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(this);
+        //BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(this);
         initCollisionListener(); 
         ((CSGGeometry)getChild(0)).regenerate();
         createLooseControl(location); 

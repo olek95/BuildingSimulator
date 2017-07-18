@@ -84,7 +84,6 @@ public abstract class Hook implements RememberingRecentlyHitObject{
             wall.swapControl(0);
             wall.activateIfInactive();
             if(merging && !wall.getParent().getName().startsWith("Building")){
-                System.out.println("WCHODZI");
                 Construction construction = new Construction(); 
                 construction.add(wall);
                 GameManager.addToGame(construction);

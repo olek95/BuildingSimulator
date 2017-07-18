@@ -32,6 +32,7 @@ public class Control {
         ATTACH(KeyInput.KEY_Y),
         VERTICAL_ATTACH(KeyInput.KEY_V),
         DETACH(KeyInput.KEY_B),
+        MERGE(KeyInput.KEY_N),
         PHYSICS(KeyInput.KEY_P),
         FIRST(KeyInput.KEY_1),
         SECOND(KeyInput.KEY_2);

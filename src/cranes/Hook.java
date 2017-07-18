@@ -76,18 +76,18 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     /**
      * Odłącza od haka przyczepiony obiekt. 
      */
-    public void detach(){
+    public void detach(boolean merging){
         if(attachedObject != null){
             BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
                     .remove(buildingMaterialJoint);
             Wall wall = (Wall)attachedObject;
             wall.swapControl(0);
             wall.activateIfInactive();
-            Construction construction = new Construction(); 
-            construction.add(wall);
-            GameManager.addToGame(construction);
-            for(int i = 0; i < BuildingSimulator.getBuildingSimulator().getRootNode().getChildren().size(); i++){
-                System.out.println(BuildingSimulator.getBuildingSimulator().getRootNode().getChildren().get(i));
+            if(merging && !wall.getParent().getName().startsWith("Building")){
+                System.out.println("WCHODZI");
+                Construction construction = new Construction(); 
+                construction.add(wall);
+                GameManager.addToGame(construction);
             }
             attachedObject = null;
             buildingMaterialJoint = null; 

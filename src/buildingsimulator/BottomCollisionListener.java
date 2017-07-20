@@ -20,7 +20,7 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
     private String hittingObjectName, hitObjectName; 
     public BottomCollisionListener(RememberingRecentlyHitObject hittingObject,
             String hittingObjectName, String hitObjectName){
-        this.hittingObject = hittingObject; 
+        this.hittingObject = hittingObject;
         this.hittingObjectName = hittingObjectName; 
         this.hitObjectName = hitObjectName; 
     }
@@ -40,10 +40,13 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
         Object a = nodeA.getUserObject(), b = nodeB.getUserObject();
         Spatial aSpatial = (Spatial)a, bSpatial = (Spatial)b;
         String aName = aSpatial.getName(), bName = bSpatial.getName();
-        if(aName.startsWith(hittingObjectName) && !bName.equals(hitObjectName)){
+        //if((aName.startsWith("Wall") || aName.startsWith("New Scene"))
+          //      && (bName.startsWith("Wall") || bName.startsWith("New Scene")))
+            //System.out.println(aName + "| " + bName); 
+        if(aName.equals(hittingObjectName) && !bName.equals(hitObjectName)){
            // if(!isProperCollisionGroup(bSpatial)) return false;
             hittingObject.setCollision(bSpatial);
-        }else if(bName.startsWith(hittingObjectName) && !aName.equals(hitObjectName)){
+        }else if(bName.equals(hittingObjectName) && !aName.equals(hitObjectName)){
             //if(!isProperCollisionGroup(aSpatial)) return false;
             hittingObject.setCollision(aSpatial);
         }
@@ -58,6 +61,8 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
     public void setHittingObject(RememberingRecentlyHitObject hittingObject){
         this.hittingObject = hittingObject; 
     }
+    
+    public void setHittingObjectName(String name){ hittingObjectName = name; }
     
     /**
      * Sprawdza czy ostatnio uderzony obiekt znajduje się dokładnie poniżej 

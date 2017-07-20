@@ -83,10 +83,27 @@ public abstract class Hook implements RememberingRecentlyHitObject{
             Wall wall = (Wall)attachedObject;
             wall.swapControl(0);
             wall.activateIfInactive();
-            if(merging && !wall.getParent().getName().startsWith("Building")){
-                Construction construction = new Construction(); 
-                construction.add(wall);
-                GameManager.addToGame(construction);
+            //System.out.println("UDERZ: " + wall.getRecentlyHitObject() + "|" + 
+               //     wall);
+            if(merging){
+                Spatial wallRecentlyHitObject = wall.getRecentlyHitObject(); 
+                if(wallRecentlyHitObject != null){
+                    //System.out.println("el");
+                    Spatial recentlyHitObjectParent = wallRecentlyHitObject.getParent();
+                    //String recentlyHitObjectName = recentlyHitObject.getName(); 
+                    Construction construction; 
+                    //if(recentlyHitObjectName.startsWith("Wall") || 
+                    //        recentlyHitObjectName.startsWith("New Scene")){
+                    //System.out.println(wallRecentlyHitObject.getName());
+                        if(recentlyHitObjectParent.getName().startsWith("Building")){
+                            construction = (Construction)recentlyHitObjectParent; 
+                        }else{
+                            construction = new Construction(); 
+                            GameManager.addToGame(construction);
+                        }
+                        construction.add(wall);
+                    //}
+                }
             }
             attachedObject = null;
             buildingMaterialJoint = null; 

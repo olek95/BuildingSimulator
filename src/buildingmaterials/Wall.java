@@ -39,7 +39,6 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         width = bounding.getYExtent(); 
         height = bounding.getZExtent(); 
         initShape(shape, differenceShapes);
-        //BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(this);
         initCollisionListener(); 
         ((CSGGeometry)getChild(0)).regenerate();
         createLooseControl(location); 
@@ -123,6 +122,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     
     public void runCollisionListener(){
         collisionListener.setHittingObject(this);
+        collisionListener.setHittingObjectName(name);
     }
     
     @Override
@@ -133,6 +133,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
                 .getWorldBound()).getMax(null).y > ((BoundingBox)b.getWorldBound())
                 .getMax(null).y))
             recentlyHitObject = b;
+        System.out.println(recentlyHitObject +" " + b);
     }
     
     @Override
@@ -237,8 +238,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     
     private void initCollisionListener(){
         if(collisionListener == null){
-            collisionListener = new BottomCollisionListener(this, name
-                    .substring(0, name.length() - 1), "ropeHook");
+            collisionListener = new BottomCollisionListener(this, name, "ropeHook");
             BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
                     .addCollisionGroupListener(collisionListener, 5);
         }

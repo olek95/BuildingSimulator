@@ -133,7 +133,6 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
                 .getWorldBound()).getMax(null).y > ((BoundingBox)b.getWorldBound())
                 .getMax(null).y))
             recentlyHitObject = b;
-        System.out.println(recentlyHitObject +" " + b);
     }
     
     @Override

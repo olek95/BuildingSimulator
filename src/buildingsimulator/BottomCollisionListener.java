@@ -42,7 +42,6 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
         String aName = aSpatial.getName(), bName = bSpatial.getName();
         //if((aName.startsWith("Wall") || aName.startsWith("New Scene"))
           //      && (bName.startsWith("Wall") || bName.startsWith("New Scene")))
-            //System.out.println(aName + "| " + bName); 
         if(aName.equals(hittingObjectName) && !bName.equals(hitObjectName)){
            // if(!isProperCollisionGroup(bSpatial)) return false;
             hittingObject.setCollision(bSpatial);

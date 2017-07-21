@@ -111,11 +111,6 @@ public abstract class ArmControl implements AnalogListener, Controllable{
                 break;
             case DOWN:
                 Spatial attachedObject = hook.getAttachedObject();
-                //System.out.println(BottomCollisionListener.isNothingBelow(hook));
-                    //if(attachedObject != null){
-                      //  System.out.println("NIENULL: " +  BottomCollisionListener
-                     //       .isNothingBelow((Wall)attachedObject));
-                    //} // true NIENULL: false
                 if((BottomCollisionListener.isNothingBelow(hook) && attachedObject == null)
                         || (attachedObject != null && BottomCollisionListener
                             .isNothingBelow((Wall)attachedObject))){

@@ -16,14 +16,12 @@ public class Construction extends Node{
     public void add(Wall wall){
         Spatial recentlyHitObject = wall.getRecentlyHitObject();
         if(recentlyHitObject != null){ 
-            //System.out.println("WSZEDL");
             String recentlyHitObjectName = recentlyHitObject.getName(); 
-            boolean collisionWithOtherWall = recentlyHitObjectName.startsWith("Wall");
-            if(recentlyHitObjectName.startsWith("New Scene") 
-                    || recentlyHitObject.getParent().getName().startsWith("Building")
-                    || collisionWithOtherWall){
-                //System.out.println("if");
+            boolean collisionWithGround = recentlyHitObjectName.startsWith("New Scene");
+            if(collisionWithGround || recentlyHitObject.getParent().getName()
+                    .startsWith("Building") || recentlyHitObjectName.startsWith("Wall")){
                 wall.removeFromParent();
+                merge(wall, collisionWithGround ? null : (Wall)recentlyHitObject);
                 attachChild(wall);
             }
             List<Spatial> c = BuildingSimulator.getBuildingSimulator().getRootNode().getChildren();
@@ -36,9 +34,12 @@ public class Construction extends Node{
     }
     
     private void merge(Wall wall1, Wall wall2){
-        Vector3f location = wall2.getControl(RigidBodyControl.class).getPhysicsLocation();
-        Vector3f newLocation = new Vector3f(location.x, wall1
-                .getControl(RigidBodyControl.class).getPhysicsLocation().y, location.z);
-        wall1.getControl(RigidBodyControl.class).setPhysicsLocation(newLocation);
+        if(wall2 != null){
+            RigidBodyControl control1 = wall1.getControl(RigidBodyControl.class), 
+                    control2 = wall2.getControl(RigidBodyControl.class); 
+            control1.setPhysicsLocation(control2.getPhysicsLocation()
+                    .setY(control1.getPhysicsLocation().y));
+            control1.setPhysicsRotation(control2.getPhysicsRotation());
+        }
     }
 }

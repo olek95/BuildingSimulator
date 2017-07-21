@@ -273,6 +273,10 @@ public class GameManager {
         return null;
     }
     
+    /**
+     * Dodaje obiekt do gry. 
+     * @param object dodawany obiekt 
+     */
     public static void addToGame(Node object){
         BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(object);
     }

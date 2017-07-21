@@ -2,17 +2,25 @@ package buildingsimulator;
 
 import buildingmaterials.Wall;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.List;
 
+/**
+ * Obiekt klasy <code>Construction</code> reprezentuje budowaną konstrukcję. 
+ * Jest to węzeł składajacy się z różnych rodzajów ścian połaczonych ze sobą. 
+ * @author AleksanderSklorz 
+ */
 public class Construction extends Node{
     private static int counter = -1; 
     public Construction(){
         setName("Building" + (++counter));
     }
     
+    /**
+     * Dodaje kolejną ścianą do konstrukcji. 
+     * @param wall dodawana ściana 
+     */
     public void add(Wall wall){
         Spatial recentlyHitObject = wall.getRecentlyHitObject();
         if(recentlyHitObject != null){ 

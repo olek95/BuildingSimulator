@@ -120,6 +120,9 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         return vertical ? distanceToHandleVertical : distanceToHandle;  
     }
     
+    /**
+     * Włacza słuchacza dolnej kolizji dla obecnego obiektu. 
+     */
     public void runCollisionListener(){
         collisionListener.setHittingObject(this);
         collisionListener.setHittingObjectName(name);

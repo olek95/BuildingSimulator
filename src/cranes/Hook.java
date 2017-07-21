@@ -87,18 +87,14 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 Spatial wallRecentlyHitObject = wall.getRecentlyHitObject(); 
                 if(wallRecentlyHitObject != null){
                     Spatial recentlyHitObjectParent = wallRecentlyHitObject.getParent();
-                    //String recentlyHitObjectName = recentlyHitObject.getName(); 
                     Construction construction; 
-                    //if(recentlyHitObjectName.startsWith("Wall") || 
-                    //        recentlyHitObjectName.startsWith("New Scene")){
-                        if(recentlyHitObjectParent.getName().startsWith("Building")){
-                            construction = (Construction)recentlyHitObjectParent; 
-                        }else{
-                            construction = new Construction(); 
-                            GameManager.addToGame(construction);
-                        }
-                        construction.add(wall);
-                    //}
+                    if(recentlyHitObjectParent.getName().startsWith("Building")){
+                        construction = (Construction)recentlyHitObjectParent; 
+                    }else{
+                        construction = new Construction();
+                        GameManager.addToGame(construction);
+                    }
+                    construction.add(wall);
                 }
             }
             attachedObject = null;
@@ -161,6 +157,9 @@ public abstract class Hook implements RememberingRecentlyHitObject{
      * @return słuchacz dla kolizji od dołu 
      */
     public BottomCollisionListener getCollisionListener(){ return collisionListener; }
+    
+    @Override
+    public Vector3f getWorldTranslation(){ return hook.getWorldTranslation(); }
     
     /**
      * Opuszcza hak, jeśli nic nie znajduje się pod nim. W przeciwnym razie 
@@ -291,9 +290,5 @@ public abstract class Hook implements RememberingRecentlyHitObject{
             parent = parent.getParent();
         }while(parent != null);
         return distanceBetweenHookAndObject; 
-    }
-    
-    public Vector3f getWorldTranslation(){
-        return hook.getWorldTranslation();
     }
 }

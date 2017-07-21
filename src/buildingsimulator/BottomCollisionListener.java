@@ -61,6 +61,10 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
         this.hittingObject = hittingObject; 
     }
     
+    /**
+     * Ustawia nazwę obiektu który jest obiektem zderzającym się. 
+     * @param name nazwa obiektu zderzającego się 
+     */
     public void setHittingObjectName(String name){ hittingObjectName = name; }
     
     /**

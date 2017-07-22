@@ -2,6 +2,9 @@ package buildingsimulator;
 
 import buildingmaterials.Wall;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Transform;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.List;
@@ -48,10 +51,12 @@ public class Construction extends Node{
     private void merge(Wall wall1, Wall wall2){
         if(wall2 != null){
             RigidBodyControl control1 = wall1.getControl(RigidBodyControl.class), 
-                    control2 = wall2.getControl(RigidBodyControl.class); 
-            control1.setPhysicsLocation(control2.getPhysicsLocation()
-                    .setY(control1.getPhysicsLocation().y));
-            control1.setPhysicsRotation(control2.getPhysicsRotation());
+                    control2 = wall2.getControl(RigidBodyControl.class);
+            Transform location = calculateLocationProperly(wall1, wall2);
+            if(location != null){
+                control1.setPhysicsLocation(location.getTranslation());
+                control1.setPhysicsRotation(location.getRotation());
+            }
         }
     }
     
@@ -70,5 +75,21 @@ public class Construction extends Node{
             }
         }
         counter--; 
+    }
+    
+    private Transform calculateLocationProperly(Wall wall1, Wall wall2){
+        RigidBodyControl control1 = (RigidBodyControl)wall1.getControl(2),
+                control2 = wall2.getControl(RigidBodyControl.class);
+        Vector3f location1 = control1.getPhysicsLocation(), location2 = control2
+                .getPhysicsLocation();
+        System.out.println(location1 + " " + location2); 
+        if(location1.x > location2.x && location1.z > location2.z - 1 && 
+                location1.z < location2.z + 1){
+            Quaternion rotation2 = control2.getPhysicsRotation();
+            return new Transform(new Vector3f(location2.x, 
+                    location1.y, location2.z), rotation2.clone()
+                    .multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f)));
+        }
+        return null; 
     }
 }

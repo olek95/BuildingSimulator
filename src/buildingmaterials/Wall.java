@@ -99,6 +99,14 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     /**
+     * Włacza słuchacza dolnej kolizji dla obecnego obiektu. 
+     */
+    public void runCollisionListener(){
+        collisionListener.setHittingObject(this);
+        collisionListener.setHittingObjectName(name);
+    }
+    
+    /**
      * Zwraca szerokość ściany. 
      * @return szerokość 
      */
@@ -118,14 +126,6 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      */
     public float getDistanceToHandle(boolean vertical){ 
         return vertical ? distanceToHandleVertical : distanceToHandle;  
-    }
-    
-    /**
-     * Włacza słuchacza dolnej kolizji dla obecnego obiektu. 
-     */
-    public void runCollisionListener(){
-        collisionListener.setHittingObject(this);
-        collisionListener.setHittingObjectName(name);
     }
     
     @Override

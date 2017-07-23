@@ -39,12 +39,12 @@ public class Construction extends Node{
                 attachChild(wall);
             }
             List<Spatial> c = BuildingSimulator.getBuildingSimulator().getRootNode().getChildren();
-            for(Spatial s : c){
-                System.out.println(s); 
+            //for(Spatial s : c){
+             //   System.out.println(s); 
                 //if(s instanceof Construction)
                 //System.out.println(s + " " + ((Node)s).getChildren().size() + " " 
                 //        + ((Node)s).getChild(0));
-            } 
+            //} 
         }
     }
     
@@ -85,9 +85,26 @@ public class Construction extends Node{
         System.out.println(location1 + " " + location2); 
         if(location1.x > location2.x && location1.z > location2.z - 1 && 
                 location1.z < location2.z + 1){
+            //float height = wall2.getHeight(); 
+            //float zOffset = (float)Math.sin(1.0516) * height,
+            //        xOffset = (float)Math.cos(1.0516) * height;
+            //System.out.println(zOffset + " " + xOffset); 
+            //float offset = (float)(wall2.getHeight() / Math.sqrt(2));
+            //location1.setX(location2.x + xOffset);
+            //location1.setZ(location2.z - zOffset);
+            Vector3f prostopadly = new Vector3f(0,0, location2.z);
+            Vector3f prostopadlyZnormalizowany = prostopadly.clone().setX(0).setY(0).normalize(); 
+            Vector3f znormalizowany = location1.clone().normalize(); 
+            float kat = prostopadlyZnormalizowany.angleBetween(znormalizowany); 
+            float height = wall2.getHeight();
+            float zOffset = (float)Math.sin(kat) * height,
+                    xOffset = (float)Math.cos(kat) * height;
+            System.out.println(zOffset + " " + xOffset + " " + kat); 
+           // float offset = (float)(wall2.getHeight() / Math.sqrt(2));
+            location1.setX(location2.x + xOffset);
+            location1.setZ(location2.z - zOffset);
             Quaternion rotation2 = control2.getPhysicsRotation();
-            return new Transform(new Vector3f(location2.x, 
-                    location1.y, location2.z), rotation2.clone()
+            return new Transform(location1, rotation2.clone()
                     .multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f)));
         }
         return null; 

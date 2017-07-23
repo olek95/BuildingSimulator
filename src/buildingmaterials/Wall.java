@@ -31,13 +31,14 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private Spatial recentlyHitObject;
     private static BottomCollisionListener collisionListener = null; 
     private Geometry[] ropesHorizontal = new Geometry[4], ropesVertical = new Geometry[2];
-    private float width, height, distanceToHandle, distanceToHandleVertical; 
+    private float width, height, length, distanceToHandle, distanceToHandleVertical; 
     private static int counter = 0; 
     @SuppressWarnings("LeakingThisInConstructor")
     public Wall(CSGShape shape, Vector3f location, CSGShape... differenceShapes){
         BoundingBox bounding = (BoundingBox)shape.getWorldBound();
         width = bounding.getYExtent(); 
         height = bounding.getZExtent(); 
+        length = bounding.getXExtent(); 
         initShape(shape, differenceShapes);
         initCollisionListener(); 
         ((CSGGeometry)getChild(0)).regenerate();
@@ -107,16 +108,22 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     /**
-     * Zwraca szerokość ściany. 
+     * Zwraca szerokość ściany (mierzona od środka). 
      * @return szerokość 
      */
     public float getWidth(){ return width; }
     
     /**
-     * Zwraca wysokość ściany. 
+     * Zwraca wysokość ściany (mierzona od środka). 
      * @return wysokość 
      */
     public float getHeight(){ return height; }
+    
+    /**
+     * Zwraca długość ściany (mierzona od środka).
+     * @return długość 
+     */
+    public float getLength() { return length; }
     
     /**
      * Zwraca odległość między środkiem ściany a przyszłym uchwytem na którym 

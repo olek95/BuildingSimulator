@@ -42,6 +42,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         initShape(shape, differenceShapes);
         initCollisionListener(); 
         ((CSGGeometry)getChild(0)).regenerate();
+        createWallNodes(); 
         createLooseControl(location); 
         createAttachingControl(location, false); 
         createAttachingControl(location, true); 
@@ -256,5 +257,11 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private void createLooseControl(Vector3f location){
         GameManager.createObjectPhysics(this, 0.00001f, false, new String[] {"Box"});
         getControl(RigidBodyControl.class).setPhysicsLocation(location);
+    }
+    
+    private void createWallNodes(){
+        Node bottom = new Node("Bottom"); 
+        bottom.setLocalTranslation(0, 0.2f, 2.5f);
+        attachChild(bottom);
     }
 }

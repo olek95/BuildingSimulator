@@ -30,33 +30,35 @@ public class Construction extends Node{
             String recentlyHitObjectName = recentlyHitObject.getName(); 
             boolean collisionWithGround = recentlyHitObjectName.startsWith("New Scene");
             if(collisionWithGround || recentlyHitObjectName.startsWith("Wall")){
-                Spatial wallParent = wall.getParent(); 
-                if(wallParent.getName().startsWith("Building")){
-                    deleteConstruction(wallParent);
+                if(merge(wall, collisionWithGround ? null : (Wall)recentlyHitObject)){
+                    Spatial wallParent = wall.getParent(); 
+                    if(wallParent.getName().startsWith("Building")){
+                        deleteConstruction(wallParent);
+                    }
+                    wall.removeFromParent();
+                    attachChild(wall);
                 }
-                wall.removeFromParent();
-                merge(wall, collisionWithGround ? null : (Wall)recentlyHitObject);
-                attachChild(wall);
             }
             List<Spatial> c = BuildingSimulator.getBuildingSimulator().getRootNode().getChildren();
-            //for(Spatial s : c){
-             //   System.out.println(s); 
+            for(Spatial s : c){
+                System.out.println(s); 
                 //if(s instanceof Construction)
                 //System.out.println(s + " " + ((Node)s).getChildren().size() + " " 
                 //        + ((Node)s).getChild(0));
-            //} 
+            } 
         }
     }
     
-    private void merge(Wall wall1, Wall wall2){
+    private boolean merge(Wall wall1, Wall wall2){
         if(wall2 != null){
-            RigidBodyControl control1 = wall1.getControl(RigidBodyControl.class);
+            RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
             Transform location = calculateLocationProperly(wall1, wall2);
             if(location != null){
-                control1.setPhysicsLocation(location.getTranslation());
-                control1.setPhysicsRotation(location.getRotation());
-            }
+                control.setPhysicsLocation(location.getTranslation());
+                control.setPhysicsRotation(location.getRotation());
+            }else return false; 
         }
+        return true;
     }
     
     private void deleteConstruction(Spatial construction){
@@ -81,12 +83,22 @@ public class Construction extends Node{
                 control2 = wall2.getControl(RigidBodyControl.class);
         Vector3f location1 = control1.getPhysicsLocation(), location2 = control2
                 .getPhysicsLocation();
-        if(location1.x > location2.x && location1.z > location2.z - 1 && 
-                location1.z < location2.z + 1){
+        if(location1.x < location2.x / 2 && location1.z > location2.z - 1
+                && location1.z < location2.z + 1){
+            System.out.println("BOTTOM");
             Quaternion rotation2 = control2.getPhysicsRotation();
             Vector3f bottomLocation = ((Node)wall2.getChild("Bottom")).getWorldTranslation();
             return new Transform(new Vector3f(bottomLocation.x, location1.y, bottomLocation.z),
                     rotation2.clone().multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f)));
+        }else{
+            if(location1.x < location1.x / 2 && location1.z > location2.z - 1
+                    && location1.z < location2.z + 1){
+            System.out.println("TOP");
+            Quaternion rotation2 = control2.getPhysicsRotation();
+            Vector3f bottomLocation = ((Node)wall2.getChild("Top")).getWorldTranslation();
+            return new Transform(new Vector3f(bottomLocation.x, location1.y, bottomLocation.z),
+                    rotation2.clone().multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f)));
+            }
         }
         return null; 
     }

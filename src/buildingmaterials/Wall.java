@@ -261,16 +261,16 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     
     private void createWallNodes(){
         Node node = new Node("Bottom"); 
-        node.setLocalTranslation(0, 0.2f, -2.5f);
+        node.setLocalTranslation(0, width, -height + width);
         attachChild(node);
         node = new Node("Up"); 
-        node.setLocalTranslation(0, 0.2f, 2.5f);
+        node.setLocalTranslation(0, width, height - width);
         attachChild(node);
         node = new Node("Left"); 
-        node.setLocalTranslation(-4, 0.2f, 0);
+        node.setLocalTranslation(-length + width, width, 0);
         attachChild(node);
         node = new Node("Right"); 
-        node.setLocalTranslation(4, 0.2f, 0f);
+        node.setLocalTranslation(length - width, width, 0f);
         attachChild(node);
     }
 }

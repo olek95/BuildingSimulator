@@ -41,7 +41,7 @@ public class Construction extends Node{
             }
             List<Spatial> c = BuildingSimulator.getBuildingSimulator().getRootNode().getChildren();
             for(Spatial s : c){
-                System.out.println(s); 
+                //System.out.println(s); 
                 //if(s instanceof Construction)
                 //System.out.println(s + " " + ((Node)s).getChildren().size() + " " 
                 //        + ((Node)s).getChild(0));
@@ -83,19 +83,20 @@ public class Construction extends Node{
                 control2 = wall2.getControl(RigidBodyControl.class);
         Vector3f location1 = control1.getPhysicsLocation(), location2 = control2
                 .getPhysicsLocation();
-        if(location1.x < location2.x / 2 && location1.z > location2.z - 1
-                && location1.z < location2.z + 1){
+        System.out.println(location1 + " " + location2);
+        if(location1.z < location2.z && location1.x > location2.x - 2
+                && location1.x < location2.x + 2){
             System.out.println("BOTTOM");
             Quaternion rotation2 = control2.getPhysicsRotation();
             Vector3f bottomLocation = ((Node)wall2.getChild("Bottom")).getWorldTranslation();
             return new Transform(new Vector3f(bottomLocation.x, location1.y, bottomLocation.z),
                     rotation2.clone().multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f)));
         }else{
-            if(location1.x < location1.x / 2 && location1.z > location2.z - 1
-                    && location1.z < location2.z + 1){
+            if(location1.z > location2.z && location1.x > location2.x - 2 
+                    && location1.x < location2.x + 2){
             System.out.println("TOP");
             Quaternion rotation2 = control2.getPhysicsRotation();
-            Vector3f bottomLocation = ((Node)wall2.getChild("Top")).getWorldTranslation();
+            Vector3f bottomLocation = ((Node)wall2.getChild("Up")).getWorldTranslation();
             return new Transform(new Vector3f(bottomLocation.x, location1.y, bottomLocation.z),
                     rotation2.clone().multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f)));
             }

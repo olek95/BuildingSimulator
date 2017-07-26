@@ -45,7 +45,9 @@ public class WallsFactory {
             window.setLocalTranslation(-2, 0, 1);
             return new Wall(new CSGShape("Box", new Box(4, 0.2f, 2.5f)), location,
                     door, window);
-        } 
+        }else if(WallType.SMALL_WALL.equals(type)){
+            return new Wall(new CSGShape("Box", new Box(2.5f, 0.2f, 2.3f)), location);
+        }
         return null; 
     }
 }

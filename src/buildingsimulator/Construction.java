@@ -79,74 +79,40 @@ public class Construction extends Node{
     }
     
     private Transform calculateLocationProperly(Wall wall1, Wall wall2){
-        getDirection(wall1, wall2); 
-        RigidBodyControl control1 = (RigidBodyControl)wall1.getControl(2),
-                control2 = wall2.getControl(RigidBodyControl.class);
-        Vector3f location1 = control1.getPhysicsLocation(), location2 = control2
-                .getPhysicsLocation();
-        //System.out.println(location1 + " " + location2);
-        if(location1.z < location2.z && location1.x > location2.x - 2
-                && location1.x < location2.x + 2){
-            //System.out.println("BOTTOM");
-            Quaternion rotation2 = control2.getPhysicsRotation();
-            Vector3f bottomLocation = ((Node)wall2.getChild("Bottom")).getWorldTranslation();
-            return new Transform(new Vector3f(bottomLocation.x, location1.y, bottomLocation.z),
-                    rotation2.clone().multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f)));
-        }else{
-            if(location1.z > location2.z && location1.x > location2.x - 2 
-                    && location1.x < location2.x + 2){
-                //System.out.println("TOP");
-                Quaternion rotation2 = control2.getPhysicsRotation();
-                Vector3f bottomLocation = ((Node)wall2.getChild("Up")).getWorldTranslation();
-                return new Transform(new Vector3f(bottomLocation.x, location1.y, bottomLocation.z),
-                        rotation2.clone().multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f)));
-            }else{
-                if(location1.x > location2.x && location1.z > location2.z - 1 
-                    && location1.z < location2.z + 1){
-                    //System.out.println("LEFT");
-                    Quaternion rotation2 = control2.getPhysicsRotation();
-                    Vector3f bottomLocation = ((Node)wall2.getChild("Left")).getWorldTranslation();
-                    return new Transform(new Vector3f(bottomLocation.x, location1.y, bottomLocation.z),
-                            rotation2.clone().multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f)));
-                }else{
-                    if(location1.x < location2.x && location1.z > location2.z - 1 
-                        && location1.z < location2.z + 1){
-                        //System.out.println("RIGHT");
-                        Quaternion rotation2 = control2.getPhysicsRotation();
-                        Vector3f bottomLocation = ((Node)wall2.getChild("Right")).getWorldTranslation();
-                        return new Transform(new Vector3f(bottomLocation.x, location1.y, bottomLocation.z),
-                                rotation2.clone().multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f)));
-                    }
-                }
-            }
-        }
-        return null; 
-    }
-    
-    private void getDirection(Wall wall1, Wall wall2){
         RigidBodyControl control1 = (RigidBodyControl)wall1.getControl(2),
                 control2 = wall2.getControl(RigidBodyControl.class);
         Vector3f location1 = control1.getPhysicsLocation(), location2 = control2
                 .getPhysicsLocation();
         Node up = (Node)wall2.getChild("Up"), bottom = (Node)wall2.getChild("Bottom"),
                 right = (Node)wall2.getChild("Right"), left = (Node)wall2.getChild("Left");
-        System.out.println(location1 + " " + up.getWorldTranslation() + " " 
-                + location2);
-        float[] distances = {location1.distance(bottom.getWorldTranslation()), 
-            location1.distance(up.getWorldTranslation()),
-            location1.distance(right.getWorldTranslation()),
-            location1.distance(left.getWorldTranslation())};
-        int minDistance = getMin(distances); 
-        if(minDistance == 0) System.out.println("Bottom");
-        else if(minDistance == 1) System.out.println("Up");
-        else if(minDistance == 2) System.out.println("Right");
-        else System.out.println("Left");
-        
-        /*if(location1.z > bottom.getWorldTranslation().z && location1.z < location2.z){
-            System.out.println("Bottom");
-        }else if(location1.z < up.getWorldTranslation().z && location1.z > location2.z){
-            System.out.println("Up");
-        }*/
+        Vector3f bottomLocation = bottom.getWorldTranslation(), 
+                upLocation = up.getWorldTranslation(),
+                rightLocation = right.getWorldTranslation(), 
+                leftLocation = left.getWorldTranslation();
+        int minDistance = getMin(new float[] {location1.distance(bottomLocation), 
+            location1.distance(upLocation), location1.distance(rightLocation),
+            location1.distance(leftLocation)}); 
+        Quaternion rotation;
+        switch(minDistance){
+            case 0: 
+                rotation = control2.getPhysicsRotation();
+                return new Transform(new Vector3f(bottomLocation.x, location1.y, bottomLocation.z),
+                        rotation.clone().multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f)));
+            case 1: 
+                rotation = control2.getPhysicsRotation();
+                return new Transform(new Vector3f(upLocation.x, location1.y, upLocation.z),
+                        rotation.clone().multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f)));
+            case 2:
+                rotation = control2.getPhysicsRotation();
+                return new Transform(new Vector3f(rightLocation.x, location1.y, rightLocation.z),
+                        rotation.clone().multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f))
+                        .multLocal(new Quaternion(0, -1.570796f, 0, 1.570796f)));
+            case 3:
+                rotation = control2.getPhysicsRotation();
+                return new Transform(new Vector3f(leftLocation.x, location1.y, leftLocation.z),
+                        rotation.clone().multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f)));
+        }
+        return null; 
     }
     
     private int getMin(float... distances){

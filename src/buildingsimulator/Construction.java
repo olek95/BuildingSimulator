@@ -106,7 +106,7 @@ public class Construction extends Node{
                 rotation = control2.getPhysicsRotation();
                 return new Transform(new Vector3f(rightLocation.x, location1.y, rightLocation.z),
                         rotation.clone().multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f))
-                        .multLocal(new Quaternion(0, -1.570796f, 0, 1.570796f)));
+                        .multLocal(new Quaternion(0, 0, -1.570796f, 1.570796f)));
             case 3:
                 rotation = control2.getPhysicsRotation();
                 return new Transform(new Vector3f(leftLocation.x, location1.y, leftLocation.z),

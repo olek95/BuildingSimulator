@@ -81,38 +81,16 @@ public class Construction extends Node{
     private Transform calculateLocationProperly(Wall wall1, Wall wall2){
         RigidBodyControl control1 = (RigidBodyControl)wall1.getControl(2),
                 control2 = wall2.getControl(RigidBodyControl.class);
-        Vector3f location1 = control1.getPhysicsLocation(), location2 = control2
-                .getPhysicsLocation();
-        Node up = (Node)wall2.getChild("Up"), bottom = (Node)wall2.getChild("Bottom"),
-                right = (Node)wall2.getChild("Right"), left = (Node)wall2.getChild("Left");
-        Vector3f bottomLocation = bottom.getWorldTranslation(), 
-                upLocation = up.getWorldTranslation(),
-                rightLocation = right.getWorldTranslation(), 
-                leftLocation = left.getWorldTranslation();
-        int minDistance = getMin(new float[] {location1.distance(bottomLocation), 
-            location1.distance(upLocation), location1.distance(rightLocation),
-            location1.distance(leftLocation)}); 
-        Quaternion rotation;
-        switch(minDistance){
-            case 0: 
-                rotation = control2.getPhysicsRotation();
-                return new Transform(new Vector3f(bottomLocation.x, location1.y, bottomLocation.z),
-                        rotation.clone().multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f)));
-            case 1: 
-                rotation = control2.getPhysicsRotation();
-                return new Transform(new Vector3f(upLocation.x, location1.y, upLocation.z),
-                        rotation.clone().multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f)));
-            case 2:
-                rotation = control2.getPhysicsRotation();
-                return new Transform(new Vector3f(rightLocation.x, location1.y, rightLocation.z),
-                        rotation.clone().multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f))
-                        .multLocal(new Quaternion(0, 0, -1.570796f, 1.570796f)));
-            case 3:
-                rotation = control2.getPhysicsRotation();
-                return new Transform(new Vector3f(leftLocation.x, location1.y, leftLocation.z),
-                        rotation.clone().multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f)));
-        }
-        return null; 
+        Vector3f location1 = control1.getPhysicsLocation();
+        Vector3f[] edgeLocations = {((Node)wall2.getChild("Bottom")).getWorldTranslation(),
+            ((Node)wall2.getChild("Up")).getWorldTranslation(),
+            ((Node)wall2.getChild("Right")).getWorldTranslation(),
+            ((Node)wall2.getChild("Left")).getWorldTranslation()};
+        int minDistance = getMin(new float[] {location1.distance(edgeLocations[0]), 
+            location1.distance(edgeLocations[1]), location1.distance(edgeLocations[2]),
+            location1.distance(edgeLocations[3])}); 
+        return calculateTransform(location1, edgeLocations[minDistance], 
+                control2.getPhysicsRotation(), minDistance); 
     }
     
     private int getMin(float... distances){
@@ -123,5 +101,13 @@ public class Construction extends Node{
             }
         }
         return min; 
+    }
+    
+    private Transform calculateTransform(Vector3f wallLocation, Vector3f edgeLocation,
+            Quaternion rotation, int direction){
+        Quaternion newRotation = rotation.clone().multLocal(-1.570796f, 0, 0, 1.570796f);
+        if(direction > 1) newRotation.multLocal(0, 0, -1.570796f, 1.570796f);
+        return new Transform(new Vector3f(edgeLocation.x, wallLocation.y, edgeLocation.z),
+                newRotation);
     }
 }

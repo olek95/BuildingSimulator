@@ -30,35 +30,45 @@ public class Construction extends Node{
             String recentlyHitObjectName = recentlyHitObject.getName(); 
             boolean collisionWithGround = recentlyHitObjectName.startsWith("New Scene");
             if(collisionWithGround || recentlyHitObjectName.startsWith("Wall")){
-                if(merge(wall, collisionWithGround ? null : (Wall)recentlyHitObject)){
                     Spatial wallParent = wall.getParent(); 
                     if(wallParent.getName().startsWith("Building")){
                         deleteConstruction(wallParent);
                     }
-                    wall.removeFromParent();
-                    attachChild(wall);
-                }
+                    //wall.removeFromParent();
+                    merge(wall, collisionWithGround ? null : (Wall)recentlyHitObject)
+                            .attachChild(wall);
             }
             List<Spatial> c = BuildingSimulator.getBuildingSimulator().getRootNode().getChildren();
             for(Spatial s : c){
-                //System.out.println(s); 
-                //if(s instanceof Construction)
-                //System.out.println(s + " " + ((Node)s).getChildren().size() + " " 
-                //        + ((Node)s).getChild(0));
+                System.out.println(s); 
+                if(s instanceof Construction)
+                System.out.println(s + " " + ((Node)s).getChildren().size() + " " 
+                        + ((Node)s).getChild(0));
             } 
         }
     }
     
-    private boolean merge(Wall wall1, Wall wall2){
+    private Node merge(Wall wall1, Wall wall2){
         if(wall2 != null){
+            Vector3f location = ((RigidBodyControl)wall1.getControl(2)).getPhysicsLocation();
+            Node[] edges = {(Node)wall2.getChild("Bottom"), (Node)wall2.getChild("Up"),
+            (Node)wall2.getChild("Right"), (Node)wall2.getChild("Left")};
+            Vector3f[] edgeLocations = {edges[0].getWorldTranslation(),
+                edges[1].getWorldTranslation(), edges[2].getWorldTranslation(),
+                edges[3].getWorldTranslation()};
+            int minDistance = getMin(location.distance(edgeLocations[0]), 
+                location.distance(edgeLocations[1]), location.distance(edgeLocations[2]),
+                location.distance(edgeLocations[3])); 
             RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
-            Transform location = calculateLocationProperly(wall1, wall2);
-            if(location != null){
-                control.setPhysicsLocation(location.getTranslation());
-                control.setPhysicsRotation(location.getRotation());
-            }else return false; 
+            Transform transform = calculateProperLocation(location, edgeLocations[minDistance], 
+                wall2.getControl(RigidBodyControl.class).getPhysicsRotation(), minDistance);
+            if(transform != null){
+                control.setPhysicsLocation(transform.getTranslation());
+                control.setPhysicsRotation(transform.getRotation());
+            }
+            return edges[minDistance];
         }
-        return true;
+        return this;
     }
     
     private void deleteConstruction(Spatial construction){
@@ -78,21 +88,6 @@ public class Construction extends Node{
         counter--; 
     }
     
-    private Transform calculateLocationProperly(Wall wall1, Wall wall2){
-        RigidBodyControl control1 = (RigidBodyControl)wall1.getControl(2),
-                control2 = wall2.getControl(RigidBodyControl.class);
-        Vector3f location1 = control1.getPhysicsLocation();
-        Vector3f[] edgeLocations = {((Node)wall2.getChild("Bottom")).getWorldTranslation(),
-            ((Node)wall2.getChild("Up")).getWorldTranslation(),
-            ((Node)wall2.getChild("Right")).getWorldTranslation(),
-            ((Node)wall2.getChild("Left")).getWorldTranslation()};
-        int minDistance = getMin(new float[] {location1.distance(edgeLocations[0]), 
-            location1.distance(edgeLocations[1]), location1.distance(edgeLocations[2]),
-            location1.distance(edgeLocations[3])}); 
-        return calculateTransform(location1, edgeLocations[minDistance], 
-                control2.getPhysicsRotation(), minDistance); 
-    }
-    
     private int getMin(float... distances){
         int min = 0; 
         for(int i = 1; i < 4; i++){
@@ -103,7 +98,7 @@ public class Construction extends Node{
         return min; 
     }
     
-    private Transform calculateTransform(Vector3f wallLocation, Vector3f edgeLocation,
+    private Transform calculateProperLocation(Vector3f wallLocation, Vector3f edgeLocation,
             Quaternion rotation, int direction){
         Quaternion newRotation = rotation.clone().multLocal(-1.570796f, 0, 0, 1.570796f);
         if(direction > 1) newRotation.multLocal(0, 0, -1.570796f, 1.570796f);

@@ -24,7 +24,8 @@ import net.wcomohundro.jme3.csg.CSGShape;
 
 /**
  * Obiekt klasy <code>Wall</code> reprezentuje kawałek ściany. Obiekt ten może 
- * służyć do budowy budynków. 
+ * służyć do budowy budynków. Każda ściana ma dodatkowe punkty, służące jako miejsca
+ * połączeń z innymi ścianami i podłogami. 
  * @author AleksanderSklorz
  */
 final public class Wall extends Node implements RememberingRecentlyHitObject{
@@ -272,17 +273,5 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         node = new Node("Left"); 
         node.setLocalTranslation(length - width, width, 0f);
         attachChild(node);
-        /*Node node = new Node("Bottom"); 
-        node.setLocalTranslation(0, width, -height);
-        attachChild(node);
-        node = new Node("Up"); 
-        node.setLocalTranslation(0, width, height);
-        attachChild(node);
-        node = new Node("Left"); 
-        node.setLocalTranslation(-length, width, 0);
-        attachChild(node);
-        node = new Node("Right"); 
-        node.setLocalTranslation(length, width, 0f);
-        attachChild(node);*/
     }
 }

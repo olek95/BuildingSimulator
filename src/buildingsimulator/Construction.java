@@ -36,8 +36,9 @@ public class Construction extends Node{
                         deleteConstruction(wallParent);
                     }
                     //wall.removeFromParent();
-                    merge(wall, collisionWithGround ? null : (Wall)recentlyHitObject)
-                            .attachChild(wall);
+                    Node touchedWall = merge(wall, collisionWithGround ? null 
+                            : (Wall)recentlyHitObject);
+                    if(touchedWall != null) touchedWall.attachChild(wall);
             }
            /* List<Spatial> c = BuildingSimulator.getBuildingSimulator().getRootNode().getChildren();
             for(Spatial s : c){
@@ -78,26 +79,28 @@ public class Construction extends Node{
     }
     
     private Node merge(Wall wall1, Wall wall2){
-        if(wall2 != null){
-            System.out.println(wall2);
+        if(wall2 != null){ 
             Vector3f location = ((RigidBodyControl)wall1.getControl(2)).getPhysicsLocation();
-            Node[] edges = {(Node)wall2.getChild("Bottom"), (Node)wall2.getChild("Up"),
-            (Node)wall2.getChild("Right"), (Node)wall2.getChild("Left")};
-            Vector3f[] edgeLocations = {edges[0].getWorldTranslation(),
-                edges[1].getWorldTranslation(), edges[2].getWorldTranslation(),
-                edges[3].getWorldTranslation()};
-            int minDistance = getMin(location.distance(edgeLocations[0]), 
-                location.distance(edgeLocations[1]), location.distance(edgeLocations[2]),
-                location.distance(edgeLocations[3])); 
-            RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
-            Transform transform = calculateProperLocation(location, edgeLocations[minDistance], 
-                wall2.getControl(RigidBodyControl.class).getPhysicsRotation(), minDistance);
-            if(transform != null){
-                control.setPhysicsLocation(transform.getTranslation());
-                control.setPhysicsRotation(transform.getRotation());
+            List<Spatial> wallChildren = wall2.getChildren(); 
+            Node[] edges = new Node[4];
+            Vector3f[] edgeLocations = new Vector3f[4];
+            float[] distances = new float[4];
+            for(int i = 0; i < 4; i++){
+                edges[i] = (Node)wallChildren.get(i + 1);
+                edgeLocations[i] = edges[i].getWorldTranslation(); 
+                distances[i] = location.distance(edgeLocations[i]); 
             }
-            System.out.println(minDistance + " " + wall1 + " " + wall2); 
-            return edges[minDistance];
+            int minDistance = getMin(distances); 
+            if(edges[minDistance].getChildren().isEmpty()){
+                RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
+                Transform transform = calculateProperLocation(location, edgeLocations[minDistance], 
+                    wall2.getControl(RigidBodyControl.class).getPhysicsRotation(), minDistance);
+                if(transform != null){
+                    control.setPhysicsLocation(transform.getTranslation());
+                    control.setPhysicsRotation(transform.getRotation());
+                }
+                return edges[minDistance];
+            }else return null; 
         }
         return this;
     }
@@ -131,7 +134,7 @@ public class Construction extends Node{
         counter--; 
     }
     
-    private int getMin(float... distances){
+    private int getMin(float[] distances){
         int min = 0; 
         for(int i = 1; i < 4; i++){
             if(distances[min] > distances[i]){

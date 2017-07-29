@@ -151,9 +151,8 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     public void setCollision(Spatial b){
         /* zabezpiecza przypadek gdy hak dotyka jednocześnie elementu pionowego
         i poziomego */
-        if((recentlyHitObject == null || ((BoundingBox)recentlyHitObject
-                .getWorldBound()).getMax(null).y > ((BoundingBox)b.getWorldBound())
-                .getMax(null).y))
+        if((recentlyHitObject == null || recentlyHitObject.getWorldTranslation().y
+                > b.getWorldTranslation().y))
             recentlyHitObject = b;
     }
     

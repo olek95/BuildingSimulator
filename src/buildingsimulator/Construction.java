@@ -27,7 +27,7 @@ public class Construction extends Node{
      */
     public void add(Wall wall, int wallMode){
         Spatial recentlyHitObject = wall.getRecentlyHitObject();
-        if(recentlyHitObject != null && (wallMode == 2 || wallMode == 1)){ 
+        if(recentlyHitObject != null && wallMode == 2){ 
             String recentlyHitObjectName = recentlyHitObject.getName(); 
             boolean collisionWithGround = recentlyHitObjectName.startsWith("New Scene");
             if(collisionWithGround || recentlyHitObjectName.startsWith("Wall")){
@@ -46,7 +46,7 @@ public class Construction extends Node{
                 System.out.println(s + " " + ((Node)s).getChildren().size() + " " 
                         + ((Node)s).getChild(0));
             } */
-        }/*else{
+        }else{
             if(recentlyHitObject != null && wallMode == 1){
                 String recentlyHitObjectName = recentlyHitObject.getName(); 
                 boolean collisionWithGround = recentlyHitObjectName.startsWith("New Scene");
@@ -56,11 +56,11 @@ public class Construction extends Node{
                         deleteConstruction(wallParent);
                     }
                     //wall.removeFromParent();
-                    merge(wall, collisionWithGround ? null : (Wall)recentlyHitObject)
+                    mergeHorizontal(wall, collisionWithGround ? null : (Wall)recentlyHitObject)
                             .attachChild(wall);
                 }
             }
-        }*/
+        }
     }
     
     /**
@@ -79,6 +79,7 @@ public class Construction extends Node{
     
     private Node merge(Wall wall1, Wall wall2){
         if(wall2 != null){
+            System.out.println(wall2);
             Vector3f location = ((RigidBodyControl)wall1.getControl(2)).getPhysicsLocation();
             Node[] edges = {(Node)wall2.getChild("Bottom"), (Node)wall2.getChild("Up"),
             (Node)wall2.getChild("Right"), (Node)wall2.getChild("Left")};
@@ -95,6 +96,7 @@ public class Construction extends Node{
                 control.setPhysicsLocation(transform.getTranslation());
                 control.setPhysicsRotation(transform.getRotation());
             }
+            System.out.println(minDistance + " " + wall1 + " " + wall2); 
             return edges[minDistance];
         }
         return this;
@@ -102,12 +104,14 @@ public class Construction extends Node{
     
     private Node mergeHorizontal(Wall wall1, Wall wall2){
         if(wall2 != null){
-            Node otherWall = (Node)((Node)wall2.getChild("Up")).getChild(0);
+            Node floor = (Node)wall2.getParent().getParent(),
+                    otherWall = (Node)((Node)floor.getChild("Up")).getChild(0);
             if(otherWall != null){
-                Node ceiling = (Node)wall2.getChild("Ceiling");
+                wall1.getControl(RigidBodyControl.class)
+                        .setPhysicsLocation(floor.getChild("Ceiling").getWorldTranslation());
             }
         }
-        return null; 
+        return this; 
     }
     
     private void deleteConstruction(Spatial construction){

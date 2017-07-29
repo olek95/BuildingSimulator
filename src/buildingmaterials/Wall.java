@@ -34,6 +34,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private Geometry[] ropesHorizontal = new Geometry[4], ropesVertical = new Geometry[2];
     private float width, height, length, distanceToHandle, distanceToHandleVertical; 
     private static int counter = 0; 
+    private int actualMode;
     @SuppressWarnings("LeakingThisInConstructor")
     public Wall(CSGShape shape, Vector3f location, CSGShape... differenceShapes){
         BoundingBox bounding = (BoundingBox)shape.getWorldBound();
@@ -69,10 +70,12 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      * obiekt otrzymuje fizykę dla obiektu przyczepionego do haka pionowo. 
      * @param mode typ fizyki: 0 - nieprzyczepiony, 1 - przyczepiony poziomo,
      * 2 - przyczepiony pionowo
-     * @return 
+     * @return fizyka dla aktualnego stanu obiektu (obiekt luźny, przyczepiony 
+     * pionowo lub poziomo)
      */
     public RigidBodyControl swapControl(int mode){
         RigidBodyControl selectedControl = null;
+        actualMode = mode; 
         for(int i = 0; i < 3; i++){
             if(i == mode){
                 selectedControl = ((RigidBodyControl)getControl(i));
@@ -126,6 +129,13 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      * @return długość 
      */
     public float getLength() { return length; }
+    
+    /**
+     * Zwraca aktualny tryb obiektu (0 - nieprzyczepiony, 1 - przyczepiony poziomo,
+     * 2 - przyczepiony pionowo)
+     * @return tryb obiektu 
+     */
+    public int getActualMode(){ return actualMode; }
     
     /**
      * Zwraca odległość między środkiem ściany a przyszłym uchwytem na którym 
@@ -273,5 +283,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         node = new Node("Left"); 
         node.setLocalTranslation(length - width, width, 0f);
         attachChild(node);
+        node = new Node("Ceiling");
+        node.setLocalTranslation(0, width + height * 2,0);
     }
 }

@@ -81,20 +81,19 @@ public abstract class Hook implements RememberingRecentlyHitObject{
             BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
                     .remove(buildingMaterialJoint);
             Wall wall = (Wall)attachedObject;
+            int oldMode = wall.getActualMode(); 
             wall.swapControl(0);
             wall.activateIfInactive();
             if(merging){
                 Spatial wallRecentlyHitObject = wall.getRecentlyHitObject(); 
                 if(wallRecentlyHitObject != null){
-                    Spatial recentlyHitObjectParent = wallRecentlyHitObject.getParent();
-                    Construction construction; 
-                    if(recentlyHitObjectParent.getName().startsWith("Building")){
-                        construction = (Construction)recentlyHitObjectParent; 
-                    }else{
+                    Construction construction = Construction
+                            .getWholeConstruction(wallRecentlyHitObject); 
+                    if(construction == null){
                         construction = new Construction();
                         GameManager.addToGame(construction);
                     }
-                    construction.add(wall);
+                    construction.add(wall, oldMode);
                 }
             }
             attachedObject = null;

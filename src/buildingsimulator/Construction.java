@@ -23,10 +23,11 @@ public class Construction extends Node{
     /**
      * Dodaje kolejną ścianą do konstrukcji. 
      * @param wall dodawana ściana 
+     * @param wallMode tryb fizyki dla dodawanego elementu w chwili dodawania 
      */
-    public void add(Wall wall){
+    public void add(Wall wall, int wallMode){
         Spatial recentlyHitObject = wall.getRecentlyHitObject();
-        if(recentlyHitObject != null){ 
+        if(recentlyHitObject != null && (wallMode == 2 || wallMode == 1)){ 
             String recentlyHitObjectName = recentlyHitObject.getName(); 
             boolean collisionWithGround = recentlyHitObjectName.startsWith("New Scene");
             if(collisionWithGround || recentlyHitObjectName.startsWith("Wall")){
@@ -38,14 +39,42 @@ public class Construction extends Node{
                     merge(wall, collisionWithGround ? null : (Wall)recentlyHitObject)
                             .attachChild(wall);
             }
-            List<Spatial> c = BuildingSimulator.getBuildingSimulator().getRootNode().getChildren();
+           /* List<Spatial> c = BuildingSimulator.getBuildingSimulator().getRootNode().getChildren();
             for(Spatial s : c){
                 System.out.println(s); 
                 if(s instanceof Construction)
                 System.out.println(s + " " + ((Node)s).getChildren().size() + " " 
                         + ((Node)s).getChild(0));
-            } 
+            } */
+        }/*else{
+            if(recentlyHitObject != null && wallMode == 1){
+                String recentlyHitObjectName = recentlyHitObject.getName(); 
+                boolean collisionWithGround = recentlyHitObjectName.startsWith("New Scene");
+                if(collisionWithGround || recentlyHitObjectName.startsWith("Wall")){
+                    Spatial wallParent = wall.getParent(); 
+                    if(wallParent.getName().startsWith("Building")){
+                        deleteConstruction(wallParent);
+                    }
+                    //wall.removeFromParent();
+                    merge(wall, collisionWithGround ? null : (Wall)recentlyHitObject)
+                            .attachChild(wall);
+                }
+            }
+        }*/
+    }
+    
+    /**
+     * Zwraca całą budowlę do której należy obiekt. 
+     * @param wall sprawdzany obiekt 
+     * @return budowlę do której nalezy obiekt lub null jeśli nie należy do budowli  
+     */
+    public static Construction getWholeConstruction(Spatial wall){
+        Node wallParent = wall.getParent(); 
+        while(wallParent != null){  
+            if(wallParent.getName().startsWith("Building")) return (Construction)wallParent; 
+            wallParent = wallParent.getParent();
         }
+        return null; 
     }
     
     private Node merge(Wall wall1, Wall wall2){
@@ -69,6 +98,16 @@ public class Construction extends Node{
             return edges[minDistance];
         }
         return this;
+    }
+    
+    private Node mergeHorizontal(Wall wall1, Wall wall2){
+        if(wall2 != null){
+            Node otherWall = (Node)((Node)wall2.getChild("Up")).getChild(0);
+            if(otherWall != null){
+                Node ceiling = (Node)wall2.getChild("Ceiling");
+            }
+        }
+        return null; 
     }
     
     private void deleteConstruction(Spatial construction){

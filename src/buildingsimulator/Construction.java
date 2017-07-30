@@ -57,8 +57,9 @@ public class Construction extends Node{
                         deleteConstruction(wallParent);
                     }
                     //wall.removeFromParent();
-                    mergeHorizontal(wall, collisionWithGround ? null : (Wall)recentlyHitObject)
-                            .attachChild(wall);
+                    Node floor = mergeHorizontal(wall, collisionWithGround ? null 
+                            : (Wall)recentlyHitObject);
+                    if(floor != null) floor.attachChild(wall);
                 }
             }
         }
@@ -107,12 +108,17 @@ public class Construction extends Node{
     
     private Node mergeHorizontal(Wall wall1, Wall wall2){
         if(wall2 != null){
-            Node floor = (Node)wall2.getParent().getParent(),
-                    otherWall = (Node)((Node)floor.getChild("Up")).getChild(0);
-            if(otherWall != null){
-                wall1.getControl(RigidBodyControl.class)
-                        .setPhysicsLocation(floor.getChild("Ceiling").getWorldTranslation());
+            Node floor = (Node)wall2.getParent().getParent();
+            // sprawdza czy na przeciwko jest druga ściana 
+            if((Node)((Node)floor.getChild(1)).getChild(0) != null){
+                Vector3f center = floor.getWorldTranslation();
+                RigidBodyControl control = wall1.getControl(RigidBodyControl.class); 
+                control.setPhysicsLocation(new Vector3f(center.x, wall1
+                        .getWorldTranslation().y, center.z));
+                control.setPhysicsRotation(floor.getWorldRotation());
+                return (Node)floor.getChild(5);
             }
+            return null; 
         }
         return this; 
     }

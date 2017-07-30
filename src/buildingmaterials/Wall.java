@@ -282,7 +282,8 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         node = new Node("Left"); 
         node.setLocalTranslation(length - width, width, 0f);
         attachChild(node);
-        node = new Node("Ceiling");
-        node.setLocalTranslation(0, width + height * 2,0);
+        node = new Node("Center");
+        node.setLocalTranslation(0, 0, 0);
+        attachChild(node); 
     }
 }

@@ -3,7 +3,7 @@ package cranes;
 import buildingmaterials.Wall;
 import buildingsimulator.BottomCollisionListener;
 import buildingsimulator.BuildingSimulator;
-import buildingsimulator.Construction;
+import buildingmaterials.Construction;
 import buildingsimulator.GameManager;
 import static buildingsimulator.GameManager.*;
 import buildingsimulator.RememberingRecentlyHitObject;

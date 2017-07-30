@@ -1,6 +1,7 @@
-package buildingsimulator;
+package buildingmaterials;
 
 import buildingmaterials.Wall;
+import buildingsimulator.BuildingSimulator;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
@@ -108,9 +109,11 @@ public class Construction extends Node{
     
     private Node mergeHorizontal(Wall wall1, Wall wall2){
         if(wall2 != null){
-            Node floor = (Node)wall2.getParent().getParent();
+            Node edge = wall2.getParent(), floor = edge.getParent();
+            int index = floor.getChildIndex(edge);
+            index += index % 2 == 0 ? -1 : 1;
             // sprawdza czy na przeciwko jest druga ściana 
-            if((Node)((Node)floor.getChild(1)).getChild(0) != null){
+            if((Node)((Node)floor.getChild(index)).getChild(0) != null){
                 Vector3f center = floor.getWorldTranslation();
                 RigidBodyControl control = wall1.getControl(RigidBodyControl.class); 
                 control.setPhysicsLocation(new Vector3f(center.x, wall1

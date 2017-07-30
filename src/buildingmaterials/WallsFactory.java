@@ -18,7 +18,7 @@ public class WallsFactory {
      */
     public static Wall createWall(WallType type, Vector3f location){
         if(WallType.WALL.equals(type)) 
-            return new Wall(new CSGShape("Box", new Box(4, 0.2f, 2.5f)), location); 
+            return new Wall(new CSGShape("Box", new Box(4, 0.2f, 2.7f)), location); 
         else if(WallType.WINDOWS.equals(type)){
             CSGShape window1 = new CSGShape("Box0", new Box(1, 0.2f, 1.25f)),
                     window2 = new CSGShape("Box1", new Box(1, 0.2f, 1.25f));
@@ -43,10 +43,10 @@ public class WallsFactory {
             CSGShape window = new CSGShape("Box1", new Box(1, 0.2f, 1.25f));
             door.setLocalTranslation(2, 0, -0.4f);
             window.setLocalTranslation(-2, 0, 1);
-            return new Wall(new CSGShape("Box", new Box(4, 0.2f, 2.5f)), location,
+            return new Wall(new CSGShape("Box", new Box(4, 0.2f, 2.7f)), location,
                     door, window);
         }else if(WallType.SMALL_WALL.equals(type)){
-            return new Wall(new CSGShape("Box", new Box(2.5f, 0.2f, 2.3f)), location);
+            return new Wall(new CSGShape("Box", new Box(2.7f, 0.2f, 2.5f)), location);
         }
         return null; 
     }

@@ -39,7 +39,10 @@ public class Construction extends Node{
                     //wall.removeFromParent();
                     Node touchedWall = merge(wall, collisionWithGround ? null 
                             : (Wall)recentlyHitObject);
-                    if(touchedWall != null) touchedWall.attachChild(wall);
+                    if(touchedWall != null){
+                        touchedWall.attachChild(wall);
+                        if(!collisionWithGround) correctLocations(); 
+                    }
             }
            /* List<Spatial> c = BuildingSimulator.getBuildingSimulator().getRootNode().getChildren();
             for(Spatial s : c){
@@ -60,7 +63,10 @@ public class Construction extends Node{
                     //wall.removeFromParent();
                     Node floor = mergeHorizontal(wall, collisionWithGround ? null 
                             : (Wall)recentlyHitObject);
-                    if(floor != null) floor.attachChild(wall);
+                    if(floor != null){
+                        floor.attachChild(wall);
+                        if(!collisionWithGround) correctLocations(); 
+                    }
                 }
             }
         }
@@ -155,9 +161,37 @@ public class Construction extends Node{
     
     private Transform calculateProperLocation(Vector3f wallLocation, Vector3f edgeLocation,
             Quaternion rotation, int direction){
+        Vector3f location; 
+        if(direction < 2)
+            location = edgeLocation.clone().add(0, 2.7f - 0.2f * 2, 0);  
+        else location = new Vector3f(edgeLocation.x, wallLocation.y, edgeLocation.z);
         Quaternion newRotation = rotation.clone().multLocal(-1.570796f, 0, 0, 1.570796f);
         if(direction > 1) newRotation.multLocal(0, 0, -1.570796f, 1.570796f);
-        return new Transform(new Vector3f(edgeLocation.x, wallLocation.y, edgeLocation.z),
+        return new Transform(location,
                 newRotation);
+    }
+    
+    private void correctLocations(){
+        Node floor = (Node)getChild(0); 
+        Quaternion rotation = floor.getWorldRotation(); 
+        Vector3f location; 
+        for(int i = 1; i <= 4; i++){
+            Node edge = (Node)floor.getChild(i); 
+            if(!edge.getChildren().isEmpty()){
+                Spatial wall = edge.getChild(0); 
+                Vector3f edgeLocation = edge.getWorldTranslation(); 
+                RigidBodyControl control = wall.getControl(RigidBodyControl.class); 
+                if(i < 3)
+                    location = edgeLocation.clone().add(0, 2.7f - 0.2f * 2, 0);  
+                else{
+                    location = new Vector3f(edgeLocation.x, ((RigidBodyControl)wall.getControl(2)).getPhysicsLocation().y, edgeLocation.z);
+                }
+                Quaternion newRotation = rotation.clone().multLocal(-1.570796f, 0, 0, 1.570796f);
+                if(i > 2) newRotation.multLocal(0, 0, -1.570796f, 1.570796f);
+                control.setPhysicsLocation(location);
+                control.setPhysicsRotation(newRotation);
+            }
+            
+        }
     }
 }

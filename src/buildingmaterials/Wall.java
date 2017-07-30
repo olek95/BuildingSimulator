@@ -266,15 +266,18 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     
     private void createLooseControl(Vector3f location){
         GameManager.createObjectPhysics(this, 0.00001f, false, new String[] {"Box"});
-        getControl(RigidBodyControl.class).setPhysicsLocation(location);
+        RigidBodyControl control = getControl(RigidBodyControl.class); 
+        control.setPhysicsLocation(location);
+        control.setAngularDamping(1);
+        control.setLinearDamping(1);
     }
     
     private void createWallNodes(){
         Node node = new Node("Bottom"); 
-        node.setLocalTranslation(0, width, -height + width);
+        node.setLocalTranslation(0, width, -height - width);
         attachChild(node);
         node = new Node("Up"); 
-        node.setLocalTranslation(0, width, height - width);
+        node.setLocalTranslation(0, width, height + width);
         attachChild(node);
         node = new Node("Right"); 
         node.setLocalTranslation(-length + width, width, 0);

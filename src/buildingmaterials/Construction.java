@@ -85,6 +85,34 @@ public class Construction extends Node{
         return null; 
     }
     
+    public static Wall getNearestBuildingWall(Wall wall){
+        List<Spatial> gameObjects = BuildingSimulator.getBuildingSimulator()
+                    .getRootNode().getChildren();
+        float min = -1;
+        Spatial minWall = null; 
+        for(int i = 0; i < gameObjects.size(); i++){
+            Spatial object = gameObjects.get(i); 
+            if(object.getName().startsWith("Building")){
+                List<Spatial> buildingElements = ((Node)object).getChildren();
+                if(minWall == null){
+                    minWall = buildingElements.get(0); 
+                    min = wall.getWorldTranslation().distance(minWall
+                            .getWorldTranslation());
+                }
+                for(int k = 0; k < buildingElements.size(); k++){
+                    float distance = wall.getWorldTranslation()
+                        .distance(buildingElements.get(k).getWorldTranslation());
+                    if(distance < min){
+                        System.out.println(distance + " " + buildingElements.get(k));
+                        min = distance;
+                        minWall = buildingElements.get(k); 
+                    } 
+                }
+            }
+        }
+        return min < 5 ? (Wall)minWall : null; 
+    }
+    
     private Node merge(Wall wall1, Wall wall2){
         if(wall2 != null){ 
             Vector3f location = ((RigidBodyControl)wall1.getControl(2)).getPhysicsLocation();
@@ -126,7 +154,21 @@ public class Construction extends Node{
                 control.setPhysicsRotation(floor.getWorldRotation());
                 return (Node)floor.getChild(5);
             }
-            return null; 
+            return null;
+        }else{
+            List<Spatial> foundations = getChildren(); 
+            if(!foundations.isEmpty()){
+                float min = wall1.getWorldTranslation()
+                            .distance(foundations.get(0).getWorldTranslation()); 
+                for(int i = 1; i < foundations.size(); i++){
+                    float distance = wall1.getWorldTranslation()
+                            .distance(foundations.get(i).getWorldTranslation());
+                    if(distance < min){
+                        System.out.println(distance + " " + foundations.get(i));
+                        min = distance;
+                    } 
+                }
+            }
         }
         return this; 
     }

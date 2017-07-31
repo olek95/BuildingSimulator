@@ -87,8 +87,12 @@ public abstract class Hook implements RememberingRecentlyHitObject{
             if(merging){
                 Spatial wallRecentlyHitObject = wall.getRecentlyHitObject(); 
                 if(wallRecentlyHitObject != null){
+                    Wall nearestBuildingWall = null; 
+                    if(oldMode == 1 && wallRecentlyHitObject.getName().equals("New Scene"))
+                        nearestBuildingWall = Construction.getNearestBuildingWall(wall); 
                     Construction construction = Construction
-                            .getWholeConstruction(wallRecentlyHitObject); 
+                            .getWholeConstruction(nearestBuildingWall == null ? 
+                            wallRecentlyHitObject : nearestBuildingWall); 
                     if(construction == null){
                         construction = new Construction();
                         GameManager.addToGame(construction);

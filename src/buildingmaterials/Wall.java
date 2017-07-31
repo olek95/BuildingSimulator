@@ -273,20 +273,20 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     private void createWallNodes(){
-        Node node = new Node("Bottom"); 
-        node.setLocalTranslation(0, width, -height - width);
-        attachChild(node);
-        node = new Node("Up"); 
-        node.setLocalTranslation(0, width, height + width);
-        attachChild(node);
-        node = new Node("Right"); 
-        node.setLocalTranslation(-length + width, width, 0);
-        attachChild(node);
-        node = new Node("Left"); 
-        node.setLocalTranslation(length - width, width, 0f);
-        attachChild(node);
-        node = new Node("Center");
-        node.setLocalTranslation(0, 0, 0);
+        addNode("Bottom", new Vector3f(0, width, -height - width)); 
+        addNode("Up", new Vector3f(0, width, height + width)); 
+        addNode("Right", new Vector3f(-length + width, width, 0)); 
+        addNode("Left", new Vector3f(length - width, width, 0f)); 
+        addNode("Center", new Vector3f(0, 0, 0)); 
+        addNode("South", new Vector3f(0, width, -height * 2));
+        addNode("North", new Vector3f(0, width, height * 2)); 
+        addNode("East", new Vector3f(-length * 2, width, 0)); 
+        addNode("West", new Vector3f(length * 2, width, 0)); 
+    }
+    
+    private void addNode(String name, Vector3f location){
+        Node node = new Node(name); 
+        node.setLocalTranslation(location);
         attachChild(node); 
     }
 }

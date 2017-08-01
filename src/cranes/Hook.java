@@ -89,7 +89,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 if(wallRecentlyHitObject != null){
                     Wall nearestBuildingWall = null; 
                     if(oldMode == 1 && wallRecentlyHitObject.getName().equals("New Scene"))
-                        nearestBuildingWall = Construction.getNearestBuildingWall(wall); 
+                        nearestBuildingWall = Construction.getNearestBuildingWall(wall);
                     Construction construction = Construction
                             .getWholeConstruction(nearestBuildingWall == null ? 
                             wallRecentlyHitObject : nearestBuildingWall); 

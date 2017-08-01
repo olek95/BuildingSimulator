@@ -99,18 +99,17 @@ public class Construction extends Node{
                     min = wall.getWorldTranslation().distance(minWall
                             .getWorldTranslation());
                 }
-                for(int k = 0; k < buildingElements.size(); k++){
+                for(int k = 1; k < buildingElements.size(); k++){
                     float distance = wall.getWorldTranslation()
                         .distance(buildingElements.get(k).getWorldTranslation());
                     if(distance < min){
-                        System.out.println(distance + " " + buildingElements.get(k));
                         min = distance;
                         minWall = buildingElements.get(k); 
                     } 
                 }
             }
         }
-        return min < 5 ? (Wall)minWall : null; 
+        return min < 8 ? (Wall)minWall : null; 
     }
     
     private Node merge(Wall wall1, Wall wall2){

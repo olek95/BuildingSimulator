@@ -130,19 +130,20 @@ public class Construction extends Node{
             int minDistance = getMin(distances); 
             if(edges[minDistance].getChildren().isEmpty()){
                 RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
+                boolean foundations = catchNodeIndex != 5; 
                 control.setPhysicsLocation(calculateProperLocation(location,
-                        edgeLocations[minDistance], minDistance));
+                        edgeLocations[minDistance], minDistance, foundations));
                 control.setPhysicsRotation(calculateProperRotation(wall2
                         .getControl(RigidBodyControl.class).getPhysicsRotation(),
-                        minDistance, catchNodeIndex == 5));
+                        minDistance, !foundations));
                 return edges[minDistance];
             }else return null; 
         }
         return this;
     }
     
-    private Node mergeHorizontal(Wall wall1, Wall wall2, boolean isFoundations, int mode){
-        if(!isFoundations){
+    private Node mergeHorizontal(Wall wall1, Wall wall2, boolean foundations, int mode){
+        if(!foundations){
             if(wall2 != null){
                 Node edge = wall2.getParent(), floor = edge.getParent();
                 int index = floor.getChildIndex(edge);
@@ -192,9 +193,9 @@ public class Construction extends Node{
     }
     
     private Vector3f calculateProperLocation(Vector3f wallLocation, Vector3f edgeLocation,
-            int direction){
+            int direction, boolean foundations){
         Vector3f location; 
-        if(direction < 2)
+        if(direction < 2 && !foundations)
             location = edgeLocation.clone().add(0, 2.7f - 0.2f * 2, 0);  
         else location = new Vector3f(edgeLocation.x, wallLocation.y, edgeLocation.z);
         return location;
@@ -222,7 +223,7 @@ public class Construction extends Node{
                 int direction = i - 1; 
                 control.setPhysicsLocation(calculateProperLocation(((RigidBodyControl)wall
                         .getControl(2)).getPhysicsLocation(),
-                        edge.getWorldTranslation(), direction));
+                        edge.getWorldTranslation(), direction, false));
                 control.setPhysicsRotation(calculateProperRotation(rotation,
                         direction, true));
             }

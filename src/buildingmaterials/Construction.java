@@ -22,24 +22,26 @@ public class Construction extends Node{
     
     /**
      * Dodaje kolejną ścianą do konstrukcji. 
-     * @param wall dodawana ściana 
+     * @param wall1 dodawana ściana 
+     * @param wall2 najbliższy element do którego można dołaczyć nową ścianę.
+     * Jeśli null, to element jest łaczony z ostatnio dotkniętym elementem. 
      * @param wallMode tryb fizyki dla dodawanego elementu w chwili dodawania 
      */
-    public void add(Wall wall, int wallMode){
-        Spatial recentlyHitObject = wall.getRecentlyHitObject();
+    public void add(Wall wall1, Wall wall2, int wallMode){
+        Spatial recentlyHitObject = wall1.getRecentlyHitObject();
         if(recentlyHitObject != null && wallMode == 2){ 
             String recentlyHitObjectName = recentlyHitObject.getName(); 
             boolean collisionWithGround = recentlyHitObjectName.startsWith("New Scene");
             if(collisionWithGround || recentlyHitObjectName.startsWith("Wall")){
-                    Spatial wallParent = wall.getParent(); 
+                    Spatial wallParent = wall1.getParent(); 
                     if(wallParent.getName().startsWith("Building")){
                         deleteConstruction(wallParent);
                     }
                     //wall.removeFromParent();
-                    Node touchedWall = merge(wall, collisionWithGround ? null 
+                    Node touchedWall = merge(wall1, collisionWithGround ? null 
                             : (Wall)recentlyHitObject);
                     if(touchedWall != null){
-                        touchedWall.attachChild(wall);
+                        touchedWall.attachChild(wall1);
                         if(!collisionWithGround) correctLocations(touchedWall.getName()); 
                     }
             }
@@ -55,15 +57,16 @@ public class Construction extends Node{
                 String recentlyHitObjectName = recentlyHitObject.getName(); 
                 boolean collisionWithGround = recentlyHitObjectName.startsWith("New Scene");
                 if(collisionWithGround || recentlyHitObjectName.startsWith("Wall")){
-                    Spatial wallParent = wall.getParent(); 
+                    Spatial wallParent = wall1.getParent(); 
                     if(wallParent.getName().startsWith("Building")){
                         deleteConstruction(wallParent);
                     }
                     //wall.removeFromParent();
-                    Node floor = mergeHorizontal(wall, collisionWithGround ? null 
-                            : (Wall)recentlyHitObject);
+                    Node floor; 
+                    if(wall2 != null) floor = mergeHorizontal(wall1, wall2, false); 
+                    else floor = mergeHorizontal(wall1, (Wall)recentlyHitObject, true); 
                     if(floor != null){
-                        floor.attachChild(wall);
+                        floor.attachChild(wall1);
                         if(!collisionWithGround) correctLocations(null); 
                     }
                 }
@@ -112,7 +115,7 @@ public class Construction extends Node{
         return min < 8 ? (Wall)minWall : null; 
     }
     
-    private Node merge(Wall wall1, Wall wall2){
+    private Node merge(Wall wall1, Wall wall2, boolean isFoundations){
         if(wall2 != null){ 
             Vector3f location = ((RigidBodyControl)wall1.getControl(2)).getPhysicsLocation();
             List<Spatial> wallChildren = wall2.getChildren(); 
@@ -139,8 +142,8 @@ public class Construction extends Node{
         return this;
     }
     
-    private Node mergeHorizontal(Wall wall1, Wall wall2){
-        if(wall2 != null){
+    private Node mergeHorizontal(Wall wall1, Wall wall2, boolean vertical){
+        if(vertical){
             Node edge = wall2.getParent(), floor = edge.getParent();
             int index = floor.getChildIndex(edge);
             index += index % 2 == 0 ? -1 : 1;
@@ -155,19 +158,7 @@ public class Construction extends Node{
             }
             return null;
         }else{
-            List<Spatial> foundations = getChildren(); 
-            if(!foundations.isEmpty()){
-                float min = wall1.getWorldTranslation()
-                            .distance(foundations.get(0).getWorldTranslation()); 
-                for(int i = 1; i < foundations.size(); i++){
-                    float distance = wall1.getWorldTranslation()
-                            .distance(foundations.get(i).getWorldTranslation());
-                    if(distance < min){
-                        System.out.println(distance + " " + foundations.get(i));
-                        min = distance;
-                    } 
-                }
-            }
+            
         }
         return this; 
     }

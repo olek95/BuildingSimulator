@@ -132,10 +132,9 @@ public class Construction extends Node{
                 RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
                 control.setPhysicsLocation(calculateProperLocation(location,
                         edgeLocations[minDistance], minDistance));
-                System.out.println(catchNodeIndex); 
                 control.setPhysicsRotation(calculateProperRotation(wall2
                         .getControl(RigidBodyControl.class).getPhysicsRotation(),
-                        minDistance, catchNodeIndex <= 4));
+                        minDistance, catchNodeIndex == 5));
                 return edges[minDistance];
             }else return null; 
         }

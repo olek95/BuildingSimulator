@@ -3,7 +3,6 @@ package buildingmaterials;
 import buildingsimulator.BuildingSimulator;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Quaternion;
-import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -129,12 +128,12 @@ public class Construction extends Node{
             int minDistance = getMin(distances); 
             if(edges[minDistance].getChildren().isEmpty()){
                 RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
-                Transform transform = calculateProperLocation(location, edgeLocations[minDistance], 
-                    wall2.getControl(RigidBodyControl.class).getPhysicsRotation(), minDistance);
-                if(transform != null){
-                    control.setPhysicsLocation(transform.getTranslation());
-                    control.setPhysicsRotation(transform.getRotation());
-                }
+                control.setPhysicsLocation(calculateProperLocation(location,
+                        edgeLocations[minDistance], minDistance));
+                System.out.println(catchNodeIndex); 
+                control.setPhysicsRotation(calculateProperRotation(wall2
+                        .getControl(RigidBodyControl.class).getPhysicsRotation(),
+                        minDistance, catchNodeIndex <= 4));
                 return edges[minDistance];
             }else return null; 
         }
@@ -191,16 +190,23 @@ public class Construction extends Node{
         return min; 
     }
     
-    private Transform calculateProperLocation(Vector3f wallLocation, Vector3f edgeLocation,
-            Quaternion rotation, int direction){
+    private Vector3f calculateProperLocation(Vector3f wallLocation, Vector3f edgeLocation,
+            int direction){
         Vector3f location; 
         if(direction < 2)
             location = edgeLocation.clone().add(0, 2.7f - 0.2f * 2, 0);  
         else location = new Vector3f(edgeLocation.x, wallLocation.y, edgeLocation.z);
-        Quaternion newRotation = rotation.clone().multLocal(-1.570796f, 0, 0, 1.570796f);
+        return location;
+    }
+    
+    private Quaternion calculateProperRotation(Quaternion rotation, int direction,
+            boolean reversal){
+        Quaternion newRotation;
+        if(reversal) 
+            newRotation = rotation.clone().multLocal(-1.570796f, 0, 0, 1.570796f);
+        else newRotation = rotation.clone(); 
         if(direction > 1) newRotation.multLocal(0, 0, -1.570796f, 1.570796f);
-        return new Transform(location,
-                newRotation);
+        return newRotation;
     }
     
     private void correctLocations(String edgeName){
@@ -212,11 +218,12 @@ public class Construction extends Node{
             if(!edge.getChildren().isEmpty() && !edge.getName().equals(edgeName)){
                 Spatial wall = edge.getChild(0); 
                 RigidBodyControl control = wall.getControl(RigidBodyControl.class); 
-                Transform transform = calculateProperLocation(((RigidBodyControl)wall
-                        .getControl(2)).getPhysicsLocation(), edge.getWorldTranslation(),
-                        rotation, i - 1);
-                control.setPhysicsLocation(transform.getTranslation());
-                control.setPhysicsRotation(transform.getRotation());
+                int direction = i - 1; 
+                control.setPhysicsLocation(calculateProperLocation(((RigidBodyControl)wall
+                        .getControl(2)).getPhysicsLocation(),
+                        edge.getWorldTranslation(), direction));
+                control.setPhysicsRotation(calculateProperRotation(rotation,
+                        direction, true));
             }
         }
     }

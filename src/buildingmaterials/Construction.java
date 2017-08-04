@@ -135,7 +135,7 @@ public class Construction extends Node{
                         edgeLocations[minDistance], minDistance, foundations));
                 control.setPhysicsRotation(calculateProperRotation(wall2
                         .getControl(RigidBodyControl.class).getPhysicsRotation(),
-                        minDistance, !foundations));
+                        minDistance, !foundations, wall1.isRotatedY()));
                 return edges[minDistance];
             }else return null; 
         }
@@ -202,12 +202,15 @@ public class Construction extends Node{
     }
     
     private Quaternion calculateProperRotation(Quaternion rotation, int direction,
-            boolean reversal){
+            boolean reversal, boolean rotated){
         Quaternion newRotation;
         if(reversal){
             newRotation = rotation.clone().multLocal(-1.570796f, 0, 0, 1.570796f);
             if(direction > 1 && reversal) newRotation.multLocal(0, 0, -1.570796f, 1.570796f);
-        }else newRotation = rotation.clone(); 
+        }else{
+            newRotation = rotation.clone();
+            if(rotated) newRotation.multLocal(0, -1.570796f, 0, 1.570796f);
+        } 
         return newRotation;
     }
     
@@ -225,7 +228,7 @@ public class Construction extends Node{
                         .getControl(2)).getPhysicsLocation(),
                         edge.getWorldTranslation(), direction, false));
                 control.setPhysicsRotation(calculateProperRotation(rotation,
-                        direction, true));
+                        direction, true, ((Wall)wall).isRotatedY()));
             }
         }
     }

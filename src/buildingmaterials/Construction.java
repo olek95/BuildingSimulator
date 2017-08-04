@@ -112,7 +112,7 @@ public class Construction extends Node{
                 }
             }
         }
-        return min < 8 ? (Wall)minWall : null; 
+        return min < 11 ? (Wall)minWall : null; 
     }
     
     private Node merge(Wall wall1, Wall wall2, int catchNodeIndex, int mode){
@@ -204,10 +204,10 @@ public class Construction extends Node{
     private Quaternion calculateProperRotation(Quaternion rotation, int direction,
             boolean reversal){
         Quaternion newRotation;
-        if(reversal) 
+        if(reversal){
             newRotation = rotation.clone().multLocal(-1.570796f, 0, 0, 1.570796f);
-        else newRotation = rotation.clone(); 
-        if(direction > 1) newRotation.multLocal(0, 0, -1.570796f, 1.570796f);
+            if(direction > 1 && reversal) newRotation.multLocal(0, 0, -1.570796f, 1.570796f);
+        }else newRotation = rotation.clone(); 
         return newRotation;
     }
     

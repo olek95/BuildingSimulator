@@ -120,8 +120,8 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         float yAngleOther = Math.abs(wall.getWorldRotation().toAngles(null)[1]),
                 yAngle = Math.abs(getWorldRotation().toAngles(null)[1]);
         System.out.println(yAngleOther + " " + yAngle);
-        return FastMath.QUARTER_PI + yAngleOther < yAngle && FastMath.HALF_PI 
-                + FastMath.QUARTER_PI + yAngleOther > yAngle;
+        return yAngleOther - FastMath.QUARTER_PI > yAngle 
+                && FastMath.QUARTER_PI + yAngleOther < FastMath.TWO_PI - yAngle;
     }
     
     /**

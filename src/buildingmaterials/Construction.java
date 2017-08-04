@@ -135,7 +135,7 @@ public class Construction extends Node{
                         edgeLocations[minDistance], minDistance, foundations));
                 control.setPhysicsRotation(calculateProperRotation(wall2
                         .getControl(RigidBodyControl.class).getPhysicsRotation(),
-                        minDistance, !foundations, wall1.isRotatedY() ^ wall2.isRotatedY()));
+                        minDistance, !foundations, wall1.checkPerpendicularity(wall2)));
                 return edges[minDistance];
             }else return null; 
         }
@@ -227,8 +227,8 @@ public class Construction extends Node{
                 control.setPhysicsLocation(calculateProperLocation(((RigidBodyControl)wall
                         .getControl(2)).getPhysicsLocation(),
                         edge.getWorldTranslation(), direction, false));
-                control.setPhysicsRotation(calculateProperRotation(rotation,
-                        direction, true, ((Wall)wall).isRotatedY()));
+                //control.setPhysicsRotation(calculateProperRotation(rotation,
+                //        direction, true, ((Wall)wall).checkPerpendicularity(null)));
             }
         }
     }

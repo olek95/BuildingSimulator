@@ -116,11 +116,12 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      * Określa czy ściana jest obrócona wokół osi Y o ok. 90 stopni. 
      * @return true jeśli ściana jest obrócona, false w przeciwnym przypadku 
      */
-    public boolean isRotatedY(){
-        float yAngle = Math.abs(getWorldRotation().toAngles(null)[1]);
-        System.out.println(yAngle); 
-        return FastMath.QUARTER_PI < yAngle && FastMath.HALF_PI 
-                + FastMath.QUARTER_PI > yAngle;
+    public boolean checkPerpendicularity(Wall wall){
+        float yAngleOther = Math.abs(wall.getWorldRotation().toAngles(null)[1]),
+                yAngle = Math.abs(getWorldRotation().toAngles(null)[1]);
+        System.out.println(yAngleOther + " " + yAngle);
+        return FastMath.QUARTER_PI + yAngleOther < yAngle && FastMath.HALF_PI 
+                + FastMath.QUARTER_PI + yAngleOther > yAngle;
     }
     
     /**

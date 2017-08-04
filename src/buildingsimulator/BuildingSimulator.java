@@ -121,8 +121,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         CraneAbstract crane = GameManager.getUnit(1);
             if(isPressed){
                 if(name.equals(Control.Actions.PHYSICS.toString())){
-                    if(!debug) bulletAppState.setDebugEnabled(true);
-                    else bulletAppState.setDebugEnabled(false);
+                    if(!debug) bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+                    else bulletAppState.getPhysicsSpace().disableDebug();
                     debug = !debug;
                 }else{
                     if(name.equals(Control.Actions.FIRST.toString())){

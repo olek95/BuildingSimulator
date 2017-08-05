@@ -119,7 +119,6 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     public boolean checkPerpendicularity(Wall wall){
         float yAngleOther = Math.abs(wall.getWorldRotation().toAngles(null)[1]),
                 yAngle = Math.abs(getWorldRotation().toAngles(null)[1]);
-        System.out.println(yAngleOther + " " + yAngle);
         return yAngleOther - FastMath.QUARTER_PI > yAngle 
                 && FastMath.QUARTER_PI + yAngleOther < FastMath.TWO_PI - yAngle;
     }
@@ -285,20 +284,23 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     private void createWallNodes(){
-        addNode("Bottom", new Vector3f(0, width, -height - width)); 
-        addNode("Up", new Vector3f(0, width, height + width)); 
-        addNode("Right", new Vector3f(-length + width, width, 0)); 
-        addNode("Left", new Vector3f(length - width, width, 0f)); 
-        addNode("Center", new Vector3f(0, 0, 0)); 
-        addNode("South", new Vector3f(0, width, -height * 2));
-        addNode("North", new Vector3f(0, width, height * 2)); 
-        addNode("East", new Vector3f(-length * 2, width, 0)); 
-        addNode("West", new Vector3f(length * 2, width, 0)); 
+        addNode("Bottom", new Vector3f(0, width, -height - width), this); 
+        addNode("Up", new Vector3f(0, width, height + width), this); 
+        addNode("Right", new Vector3f(-length + width, width, 0), this); 
+        addNode("Left", new Vector3f(length - width, width, 0f), this); 
+        addNode("Center", new Vector3f(0, 0, 0), this); 
+        Node south = addNode("South", new Vector3f(0, width, -height * 2), this);
+        addNode("North", new Vector3f(0, width, height * 2), this); 
+        addNode("East", new Vector3f(-length * 2, width, 0), this); 
+        addNode("West", new Vector3f(length * 2, width, 0), this);
+        addNode("South0", new Vector3f(height, width, 0), south); 
+        addNode("South1", new Vector3f(-height, width, 0), south); 
     }
     
-    private void addNode(String name, Vector3f location){
+    private Node addNode(String name, Vector3f location, Node parent){
         Node node = new Node(name); 
         node.setLocalTranslation(location);
-        attachChild(node); 
+        parent.attachChild(node); 
+        return node; 
     }
 }

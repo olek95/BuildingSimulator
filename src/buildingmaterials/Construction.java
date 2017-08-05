@@ -119,24 +119,33 @@ public class Construction extends Node{
         if(wall2 != null){ 
             Vector3f location = ((RigidBodyControl)wall1.getControl(mode)).getPhysicsLocation();
             List<Spatial> wallChildren = wall2.getChildren(); 
-            Node[] edges = new Node[4];
-            Vector3f[] edgeLocations = new Vector3f[4];
+            Node[] catchNodes = new Node[4];
+            Vector3f[] catchNodesLocations = new Vector3f[4];
             float[] distances = new float[4];
             for(int i = 0; i < 4; i++, catchNodeIndex++){
-                edges[i] = (Node)wallChildren.get(catchNodeIndex);
-                edgeLocations[i] = edges[i].getWorldTranslation(); 
-                distances[i] = location.distance(edgeLocations[i]); 
+                catchNodes[i] = (Node)wallChildren.get(catchNodeIndex);
+                catchNodesLocations[i] = catchNodes[i].getWorldTranslation(); 
+                distances[i] = location.distance(catchNodesLocations[i]); 
             }
             int minDistance = getMin(distances); 
-            if(edges[minDistance].getChildren().isEmpty()){
+            boolean perpendicularity = wall1.checkPerpendicularity(wall2),
+                    foundations = catchNodeIndex != 5; 
+            if(hasEmptySpace(catchNodes[minDistance], perpendicularity)){
+                if(perpendicularity && foundations && minDistance <= 1){
+                    catchNodes[minDistance] = getNearestChild(catchNodes[minDistance],
+                            distances);
+                    if(catchNodes[minDistance] != null)
+                        catchNodesLocations[minDistance] = catchNodes[minDistance]
+                                .getWorldTranslation();
+                    else return null; 
+                }
                 RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
-                boolean foundations = catchNodeIndex != 5; 
                 control.setPhysicsLocation(calculateProperLocation(location,
-                        edgeLocations[minDistance], minDistance, foundations));
+                        catchNodesLocations[minDistance], minDistance, foundations));
                 control.setPhysicsRotation(calculateProperRotation(wall2
                         .getControl(RigidBodyControl.class).getPhysicsRotation(),
-                        minDistance, !foundations, wall1.checkPerpendicularity(wall2)));
-                return edges[minDistance];
+                        minDistance, !foundations, perpendicularity));
+                return catchNodes[minDistance];
             }else return null; 
         }
         return this;
@@ -231,5 +240,29 @@ public class Construction extends Node{
                 //        direction, true, ((Wall)wall).checkPerpendicularity(null)));
             }
         }
+    }
+    
+    private boolean hasEmptySpace(Node catchNode, boolean perpendicularity){
+        String catchNodeName = catchNode.getName(); 
+        if(!catchNodeName.equals("North") && !catchNodeName.equals("South")) 
+            return catchNode.getChildren().isEmpty();
+        else{
+            if(perpendicularity) return true; 
+            List<Spatial> catchNodeChildren = catchNode.getChildren(); 
+            if(catchNodeChildren.size() > 2) return false; 
+            boolean empty = true;
+            for(int i = 0; i < 2; i++){
+                empty = ((Node)catchNodeChildren.get(i)).getChildren().isEmpty(); 
+                if(!empty) return empty; 
+            }
+            return empty; 
+        }
+    }
+    
+    private Node getNearestChild(Node parent, float[] distances){
+        Node nearestChild = distances[3] < distances[2] ? (Node)parent.getChild(0) :
+                (Node)parent.getChild(1);
+        if(nearestChild.getChildren().isEmpty()) return nearestChild; 
+        return null; 
     }
 }

@@ -48,7 +48,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         createLooseControl(location); 
         createAttachingControl(location, false); 
         createAttachingControl(location, true); 
-        swapControl(0);
+        swapControl(2);
         counter++;
     }
     
@@ -189,18 +189,18 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      */
     private Vector3f getProperPoint(int pointNumber, boolean vertical){
         BoundingBox bounding = (BoundingBox)getWorldBound();
-        Vector3f max = bounding.getMax(null);
+        System.out.println(bounding.getCenter() + " " + getWorldTranslation()); 
+        Vector3f max = getWorldTranslation().subtract(-length, -width, -height);
         switch(pointNumber){
             case 0:
                 return vertical ? max.subtract(0f, max.y, 0f) : max;
             case 1: 
-                return vertical ? max.subtract(bounding.getXExtent() * 2, max.y, 0f)
-                        : max.subtract(bounding.getXExtent() * 2, 0f, 0f);
+                return vertical ? max.subtract(length * 2, max.y, 0f)
+                        : max.subtract(length * 2, 0f, 0);
             case 2:
-                return max.subtract(0, 0, bounding.getZExtent() * 2);
+                return max.subtract(0f, 0f, height * 2);
             case 3: 
-                return max.subtract(bounding.getXExtent() * 2, 0, bounding
-                        .getZExtent() * 2); 
+                return max.subtract(length * 2, 0f, height * 2); 
             default: return null;
         }
     }
@@ -219,14 +219,14 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         Material ropeMaterial = new Material(BuildingSimulator.getBuildingSimulator()
                 .getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         ropeMaterial.setColor("Color", ColorRGBA.Black); 
-        float length = start.distance(end);
+        float ropeLenght = start.distance(end);
         if(!vertical) distanceToHandle = end.y - getWorldTranslation().y; 
         else distanceToHandleVertical = end.z - getWorldTranslation().z;
         String[] elementsName = new String[ropes.length + 1];
         elementsName[0] = "Box";
         for(int i = 0; i < ropes.length; i++){
             elementsName[i + 1] = "Cylinder" + i;
-            ropes[i] = new Geometry(elementsName[i + 1], new Cylinder(4, 8, 0.02f, length));
+            ropes[i] = new Geometry(elementsName[i + 1], new Cylinder(4, 8, 0.02f, ropeLenght));
             ropesLocations[i] = FastMath.interpolateLinear(0.5f, start, end);
             ropes[i].setMaterial(ropeMaterial); 
             attachChild(ropes[i]);
@@ -246,7 +246,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
             ropes[i].setLocalTranslation(ropesLocations[i].subtract(physicsLocation));
             ropes[i].lookAt(end, Vector3f.UNIT_Y);
             ChildCollisionShape gotShape = collisionShapeChildren.get(1 + i);
-            gotShape.location = ropes[i].getLocalTranslation();
+            gotShape.location = ropes[i].getLocalTranslation(); 
             gotShape.rotation = ropes[i].getLocalRotation().toRotationMatrix();
         }
         controlAttaching.setPhysicsLocation(location);

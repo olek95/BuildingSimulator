@@ -48,7 +48,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         createLooseControl(location); 
         createAttachingControl(location, false); 
         createAttachingControl(location, true); 
-        swapControl(2);
+        swapControl(0);
         counter++;
     }
     
@@ -188,19 +188,17 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      * @return współrzędne wybranego rogu 
      */
     private Vector3f getProperPoint(int pointNumber, boolean vertical){
-        BoundingBox bounding = (BoundingBox)getWorldBound();
-        System.out.println(bounding.getCenter() + " " + getWorldTranslation()); 
-        Vector3f max = getWorldTranslation().subtract(-length, -width, -height);
+        Vector3f leftBottom = getWorldTranslation().subtract(-length, -width, -height);
         switch(pointNumber){
             case 0:
-                return vertical ? max.subtract(0f, max.y, 0f) : max;
+                return vertical ? leftBottom.subtract(0f, leftBottom.y, 0f) : leftBottom;
             case 1: 
-                return vertical ? max.subtract(length * 2, max.y, 0f)
-                        : max.subtract(length * 2, 0f, 0);
+                return vertical ? leftBottom.subtract(length * 2, leftBottom.y, 0f)
+                        : leftBottom.subtract(length * 2, 0f, 0);
             case 2:
-                return max.subtract(0f, 0f, height * 2);
+                return leftBottom.subtract(0f, 0f, height * 2);
             case 3: 
-                return max.subtract(length * 2, 0f, height * 2); 
+                return leftBottom.subtract(length * 2, 0f, height * 2); 
             default: return null;
         }
     }

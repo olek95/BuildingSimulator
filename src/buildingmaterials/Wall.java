@@ -282,17 +282,21 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     private void createWallNodes(){
+        float x = length * 2, z = height * 2, zSouthParts = -length + height,
+                zNorthParts = length - height; 
         addNode("Bottom", new Vector3f(0, width, -height - width), this); 
         addNode("Up", new Vector3f(0, width, height + width), this); 
         addNode("Right", new Vector3f(-length + width, width, 0), this); 
         addNode("Left", new Vector3f(length - width, width, 0f), this); 
         addNode("Center", new Vector3f(0, 0, 0), this); 
-        Node south = addNode("South", new Vector3f(0, width, -height * 2), this);
-        addNode("North", new Vector3f(0, width, height * 2), this); 
-        addNode("East", new Vector3f(-length * 2, width, 0), this); 
-        addNode("West", new Vector3f(length * 2, width, 0), this);
-        addNode("South0", new Vector3f(height, width, 0), south); 
-        addNode("South1", new Vector3f(-height, width, 0), south); 
+        Node south = addNode("South", new Vector3f(0, width, -z), this),
+                north = addNode("North", new Vector3f(0, width, z), this); 
+        addNode("East", new Vector3f(-x, width, 0), this); 
+        addNode("West", new Vector3f(x, width, 0), this);
+        addNode("South0", new Vector3f(height, width, zSouthParts), south); 
+        addNode("South1", new Vector3f(-height, width, zSouthParts), south); 
+        addNode("North0", new Vector3f(height, width, zNorthParts), north);
+        addNode("North1", new Vector3f(-height, width, zNorthParts), north); 
     }
     
     private Node addNode(String name, Vector3f location, Node parent){

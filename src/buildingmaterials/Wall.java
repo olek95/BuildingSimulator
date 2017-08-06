@@ -232,25 +232,6 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
             ropes[i].setCullHint(CullHint.Always);
         }          
         CompoundCollisionShape wallRopesShape = GameManager.createCompound(this, "Box");
-        
-        //CompoundCollisionShape wallRopesShape = new CompoundCollisionShape(); 
-       // for(int i = 0; i < 1; i++){
-            //addNewCollisionShapeToCompound(compound, parent, children[i], 
-              //      Vector3f.ZERO, null);
-            
-         /*   Geometry parentGeometry = (Geometry)this.getChild(elementsName[i]);
-            CollisionShape elementCollisionShape;
-            System.out.println(parentGeometry); 
-            if(!(parentGeometry instanceof CSGGeometry))
-        elementCollisionShape = CollisionShapeFactory.createBoxShape(parentGeometry);
-        else
-            elementCollisionShape = CollisionShapeFactory
-                    .createDynamicMeshShape(((CSGGeometry)parentGeometry).asSpatial());
-            elementCollisionShape.setScale(parentGeometry.getWorldScale()); 
-            wallRopesShape.addChildShape(elementCollisionShape, Vector3f.ZERO);
-        }*/
-        
-        
         RigidBodyControl controlAttaching = new RigidBodyControl(wallRopesShape, 0.00001f);
         addControl(controlAttaching); 
         BuildingSimulator.getBuildingSimulator().getBulletAppState()

@@ -162,8 +162,8 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     public void setCollision(Spatial b){
         /* zabezpiecza przypadek gdy hak dotyka jednocześnie elementu pionowego
         i poziomego */
-        if((recentlyHitObject == null || recentlyHitObject.getWorldTranslation().y
-                > b.getWorldTranslation().y))
+        if(recentlyHitObject == null || recentlyHitObject.getWorldTranslation().y
+                > b.getWorldTranslation().y)
             recentlyHitObject = b;
     }
     
@@ -284,8 +284,8 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private void createWallNodes(){
         float x = length * 2, z = height * 2, zSouthParts = -length + height,
                 zNorthParts = length - height; 
-        addNode("Bottom", new Vector3f(0, width, -height - width), this); 
-        addNode("Up", new Vector3f(0, width, height + width), this); 
+        addNode("Bottom", new Vector3f(0, width, -height + width), this); 
+        addNode("Up", new Vector3f(0, width, height - width), this); 
         addNode("Right", new Vector3f(-length + width, width, 0), this); 
         addNode("Left", new Vector3f(length - width, width, 0f), this); 
         addNode("Center", new Vector3f(0, 0, 0), this); 

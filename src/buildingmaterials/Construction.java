@@ -141,7 +141,7 @@ public class Construction extends Node{
                 }
                 RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
                 control.setPhysicsLocation(calculateProperLocation(location,
-                        catchNodesLocations[minDistance], minDistance, foundations));
+                        catchNodesLocations[minDistance], foundations, wall1));
                 control.setPhysicsRotation(calculateProperRotation(wall2
                         .getControl(RigidBodyControl.class).getPhysicsRotation(),
                         minDistance, !foundations, perpendicularity));
@@ -202,12 +202,9 @@ public class Construction extends Node{
     }
     
     private Vector3f calculateProperLocation(Vector3f wallLocation, Vector3f edgeLocation,
-            int direction, boolean foundations){
-        Vector3f location; 
-        if(direction < 2 && !foundations)
-            location = edgeLocation.clone().add(0, 2.7f - 0.2f * 2, 0);  
-        else location = new Vector3f(edgeLocation.x, wallLocation.y, edgeLocation.z);
-        return location;
+            boolean foundations, Wall wall){
+        return new Vector3f(edgeLocation.x, foundations ? wallLocation.y
+                : edgeLocation.y + wall.getHeight(), edgeLocation.z);
     }
     
     private Quaternion calculateProperRotation(Quaternion rotation, int direction,
@@ -233,9 +230,9 @@ public class Construction extends Node{
                 Spatial wall = edge.getChild(0); 
                 RigidBodyControl control = wall.getControl(RigidBodyControl.class); 
                 int direction = i - 1; 
-                control.setPhysicsLocation(calculateProperLocation(((RigidBodyControl)wall
-                        .getControl(2)).getPhysicsLocation(),
-                        edge.getWorldTranslation(), direction, false));
+                //control.setPhysicsLocation(calculateProperLocation(((RigidBodyControl)wall
+                //        .getControl(2)).getPhysicsLocation(),
+                 //       edge.getWorldTranslation()));
                 //control.setPhysicsRotation(calculateProperRotation(rotation,
                 //        direction, true, ((Wall)wall).checkPerpendicularity(null)));
             }

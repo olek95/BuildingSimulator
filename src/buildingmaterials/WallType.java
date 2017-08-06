@@ -12,6 +12,5 @@ public enum WallType {
     WINDOWS,
     ONE_BIG_WINDOW,
     ONE_BIGGER_WINDOW,
-    DOOR, 
-    SMALL_WALL;
+    DOOR;
 }

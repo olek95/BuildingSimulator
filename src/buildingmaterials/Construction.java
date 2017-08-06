@@ -140,8 +140,8 @@ public class Construction extends Node{
                     else return null; 
                 }
                 RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
-                control.setPhysicsLocation(calculateProperLocation(location,
-                        catchNodesLocations[minDistance], foundations, wall1));
+                control.setPhysicsLocation(calculateProperLocation(
+                        catchNodesLocations[minDistance], foundations, wall1, mode));
                 control.setPhysicsRotation(calculateProperRotation(wall2
                         .getControl(RigidBodyControl.class).getPhysicsRotation(),
                         minDistance, !foundations, perpendicularity));
@@ -201,9 +201,10 @@ public class Construction extends Node{
         return min; 
     }
     
-    private Vector3f calculateProperLocation(Vector3f wallLocation, Vector3f edgeLocation,
-            boolean foundations, Wall wall){
-        return new Vector3f(edgeLocation.x, foundations ? wallLocation.y
+    private Vector3f calculateProperLocation(Vector3f edgeLocation,
+            boolean foundations, Wall wall, int mode){
+        Vector3f location = ((RigidBodyControl)wall.getControl(mode)).getPhysicsLocation();
+        return new Vector3f(edgeLocation.x, foundations || mode == 1 ? location.y
                 : edgeLocation.y + wall.getHeight(), edgeLocation.z);
     }
     

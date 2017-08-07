@@ -268,11 +268,9 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     private void createLooseControl(Vector3f location){
-        GameManager.createObjectPhysics(this, 0.00001f, false, new String[] {"Box"});
+        GameManager.createObjectPhysics(this, 0.00001f, false, "Box");
         RigidBodyControl control = getControl(RigidBodyControl.class); 
         control.setPhysicsLocation(location);
-        control.setAngularDamping(1);
-        control.setLinearDamping(1);
     }
     
     private void createWallNodes(){

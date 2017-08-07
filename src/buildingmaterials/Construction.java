@@ -42,6 +42,9 @@ public class Construction extends Node{
                     if(touchedWall != null){
                         touchedWall.attachChild(wall1);
                         if(!collisionWithGround) correctLocations(touchedWall.getName()); 
+                        RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
+                        control.setAngularDamping(1);
+                        control.setLinearDamping(1);
                     }
             }
            /* List<Spatial> c = BuildingSimulator.getBuildingSimulator().getRootNode().getChildren();
@@ -67,7 +70,10 @@ public class Construction extends Node{
                                 (Wall)recentlyHitObject, false, wallMode);
                     if(floor != null){
                         floor.attachChild(wall1);
-                        if(!collisionWithGround) correctLocations(null); 
+                        if(!collisionWithGround) correctLocations(null);
+                        RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
+                        control.setAngularDamping(1);
+                        control.setLinearDamping(1);
                     }
                 }
             }

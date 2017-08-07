@@ -223,14 +223,6 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         float ropeLenght = start.distance(end);
         if(!vertical) distanceToHandle = end.y - getWorldTranslation().y; 
         else distanceToHandleVertical = end.z - getWorldTranslation().z;
-        for(int i = 0; i < ropes.length; i++){
-            ropes[i] = new Geometry("Cylinder" + i, new Cylinder(4, 8, 0.02f, ropeLenght));
-            ropesLocations[i] = FastMath.interpolateLinear(0.5f, start, end);
-            ropes[i].setMaterial(ropeMaterial); 
-            attachChild(ropes[i]);
-            start = getProperPoint(i + 1, vertical);
-            ropes[i].setCullHint(CullHint.Always);
-        }          
         CompoundCollisionShape wallRopesShape = GameManager.createCompound(this, "Box");
         RigidBodyControl controlAttaching = new RigidBodyControl(wallRopesShape, 0.00001f);
         addControl(controlAttaching); 
@@ -240,9 +232,15 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         controlAttaching.setCollisionGroup(5);
         Vector3f physicsLocation = controlAttaching.getPhysicsLocation();
         for(int i = 0; i < ropes.length; i++){
+            ropes[i] = new Geometry("Cylinder" + i, new Cylinder(4, 8, 0.02f, ropeLenght));
+            ropesLocations[i] = FastMath.interpolateLinear(0.5f, start, end);
+            ropes[i].setMaterial(ropeMaterial); 
+            attachChild(ropes[i]);
+            start = getProperPoint(i + 1, vertical);
             ropes[i].setLocalTranslation(ropesLocations[i].subtract(physicsLocation));
             ropes[i].lookAt(end, Vector3f.UNIT_Y);
-        }
+            ropes[i].setCullHint(CullHint.Always);
+        }          
         controlAttaching.setPhysicsLocation(location);
     }
     

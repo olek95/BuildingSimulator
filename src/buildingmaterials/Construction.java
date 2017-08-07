@@ -28,7 +28,7 @@ public class Construction extends Node{
      */
     public void add(Wall wall1, Wall wall2, int wallMode){
         Spatial recentlyHitObject = wall1.getRecentlyHitObject();
-        if(recentlyHitObject != null && wallMode == 2){ 
+        if(recentlyHitObject != null){ 
             String recentlyHitObjectName = recentlyHitObject.getName(); 
             boolean collisionWithGround = recentlyHitObjectName.startsWith("New Scene");
             if(collisionWithGround || recentlyHitObjectName.startsWith("Wall")){
@@ -37,8 +37,16 @@ public class Construction extends Node{
                         deleteConstruction(wallParent);
                     }
                     //wall.removeFromParent();
-                    Node touchedWall = merge(wall1, collisionWithGround ? null 
+                    Node touchedWall; 
+                    if(wallMode == 2){
+                        touchedWall = merge(wall1, collisionWithGround ? null 
                             : (Wall)recentlyHitObject, 1, wallMode);
+                    }else{
+                        if(wall2 != null) 
+                            touchedWall = mergeHorizontal(wall1, wall2, true, wallMode); 
+                        else touchedWall = mergeHorizontal(wall1, collisionWithGround ? null :
+                                (Wall)recentlyHitObject, false, wallMode);
+                    }
                     if(touchedWall != null){
                         touchedWall.attachChild(wall1);
                         if(!collisionWithGround) correctLocations(touchedWall.getName()); 
@@ -54,29 +62,6 @@ public class Construction extends Node{
                 System.out.println(s + " " + ((Node)s).getChildren().size() + " " 
                         + ((Node)s).getChild(0));
             } */
-        }else{
-            if(recentlyHitObject != null && wallMode == 1){
-                String recentlyHitObjectName = recentlyHitObject.getName(); 
-                boolean collisionWithGround = recentlyHitObjectName.startsWith("New Scene");
-                if(collisionWithGround || recentlyHitObjectName.startsWith("Wall")){
-                    Spatial wallParent = wall1.getParent(); 
-                    if(wallParent.getName().startsWith("Building")){
-                        deleteConstruction(wallParent);
-                    }
-                    //wall.removeFromParent();
-                    Node floor;  
-                    if(wall2 != null) floor = mergeHorizontal(wall1, wall2, true, wallMode); 
-                    else floor = mergeHorizontal(wall1, collisionWithGround ? null :
-                                (Wall)recentlyHitObject, false, wallMode);
-                    if(floor != null){
-                        floor.attachChild(wall1);
-                        if(!collisionWithGround) correctLocations(null);
-                        RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
-                        control.setAngularDamping(1);
-                        control.setLinearDamping(1);
-                    }
-                }
-            }
         }
     }
     
@@ -94,6 +79,11 @@ public class Construction extends Node{
         return null; 
     }
     
+    /**
+     * Zwraca najbliższą ścianę z jakiegokolwiek budynku. 
+     * @param wall ściana dla której szukamy najbliższy element z jakiegoś budynku. 
+     * @return najbliższy element z jakiegokolwiek budynku 
+     */
     public static Wall getNearestBuildingWall(Wall wall){
         List<Spatial> gameObjects = BuildingSimulator.getBuildingSimulator()
                     .getRootNode().getChildren();
@@ -145,6 +135,16 @@ public class Construction extends Node{
                                 .getWorldTranslation();
                     else return null; 
                 }
+                
+                
+                if(foundations){
+                    catchNodes[minDistance] = changeCatchNodeLocation(wall1, wall2, catchNodes[minDistance], minDistance); 
+                    catchNodesLocations[minDistance] = catchNodes[minDistance].getWorldTranslation();
+                    System.out.println(123); 
+                }
+                
+                
+                
                 RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
                 control.setPhysicsLocation(calculateProperLocation(
                         catchNodesLocations[minDistance], foundations, wall1, mode));
@@ -215,11 +215,11 @@ public class Construction extends Node{
     }
     
     private Quaternion calculateProperRotation(Quaternion rotation, int direction,
-            boolean reversal, boolean perpendicular){
+            boolean notFoundations, boolean perpendicular){
         Quaternion newRotation;
-        if(reversal){
+        if(notFoundations){
             newRotation = rotation.clone().multLocal(-1.570796f, 0, 0, 1.570796f);
-            if(direction > 1 && reversal) newRotation.multLocal(0, 0, -1.570796f, 1.570796f);
+            if(direction > 1) newRotation.multLocal(0, 0, -1.570796f, 1.570796f);
         }else{
             newRotation = rotation.clone();
             if(perpendicular) newRotation.multLocal(0, -1.570796f, 0, 1.570796f);
@@ -268,5 +268,18 @@ public class Construction extends Node{
                 (Node)parent.getChild(1);
         if(nearestChild.getChildren().isEmpty()) return nearestChild; 
         return null; 
+    }
+    
+    private Node changeCatchNodeLocation(Wall wall1, Wall wall2, Node catchNode, int i){
+        Node wallCopy = wall2.clone(false); 
+        RigidBodyControl control = wallCopy.getControl(RigidBodyControl.class);
+        control.setPhysicsRotation(Quaternion.IDENTITY);
+        Node catchNodeCopy = (Node)wallCopy.getChild(6 + i);
+        catchNodeCopy.setLocalTranslation(0, wall1.getWidth(), -wall1.getHeight()
+                - wall2.getHeight());
+        control.setPhysicsRotation(wall1.getControl(RigidBodyControl.class)
+                .getPhysicsRotation());
+        catchNode.setLocalTranslation(catchNodeCopy.getLocalTranslation());
+        return catchNode; 
     }
 }

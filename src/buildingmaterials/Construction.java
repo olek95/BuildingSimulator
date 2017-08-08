@@ -38,7 +38,7 @@ public class Construction extends Node{
                     }
                     //wall.removeFromParent();
                     Node touchedWall; 
-                    if(wallMode == 2){
+                    if(wallMode == 2){ 
                         touchedWall = merge(wall1, collisionWithGround ? null 
                             : (Wall)recentlyHitObject, 1, wallMode);
                     }else{
@@ -248,7 +248,8 @@ public class Construction extends Node{
     
     private boolean hasEmptySpace(Node catchNode, boolean perpendicularity){
         String catchNodeName = catchNode.getName(); 
-        if(!catchNodeName.equals("North") && !catchNodeName.equals("South")) 
+        if(!catchNodeName.equals(CatchNodes.NORTH.toString()) 
+                && !catchNodeName.equals(CatchNodes.SOUTH.toString())) 
             return catchNode.getChildren().isEmpty();
         else{
             if(perpendicularity) return true; 
@@ -281,13 +282,22 @@ public class Construction extends Node{
             copyDirection = (Node)wallCopy.getChild(parentIndex);
             catchNodeCopy = (Node)copyDirection.getChild(i);
         }
-        switch(i){
+        int first = 5;
+        if(copyDirection != null){
+            if(copyDirection.getName().startsWith(CatchNodes.SOUTH.toString())){
+                first = 9;
+            }
+        }
+        CatchNodes[] nodes = CatchNodes.values(); 
+        catchNodeCopy.setLocalTranslation(CatchNodes
+                .calculateTranslation(nodes[first + i], wall2, wall1));
+        /*switch(i){
             case 0: 
                 if(copyDirection == null){
                     catchNodeCopy.setLocalTranslation(0, wall1.getWidth(), -wall1.getHeight()
                             - wall2.getHeight()); 
                 }else{
-                    if(copyDirection.getName().startsWith("South"))
+                    if(copyDirection.getName().startsWith(CatchNodes.SOUTH.toString()))
                         catchNodeCopy.setLocalTranslation(wall1.getHeight(), 
                                 wall1.getWidth(), -wall1.getLength() 
                                 + wall2.getHeight());
@@ -302,7 +312,7 @@ public class Construction extends Node{
                     catchNodeCopy.setLocalTranslation(0, wall1.getWidth(), wall1.getHeight()
                             + wall2.getHeight());    
                 }else{
-                    if(copyDirection.getName().startsWith("South"))
+                    if(copyDirection.getName().startsWith(CatchNodes.SOUTH.toString()))
                         catchNodeCopy.setLocalTranslation(-wall1.getHeight(), 
                                 wall1.getWidth(), -wall1.getLength() 
                                 + wall2.getHeight());
@@ -319,7 +329,7 @@ public class Construction extends Node{
             case 3:
                 catchNodeCopy.setLocalTranslation(wall1.getLength() + wall2.getLength(),
                         wall1.getWidth(), 0); 
-        }
+        }*/
         control.setPhysicsRotation(wall1.getControl(RigidBodyControl.class)
                 .getPhysicsRotation());
         catchNode.setLocalTranslation(catchNodeCopy.getLocalTranslation());

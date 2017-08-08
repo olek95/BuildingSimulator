@@ -24,6 +24,7 @@ import com.jme3.texture.Texture;
 import java.util.List;
 import net.wcomohundro.jme3.csg.CSGGeometry;
 import net.wcomohundro.jme3.csg.CSGShape;
+import buildingmaterials.CatchNodes.*;
 
 /**
  * Obiekt klasy <code>Wall</code> reprezentuje kawałek ściany. Obiekt ten może 
@@ -282,25 +283,26 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     private void createWallNodes(){
-        float x = length * 2, z = height * 2, zSouthParts = -length + height,
-                zNorthParts = length - height; 
-        addNode("Bottom", new Vector3f(0, width, -height + width), this); 
-        addNode("Up", new Vector3f(0, width, height - width), this); 
-        addNode("Right", new Vector3f(-length + width, width, 0), this); 
-        addNode("Left", new Vector3f(length - width, width, 0f), this); 
-        addNode("Center", new Vector3f(0, 0, 0), this); 
-        Node south = addNode("South", new Vector3f(0, width, -z), this),
-                north = addNode("North", new Vector3f(0, width, z), this); 
-        addNode("East", new Vector3f(-x, width, 0), this); 
-        addNode("West", new Vector3f(x, width, 0), this);
-        addNode("South0", new Vector3f(height, width, zSouthParts), south); 
-        addNode("South1", new Vector3f(-height, width, zSouthParts), south); 
-        addNode("North0", new Vector3f(height, width, zNorthParts), north);
-        addNode("North1", new Vector3f(-height, width, zNorthParts), north); 
+        CatchNodes[] nodes = CatchNodes.values();
+        Node north = null, south = null; 
+        for(int i = 0; i < 9; i++){
+            if(nodes[i].equals(CatchNodes.SOUTH))
+                south = addNode(nodes[i], CatchNodes.calculateTranslation(nodes[i], this, null),
+                        this);
+            else if(nodes[i].equals(CatchNodes.NORTH))
+                north = addNode(nodes[i], CatchNodes.calculateTranslation(nodes[i], this, null),
+                        this); 
+            else addNode(nodes[i], CatchNodes.calculateTranslation(nodes[i], this, null),
+                        this); 
+        }
+        addNode(nodes[9], CatchNodes.calculateTranslation(nodes[9], this, null), south); 
+        addNode(nodes[10], CatchNodes.calculateTranslation(nodes[10], this, null), south); 
+        addNode(nodes[11], CatchNodes.calculateTranslation(nodes[11], this, null), north); 
+        addNode(nodes[12], CatchNodes.calculateTranslation(nodes[12], this, null), north); 
     }
     
-    private Node addNode(String name, Vector3f location, Node parent){
-        Node node = new Node(name); 
+    private Node addNode(CatchNodes type, Vector3f location, Node parent){
+        Node node = new Node(type.toString()); 
         node.setLocalTranslation(location);
         parent.attachChild(node); 
         return node; 

@@ -108,7 +108,11 @@ public class Construction extends Node{
                 }
             }
         }
-        return min < 11 ? (Wall)minWall : null; 
+        if(minWall != null){
+            Wall nearestWall = (Wall)minWall; 
+            return min < Math.ceil(wall.getMaxSize()) + Math.ceil(nearestWall.getMaxSize())
+                    ? nearestWall : null; 
+        }else return null; 
     }
     
     private Node merge(Wall wall1, Wall wall2, int catchNodeIndex, int mode){
@@ -275,8 +279,24 @@ public class Construction extends Node{
         RigidBodyControl control = wallCopy.getControl(RigidBodyControl.class);
         control.setPhysicsRotation(Quaternion.IDENTITY);
         Node catchNodeCopy = (Node)wallCopy.getChild(6 + i);
-        catchNodeCopy.setLocalTranslation(0, wall1.getWidth(), -wall1.getHeight()
-                - wall2.getHeight());
+        
+        switch(i){
+            case 0: 
+                catchNodeCopy.setLocalTranslation(0, wall1.getWidth(), -wall1.getHeight()
+                        - wall2.getHeight()); 
+            break;
+            case 1: 
+                catchNodeCopy.setLocalTranslation(0, wall1.getWidth(), wall1.getHeight()
+                        + wall2.getHeight());    
+            break;
+            case 2:
+                catchNodeCopy.setLocalTranslation(-wall1.getLength() - wall2.getLength(),
+                        wall1.getWidth(), 0); 
+            break;
+            case 3:
+                catchNodeCopy.setLocalTranslation(wall1.getLength() + wall2.getLength(),
+                        wall1.getWidth(), 0); 
+        }
         control.setPhysicsRotation(wall1.getControl(RigidBodyControl.class)
                 .getPhysicsRotation());
         catchNode.setLocalTranslation(catchNodeCopy.getLocalTranslation());

@@ -127,6 +127,14 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     /**
+     * Zwraca największy wymiar (długość lub wysokość). 
+     * @return największy wymiar 
+     */
+    public float getMaxSize(){
+        return length > height ? length : height; 
+    }
+    
+    /**
      * Zwraca szerokość ściany (mierzona od środka). 
      * @return szerokość 
      */

@@ -2,7 +2,13 @@ package buildingmaterials;
 
 import com.jme3.math.Vector3f;
 
-public enum CatchNodes {
+/**
+ * Typ wyliczeniowy <code>CatchNode</code> zawiera nazwy wszystkich możliwych 
+ * pomocniczych węzłów dla ścian budynków. Są to węzły zarówno znajdujące się 
+ * na ścianie, jak i poza nią. 
+ * @author AleksanderSklorz 
+ */
+public enum CatchNode {
     BOTTOM, 
     UP, 
     RIGHT, 
@@ -25,7 +31,7 @@ public enum CatchNodes {
      * @param wall2 ściana z której dostajemy dodatkowe dane 
      * @return lokalizacja węzła 
      */
-    public static Vector3f calculateTranslation(CatchNodes type, Wall wall1, Wall wall2){
+    public static Vector3f calculateTranslation(CatchNode type, Wall wall1, Wall wall2){
         if(wall2 == null) wall2 = wall1; 
         float width1;
         switch(type){

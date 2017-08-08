@@ -24,7 +24,7 @@ import com.jme3.texture.Texture;
 import java.util.List;
 import net.wcomohundro.jme3.csg.CSGGeometry;
 import net.wcomohundro.jme3.csg.CSGShape;
-import buildingmaterials.CatchNodes.*;
+import buildingmaterials.CatchNode.*;
 
 /**
  * Obiekt klasy <code>Wall</code> reprezentuje kawałek ściany. Obiekt ten może 
@@ -283,25 +283,25 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     private void createWallNodes(){
-        CatchNodes[] nodes = CatchNodes.values();
+        CatchNode[] nodes = CatchNode.values();
         Node north = null, south = null; 
         for(int i = 0; i < 9; i++){
-            if(nodes[i].equals(CatchNodes.SOUTH))
-                south = addNode(nodes[i], CatchNodes.calculateTranslation(nodes[i], this, null),
+            if(nodes[i].equals(CatchNode.SOUTH))
+                south = addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
                         this);
-            else if(nodes[i].equals(CatchNodes.NORTH))
-                north = addNode(nodes[i], CatchNodes.calculateTranslation(nodes[i], this, null),
+            else if(nodes[i].equals(CatchNode.NORTH))
+                north = addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
                         this); 
-            else addNode(nodes[i], CatchNodes.calculateTranslation(nodes[i], this, null),
+            else addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
                         this); 
         }
-        addNode(nodes[9], CatchNodes.calculateTranslation(nodes[9], this, null), south); 
-        addNode(nodes[10], CatchNodes.calculateTranslation(nodes[10], this, null), south); 
-        addNode(nodes[11], CatchNodes.calculateTranslation(nodes[11], this, null), north); 
-        addNode(nodes[12], CatchNodes.calculateTranslation(nodes[12], this, null), north); 
+        addNode(nodes[9], CatchNode.calculateTranslation(nodes[9], this, null), south); 
+        addNode(nodes[10], CatchNode.calculateTranslation(nodes[10], this, null), south); 
+        addNode(nodes[11], CatchNode.calculateTranslation(nodes[11], this, null), north); 
+        addNode(nodes[12], CatchNode.calculateTranslation(nodes[12], this, null), north); 
     }
     
-    private Node addNode(CatchNodes type, Vector3f location, Node parent){
+    private Node addNode(CatchNode type, Vector3f location, Node parent){
         Node node = new Node(type.toString()); 
         node.setLocalTranslation(location);
         parent.attachChild(node); 

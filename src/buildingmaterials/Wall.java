@@ -307,4 +307,25 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         parent.attachChild(node); 
         return node; 
     }
+    
+    public Node changeCatchNodeLocation(Wall wall, Node catchNode, int i,
+            int parentIndex, boolean perpendicularity){
+        Node wallCopy = clone(false), catchNodeCopy; 
+        RigidBodyControl control = wallCopy.getControl(RigidBodyControl.class);
+        control.setPhysicsRotation(Quaternion.IDENTITY);
+        catchNodeCopy = parentIndex == -1 ? (Node)wallCopy.getChild(6 + i) : 
+                (Node)((Node)wallCopy.getChild(parentIndex)).getChild(i); 
+        if(perpendicularity && parentIndex == -1){
+            catchNodeCopy.setLocalTranslation(catchNode.getName()
+                    .equals(CatchNode.EAST.toString()) ? -wall.height
+                    - length : wall.height + length, wall.width, 0);
+        }else{
+            catchNodeCopy.setLocalTranslation(CatchNode.calculateTranslation(CatchNode
+                    .valueOf(catchNodeCopy.getName()), this, wall));
+        }
+        control.setPhysicsRotation(wall.getControl(RigidBodyControl.class)
+                .getPhysicsRotation());
+        catchNode.setLocalTranslation(catchNodeCopy.getLocalTranslation());
+        return catchNode; 
+    }
 }

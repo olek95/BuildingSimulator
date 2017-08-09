@@ -140,8 +140,8 @@ public class Construction extends Node{
                                     .getWorldTranslation();
                         else return null; 
                     }
-                    catchNodes[minDistance] = changeCatchNodeLocation(wall1, 
-                            wall2, catchNodes[minDistance], minDistance, 
+                    catchNodes[minDistance] = wall2.changeCatchNodeLocation(wall1, 
+                            catchNodes[minDistance], minDistance, 
                             wallChildren.indexOf(catchNodes[minDistance].getParent()),
                             perpendicularity); 
                     catchNodesLocations[minDistance] = catchNodes[minDistance].getWorldTranslation();
@@ -270,27 +270,5 @@ public class Construction extends Node{
                 (Node)parent.getChild(1);
         if(nearestChild.getChildren().isEmpty()) return nearestChild; 
         return null; 
-    }
-    
-    private Node changeCatchNodeLocation(Wall wall1, Wall wall2, Node catchNode, int i,
-            int parentIndex, boolean perpendicularity){
-        Node wallCopy = wall2.clone(false), catchNodeCopy; 
-        RigidBodyControl control = wallCopy.getControl(RigidBodyControl.class);
-        control.setPhysicsRotation(Quaternion.IDENTITY);
-        catchNodeCopy = parentIndex == -1 ? (Node)wallCopy.getChild(6 + i) : 
-                (Node)((Node)wallCopy.getChild(parentIndex)).getChild(i); 
-        if(perpendicularity && parentIndex == -1){
-            catchNodeCopy.setLocalTranslation(catchNode.getName()
-                    .equals(CatchNode.EAST.toString()) ? -wall1.getHeight() 
-                    - wall2.getLength() : wall1.getHeight() + wall2.getLength(),
-                    wall1.getWidth(), 0);
-        }else{
-            catchNodeCopy.setLocalTranslation(CatchNode.calculateTranslation(CatchNode
-                    .valueOf(catchNodeCopy.getName()), wall2, wall1));
-        }
-        control.setPhysicsRotation(wall1.getControl(RigidBodyControl.class)
-                .getPhysicsRotation());
-        catchNode.setLocalTranslation(catchNodeCopy.getLocalTranslation());
-        return catchNode; 
     }
 }

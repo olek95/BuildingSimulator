@@ -126,9 +126,9 @@ public class Construction extends Node{
                     foundations = catchNodeIndex != 5; 
             if(hasEmptySpace(catchNodes[minDistance], perpendicularity)){
                 if(foundations){
-                    if(perpendicularity && minDistance <= 1){
+                    if(perpendicularity){
                         catchNodes[minDistance] = getNearestChild(catchNodes[minDistance],
-                            distances);
+                            distances, minDistance);
                         if(catchNodes[minDistance] != null)
                             catchNodesLocations[minDistance] = catchNodes[minDistance]
                                     .getWorldTranslation();
@@ -259,9 +259,14 @@ public class Construction extends Node{
         }
     }
     
-    private Node getNearestChild(Node parent, float[] distances){
-        Node nearestChild = distances[3] < distances[2] ? (Node)parent.getChild(0) :
-                (Node)parent.getChild(1);
+    private Node getNearestChild(Node parent, float[] distances, int directionIndex){
+        Node nearestChild;
+        if(directionIndex < 2)
+            nearestChild = distances[3] < distances[2] ? (Node)parent.getChild(0) :
+                    (Node)parent.getChild(1);
+        else
+            nearestChild = distances[1] < distances[0] ? (Node)parent.getChild(0) :
+                    (Node)parent.getChild(1);
         if(nearestChild.getChildren().isEmpty()) return nearestChild; 
         return null; 
     }

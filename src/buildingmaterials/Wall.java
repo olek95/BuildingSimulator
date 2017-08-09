@@ -316,6 +316,15 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         catchNodeCopy = parentIndex == -1 ? (Node)wallCopy.getChild(6 + i) : 
                 (Node)((Node)wallCopy.getChild(parentIndex)).getChild(i); 
         if(perpendicularity && parentIndex == -1){
+            Vector3f wallDistance = wall.getWorldTranslation(),
+                    southLocation = getChild(5).getWorldTranslation(),
+                    northLocation = getChild(6).getWorldTranslation();
+            float southDistance = southLocation.distance(wallDistance),
+                    northDistance = northLocation.distance(wallDistance), z;
+            if(southDistance < northDistance){
+                
+            }
+            //z = southDistance < northDistance ? 
             catchNodeCopy.setLocalTranslation(catchNode.getName()
                     .equals(CatchNode.EAST.toString()) ? -wall.height
                     - length : wall.height + length, wall.width, 0);

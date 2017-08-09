@@ -48,6 +48,7 @@ public class Construction extends Node{
                                 (Wall)recentlyHitObject, false, wallMode);
                     }
                     if(touchedWall != null){
+                        System.out.println(touchedWall); 
                         touchedWall.attachChild(wall1);
                         if(!collisionWithGround) correctLocations(touchedWall.getName()); 
                         RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
@@ -55,13 +56,6 @@ public class Construction extends Node{
                         control.setLinearDamping(1);
                     }
             }
-           /* List<Spatial> c = BuildingSimulator.getBuildingSimulator().getRootNode().getChildren();
-            for(Spatial s : c){
-                System.out.println(s); 
-                if(s instanceof Construction)
-                System.out.println(s + " " + ((Node)s).getChildren().size() + " " 
-                        + ((Node)s).getChild(0));
-            } */
         }
     }
     
@@ -176,7 +170,7 @@ public class Construction extends Node{
                 return null;
             }
         }else{
-            merge(wall1, wall2, 6, mode); 
+            return merge(wall1, wall2, 6, mode); 
         }
         return this; 
     }

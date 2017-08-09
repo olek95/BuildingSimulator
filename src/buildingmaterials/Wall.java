@@ -284,7 +284,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     
     private void createWallNodes(){
         CatchNode[] nodes = CatchNode.values();
-        Node north = null, south = null; 
+        Node north = null, south = null, east = null, west = null; 
         for(int i = 0; i < 9; i++){
             if(nodes[i].equals(CatchNode.SOUTH))
                 south = addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
@@ -292,6 +292,12 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
             else if(nodes[i].equals(CatchNode.NORTH))
                 north = addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
                         this); 
+            else if(nodes[i].equals(CatchNode.EAST))
+                east = addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
+                        this);
+            else if(nodes[i].equals(CatchNode.WEST))
+                west = addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
+                        this);
             else addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
                         this); 
         }
@@ -299,6 +305,10 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         addNode(nodes[10], CatchNode.calculateTranslation(nodes[10], this, null), south); 
         addNode(nodes[11], CatchNode.calculateTranslation(nodes[11], this, null), north); 
         addNode(nodes[12], CatchNode.calculateTranslation(nodes[12], this, null), north); 
+        addNode(nodes[13], CatchNode.calculateTranslation(nodes[13], this, null), east);
+        addNode(nodes[14], CatchNode.calculateTranslation(nodes[14], this, null), east); 
+        addNode(nodes[15], CatchNode.calculateTranslation(nodes[15], this, null), west); 
+        addNode(nodes[16], CatchNode.calculateTranslation(nodes[16], this, null), west); 
     }
     
     private Node addNode(CatchNode type, Vector3f location, Node parent){
@@ -321,10 +331,10 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
                     northLocation = getChild(6).getWorldTranslation();
             float southDistance = southLocation.distance(wallDistance),
                     northDistance = northLocation.distance(wallDistance), z;
-            if(southDistance < northDistance){
+            /*if(southDistance < northDistance){
                 
             }
-            //z = southDistance < northDistance ? 
+            z = southDistance < northDistance ? wall.length - height; */
             catchNodeCopy.setLocalTranslation(catchNode.getName()
                     .equals(CatchNode.EAST.toString()) ? -wall.height
                     - length : wall.height + length, wall.width, 0);

@@ -21,7 +21,11 @@ public enum CatchNode {
     SOUTH_0, 
     SOUTH_1,
     NORTH_0, 
-    NORTH_1;
+    NORTH_1,
+    EAST_0, 
+    EAST_1, 
+    WEST_0, 
+    WEST_1;
     
     /**
      * Oblicza położenie pomocniczych węzłów dla pierwszej ściany. Jeśli podana jest 
@@ -69,6 +73,18 @@ public enum CatchNode {
             case NORTH_1:
                 return new Vector3f(-wall2.getHeight(), wall2.getWidth(), 
                         wall2.getLength() - wall1.getHeight());
+            case EAST_0: 
+                return new Vector3f(-wall1.getLength() - wall2.getHeight(), 
+                        wall1.getWidth(), wall2.getLength());
+            case EAST_1: 
+                return new Vector3f(-wall1.getLength() - wall2.getHeight(), 
+                        wall1.getWidth(), -wall2.getLength()); 
+            case WEST_0: 
+                return new Vector3f(wall1.getLength() + wall2.getHeight(), 
+                        wall1.getWidth(), wall2.getLength());
+            case WEST_1: 
+                return new Vector3f(wall1.getLength() + wall2.getHeight(), 
+                        wall1.getWidth(), -wall2.getLength());
         }
         return null; 
     }

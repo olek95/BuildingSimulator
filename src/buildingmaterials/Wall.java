@@ -148,7 +148,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         catchNodeCopy = parentIndex == -1 ? (Node)wallCopy.getChild(6 + i) : 
                 (Node)((Node)wallCopy.getChild(parentIndex)).getChild(i % 2); 
         catchNodeCopy.setLocalTranslation(CatchNode.calculateTranslation(CatchNode
-                .valueOf(catchNodeCopy.getName()), this, wall));
+                .valueOf(catchNodeCopy.getName()), this, wall, perpendicularity));
         control.setPhysicsRotation(wall.getControl(RigidBodyControl.class)
                 .getPhysicsRotation());
         catchNode.setLocalTranslation(catchNodeCopy.getLocalTranslation());
@@ -312,31 +312,34 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     
     private void createWallNodes(){
         CatchNode[] nodes = CatchNode.values();
-        Node north = null, south = null, east = null, west = null; 
-        for(int i = 0; i < 9; i++){
-            if(nodes[i].equals(CatchNode.SOUTH))
-                south = addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
-                        this);
-            else if(nodes[i].equals(CatchNode.NORTH))
-                north = addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
-                        this); 
-            else if(nodes[i].equals(CatchNode.EAST))
-                east = addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
-                        this);
-            else if(nodes[i].equals(CatchNode.WEST))
-                west = addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
-                        this);
-            else addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
+        //Node north = null, south = null, east = null, west = null; 
+        //for(int i = 0; i < 9; i++){
+        for(int i = 0; i < 13; i++){
+//            if(nodes[i].equals(CatchNode.SOUTH))
+//                south = addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
+//                        this);
+//            else if(nodes[i].equals(CatchNode.NORTH))
+//                north = addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
+//                        this); 
+//            else if(nodes[i].equals(CatchNode.EAST))
+//                east = addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
+//                        this);
+//            else if(nodes[i].equals(CatchNode.WEST))
+//                west = addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
+//                        this);
+//            else addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
+//                        this); 
+            addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null, false),
                         this); 
         }
-        addNode(nodes[9], CatchNode.calculateTranslation(nodes[9], this, null), south); 
-        addNode(nodes[10], CatchNode.calculateTranslation(nodes[10], this, null), south); 
-        addNode(nodes[11], CatchNode.calculateTranslation(nodes[11], this, null), north); 
-        addNode(nodes[12], CatchNode.calculateTranslation(nodes[12], this, null), north); 
-        addNode(nodes[13], CatchNode.calculateTranslation(nodes[13], this, null), east);
-        addNode(nodes[14], CatchNode.calculateTranslation(nodes[14], this, null), east); 
-        addNode(nodes[15], CatchNode.calculateTranslation(nodes[15], this, null), west); 
-        addNode(nodes[16], CatchNode.calculateTranslation(nodes[16], this, null), west); 
+//        addNode(nodes[9], CatchNode.calculateTranslation(nodes[9], this, null), south); 
+//        addNode(nodes[10], CatchNode.calculateTranslation(nodes[10], this, null), south); 
+//        addNode(nodes[11], CatchNode.calculateTranslation(nodes[11], this, null), north); 
+//        addNode(nodes[12], CatchNode.calculateTranslation(nodes[12], this, null), north); 
+//        addNode(nodes[13], CatchNode.calculateTranslation(nodes[13], this, null), east);
+//        addNode(nodes[14], CatchNode.calculateTranslation(nodes[14], this, null), east); 
+//        addNode(nodes[15], CatchNode.calculateTranslation(nodes[15], this, null), west); 
+//        addNode(nodes[16], CatchNode.calculateTranslation(nodes[16], this, null), west); 
     }
     
     private Node addNode(CatchNode type, Vector3f location, Node parent){

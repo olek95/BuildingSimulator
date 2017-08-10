@@ -123,16 +123,17 @@ public class Construction extends Node{
             int minDistance = getMin(distances); 
             boolean perpendicularity = wall1.checkPerpendicularity(wall2),
                     foundations = catchNodeIndex != 5; 
-            if(hasEmptySpace(catchNodes[minDistance], perpendicularity)){
+//            if(hasEmptySpace(catchNodes[minDistance], perpendicularity)){
+              if(catchNodes[minDistance].getChildren().isEmpty()){
                 if(foundations){
-                    if(perpendicularity){
-                        catchNodes[minDistance] = getNearestChild(catchNodes[minDistance],
-                            distances, minDistance);
-                        if(catchNodes[minDistance] != null)
-                            catchNodesLocations[minDistance] = catchNodes[minDistance]
-                                    .getWorldTranslation();
-                        else return null; 
-                    }
+//                    if(perpendicularity){
+//                       // catchNodes[minDistance] = getNearestChild(catchNodes[minDistance],
+//                         //   distances, minDistance);
+//                        if(catchNodes[minDistance] != null)
+//                            catchNodesLocations[minDistance] = catchNodes[minDistance]
+//                                    .getWorldTranslation();
+//                        else return null; 
+//                    }
                     catchNodes[minDistance] = wall2.changeCatchNodeLocation(wall1, 
                             catchNodes[minDistance], minDistance, 
                             wallChildren.indexOf(catchNodes[minDistance].getParent()),
@@ -240,26 +241,26 @@ public class Construction extends Node{
         }
     }
     
-    private boolean hasEmptySpace(Node catchNode, boolean perpendicularity){
-        String catchNodeName = catchNode.getName(); 
-        CatchNode[] directions = {CatchNode.NORTH, CatchNode.SOUTH, 
-            CatchNode.EAST, CatchNode.WEST};
-        boolean found = false;
-        for(int i = 0; i < directions.length && !found; i++){
-            if(catchNodeName.equals(directions[i].toString())) found = true; 
-        }
-        if(found){
-            if(perpendicularity) return true; 
-            List<Spatial> catchNodeChildren = catchNode.getChildren(); 
-            if(catchNodeChildren.size() > 2) return false; 
-            boolean empty = true;
-            for(int i = 0; i < 2; i++){
-                empty = ((Node)catchNodeChildren.get(i)).getChildren().isEmpty(); 
-                if(!empty) return empty; 
-            }
-            return empty; 
-        }else return catchNode.getChildren().isEmpty();
-    }
+//    private boolean hasEmptySpace(Node catchNode, boolean perpendicularity){
+//        String catchNodeName = catchNode.getName(); 
+//        CatchNode[] directions = {CatchNode.NORTH, CatchNode.SOUTH, 
+//            CatchNode.EAST, CatchNode.WEST};
+//        boolean found = false;
+//        for(int i = 0; i < directions.length && !found; i++){
+//            if(catchNodeName.equals(directions[i].toString())) found = true; 
+//        }
+//        if(found){
+//            if(perpendicularity) return true; 
+//            List<Spatial> catchNodeChildren = catchNode.getChildren(); 
+//            if(catchNodeChildren.size() > 2) return false; 
+//            boolean empty = true;
+//            for(int i = 0; i < 2; i++){
+//                empty = ((Node)catchNodeChildren.get(i)).getChildren().isEmpty(); 
+//                if(!empty) return empty; 
+//            }
+//            return empty; 
+//        }else return catchNode.getChildren().isEmpty();
+//    }
     
     private Node getNearestChild(Node parent, float[] distances, int directionIndex){
         Node nearestChild;

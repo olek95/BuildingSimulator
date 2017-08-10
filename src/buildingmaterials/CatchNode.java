@@ -37,7 +37,11 @@ public enum CatchNode {
      */
     public static Vector3f calculateTranslation(CatchNode type, Wall wall1, Wall wall2,
             boolean perpendicularity){
-        if(wall2 == null) wall2 = wall1; 
+        boolean init = false; 
+        if(wall2 == null){
+            init = true; 
+            wall2 = wall1;
+        } 
         float width1;
         switch(type){
             case BOTTOM: 
@@ -63,19 +67,19 @@ public enum CatchNode {
 //            case WEST: 
 //                return new Vector3f(wall1.getLength() + wall2.getLength(), wall1.getWidth(), 0);
             case SOUTH_0: 
-                return new Vector3f(-getProperDimension(wall2, perpendicularity, false)
+                return new Vector3f(-getProperDimension(wall2, perpendicularity, false, init)
                         + wall1.getLength(), wall2.getWidth(), -wall1.getHeight()
-                        - getProperDimension(wall2, perpendicularity, true));
+                        - getProperDimension(wall2, perpendicularity, true, init));
             case SOUTH_1: 
-                return new Vector3f(getProperDimension(wall2, perpendicularity, false)
+                return new Vector3f(getProperDimension(wall2, perpendicularity, false, init)
                         - wall1.getLength(), wall2.getWidth(), 
-                        -wall1.getHeight() - getProperDimension(wall2, perpendicularity, true));
+                        -wall1.getHeight() - getProperDimension(wall2, perpendicularity, true, init));
             case NORTH_0:
-                return new Vector3f(-getProperDimension(wall2, perpendicularity, false)
+                return new Vector3f(-getProperDimension(wall2, perpendicularity, false, init)
                         + wall1.getLength(), wall2.getWidth(), 
                         wall2.getLength() - wall1.getHeight());
             case NORTH_1:
-                return new Vector3f(getProperDimension(wall2, perpendicularity, false)
+                return new Vector3f(getProperDimension(wall2, perpendicularity, false, init)
                         - wall1.getLength(), wall2.getWidth(), 
                         wall2.getLength() - wall1.getHeight());
             case EAST_0: 
@@ -94,7 +98,9 @@ public enum CatchNode {
         return null; 
     }
     
-    private static float getProperDimension(Wall wall, boolean perpendicularity, boolean height){
+    private static float getProperDimension(Wall wall, boolean perpendicularity, boolean height,
+            boolean init){
+        if(init) return 0; 
         if(height) return perpendicularity ? wall.getLength() : wall.getHeight();
         else return perpendicularity ? wall.getHeight() : wall.getLength();
     }

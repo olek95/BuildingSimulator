@@ -329,6 +329,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
 //                        this);
 //            else addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
 //                        this); 
+            System.out.println(nodes[i] + " " + CatchNode.calculateTranslation(nodes[i], this, null, false));
             addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null, false),
                         this); 
         }

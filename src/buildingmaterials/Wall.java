@@ -323,8 +323,9 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         Node wallCopy = clone(false), catchNodeCopy; 
         RigidBodyControl control = wallCopy.getControl(RigidBodyControl.class);
         control.setPhysicsRotation(Quaternion.IDENTITY);
+        System.out.println(parentIndex + " " + wallCopy + " " + i);
         catchNodeCopy = parentIndex == -1 ? (Node)wallCopy.getChild(6 + i) : 
-                (Node)((Node)wallCopy.getChild(parentIndex)).getChild(i); 
+                (Node)((Node)wallCopy.getChild(parentIndex)).getChild(i % 2); 
 //        if(perpendicularity && parentIndex == -1){
 //            Vector3f wallDistance = wall.getWorldTranslation(),
 //                    southLocation = getChild(5).getWorldTranslation(),

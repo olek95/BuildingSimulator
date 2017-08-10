@@ -48,7 +48,6 @@ public class Construction extends Node{
                                 (Wall)recentlyHitObject, false, wallMode);
                     }
                     if(touchedWall != null){
-                        System.out.println(touchedWall); 
                         touchedWall.attachChild(wall1);
                         if(!collisionWithGround) correctLocations(touchedWall.getName()); 
                         RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
@@ -243,10 +242,13 @@ public class Construction extends Node{
     
     private boolean hasEmptySpace(Node catchNode, boolean perpendicularity){
         String catchNodeName = catchNode.getName(); 
-        if(!catchNodeName.equals(CatchNode.NORTH.toString()) 
-                && !catchNodeName.equals(CatchNode.SOUTH.toString())) 
-            return catchNode.getChildren().isEmpty();
-        else{
+        CatchNode[] directions = {CatchNode.NORTH, CatchNode.SOUTH, 
+            CatchNode.EAST, CatchNode.WEST};
+        boolean found = false;
+        for(int i = 0; i < directions.length && !found; i++){
+            if(catchNodeName.equals(directions[i].toString())) found = true; 
+        }
+        if(found){
             if(perpendicularity) return true; 
             List<Spatial> catchNodeChildren = catchNode.getChildren(); 
             if(catchNodeChildren.size() > 2) return false; 
@@ -256,7 +258,7 @@ public class Construction extends Node{
                 if(!empty) return empty; 
             }
             return empty; 
-        }
+        }else return catchNode.getChildren().isEmpty();
     }
     
     private Node getNearestChild(Node parent, float[] distances, int directionIndex){

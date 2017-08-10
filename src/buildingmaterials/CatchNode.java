@@ -74,17 +74,17 @@ public enum CatchNode {
                 return new Vector3f(-wall2.getHeight(), wall2.getWidth(), 
                         wall2.getLength() - wall1.getHeight());
             case EAST_0: 
-                return new Vector3f(-wall1.getLength() - wall2.getHeight(), 
-                        wall1.getWidth(), wall2.getLength());
+                return new Vector3f(wall1.getLength() - wall2.getHeight(), 
+                        wall1.getWidth(), -wall2.getLength() + wall1.getHeight());
             case EAST_1: 
-                return new Vector3f(-wall1.getLength() - wall2.getHeight(), 
-                        wall1.getWidth(), -wall2.getLength()); 
+                return new Vector3f(wall1.getLength() - wall2.getHeight(), 
+                        wall1.getWidth(), wall2.getLength() - wall1.getHeight()); 
             case WEST_0: 
-                return new Vector3f(wall1.getLength() + wall2.getHeight(), 
-                        wall1.getWidth(), wall2.getLength());
+                return new Vector3f(-wall1.getLength() + wall2.getHeight(), 
+                        wall1.getWidth(), -wall2.getLength() + wall1.getHeight());
             case WEST_1: 
-                return new Vector3f(wall1.getLength() + wall2.getHeight(), 
-                        wall1.getWidth(), -wall2.getLength());
+                return new Vector3f(-wall1.getLength() + wall2.getHeight(), 
+                        wall1.getWidth(), wall2.getLength() - wall1.getHeight());
         }
         return null; 
     }

@@ -76,12 +76,12 @@ public enum CatchNode {
                         -wall1.getHeight() - getProperDimension(wall2, perpendicularity, true, init));
             case NORTH_0:
                 return new Vector3f(-getProperDimension(wall2, perpendicularity, false, init)
-                        + wall1.getLength(), wall2.getWidth(), 
-                        wall2.getLength() - wall1.getHeight());
+                        + wall1.getLength(), wall2.getWidth(), wall1.getHeight()
+                        + getProperDimension(wall2, perpendicularity, true, init));
             case NORTH_1:
                 return new Vector3f(getProperDimension(wall2, perpendicularity, false, init)
-                        - wall1.getLength(), wall2.getWidth(), 
-                        wall2.getLength() - wall1.getHeight());
+                        - wall1.getLength(), wall2.getWidth(), wall1.getHeight()
+                        + getProperDimension(wall2, perpendicularity, true, init));
             case EAST_0: 
                 return new Vector3f(wall1.getLength() - wall2.getHeight(), 
                         wall1.getWidth(), -wall2.getLength() + wall1.getHeight());

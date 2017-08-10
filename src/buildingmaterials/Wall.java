@@ -128,6 +128,34 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     /**
+     * Zmienia połozenie pomocniczego węzła podanego węzła pomocniczego dla tej 
+     * ściany, w oparciu o wymiary ściany dodawanej. 
+     * @param wall dodawana ściana 
+     * @param catchNode wezeł, którego pozycję zmieniamy 
+     * @param i indeks węzła pomocniczego 
+     * @param parentIndex indeks rodzica pomocniczego węzła, jeśli -1 to węzeł 
+     * jest węzłem pomocniczym oznaczającym kierunek wewnętrzny 
+     * @param perpendicularity true jeśli ta ściana jest prostopadła do dodawanej 
+     * ściany 
+     * @return węzeł o zmienionej pozycji  
+     */
+    public Node changeCatchNodeLocation(Wall wall, Node catchNode, int i,
+            int parentIndex, boolean perpendicularity){
+        System.out.println(wall + " " + catchNode + " " + i + " " + parentIndex + " " + perpendicularity);
+        Node wallCopy = clone(false), catchNodeCopy; 
+        RigidBodyControl control = wallCopy.getControl(RigidBodyControl.class);
+        control.setPhysicsRotation(Quaternion.IDENTITY);
+        catchNodeCopy = parentIndex == -1 ? (Node)wallCopy.getChild(6 + i) : 
+                (Node)((Node)wallCopy.getChild(parentIndex)).getChild(i % 2); 
+        catchNodeCopy.setLocalTranslation(CatchNode.calculateTranslation(CatchNode
+                .valueOf(catchNodeCopy.getName()), this, wall));
+        control.setPhysicsRotation(wall.getControl(RigidBodyControl.class)
+                .getPhysicsRotation());
+        catchNode.setLocalTranslation(catchNodeCopy.getLocalTranslation());
+        return catchNode; 
+    }
+    
+    /**
      * Zwraca największy wymiar (długość lub wysokość). 
      * @return największy wymiar 
      */
@@ -316,36 +344,5 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         node.setLocalTranslation(location);
         parent.attachChild(node); 
         return node; 
-    }
-    
-    public Node changeCatchNodeLocation(Wall wall, Node catchNode, int i,
-            int parentIndex, boolean perpendicularity){
-        Node wallCopy = clone(false), catchNodeCopy; 
-        RigidBodyControl control = wallCopy.getControl(RigidBodyControl.class);
-        control.setPhysicsRotation(Quaternion.IDENTITY);
-        System.out.println(parentIndex + " " + wallCopy + " " + i);
-        catchNodeCopy = parentIndex == -1 ? (Node)wallCopy.getChild(6 + i) : 
-                (Node)((Node)wallCopy.getChild(parentIndex)).getChild(i % 2); 
-//        if(perpendicularity && parentIndex == -1){
-//            Vector3f wallDistance = wall.getWorldTranslation(),
-//                    southLocation = getChild(5).getWorldTranslation(),
-//                    northLocation = getChild(6).getWorldTranslation();
-//            float southDistance = southLocation.distance(wallDistance),
-//                    northDistance = northLocation.distance(wallDistance), z;
-//            /*if(southDistance < northDistance){
-//                
-//            }
-//            z = southDistance < northDistance ? wall.length - height; */
-//            catchNodeCopy.setLocalTranslation(catchNode.getName()
-//                    .equals(CatchNode.EAST.toString()) ? -wall.height
-//                    - length : wall.height + length, wall.width, 0);
-//        }else{
-            catchNodeCopy.setLocalTranslation(CatchNode.calculateTranslation(CatchNode
-                    .valueOf(catchNodeCopy.getName()), this, wall));
-//        }
-        control.setPhysicsRotation(wall.getControl(RigidBodyControl.class)
-                .getPhysicsRotation());
-        catchNode.setLocalTranslation(catchNodeCopy.getLocalTranslation());
-        return catchNode; 
     }
 }

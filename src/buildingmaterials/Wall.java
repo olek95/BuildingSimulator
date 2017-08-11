@@ -140,13 +140,14 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      * @return węzeł o zmienionej pozycji  
      */
     public Node changeCatchNodeLocation(Wall wall, Node catchNode, int i,
-            int parentIndex, boolean perpendicularity){
-        System.out.println(wall + " " + catchNode + " " + i + " " + parentIndex + " " + perpendicularity);
+            boolean perpendicularity){
+        System.out.println(wall + " " + catchNode + " " + i + " " + perpendicularity);
         Node wallCopy = clone(false), catchNodeCopy; 
         RigidBodyControl control = wallCopy.getControl(RigidBodyControl.class);
         control.setPhysicsRotation(Quaternion.IDENTITY);
-        catchNodeCopy = parentIndex == -1 ? (Node)wallCopy.getChild(6 + i) : 
-                (Node)((Node)wallCopy.getChild(parentIndex)).getChild(i % 2); 
+        //catchNodeCopy = parentIndex == -1 ? (Node)wallCopy.getChild(6 + i) : 
+        //        (Node)((Node)wallCopy.getChild(parentIndex)).getChild(i % 2); 
+        catchNodeCopy = (Node)wallCopy.getChild(i); 
         catchNodeCopy.setLocalTranslation(CatchNode.calculateTranslation(CatchNode
                 .valueOf(catchNodeCopy.getName()), this, wall, perpendicularity));
         control.setPhysicsRotation(wall.getControl(RigidBodyControl.class)
@@ -329,7 +330,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
 //                        this);
 //            else addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
 //                        this); 
-            System.out.println(nodes[i] + " " + CatchNode.calculateTranslation(nodes[i], this, null, false));
+            //System.out.println(nodes[i] + " " + CatchNode.calculateTranslation(nodes[i], this, null, false));
             addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null, false),
                         this); 
         }

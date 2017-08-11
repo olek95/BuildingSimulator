@@ -112,19 +112,30 @@ public class Construction extends Node{
         if(wall2 != null){ 
             Vector3f location = ((RigidBodyControl)wall1.getControl(mode)).getPhysicsLocation();
             List<Spatial> wallChildren = wall2.getChildren(); 
+            //int nodeCount = catchNodeIndex == 1 ? 4 : 6;
             Node[] catchNodes = new Node[4];
             Vector3f[] catchNodesLocations = new Vector3f[4];
             float[] distances = new float[4];
-            for(int i = 0; i < 4; i++, catchNodeIndex++){
+            //for(int i = 0; i < nodeCount; i++, catchNodeIndex++){
+            for(int i = 0; i < 4; i++){
                 catchNodes[i] = (Node)wallChildren.get(catchNodeIndex);
                 catchNodesLocations[i] = catchNodes[i].getWorldTranslation(); 
                 distances[i] = location.distance(catchNodesLocations[i]); 
             }
-            int minDistance = getMin(distances); 
+            //for(int i = 0; i < catchNodes.length;i++){
+            //    System.out.println(catchNodes[i]);
+            //}
             boolean perpendicularity = wall1.checkPerpendicularity(wall2),
                     foundations = catchNodeIndex != 5; 
+              int minDistance = getMin(distances, foundations, wall1), 
+                      i = minDistance > 3 ? 0 : minDistance; 
+              if(foundations) {
+                  catchNodes[i] = (Node)wallChildren.get(minDistance); 
+                  for(Spatial n : wallChildren) System.out.println(n); 
+                  System.out.println(i + " " + catchNodes[i] + " " + minDistance);
+              }
 //            if(hasEmptySpace(catchNodes[minDistance], perpendicularity)){
-              if(catchNodes[minDistance].getChildren().isEmpty()){
+              if(catchNodes[i].getChildren().isEmpty()){
                 if(foundations){
 //                    if(perpendicularity){
 //                       // catchNodes[minDistance] = getNearestChild(catchNodes[minDistance],
@@ -134,19 +145,17 @@ public class Construction extends Node{
 //                                    .getWorldTranslation();
 //                        else return null; 
 //                    }
-                    catchNodes[minDistance] = wall2.changeCatchNodeLocation(wall1, 
-                            catchNodes[minDistance], minDistance, 
-                            wallChildren.indexOf(catchNodes[minDistance].getParent()),
-                            perpendicularity); 
-                    catchNodesLocations[minDistance] = catchNodes[minDistance].getWorldTranslation();
+                    catchNodes[i] = wall2.changeCatchNodeLocation(wall1, 
+                            catchNodes[i], minDistance, perpendicularity); 
+                    catchNodesLocations[i] = catchNodes[i].getWorldTranslation();
                 }
                 RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
                 control.setPhysicsLocation(calculateProperLocation(
-                        catchNodesLocations[minDistance], foundations, wall1, mode));
+                        catchNodesLocations[i], foundations, wall1, mode));
                 control.setPhysicsRotation(calculateProperRotation(wall2
                         .getControl(RigidBodyControl.class).getPhysicsRotation(),
-                        minDistance, !foundations, perpendicularity));
-                return catchNodes[minDistance];
+                        i, !foundations, perpendicularity));
+                return catchNodes[i];
             }else return null; 
         }
         return this;
@@ -192,12 +201,20 @@ public class Construction extends Node{
         counter--; 
     }
     
-    private int getMin(float[] distances){
+    private int getMin(float[] distances, boolean foundations, Wall wall){
         int min = 0; 
         for(int i = 1; i < 4; i++){
             if(distances[min] > distances[i]){
                 min = i; 
             }
+        }
+        if(foundations){
+            Vector3f wallLocation = wall.getWorldTranslation();
+            int offset = min % 2, i1 = min + 6 + offset, i2 = min + 7 + offset; 
+            System.out.println(i1 + " " + i2 +  " "  + wall); 
+            return wall.getChild(i1).getWorldTranslation().distance(wallLocation) 
+                    < wall.getChild(i2).getWorldTranslation().distance(wallLocation) ?
+                    i1 : i2; 
         }
         return min; 
     }

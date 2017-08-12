@@ -40,7 +40,7 @@ public class Construction extends Node{
                     Node touchedWall; 
                     if(wallMode == 2){ 
                         touchedWall = merge(wall1, collisionWithGround ? null 
-                            : (Wall)recentlyHitObject, 1, wallMode);
+                            : (Wall)recentlyHitObject, false, wallMode);
                     }else{
                         if(wall2 != null) 
                             touchedWall = mergeHorizontal(wall1, wall2, true, wallMode); 
@@ -108,7 +108,7 @@ public class Construction extends Node{
         }else return null; 
     }
     
-    private Node merge(Wall wall1, Wall wall2, int catchNodeIndex, int mode){
+    private Node merge(Wall wall1, Wall wall2, boolean foundations, int mode){
         if(wall2 != null){ 
             Vector3f location = ((RigidBodyControl)wall1.getControl(mode)).getPhysicsLocation();
             List<Spatial> wallChildren = wall2.getChildren(); 
@@ -118,16 +118,13 @@ public class Construction extends Node{
             float[] distances = new float[4];
             //for(int i = 0; i < nodeCount; i++, catchNodeIndex++){
             for(int i = 0; i < 4; i++){
-                catchNodes[i] = (Node)wallChildren.get(catchNodeIndex);
+                catchNodes[i] = (Node)wallChildren.get(i + 1);
+                System.out.println(catchNodes[i]);
                 catchNodesLocations[i] = catchNodes[i].getWorldTranslation(); 
                 distances[i] = location.distance(catchNodesLocations[i]); 
             }
-            //for(int i = 0; i < catchNodes.length;i++){
-            //    System.out.println(catchNodes[i]);
-            //}
-            boolean perpendicularity = wall1.checkPerpendicularity(wall2),
-                    foundations = catchNodeIndex != 5; 
-              int minDistance = getMin(distances, foundations, wall1), 
+            boolean perpendicularity = wall1.checkPerpendicularity(wall2); 
+              int minDistance = getMin(distances, foundations, location, wall2), 
                       i = minDistance > 3 ? 0 : minDistance; 
               if(foundations) {
                   catchNodes[i] = (Node)wallChildren.get(minDistance); 
@@ -179,7 +176,7 @@ public class Construction extends Node{
                 return null;
             }
         }else{
-            return merge(wall1, wall2, 6, mode); 
+            return merge(wall1, wall2, true, mode); 
         }
         return this; 
     }
@@ -201,17 +198,21 @@ public class Construction extends Node{
         counter--; 
     }
     
-    private int getMin(float[] distances, boolean foundations, Wall wall){
+    private int getMin(float[] distances, boolean foundations, Vector3f wallLocation,
+            Wall wall){
         int min = 0; 
+        System.out.println(distances[0]);
         for(int i = 1; i < 4; i++){
+            System.out.println(distances[i]);
             if(distances[min] > distances[i]){
                 min = i; 
             }
         }
         if(foundations){
-            Vector3f wallLocation = wall.getWorldTranslation();
-            int offset = min % 2, i1 = min + 6 + offset, i2 = min + 7 + offset; 
-            System.out.println(i1 + " " + i2 +  " "  + wall); 
+            int offset = min * 2, i1 = 6 + offset, i2 = 7 + offset; 
+            System.out.println(i1 + " " + i2 +  " "  + wall.getChild(i1) + " " 
+                    + wall.getChild(i2) + " " + wall.getChild(i1).getWorldTranslation()
+                    + " " + wall.getChild(i2).getWorldTranslation() + " "+  min + " " + offset); 
             return wall.getChild(i1).getWorldTranslation().distance(wallLocation) 
                     < wall.getChild(i2).getWorldTranslation().distance(wallLocation) ?
                     i1 : i2; 

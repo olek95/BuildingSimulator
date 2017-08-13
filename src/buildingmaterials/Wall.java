@@ -126,10 +126,17 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
                 yAngle = Math.abs(getWorldRotation().toAngles(null)[1]);
         //System.out.println((yAngleOther - FastMath.QUARTER_PI) + " " + yAngle +
         //        " " + (FastMath.QUARTER_PI + yAngleOther) + " " + (FastMath.TWO_PI - yAngle));
-        return yAngleOther - FastMath.QUARTER_PI > yAngle 
-                && FastMath.QUARTER_PI + yAngleOther < FastMath.TWO_PI - yAngle
-                || yAngleOther + FastMath.QUARTER_PI < yAngle && yAngleOther 
-                - FastMath.QUARTER_PI > (FastMath.TWO_PI + yAngle) % 360;
+        //return yAngleOther - FastMath.QUARTER_PI > yAngle 
+          //      && FastMath.QUARTER_PI + yAngleOther < FastMath.TWO_PI - yAngle
+            //    || yAngleOther + FastMath.QUARTER_PI < yAngle && yAngleOther 
+              //  - FastMath.QUARTER_PI > (FastMath.TWO_PI + yAngle) % 360;
+        System.out.println((yAngleOther - FastMath.QUARTER_PI) + " " + yAngle + 
+                " " + (yAngleOther - FastMath.PI
+                + FastMath.QUARTER_PI) + " " + (yAngleOther + FastMath.QUARTER_PI) + 
+                " " + (yAngleOther + FastMath.PI - FastMath.QUARTER_PI));
+        return yAngleOther - FastMath.QUARTER_PI > yAngle && yAngleOther - FastMath.PI
+                + FastMath.QUARTER_PI < yAngle || yAngleOther + FastMath.QUARTER_PI 
+                < yAngle && yAngleOther + FastMath.PI - FastMath.QUARTER_PI > yAngle;
         /* ‪46,5929244622918‬ > 178.394282708677
 
 136.592920635226 < 181.605734068697*/

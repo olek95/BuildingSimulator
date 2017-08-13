@@ -229,6 +229,7 @@ public class Construction extends Node{
     
     private Quaternion calculateProperRotation(Quaternion rotation, int direction,
             boolean notFoundations, boolean perpendicular){
+        System.out.println("PROSTOPADLOSC: " + perpendicular); 
         Quaternion newRotation;
         if(notFoundations){
             newRotation = rotation.clone().multLocal(-1.570796f, 0, 0, 1.570796f);

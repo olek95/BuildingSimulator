@@ -14,10 +14,6 @@ public enum CatchNode {
     RIGHT, 
     LEFT, 
     CENTER, 
-    /*SOUTH,
-    NORTH,
-    EAST,
-    WEST,*/
     SOUTH_0, 
     SOUTH_1,
     NORTH_0, 
@@ -58,14 +54,6 @@ public enum CatchNode {
                 return new Vector3f(wall1.getLength() - width1, width1, 0);
             case CENTER:
                 return Vector3f.ZERO;
-//            case SOUTH:
-//                return new Vector3f(0, wall1.getWidth(), -wall1.getHeight() - wall2.getHeight());
-//            case NORTH: 
-//                return new Vector3f(0, wall1.getWidth(), wall1.getHeight() + wall2.getHeight());
-//            case EAST:
-//                return new Vector3f(-wall1.getLength() - wall2.getLength(), wall1.getWidth(), 0);
-//            case WEST: 
-//                return new Vector3f(wall1.getLength() + wall2.getLength(), wall1.getWidth(), 0);
             case SOUTH_0: 
                 return new Vector3f(-getProperDimension(wall2, perpendicularity, false, init)
                         + wall1.getLength(), wall2.getWidth(), -wall1.getHeight()

@@ -124,22 +124,9 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     public boolean checkPerpendicularity(Wall wall){
         float yAngleOther = Math.abs(wall.getWorldRotation().toAngles(null)[1]),
                 yAngle = Math.abs(getWorldRotation().toAngles(null)[1]);
-        //System.out.println((yAngleOther - FastMath.QUARTER_PI) + " " + yAngle +
-        //        " " + (FastMath.QUARTER_PI + yAngleOther) + " " + (FastMath.TWO_PI - yAngle));
-        //return yAngleOther - FastMath.QUARTER_PI > yAngle 
-          //      && FastMath.QUARTER_PI + yAngleOther < FastMath.TWO_PI - yAngle
-            //    || yAngleOther + FastMath.QUARTER_PI < yAngle && yAngleOther 
-              //  - FastMath.QUARTER_PI > (FastMath.TWO_PI + yAngle) % 360;
-        System.out.println((yAngleOther - FastMath.QUARTER_PI) + " " + yAngle + 
-                " " + (yAngleOther - FastMath.PI
-                + FastMath.QUARTER_PI) + " " + (yAngleOther + FastMath.QUARTER_PI) + 
-                " " + (yAngleOther + FastMath.PI - FastMath.QUARTER_PI));
         return yAngleOther - FastMath.QUARTER_PI > yAngle && yAngleOther - FastMath.PI
                 + FastMath.QUARTER_PI < yAngle || yAngleOther + FastMath.QUARTER_PI 
                 < yAngle && yAngleOther + FastMath.PI - FastMath.QUARTER_PI > yAngle;
-        /* ‪46,5929244622918‬ > 178.394282708677
-
-136.592920635226 < 181.605734068697*/
     }
     
     /**
@@ -160,8 +147,6 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         Node wallCopy = clone(false), catchNodeCopy; 
         RigidBodyControl control = wallCopy.getControl(RigidBodyControl.class);
         control.setPhysicsRotation(Quaternion.IDENTITY);
-        //catchNodeCopy = parentIndex == -1 ? (Node)wallCopy.getChild(6 + i) : 
-        //        (Node)((Node)wallCopy.getChild(parentIndex)).getChild(i % 2); 
         catchNodeCopy = (Node)wallCopy.getChild(i); 
         catchNodeCopy.setLocalTranslation(CatchNode.calculateTranslation(CatchNode
                 .valueOf(catchNodeCopy.getName()), this, wall, perpendicularity));
@@ -328,35 +313,8 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     
     private void createWallNodes(){
         CatchNode[] nodes = CatchNode.values();
-        //Node north = null, south = null, east = null, west = null; 
-        //for(int i = 0; i < 9; i++){
-        for(int i = 0; i < 13; i++){
-//            if(nodes[i].equals(CatchNode.SOUTH))
-//                south = addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
-//                        this);
-//            else if(nodes[i].equals(CatchNode.NORTH))
-//                north = addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
-//                        this); 
-//            else if(nodes[i].equals(CatchNode.EAST))
-//                east = addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
-//                        this);
-//            else if(nodes[i].equals(CatchNode.WEST))
-//                west = addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
-//                        this);
-//            else addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null),
-//                        this); 
-            //System.out.println(nodes[i] + " " + CatchNode.calculateTranslation(nodes[i], this, null, false));
-            addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null, false),
-                        this); 
-        }
-//        addNode(nodes[9], CatchNode.calculateTranslation(nodes[9], this, null), south); 
-//        addNode(nodes[10], CatchNode.calculateTranslation(nodes[10], this, null), south); 
-//        addNode(nodes[11], CatchNode.calculateTranslation(nodes[11], this, null), north); 
-//        addNode(nodes[12], CatchNode.calculateTranslation(nodes[12], this, null), north); 
-//        addNode(nodes[13], CatchNode.calculateTranslation(nodes[13], this, null), east);
-//        addNode(nodes[14], CatchNode.calculateTranslation(nodes[14], this, null), east); 
-//        addNode(nodes[15], CatchNode.calculateTranslation(nodes[15], this, null), west); 
-//        addNode(nodes[16], CatchNode.calculateTranslation(nodes[16], this, null), west); 
+        for(int i = 0; i < 13; i++)
+            addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null, false), this); 
     }
     
     private Node addNode(CatchNode type, Vector3f location, Node parent){

@@ -112,47 +112,35 @@ public class Construction extends Node{
         if(wall2 != null){ 
             Vector3f location = ((RigidBodyControl)wall1.getControl(mode)).getPhysicsLocation();
             List<Spatial> wallChildren = wall2.getChildren(); 
-            //int nodeCount = catchNodeIndex == 1 ? 4 : 6;
             Node[] catchNodes = new Node[4];
             Vector3f[] catchNodesLocations = new Vector3f[4];
             float[] distances = new float[4];
-            //for(int i = 0; i < nodeCount; i++, catchNodeIndex++){
             for(int i = 0; i < 4; i++){
                 catchNodes[i] = (Node)wallChildren.get(i + 1);
-                System.out.println(catchNodes[i]);
                 catchNodesLocations[i] = catchNodes[i].getWorldTranslation(); 
                 distances[i] = location.distance(catchNodesLocations[i]); 
             }
             boolean perpendicularity = wall1.checkPerpendicularity(wall2); 
-              int minDistance = getMin(distances, foundations, location, wall2), 
-                      i = minDistance > 3 ? 0 : minDistance; 
-              if(foundations) {
-                  catchNodes[i] = (Node)wallChildren.get(minDistance); 
-                  for(Spatial n : wallChildren) System.out.println(n); 
-                  System.out.println(i + " " + catchNodes[i] + " " + minDistance);
+            int minDistance = getMin(distances, foundations, location, wall2), 
+                    i = minDistance > 3 ? 0 : minDistance; 
+            if(foundations) 
+                catchNodes[i] = (Node)wallChildren.get(minDistance); 
+            System.out.println("FOUND" + foundations); 
+            if(catchNodes[i].getChildren().isEmpty()){
+                System.out.println("PUSTE" + " " + catchNodes[i] + " " +
+                        " " + catchNodes[i].getChildren().size());
+              if(foundations){
+                  catchNodes[i] = wall2.changeCatchNodeLocation(wall1, 
+                          catchNodes[i], minDistance, perpendicularity); 
+                  catchNodesLocations[i] = catchNodes[i].getWorldTranslation();
               }
-//            if(hasEmptySpace(catchNodes[minDistance], perpendicularity)){
-              if(catchNodes[i].getChildren().isEmpty()){
-                if(foundations){
-//                    if(perpendicularity){
-//                       // catchNodes[minDistance] = getNearestChild(catchNodes[minDistance],
-//                         //   distances, minDistance);
-//                        if(catchNodes[minDistance] != null)
-//                            catchNodesLocations[minDistance] = catchNodes[minDistance]
-//                                    .getWorldTranslation();
-//                        else return null; 
-//                    }
-                    catchNodes[i] = wall2.changeCatchNodeLocation(wall1, 
-                            catchNodes[i], minDistance, perpendicularity); 
-                    catchNodesLocations[i] = catchNodes[i].getWorldTranslation();
-                }
-                RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
-                control.setPhysicsLocation(calculateProperLocation(
-                        catchNodesLocations[i], foundations, wall1, mode));
-                control.setPhysicsRotation(calculateProperRotation(wall2
-                        .getControl(RigidBodyControl.class).getPhysicsRotation(),
-                        i, !foundations, perpendicularity));
-                return catchNodes[i];
+              RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
+              control.setPhysicsLocation(calculateProperLocation(
+                      catchNodesLocations[i], foundations, wall1, mode));
+              control.setPhysicsRotation(calculateProperRotation(wall2
+                      .getControl(RigidBodyControl.class).getPhysicsRotation(),
+                      i, !foundations, perpendicularity));
+              return catchNodes[i];
             }else return null; 
         }
         return this;
@@ -201,18 +189,10 @@ public class Construction extends Node{
     private int getMin(float[] distances, boolean foundations, Vector3f wallLocation,
             Wall wall){
         int min = 0; 
-        System.out.println(distances[0]);
-        for(int i = 1; i < 4; i++){
-            System.out.println(distances[i]);
-            if(distances[min] > distances[i]){
-                min = i; 
-            }
-        }
+        for(int i = 1; i < 4; i++)
+            if(distances[min] > distances[i]) min = i; 
         if(foundations){
-            int offset = min * 2, i1 = 6 + offset, i2 = 7 + offset; 
-            System.out.println(i1 + " " + i2 +  " "  + wall.getChild(i1) + " " 
-                    + wall.getChild(i2) + " " + wall.getChild(i1).getWorldTranslation()
-                    + " " + wall.getChild(i2).getWorldTranslation() + " "+  min + " " + offset); 
+            int offset = min * 2, i1 = 6 + offset, i2 = 7 + offset;  
             return wall.getChild(i1).getWorldTranslation().distance(wallLocation) 
                     < wall.getChild(i2).getWorldTranslation().distance(wallLocation) ?
                     i1 : i2; 
@@ -229,7 +209,6 @@ public class Construction extends Node{
     
     private Quaternion calculateProperRotation(Quaternion rotation, int direction,
             boolean notFoundations, boolean perpendicular){
-        System.out.println("PROSTOPADLOSC: " + perpendicular); 
         Quaternion newRotation;
         if(notFoundations){
             newRotation = rotation.clone().multLocal(-1.570796f, 0, 0, 1.570796f);
@@ -260,36 +239,17 @@ public class Construction extends Node{
         }
     }
     
-//    private boolean hasEmptySpace(Node catchNode, boolean perpendicularity){
-//        String catchNodeName = catchNode.getName(); 
-//        CatchNode[] directions = {CatchNode.NORTH, CatchNode.SOUTH, 
-//            CatchNode.EAST, CatchNode.WEST};
-//        boolean found = false;
-//        for(int i = 0; i < directions.length && !found; i++){
-//            if(catchNodeName.equals(directions[i].toString())) found = true; 
-//        }
-//        if(found){
-//            if(perpendicularity) return true; 
-//            List<Spatial> catchNodeChildren = catchNode.getChildren(); 
-//            if(catchNodeChildren.size() > 2) return false; 
-//            boolean empty = true;
-//            for(int i = 0; i < 2; i++){
-//                empty = ((Node)catchNodeChildren.get(i)).getChildren().isEmpty(); 
-//                if(!empty) return empty; 
-//            }
-//            return empty; 
-//        }else return catchNode.getChildren().isEmpty();
-//    }
-    
-    private Node getNearestChild(Node parent, float[] distances, int directionIndex){
-        Node nearestChild;
-        if(directionIndex < 2)
-            nearestChild = distances[3] < distances[2] ? (Node)parent.getChild(0) :
-                    (Node)parent.getChild(1);
-        else
-            nearestChild = distances[1] < distances[0] ? (Node)parent.getChild(0) :
-                    (Node)parent.getChild(1);
-        if(nearestChild.getChildren().isEmpty()) return nearestChild; 
+    private Wall getNearestChildFromWall(Wall wall1, Wall wall2, float min){
+        List<Spatial> children = wall2.getChildren();
+        if(children.isEmpty()) return wall2; 
+        for(int i = 0; i < children.size(); i++){
+            Wall nearestWall = getNearestChildFromWall(wall1, wall2, min); 
+            if(nearestWall != null){
+                Vector3f v1 = wall1.getWorldTranslation(), v2 = nearestWall.getWorldTranslation();
+                float distance = v1.distance(v2); 
+                if(distance < min) min = distance; 
+            }
+        }
         return null; 
     }
 }

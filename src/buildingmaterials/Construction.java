@@ -81,23 +81,29 @@ public class Construction extends Node{
         List<Spatial> gameObjects = BuildingSimulator.getBuildingSimulator()
                     .getRootNode().getChildren();
         float min = -1;
+        int objectsNumber = gameObjects.size(); 
         Spatial minWall = null; 
-        for(int i = 0; i < gameObjects.size(); i++){
+        Vector3f wallLocation = wall.getWorldTranslation();
+        for(int i = 0; i < objectsNumber; i++){
             Spatial object = gameObjects.get(i); 
             if(object.getName().startsWith("Building")){
-                List<Spatial> buildingElements = ((Node)object).getChildren();
+                Node building = (Node)object; 
                 if(minWall == null){
-                    minWall = buildingElements.get(0); 
-                    min = wall.getWorldTranslation().distance(minWall
-                            .getWorldTranslation());
+                    minWall = (Node)building.getChild(0);
+                    min = wallLocation.distance(minWall.getWorldTranslation());
                 }
-                for(int k = 1; k < buildingElements.size(); k++){
-                    float distance = wall.getWorldTranslation()
-                        .distance(buildingElements.get(k).getWorldTranslation());
-                    if(distance < min){
-                        min = distance;
-                        minWall = buildingElements.get(k); 
-                    } 
+                Spatial suspectMinWall = getNearestChildFromWall(wallLocation, (Node)building
+                        .getChild(0), wall.getWorldTranslation().distance(minWall
+                        .getWorldTranslation())); 
+                System.out.println(suspectMinWall + " suspect"); 
+                if(suspectMinWall != null){
+                    float suspectMin = wall.getWorldTranslation().distance(suspectMinWall
+                            .getWorldTranslation());
+                    System.out.println(suspectMin + " minSusp");
+                    if(min > suspectMin){
+                        min = suspectMin;
+                        minWall = suspectMinWall; 
+                    }
                 }
             }
         }
@@ -239,17 +245,27 @@ public class Construction extends Node{
         }
     }
     
-    private Wall getNearestChildFromWall(Wall wall1, Wall wall2, float min){
-        List<Spatial> children = wall2.getChildren();
-        if(children.isEmpty()) return wall2; 
-        for(int i = 0; i < children.size(); i++){
-            Wall nearestWall = getNearestChildFromWall(wall1, wall2, min); 
-            if(nearestWall != null){
-                Vector3f v1 = wall1.getWorldTranslation(), v2 = nearestWall.getWorldTranslation();
-                float distance = v1.distance(v2); 
-                if(distance < min) min = distance; 
+    private static Spatial getNearestChildFromWall(Vector3f wallLocation,
+            Node wallFromTree, float min){
+        List<Spatial> wallFromTreeChildren = wallFromTree.getChildren(); 
+        Spatial nearestWall = wallFromTree;
+        for(int i = 6; i < 14; i++){ // przechodzi po wszystkich stronach ściany
+            Node side = (Node)wallFromTreeChildren.get(i);
+            if(!side.getChildren().isEmpty()){
+                Spatial nextWall = getNearestChildFromWall(wallLocation,
+                        (Node)side.getChild(0), min);
+                System.out.println("SPR" + nextWall); 
+                if(nextWall != null){
+                    float distance = nextWall.getWorldTranslation().distance(wallLocation);
+                    System.out.println("TUTAJ " + distance + " z " + min);
+                    if(min > distance){
+                        nearestWall = nextWall; 
+                        min = distance;
+                    }
+                }
             }
         }
-        return null; 
+        return wallLocation.distance(nearestWall.getWorldTranslation()) <= min 
+                ? nearestWall : null;
     }
 }

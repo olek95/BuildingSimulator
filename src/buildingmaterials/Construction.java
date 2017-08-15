@@ -89,17 +89,15 @@ public class Construction extends Node{
             if(object.getName().startsWith("Building")){
                 Node building = (Node)object; 
                 if(minWall == null){
-                    minWall = (Node)building.getChild(0);
+                    minWall = building.getChild(0);
                     min = wallLocation.distance(minWall.getWorldTranslation());
                 }
-                Spatial suspectMinWall = getNearestChildFromWall(wallLocation, (Node)building
+                Spatial suspectMinWall = getNearestChildFromWall(wallLocation, building
                         .getChild(0), wall.getWorldTranslation().distance(minWall
                         .getWorldTranslation())); 
-                System.out.println(suspectMinWall + " suspect"); 
                 if(suspectMinWall != null){
                     float suspectMin = wall.getWorldTranslation().distance(suspectMinWall
                             .getWorldTranslation());
-                    System.out.println(suspectMin + " minSusp");
                     if(min > suspectMin){
                         min = suspectMin;
                         minWall = suspectMinWall; 
@@ -131,10 +129,7 @@ public class Construction extends Node{
                     i = minDistance > 3 ? 0 : minDistance; 
             if(foundations) 
                 catchNodes[i] = (Node)wallChildren.get(minDistance); 
-            System.out.println("FOUND" + foundations); 
             if(catchNodes[i].getChildren().isEmpty()){
-                System.out.println("PUSTE" + " " + catchNodes[i] + " " +
-                        " " + catchNodes[i].getChildren().size());
               if(foundations){
                   catchNodes[i] = wall2.changeCatchNodeLocation(wall1, 
                           catchNodes[i], minDistance, perpendicularity); 
@@ -167,6 +162,7 @@ public class Construction extends Node{
                     control.setPhysicsRotation(floor.getWorldRotation());
                     return (Node)floor.getChild(5);
                 }
+                //}
                 return null;
             }
         }else{
@@ -246,18 +242,16 @@ public class Construction extends Node{
     }
     
     private static Spatial getNearestChildFromWall(Vector3f wallLocation,
-            Node wallFromTree, float min){
-        List<Spatial> wallFromTreeChildren = wallFromTree.getChildren(); 
+            Spatial wallFromTree, float min){
+        List<Spatial> wallFromTreeChildren = ((Node)wallFromTree).getChildren(); 
         Spatial nearestWall = wallFromTree;
         for(int i = 6; i < 14; i++){ // przechodzi po wszystkich stronach ściany
             Node side = (Node)wallFromTreeChildren.get(i);
             if(!side.getChildren().isEmpty()){
                 Spatial nextWall = getNearestChildFromWall(wallLocation,
                         (Node)side.getChild(0), min);
-                System.out.println("SPR" + nextWall); 
                 if(nextWall != null){
                     float distance = nextWall.getWorldTranslation().distance(wallLocation);
-                    System.out.println("TUTAJ " + distance + " z " + min);
                     if(min > distance){
                         nearestWall = nextWall; 
                         min = distance;
@@ -267,5 +261,29 @@ public class Construction extends Node{
         }
         return wallLocation.distance(nearestWall.getWorldTranslation()) <= min 
                 ? nearestWall : null;
+    }
+    
+    /*private Node getWallFromOpposite(Wall wall){
+        Node insideSide = wall.getParent(), floor = insideSide.getParent(); 
+        if(insideSide.getName().equals(CatchNode.BOTTOM.toString())){
+            List<Spatial> sideChildren = ((Node)floor.getChild(CatchNode.SOUTH_0
+                    .toString())).getChildren();
+            if(!sideChildren.isEmpty()){
+                return (Node)sideChildren.get(0);
+            }
+        }
+        return null; 
+    }*/
+    
+    private Node getWallFromOpposite(Wall wall, Wall recentlyHitWall){
+        List<Spatial> hitObjects = wall.getHitObjects();
+        int numberHitObjects = hitObjects.size(); 
+        for(int i = 0; i < numberHitObjects; i++){
+            Spatial hitObject = hitObjects.get(i); 
+            if(hitObject.getName().startsWith("Wall") && !recentlyHitWall
+                    .checkPerpendicularity((Wall)hitObject))
+                return (Node)hitObject; 
+        }
+        return null; 
     }
 }

@@ -3,14 +3,10 @@ package buildingmaterials;
 import buildingsimulator.BottomCollisionListener;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
-import static buildingsimulator.GameManager.addNewCollisionShapeToCompound;
 import buildingsimulator.RememberingRecentlyHitObject;
 import com.jme3.bounding.BoundingBox;
-import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
-import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -25,6 +21,7 @@ import java.util.List;
 import net.wcomohundro.jme3.csg.CSGGeometry;
 import net.wcomohundro.jme3.csg.CSGShape;
 import buildingmaterials.CatchNode.*;
+import java.util.ArrayList;
 
 /**
  * Obiekt klasy <code>Wall</code> reprezentuje kawałek ściany. Obiekt ten może 
@@ -39,6 +36,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private float width, height, length, distanceToHandle, distanceToHandleVertical; 
     private static int counter = 0; 
     private int actualMode;
+    private List<Spatial> hitObjects = new ArrayList(); 
     @SuppressWarnings("LeakingThisInConstructor")
     public Wall(CSGShape shape, Vector3f location, CSGShape... differenceShapes){
         BoundingBox bounding = (BoundingBox)shape.getWorldBound();
@@ -190,6 +188,18 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     public int getActualMode(){ return actualMode; }
     
     /**
+     * Zwraca listę dotkniętych obiektów. 
+     * @return lista dotkniętych obiektów 
+     */
+    public List<Spatial> getHitObjects(){ return hitObjects; }
+    
+    /**
+     * Ustawia listę wszystkich dotkniętych obiektów przez tę ścianę. 
+     * @param hitObjects lista dotkniętych obiektów 
+     */
+    public void setHitObjects(List hitObjects){ this.hitObjects = hitObjects; }
+    
+    /**
      * Zwraca odległość między środkiem ściany a przyszłym uchwytem na którym 
      * będzie powieszona ta ściana (za pomocą lin). 
      * @param vertical true jeśli ściana podnoszona pionowo, false jeśli poziomo 
@@ -201,6 +211,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     
     @Override
     public void setCollision(Spatial b){
+        if(recentlyHitObject != null) hitObjects.add(b);
         /* zabezpiecza przypadek gdy hak dotyka jednocześnie elementu pionowego
         i poziomego */
         if(recentlyHitObject == null || recentlyHitObject.getWorldTranslation().y

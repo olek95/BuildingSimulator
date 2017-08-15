@@ -13,6 +13,7 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.collision.CollisionResults;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
+import java.util.ArrayList;
 /**
  * Klasa <code>ArmControl</code> jest klasą abstrakcyjną dla wszystkich klas 
  * reprezentujących sterowanie ramieniem dźwigu w grze. Implementuje ona interfejs
@@ -131,7 +132,7 @@ public abstract class ArmControl implements AnalogListener, Controllable{
                 hook.setRecentlyHitObject(null);
                 if(attachedObjectNotNull){
                     wall.setRecentlyHitObject(null);
-                    wall.setHitObjects(null);
+                    wall.getHitObjects().clear();
                 }
             }
         }else usedNotUsingKey = false;

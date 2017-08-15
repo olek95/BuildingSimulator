@@ -150,11 +150,10 @@ public class Construction extends Node{
     private Node mergeHorizontal(Wall wall1, Wall wall2, boolean foundations, int mode){
         if(!foundations){
             if(wall2 != null){
-                Node edge = wall2.getParent(), floor = edge.getParent();
-                int index = floor.getChildIndex(edge);
-                index += index % 2 == 0 ? -1 : 1;
+                Node edge = wall2.getParent(), floor = edge.getParent(),
+                        oppositeWall = getWallFromOpposite(wall1, wall2);
                 // sprawdza czy na przeciwko jest druga ściana 
-                if((Node)((Node)floor.getChild(index)).getChild(0) != null){
+                if(oppositeWall != null){
                     Vector3f center = floor.getWorldTranslation();
                     RigidBodyControl control = wall1.getControl(RigidBodyControl.class); 
                     control.setPhysicsLocation(new Vector3f(center.x, wall1
@@ -162,7 +161,6 @@ public class Construction extends Node{
                     control.setPhysicsRotation(floor.getWorldRotation());
                     return (Node)floor.getChild(5);
                 }
-                //}
                 return null;
             }
         }else{
@@ -281,7 +279,8 @@ public class Construction extends Node{
         for(int i = 0; i < numberHitObjects; i++){
             Spatial hitObject = hitObjects.get(i); 
             if(hitObject.getName().startsWith("Wall") && !recentlyHitWall
-                    .checkPerpendicularity((Wall)hitObject))
+                    .checkPerpendicularity((Wall)hitObject) && (int)(recentlyHitWall
+                    .getWorldTranslation().y - hitObject.getWorldTranslation().y) == 0)
                 return (Node)hitObject; 
         }
         return null; 

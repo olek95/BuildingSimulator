@@ -194,12 +194,6 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     public List<Spatial> getHitObjects(){ return hitObjects; }
     
     /**
-     * Ustawia listę wszystkich dotkniętych obiektów przez tę ścianę. 
-     * @param hitObjects lista dotkniętych obiektów 
-     */
-    public void setHitObjects(List hitObjects){ this.hitObjects = hitObjects; }
-    
-    /**
      * Zwraca odległość między środkiem ściany a przyszłym uchwytem na którym 
      * będzie powieszona ta ściana (za pomocą lin). 
      * @param vertical true jeśli ściana podnoszona pionowo, false jeśli poziomo 
@@ -211,7 +205,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     
     @Override
     public void setCollision(Spatial b){
-        if(recentlyHitObject != null) hitObjects.add(b);
+        if(recentlyHitObject != null && !hitObjects.contains(b)) hitObjects.add(b);
         /* zabezpiecza przypadek gdy hak dotyka jednocześnie elementu pionowego
         i poziomego */
         if(recentlyHitObject == null || recentlyHitObject.getWorldTranslation().y

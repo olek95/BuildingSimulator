@@ -147,8 +147,17 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         catchNodeCopy = (Node)wallCopy.getChild(i); 
         Vector3f catchNodeLocation = CatchNode.calculateTranslation(CatchNode
                 .valueOf(catchNodeCopy.getName()), this, wall, perpendicularity);
-        if((i == 8 || i == 9) && ceiling){
-            catchNodeLocation.addLocal(0, -wall.getHeight(), 0);
+        if(ceiling){
+            System.out.println("SUFIT");
+            String sideName = getParent().getParent().getName();
+            if(sideName.startsWith("SOUTH")){
+                System.out.println("SOUTH");
+                catchNodeLocation.addLocal(0, wall.getHeight(), 0);
+            }
+            else if(sideName.startsWith("NORTH")){
+                System.out.println("NORTH");
+                catchNodeLocation.addLocal(0, -wall.getHeight(), 0);
+            }
         }
         catchNodeCopy.setLocalTranslation(catchNodeLocation);
         control.setPhysicsRotation(wall.getControl(RigidBodyControl.class)

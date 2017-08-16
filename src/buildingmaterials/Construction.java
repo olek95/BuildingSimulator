@@ -130,18 +130,19 @@ public class Construction extends Node{
             if(foundations) 
                 catchNodes[i] = (Node)wallChildren.get(minDistance); 
             if(catchNodes[i].getChildren().isEmpty()){
-              if(foundations){
-                  catchNodes[i] = wall2.changeCatchNodeLocation(wall1, 
-                          catchNodes[i], minDistance, perpendicularity); 
-                  catchNodesLocations[i] = catchNodes[i].getWorldTranslation();
-              }
-              RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
-              control.setPhysicsLocation(calculateProperLocation(
-                      catchNodesLocations[i], foundations, wall1, mode));
-              control.setPhysicsRotation(calculateProperRotation(wall2
-                      .getControl(RigidBodyControl.class).getPhysicsRotation(),
-                      i, !foundations, perpendicularity));
-              return catchNodes[i];
+                boolean ceiling = mode == 1 && (int)(location.y - 
+                        wall2.getWorldTranslation().y) != 0; 
+                if(foundations || ceiling){
+                    catchNodes[i] = wall2.changeCatchNodeLocation(wall1, 
+                            catchNodes[i], minDistance, perpendicularity, ceiling); 
+                    catchNodesLocations[i] = catchNodes[i].getWorldTranslation();
+                }
+                RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
+                control.setPhysicsLocation(calculateProperLocation(
+                        catchNodesLocations[i], foundations, wall1, mode));
+                control.setPhysicsRotation(calculateProperRotation(wall2,
+                        i, !foundations, perpendicularity, ceiling));
+                return catchNodes[i];
             }else return null; 
         }
         return this;
@@ -154,12 +155,13 @@ public class Construction extends Node{
                         oppositeWall = getWallFromOpposite(wall1, wall2);
                 // sprawdza czy na przeciwko jest druga ściana 
                 if(oppositeWall != null){
-                    Vector3f center = floor.getWorldTranslation();
+                    return merge(wall1, wall2, true, mode); 
+                    /*Vector3f center = floor.getWorldTranslation();
                     RigidBodyControl control = wall1.getControl(RigidBodyControl.class); 
                     control.setPhysicsLocation(new Vector3f(center.x, wall1
                             .getWorldTranslation().y, center.z));
                     control.setPhysicsRotation(floor.getWorldRotation());
-                    return (Node)floor.getChild(5);
+                    return (Node)floor.getChild(5);*/
                 }
                 return null;
             }
@@ -207,14 +209,17 @@ public class Construction extends Node{
                 : edgeLocation.y + wall.getHeight(), edgeLocation.z);
     }
     
-    private Quaternion calculateProperRotation(Quaternion rotation, int direction,
-            boolean notFoundations, boolean perpendicular){
-        Quaternion newRotation;
+    private Quaternion calculateProperRotation(Wall ownerRotation, int direction,
+            boolean notFoundations, boolean perpendicular, boolean ceiling){
+        if(ceiling)
+            return ownerRotation.getParent().getParent().getWorldRotation();
+        Quaternion newRotation = ownerRotation.getControl(RigidBodyControl.class)
+                .getPhysicsRotation();
         if(notFoundations){
-            newRotation = rotation.clone().multLocal(-1.570796f, 0, 0, 1.570796f);
+            newRotation = newRotation.clone().multLocal(-1.570796f, 0, 0, 1.570796f);
             if(direction > 1) newRotation.multLocal(0, 0, -1.570796f, 1.570796f);
         }else{
-            newRotation = rotation.clone();
+            newRotation = newRotation.clone();
             if(perpendicular) newRotation.multLocal(0, -1.570796f, 0, 1.570796f);
         } 
         return newRotation;
@@ -260,18 +265,6 @@ public class Construction extends Node{
         return wallLocation.distance(nearestWall.getWorldTranslation()) <= min 
                 ? nearestWall : null;
     }
-    
-    /*private Node getWallFromOpposite(Wall wall){
-        Node insideSide = wall.getParent(), floor = insideSide.getParent(); 
-        if(insideSide.getName().equals(CatchNode.BOTTOM.toString())){
-            List<Spatial> sideChildren = ((Node)floor.getChild(CatchNode.SOUTH_0
-                    .toString())).getChildren();
-            if(!sideChildren.isEmpty()){
-                return (Node)sideChildren.get(0);
-            }
-        }
-        return null; 
-    }*/
     
     private Node getWallFromOpposite(Wall wall, Wall recentlyHitWall){
         List<Spatial> hitObjects = wall.getHitObjects();

@@ -140,14 +140,17 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      * @return węzeł o zmienionej pozycji  
      */
     public Node changeCatchNodeLocation(Wall wall, Node catchNode, int i,
-            boolean perpendicularity){
-        System.out.println(wall + " " + catchNode + " " + i + " " + perpendicularity);
+            boolean perpendicularity, boolean ceiling){
         Node wallCopy = clone(false), catchNodeCopy; 
         RigidBodyControl control = wallCopy.getControl(RigidBodyControl.class);
         control.setPhysicsRotation(Quaternion.IDENTITY);
         catchNodeCopy = (Node)wallCopy.getChild(i); 
-        catchNodeCopy.setLocalTranslation(CatchNode.calculateTranslation(CatchNode
-                .valueOf(catchNodeCopy.getName()), this, wall, perpendicularity));
+        Vector3f catchNodeLocation = CatchNode.calculateTranslation(CatchNode
+                .valueOf(catchNodeCopy.getName()), this, wall, perpendicularity);
+        if((i == 8 || i == 9) && ceiling){
+            catchNodeLocation.addLocal(0, -wall.getHeight(), 0);
+        }
+        catchNodeCopy.setLocalTranslation(catchNodeLocation);
         control.setPhysicsRotation(wall.getControl(RigidBodyControl.class)
                 .getPhysicsRotation());
         catchNode.setLocalTranslation(catchNodeCopy.getLocalTranslation());

@@ -1,5 +1,6 @@
 package buildingmaterials;
 
+import buildingsimulator.Control;
 import com.jme3.math.Vector3f;
 
 /**
@@ -88,6 +89,29 @@ public enum CatchNode {
                         + getProperDimension(wall2, perpendicularity, true, init));
         }
         return null; 
+    }
+    
+    /**
+     * Poprawia położenie dla elementu sufitu. 
+     * @param hitWall dotknięta ściana, do której dołączamy kawałek sufitu  
+     * @param wall kawałek sufitu 
+     * @param location aktualne położenie pomocniczego węzła 
+     */
+    public static void correctLocationForCeiling(Wall hitWall, Wall wall, Vector3f location) {
+        switch(CatchNode.valueOf(hitWall.getParent().getName())){
+            case UP:
+                location.addLocal(0, wall.getHeight(), 0);
+                break;
+            case BOTTOM: 
+                location.addLocal(0, -wall.getHeight(), 0);
+                break;
+            case LEFT: 
+                location.addLocal(0, -wall.getLength(), 0);
+                break;
+            case RIGHT: 
+                location.addLocal(0, wall.getLength(), 0);
+                break;
+        }
     }
     
     private static float getProperDimension(Wall wall, boolean perpendicularity, boolean height,

@@ -51,11 +51,11 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
                 new Vector3f(0f, 0.3f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
         GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
-                new Vector3f(0f, 0.7f, 20f), new Vector3f(5.4f, 0.2f, 5.4f)));
+                new Vector3f(0f, 0.7f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
         GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
-                new Vector3f(0f, 1.1f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
+                new Vector3f(0f, 1.1f, 20f), new Vector3f(2.7f, 0.2f, 2.7f)));
         GameManager.addToGame(WallsFactory.createWall(WallType.DOOR, 
-                new Vector3f(0f, 1.5f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
+                new Vector3f(0f, 1.5f, 20f), new Vector3f(2.7f, 0.2f, 2.7f)));
         GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
                 new Vector3f(0, 1.9f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
         GameManager.addToGame(WallsFactory.createWall(WallType.WALL,

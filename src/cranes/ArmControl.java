@@ -77,10 +77,10 @@ public abstract class ArmControl implements AnalogListener, Controllable{
                 rotate(tpf / 5);
                 break;
             case PULL_OUT:
-                moveHandleHook(maxHandleHookDisplacement, true, -tpf);
+                moveHandleHook(maxHandleHookDisplacement, true, -tpf / 2);
                 break;
             case PULL_IN:
-                moveHandleHook(minHandleHookDisplacement, false, tpf);
+                moveHandleHook(minHandleHookDisplacement, false, tpf / 2);
                 break;
             case LOWER_HOOK:
                 hook.lower();

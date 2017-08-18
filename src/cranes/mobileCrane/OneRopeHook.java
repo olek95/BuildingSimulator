@@ -18,7 +18,7 @@ import com.jme3.scene.Spatial;
 public class OneRopeHook extends Hook{
     private Node rope;
     public OneRopeHook(Node ropeHook, Spatial hookHandle, float speed){
-        super(ropeHook, hookHandle, speed, 1f);
+        super(ropeHook, hookHandle, speed);
         rope = (Node)ropeHook.getChild("rope");
         hookHandle.getControl(RigidBodyControl.class).addCollideWithGroup(1);
        setHookDisplacement(calculateDisplacementAfterScaling(rope, 

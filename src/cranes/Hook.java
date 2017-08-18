@@ -26,17 +26,15 @@ import java.util.List;
 public abstract class Hook implements RememberingRecentlyHitObject{
     private Node ropeHook;
     private Spatial hook, hookHandle, recentlyHitObject, attachedObject = null;
-    private float actualLowering = 1f, speed, gapBetweenHookAndAttachedObject;
+    private float actualLowering = 1f, speed;
     private Vector3f hookDisplacement;
     private HingeJoint lineAndHookHandleJoint = null, buildingMaterialJoint;
     private static BottomCollisionListener collisionListener = null; 
-    public Hook(Node ropeHook, Spatial hookHandle, float speed, 
-            float gapBetweenHookAndAttachedObject){
+    public Hook(Node ropeHook, Spatial hookHandle, float speed){
         this.ropeHook = ropeHook;
         hook = ropeHook.getChild("hook");
         this.hookHandle = hookHandle;
         this.speed = speed;
-        this.gapBetweenHookAndAttachedObject = gapBetweenHookAndAttachedObject; 
         if(collisionListener == null){
             collisionListener = new BottomCollisionListener(this, "ropeHook", "hookHandle");
             BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
@@ -70,8 +68,22 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     public void attach(boolean vertical){
         if(buildingMaterialJoint == null){
             attachedObject = recentlyHitObject;
-            if(!vertical) joinObject(false, 1, ((Wall)attachedObject).getWidth());
-            else joinObject(true, 2, ((Wall)attachedObject).getHeight());
+            Wall wall = (Wall)attachedObject;
+            Construction building = Construction.getWholeConstruction(attachedObject); 
+            if(building != null && wall.equals(building.getLastAddedWall())){
+                building.removeWall(wall); 
+                System.out.println("USUN: " + building);
+                for(Spatial s : BuildingSimulator.getBuildingSimulator().getRootNode().getChildren()){
+                    System.out.println(s); 
+                    if(s.getName().startsWith("Building")){
+                        for(int i = 0; i < ((Node)s).getChildren().size(); i++)
+                            System.out.println("A+" + ((Node)s).getChild(i));
+                    }
+                }
+                System.out.println("______");
+            }
+            if(!vertical) joinObject(false, 1, wall.getWidth());
+            else joinObject(true, 2, wall.getHeight());
         }
     }
     

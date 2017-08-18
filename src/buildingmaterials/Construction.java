@@ -17,6 +17,7 @@ import java.util.List;
  */
 public class Construction extends Node{
     private static int counter = -1; 
+    private Wall lastAddedWall; 
     public Construction(){
         setName("Building" + (++counter));
     }
@@ -34,11 +35,6 @@ public class Construction extends Node{
             String recentlyHitObjectName = recentlyHitObject.getName(); 
             boolean collisionWithGround = recentlyHitObjectName.startsWith("New Scene");
             if(collisionWithGround || recentlyHitObjectName.startsWith("Wall")){
-                    Spatial wallParent = wall1.getParent(); 
-                    if(wallParent.getName().startsWith("Building")){
-                        deleteConstruction(wallParent);
-                    }
-                    //wall.removeFromParent();
                     Node touchedWall; 
                     if(wallMode == 2){ 
                         touchedWall = merge(wall1, collisionWithGround ? null 
@@ -51,10 +47,20 @@ public class Construction extends Node{
                     }
                     if(touchedWall != null){
                         touchedWall.attachChild(wall1);
+                        lastAddedWall = wall1; 
                         //if(!collisionWithGround) correctLocations(touchedWall.getName()); 
                         RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
                         control.setAngularDamping(1);
                         control.setLinearDamping(1);
+                        System.out.println("DODAD");
+                        for(Spatial s : BuildingSimulator.getBuildingSimulator().getRootNode().getChildren()){
+                            System.out.println(s); 
+                            if(s.getName().startsWith("Building")){
+                                for(int i = 0; i < ((Node)s).getChildren().size(); i++)
+                                    System.out.println("A+" + ((Node)s).getChild(i));
+                            }
+                        }
+                        System.out.println("______");
                     }
             }
         }
@@ -115,6 +121,22 @@ public class Construction extends Node{
         }else return null; 
     }
     
+    /**
+     * Usuwa ścianę z budowli. Jeśli budowla już nie ma innych ścian, wtedy usuwa 
+     * dodatkowo całą budowlę z drzewa gry. 
+     * @param wall usuwana ściana 
+     */
+    public void removeWall(Wall wall){
+        if(wall.getParent().equals(this)) this.removeFromParent();
+        wall.removeFromParent();
+    }
+    
+    /**
+     * Zwraca ostatnio dodaną ścianę. 
+     * @return ostatnio dodana ściana
+     */
+    public Wall getLastAddedWall(){ return lastAddedWall; }
+    
     private Node merge(Wall wall1, Wall wall2, boolean foundations, int mode){
         if(wall2 != null){ 
             Vector3f location = ((RigidBodyControl)wall1.getControl(mode)).getPhysicsLocation();
@@ -162,23 +184,6 @@ public class Construction extends Node{
             return merge(wall1, wall2, true, mode); 
         }
         return this; 
-    }
-    
-    private void deleteConstruction(Spatial construction){
-        int constructionIndex = Integer.parseInt(construction.getName().substring(8));
-        construction.removeFromParent();
-        List<Spatial> objects = BuildingSimulator.getBuildingSimulator()
-                .getRootNode().getChildren();
-        for(int i = 0; i < objects.size(); i++){
-            Spatial object = objects.get(i); 
-            String nameObject = object.getName();
-            int index; 
-            if(nameObject.startsWith("Building") && (index = Integer.parseInt(nameObject
-                    .substring(8))) > constructionIndex){
-                object.setName("Building" + (--index));
-            }
-        }
-        counter--; 
     }
     
     private int getMin(float[] distances, boolean foundations, Vector3f wallLocation,

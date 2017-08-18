@@ -1,6 +1,5 @@
 package buildingmaterials;
 
-import buildingsimulator.Control;
 import com.jme3.math.Vector3f;
 
 /**
@@ -30,6 +29,8 @@ public enum CatchNode {
      * @param type typ węzła 
      * @param wall1 ściana dla której liczymy węzeł 
      * @param wall2 ściana z której dostajemy dodatkowe dane 
+     * @perpendicularity true jeśli ściany są położone prostopadle względem siebie, 
+     * false w przeciwnym razie
      * @return lokalizacja węzła 
      */
     public static Vector3f calculateTranslation(CatchNode type, Wall wall1, Wall wall2,

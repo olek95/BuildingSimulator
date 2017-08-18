@@ -21,6 +21,7 @@ import java.util.List;
 import net.wcomohundro.jme3.csg.CSGGeometry;
 import net.wcomohundro.jme3.csg.CSGShape;
 import buildingmaterials.CatchNode.*;
+import com.jme3.asset.AssetManager;
 import java.util.ArrayList;
 
 /**
@@ -285,13 +286,11 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     private void initShape(CSGShape shape, CSGShape... differenceShapes){
-        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         CSGGeometry wall = new CSGGeometry("Box"); 
         wall.addShape(shape);
-        Material mat = new Material(game.getAssetManager(), 
-                "Common/MatDefs/Misc/Unshaded.j3md");
-        Texture gypsumTexture = game.getAssetManager().loadTexture("Textures/gips.jpg");
-        mat.setTexture("ColorMap", gypsumTexture);
+        AssetManager assetManager = BuildingSimulator.getBuildingSimulator().getAssetManager(); 
+        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        mat.setTexture("ColorMap", assetManager.loadTexture("Textures/gips.jpg"));
         wall.setMaterial(mat);     
         for(int i = 0; i < differenceShapes.length; i++)
             wall.subtractShape(differenceShapes[i]);
@@ -309,8 +308,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     
     private void createLooseControl(Vector3f location){
         GameManager.createObjectPhysics(this, 0.00001f, false, "Box");
-        RigidBodyControl control = getControl(RigidBodyControl.class); 
-        control.setPhysicsLocation(location);
+        getControl(RigidBodyControl.class).setPhysicsLocation(location);
     }
     
     private void createWallNodes(){

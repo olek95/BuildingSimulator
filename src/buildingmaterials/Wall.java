@@ -26,7 +26,8 @@ import java.util.ArrayList;
 /**
  * Obiekt klasy <code>Wall</code> reprezentuje kawałek ściany. Obiekt ten może 
  * służyć do budowy budynków. Każda ściana ma dodatkowe punkty, służące jako miejsca
- * połączeń z innymi ścianami i podłogami. 
+ * połączeń z innymi ścianami i podłogami. Ściana może zawierać puste miejsca
+ * przeznaczone na takie elementy jak np. okna. 
  * @author AleksanderSklorz
  */
 final public class Wall extends Node implements RememberingRecentlyHitObject{
@@ -115,9 +116,10 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     /**
-     * Określa czy ściana jest obrócona wokół osi Y o ok. 90 stopni. 
+     * Określa czy ściana jest obrócona wokół osi Y o ok. 90 stopni, czyli czy 
+     * jest do niej prostopadła. 
      * @param wall ściana do której jest dodawany nowy element 
-     * @return true jeśli ściana jest obrócona, false w przeciwnym przypadku 
+     * @return true jeśli ściana jest obrócona prostopadle, false w przeciwnym przypadku 
      */
     public boolean checkPerpendicularity(Wall wall){
         float yAngleOther = Math.abs(wall.getWorldRotation().toAngles(null)[1]),
@@ -133,10 +135,9 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      * @param wall dodawana ściana 
      * @param catchNode wezeł, którego pozycję zmieniamy 
      * @param i indeks węzła pomocniczego 
-     * @param parentIndex indeks rodzica pomocniczego węzła, jeśli -1 to węzeł 
-     * jest węzłem pomocniczym oznaczającym kierunek wewnętrzny 
      * @param perpendicularity true jeśli ta ściana jest prostopadła do dodawanej 
      * ściany 
+     * @param ceiling true jeśli ustawiamy lokalizację dla sufitu, false w przeciwnym razie 
      * @return węzeł o zmienionej pozycji  
      */
     public Node changeCatchNodeLocation(Wall wall, Node catchNode, int i,
@@ -160,9 +161,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      * Zwraca największy wymiar (długość lub wysokość). 
      * @return największy wymiar 
      */
-    public float getMaxSize(){
-        return length > height ? length : height; 
-    }
+    public float getMaxSize(){ return length > height ? length : height; }
     
     /**
      * Zwraca szerokość ściany (mierzona od środka). 
@@ -216,14 +215,10 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     @Override
-    public Spatial getRecentlyHitObject(){
-        return recentlyHitObject; 
-    }
+    public Spatial getRecentlyHitObject(){ return recentlyHitObject; }
     
     @Override
-    public void setRecentlyHitObject(Spatial object){
-        recentlyHitObject = object; 
-    }
+    public void setRecentlyHitObject(Spatial object){ recentlyHitObject = object; }
     
     /**
      * Zwraca współrzędną wybranego rogu tego obiektu. Możliwe punkty do pobrania, 

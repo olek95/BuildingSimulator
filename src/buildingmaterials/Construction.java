@@ -11,6 +11,8 @@ import java.util.List;
 /**
  * Obiekt klasy <code>Construction</code> reprezentuje budowaną konstrukcję. 
  * Jest to węzeł składajacy się z różnych rodzajów ścian połaczonych ze sobą. 
+ * Konstrukcja budynku jest stworzona na zasadzie drzewa, tzn. każda ściana 
+ * posiada połączone z nią dzieci. 
  * @author AleksanderSklorz 
  */
 public class Construction extends Node{
@@ -49,7 +51,7 @@ public class Construction extends Node{
                     }
                     if(touchedWall != null){
                         touchedWall.attachChild(wall1);
-                        if(!collisionWithGround) correctLocations(touchedWall.getName()); 
+                        //if(!collisionWithGround) correctLocations(touchedWall.getName()); 
                         RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
                         control.setAngularDamping(1);
                         control.setLinearDamping(1);
@@ -107,6 +109,7 @@ public class Construction extends Node{
         }
         if(minWall != null){
             Wall nearestWall = (Wall)minWall; 
+            // założony możliwy błąd dla odległości 
             return min < Math.ceil(wall.getMaxSize()) + Math.ceil(nearestWall.getMaxSize())
                     ? nearestWall : null; 
         }else return null; 
@@ -151,19 +154,9 @@ public class Construction extends Node{
     private Node mergeHorizontal(Wall wall1, Wall wall2, boolean foundations, int mode){
         if(!foundations){
             if(wall2 != null){
-                Node edge = wall2.getParent(), floor = edge.getParent(),
-                        oppositeWall = getWallFromOpposite(wall1, wall2);
                 // sprawdza czy na przeciwko jest druga ściana 
-                if(oppositeWall != null){
-                    return merge(wall1, wall2, true, mode); 
-                    /*Vector3f center = floor.getWorldTranslation();
-                    RigidBodyControl control = wall1.getControl(RigidBodyControl.class); 
-                    control.setPhysicsLocation(new Vector3f(center.x, wall1
-                            .getWorldTranslation().y, center.z));
-                    control.setPhysicsRotation(floor.getWorldRotation());
-                    return (Node)floor.getChild(5);*/
-                }
-                return null;
+                return getWallFromOpposite(wall1, wall2) != null ? 
+                        merge(wall1, wall2, true, mode) : null;
             }
         }else{
             return merge(wall1, wall2, true, mode); 
@@ -204,15 +197,14 @@ public class Construction extends Node{
     
     private Vector3f calculateProperLocation(Vector3f edgeLocation,
             boolean foundations, Wall wall, int mode){
-        Vector3f location = ((RigidBodyControl)wall.getControl(mode)).getPhysicsLocation();
-        return new Vector3f(edgeLocation.x, foundations || mode == 1 ? location.y
+        return new Vector3f(edgeLocation.x, foundations || mode == 1 ?
+                ((RigidBodyControl)wall.getControl(mode)).getPhysicsLocation().y
                 : edgeLocation.y + wall.getHeight(), edgeLocation.z);
     }
     
     private Quaternion calculateProperRotation(Wall ownerRotation, int direction,
             boolean notFoundations, boolean perpendicular, boolean ceiling){
-        if(ceiling)
-            return ownerRotation.getParent().getParent().getWorldRotation();
+        if(ceiling) return ownerRotation.getParent().getParent().getWorldRotation();
         Quaternion newRotation = ownerRotation.getControl(RigidBodyControl.class)
                 .getPhysicsRotation();
         if(notFoundations){

@@ -16,7 +16,6 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Cylinder;
-import com.jme3.texture.Texture;
 import java.util.List;
 import net.wcomohundro.jme3.csg.CSGGeometry;
 import net.wcomohundro.jme3.csg.CSGShape;
@@ -38,7 +37,8 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private float width, height, length, distanceToHandle, distanceToHandleVertical; 
     private static int counter = 0; 
     private int actualMode;
-    private List<Spatial> hitObjects = new ArrayList(); 
+    private List<Spatial> hitObjects = new ArrayList();
+    private static List<Spatial> allHitByOtherObjectWalls = new ArrayList(); 
     @SuppressWarnings("LeakingThisInConstructor")
     public Wall(CSGShape shape, Vector3f location, CSGShape... differenceShapes){
         BoundingBox bounding = (BoundingBox)shape.getWorldBound();
@@ -163,11 +163,11 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      * spada po odczepieniu od haka, natomiast gdy jest false to porusza się tylko 
      * po uderzeniu, w każdym innym przypadku stoi nieruchomo np. w trakcie budowania 
      * budowli. 
-     * @param damped true jeśli ruch ma być tłumiony, false w przeciwnym razie
+     * @param notDamped true jeśli ruch nie ma być tłumiony, false w przeciwnym razie
      */
-    public void setMovable(boolean damped){
+    public void setMovable(boolean notDamped){
         RigidBodyControl control = getControl(RigidBodyControl.class);
-        int value = damped ? 1 : 0; 
+        int value = notDamped ? 0 : 1; 
         control.setAngularDamping(value);
         control.setLinearDamping(value);
     }
@@ -208,6 +208,14 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      * @return lista dotkniętych obiektów 
      */
     public List<Spatial> getHitObjects(){ return hitObjects; }
+    
+    /**
+     * Zwraca wszystkie dotknięte ściany.
+     * @return wszystkie dotknięte ściany 
+     */
+    public static List<Spatial> getAllByOtherObjectWalls(){
+        return allHitByOtherObjectWalls; 
+    }
     
     /**
      * Zwraca odległość między środkiem ściany a przyszłym uchwytem na którym 

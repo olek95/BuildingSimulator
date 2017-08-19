@@ -49,7 +49,6 @@ public class Construction extends Node{
                     touchedWall.attachChild(wall1);
                     lastAddedWall = wall1; 
                     //if(!collisionWithGround) correctLocations(touchedWall.getName()); 
-                    wall1.setMovable(true);
                 }
             }
         }
@@ -120,7 +119,7 @@ public class Construction extends Node{
         wall.removeFromParent();
         BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(wall);
         lastAddedWall = null;
-        wall.setMovable(false);
+        wall.setMovable(true);
     }
     
     /**

@@ -12,11 +12,11 @@ import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.joints.HingeJoint;
 import com.jme3.collision.CollisionResults;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,7 +25,8 @@ import java.util.List;
  */
 public abstract class Hook implements RememberingRecentlyHitObject{
     private Node ropeHook;
-    private Spatial hook, hookHandle, recentlyHitObject, attachedObject = null;
+    private Spatial hook, hookHandle, recentlyHitObject;
+    private Wall attachedObject = null; 
     private float actualLowering = 1f, speed;
     private Vector3f hookDisplacement;
     private HingeJoint lineAndHookHandleJoint = null, buildingMaterialJoint;
@@ -50,6 +51,14 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 .getWorldBound()).getMax(null).y > ((BoundingBox)b.getWorldBound())
                 .getMax(null).y) && attachedObject == null)
             recentlyHitObject = b;
+        if(b.getName().startsWith("Wall")){
+            List<Spatial> hitWalls = Wall.getAllByOtherObjectWalls(); 
+            if(!hitWalls.contains(b)){
+                ((Wall)b).setMovable(false);
+                hitWalls.add(b);
+                System.out.println("WL H" + b);
+            }
+        }
     }
     
     /**
@@ -67,17 +76,16 @@ public abstract class Hook implements RememberingRecentlyHitObject{
      */
     public void attach(boolean vertical){
         if(buildingMaterialJoint == null){
-            attachedObject = recentlyHitObject;
-            Wall wall = (Wall)attachedObject;
+            attachedObject = (Wall)recentlyHitObject;
             Construction building = Construction.getWholeConstruction(attachedObject); 
             boolean lastAddedWall = true; 
             if(building != null){
-                lastAddedWall = wall.equals(building.getLastAddedWall()); 
-                if(lastAddedWall) building.removeWall(wall); 
+                lastAddedWall = attachedObject.equals(building.getLastAddedWall()); 
+                if(lastAddedWall) building.removeWall(attachedObject); 
             }
             if(lastAddedWall){
-                if(!vertical) joinObject(false, 1, wall.getWidth());
-                else joinObject(true, 2, wall.getHeight());
+                if(!vertical) joinObject(false, 1, attachedObject.getWidth());
+                else joinObject(true, 2, attachedObject.getHeight());
             }else attachedObject = null; 
         }
     }
@@ -89,16 +97,15 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         if(attachedObject != null){
             BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
                     .remove(buildingMaterialJoint);
-            Wall wall = (Wall)attachedObject;
-            int oldMode = wall.getActualMode(); 
-            wall.swapControl(0);
-            wall.activateIfInactive();
+            int oldMode = attachedObject.getActualMode(); 
+            attachedObject.swapControl(0);
+            attachedObject.activateIfInactive();
             if(merging){
-                Spatial wallRecentlyHitObject = wall.getRecentlyHitObject(); 
+                Spatial wallRecentlyHitObject = attachedObject.getRecentlyHitObject(); 
                 if(wallRecentlyHitObject != null){
                     Wall nearestBuildingWall = null; 
                     if(oldMode == 1 && wallRecentlyHitObject.getName().equals("New Scene"))
-                        nearestBuildingWall = Construction.getNearestBuildingWall(wall);
+                        nearestBuildingWall = Construction.getNearestBuildingWall(attachedObject);
                     Construction construction = Construction
                             .getWholeConstruction(nearestBuildingWall == null ? 
                             wallRecentlyHitObject : nearestBuildingWall); 
@@ -106,7 +113,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                         construction = new Construction();
                         GameManager.addToGame(construction);
                     } 
-                    construction.add(wall, nearestBuildingWall, oldMode);
+                    construction.add(attachedObject, nearestBuildingWall, oldMode);
                 }
             }
             attachedObject = null;

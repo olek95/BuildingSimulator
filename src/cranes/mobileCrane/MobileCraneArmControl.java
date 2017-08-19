@@ -16,7 +16,7 @@ import com.jme3.scene.Spatial;
 import static buildingsimulator.GameManager.*;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
-import cranes.Hook;
+import java.util.List;
 
 /**
  * Obiekt klasy <code>MobileCraneArmControl</code> reprezentuje kabinę operatora ramienia 
@@ -161,11 +161,58 @@ public class MobileCraneArmControl extends ArmControl{
             public void collision(PhysicsCollisionEvent event) {
                 Spatial a = event.getNodeA(), b = event.getNodeB();
                 if(a != null && b != null){
+                    if((a.getName().startsWith("Wall") && b.getName().startsWith("Wall"))
+                            || (b.getName().startsWith("Wall") && a.getName().startsWith("Wall"))){
+                        System.out.println(1 + "  " + a + " " + b); 
+                        List<Spatial> hitWalls = Wall.getAllByOtherObjectWalls(); 
+                            if(!hitWalls.contains(b)){
+                                ((Wall)b).setMovable(false);
+                                hitWalls.add(b);
+                            }
+                            if(!hitWalls.contains(a)){
+                                ((Wall)a).setMovable(false);
+                                hitWalls.add(a);
+                            }
+                    } else {
+                        if(a.getName().startsWith("Wall") && b.getName().startsWith("New Scene")){
+                            System.out.println(2 + "  " + a + " " + b); 
+                            List<Spatial> hitWalls = Wall.getAllByOtherObjectWalls(); 
+                            if(!hitWalls.contains(a)){
+                                ((Wall)a).setMovable(false);
+                                hitWalls.add(a);
+                            } 
+                        }else {
+                          if(b.getName().startsWith("Wall") && a.getName().startsWith("New Scene")){
+                              System.out.println(3 + "  " + a + " " + b); 
+                            List<Spatial> hitWalls = Wall.getAllByOtherObjectWalls(); 
+                            if(!hitWalls.contains(b)){
+                                ((Wall)b).setMovable(false);
+                                hitWalls.add(b);
+                            } 
+                          }      
+                        }
+                    }
                     if(a.equals(rectractableCranePart) || a.equals(getHook().getHookHandle())){
                         if(b.equals(GameManager.getCraneRack())) rotateAfterImpact(a);
+                        else if(b.getName().startsWith("Wall")){
+                            List<Spatial> hitWalls = Wall.getAllByOtherObjectWalls(); 
+                            if(!hitWalls.contains(b)){
+                                System.out.println("WL 1" + b);
+                                ((Wall)b).setMovable(false);
+                                hitWalls.add(b);
+                            }
+                        }
                     }else{
                         if(b.equals(rectractableCranePart) || b.equals(getHook().getHookHandle())){
                             if(a.equals(GameManager.getCraneRack())) rotateAfterImpact(b);
+                            else if(a.getName().startsWith("Wall")){
+                                List<Spatial> hitWalls = Wall.getAllByOtherObjectWalls(); 
+                                if(!hitWalls.contains(a)){
+                                    System.out.println("WL 2" + a);
+                                    ((Wall)a).setMovable(false);
+                                    hitWalls.add(a);
+                                }
+                            }
                         }
                     }
                 }

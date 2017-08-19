@@ -1,6 +1,5 @@
 package buildingsimulator;
 
-import buildingmaterials.Wall;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;

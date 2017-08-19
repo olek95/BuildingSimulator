@@ -70,20 +70,15 @@ public abstract class Hook implements RememberingRecentlyHitObject{
             attachedObject = recentlyHitObject;
             Wall wall = (Wall)attachedObject;
             Construction building = Construction.getWholeConstruction(attachedObject); 
-            if(building != null && wall.equals(building.getLastAddedWall())){
-                building.removeWall(wall); 
-                System.out.println("USUN: " + building);
-                for(Spatial s : BuildingSimulator.getBuildingSimulator().getRootNode().getChildren()){
-                    System.out.println(s); 
-                    if(s.getName().startsWith("Building")){
-                        for(int i = 0; i < ((Node)s).getChildren().size(); i++)
-                            System.out.println("A+" + ((Node)s).getChild(i));
-                    }
-                }
-                System.out.println("______");
+            boolean lastAddedWall = true; 
+            if(building != null){
+                lastAddedWall = wall.equals(building.getLastAddedWall()); 
+                if(lastAddedWall) building.removeWall(wall); 
             }
-            if(!vertical) joinObject(false, 1, wall.getWidth());
-            else joinObject(true, 2, wall.getHeight());
+            if(lastAddedWall){
+                if(!vertical) joinObject(false, 1, wall.getWidth());
+                else joinObject(true, 2, wall.getHeight());
+            }else attachedObject = null; 
         }
     }
     

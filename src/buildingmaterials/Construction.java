@@ -35,33 +35,22 @@ public class Construction extends Node{
             String recentlyHitObjectName = recentlyHitObject.getName(); 
             boolean collisionWithGround = recentlyHitObjectName.startsWith("New Scene");
             if(collisionWithGround || recentlyHitObjectName.startsWith("Wall")){
-                    Node touchedWall; 
-                    if(wallMode == 2){ 
-                        touchedWall = merge(wall1, collisionWithGround ? null 
-                            : (Wall)recentlyHitObject, false, wallMode);
-                    }else{
-                        if(wall2 != null) 
-                            touchedWall = mergeHorizontal(wall1, wall2, true, wallMode); 
-                        else touchedWall = mergeHorizontal(wall1, collisionWithGround ? null :
-                                (Wall)recentlyHitObject, false, wallMode);
-                    }
-                    if(touchedWall != null){
-                        touchedWall.attachChild(wall1);
-                        lastAddedWall = wall1; 
-                        //if(!collisionWithGround) correctLocations(touchedWall.getName()); 
-                        RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
-                        control.setAngularDamping(1);
-                        control.setLinearDamping(1);
-                        System.out.println("DODAD");
-                        for(Spatial s : BuildingSimulator.getBuildingSimulator().getRootNode().getChildren()){
-                            System.out.println(s); 
-                            if(s.getName().startsWith("Building")){
-                                for(int i = 0; i < ((Node)s).getChildren().size(); i++)
-                                    System.out.println("A+" + ((Node)s).getChild(i));
-                            }
-                        }
-                        System.out.println("______");
-                    }
+                Node touchedWall; 
+                if(wallMode == 2){ 
+                    touchedWall = merge(wall1, collisionWithGround ? null 
+                        : (Wall)recentlyHitObject, false, wallMode);
+                }else{
+                    if(wall2 != null) 
+                        touchedWall = mergeHorizontal(wall1, wall2, true, wallMode); 
+                    else touchedWall = mergeHorizontal(wall1, collisionWithGround ? null :
+                            (Wall)recentlyHitObject, false, wallMode);
+                }
+                if(touchedWall != null){
+                    touchedWall.attachChild(wall1);
+                    lastAddedWall = wall1; 
+                    //if(!collisionWithGround) correctLocations(touchedWall.getName()); 
+                    wall1.setMovable(true);
+                }
             }
         }
     }
@@ -129,6 +118,9 @@ public class Construction extends Node{
     public void removeWall(Wall wall){
         if(wall.getParent().equals(this)) this.removeFromParent();
         wall.removeFromParent();
+        BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(wall);
+        lastAddedWall = null;
+        wall.setMovable(false);
     }
     
     /**

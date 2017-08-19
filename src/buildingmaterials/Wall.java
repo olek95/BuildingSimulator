@@ -159,6 +159,20 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     /**
+     * Określa czy ściana jest ruchoma. Jeśli true to porusza się zawsze np. gdy 
+     * spada po odczepieniu od haka, natomiast gdy jest false to porusza się tylko 
+     * po uderzeniu, w każdym innym przypadku stoi nieruchomo np. w trakcie budowania 
+     * budowli. 
+     * @param damped true jeśli ruch ma być tłumiony, false w przeciwnym razie
+     */
+    public void setMovable(boolean damped){
+        RigidBodyControl control = getControl(RigidBodyControl.class);
+        int value = damped ? 1 : 0; 
+        control.setAngularDamping(value);
+        control.setLinearDamping(value);
+    }
+    
+    /**
      * Zwraca największy wymiar (długość lub wysokość). 
      * @return największy wymiar 
      */

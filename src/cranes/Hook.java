@@ -51,14 +51,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 .getWorldBound()).getMax(null).y > ((BoundingBox)b.getWorldBound())
                 .getMax(null).y) && attachedObject == null)
             recentlyHitObject = b;
-        if(b.getName().startsWith("Wall")){
-            List<Spatial> hitWalls = Wall.getAllByOtherObjectWalls(); 
-            if(!hitWalls.contains(b)){
-                ((Wall)b).setMovable(false);
-                hitWalls.add(b);
-                System.out.println("WL H" + b);
-            }
-        }
+        if(b.getName().startsWith("Wall")) ((Wall)b).setMovable(false);
     }
     
     /**

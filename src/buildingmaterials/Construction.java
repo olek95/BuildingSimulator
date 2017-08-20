@@ -18,6 +18,7 @@ import java.util.List;
 public class Construction extends Node{
     private static int counter = -1; 
     private Wall lastAddedWall; 
+    private boolean hit = false; 
     public Construction(){
         setName("Building" + (++counter));
     }
@@ -122,11 +123,43 @@ public class Construction extends Node{
         wall.setMovable(true);
     }
     
+    public Spatial updateState(Node element){
+        List<Spatial> buildingWalls = element.getChildren(); 
+        for(int i = 1; i < 14; i++){ 
+            Node side = (Node)buildingWalls.get(i);
+            if(!side.getChildren().isEmpty()){
+                Spatial nextWall = updateState((Node)side.getChild(0));
+                if(nextWall != null){
+                    float distance = nextWall.getWorldTranslation()
+                            .distance(side.getWorldTranslation());
+                    System.out.println(distance);
+                    if(0.2 < distance){
+                        System.out.println("ROZBIC" + element);
+                        removeWall((Wall)nextWall);
+                    }
+                }
+            }
+        }
+        return element;
+    }
+    
     /**
      * Zwraca ostatnio dodaną ścianę. 
      * @return ostatnio dodana ściana
      */
     public Wall getLastAddedWall(){ return lastAddedWall; }
+    
+    /**
+     * Sprawdza czy budynek został uderzony. 
+     * @return true jeśli został uderzony, false w przeciwnym przypadku 
+     */
+    public boolean isHit() { return hit; }
+    
+    /**
+     * Określa czy budynek został uderzony. 
+     * @param hit true jeśli budynek został uderzony, false w przeciwnym przypadku 
+     */
+    public void setHit(boolean hit) { this.hit = hit; } 
     
     private Node merge(Wall wall1, Wall wall2, boolean foundations, int mode){
         if(wall2 != null){ 

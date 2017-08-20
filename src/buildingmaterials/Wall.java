@@ -38,7 +38,6 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private static int counter = 0; 
     private int actualMode;
     private List<Spatial> hitObjects = new ArrayList();
-    private static List<Spatial> allHitByOtherObjectWalls = new ArrayList(); 
     @SuppressWarnings("LeakingThisInConstructor")
     public Wall(CSGShape shape, Vector3f location, CSGShape... differenceShapes){
         BoundingBox bounding = (BoundingBox)shape.getWorldBound();
@@ -208,14 +207,6 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      * @return lista dotkniętych obiektów 
      */
     public List<Spatial> getHitObjects(){ return hitObjects; }
-    
-    /**
-     * Zwraca wszystkie dotknięte ściany.
-     * @return wszystkie dotknięte ściany 
-     */
-    public static List<Spatial> getAllByOtherObjectWalls(){
-        return allHitByOtherObjectWalls; 
-    }
     
     /**
      * Zwraca odległość między środkiem ściany a przyszłym uchwytem na którym 

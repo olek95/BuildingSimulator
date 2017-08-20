@@ -1,5 +1,6 @@
 package buildingsimulator;
 
+import buildingmaterials.Construction;
 import buildingmaterials.Wall;
 import buildingmaterials.WallType;
 import buildingmaterials.WallsFactory;
@@ -15,6 +16,7 @@ import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import cranes.Hook;
 import java.util.ArrayList;
@@ -99,15 +101,16 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     public void simpleUpdate(float tpf) {
         MobileCrane unit = (MobileCrane)GameManager.getUnit(0);
         unit.updateState();
-        List<Spatial> allHitWalls = Wall.getAllByOtherObjectWalls();
-        int allHitWallsNumber = allHitWalls.size(); 
-        for(int i = 0; i < allHitWallsNumber; i++){
-            Spatial wall = allHitWalls.get(i); 
-            if(!allHitWalls.get(i).getControl(RigidBodyControl.class).isActive()){
-                System.out.println("WYL" + wall);
-                ((Wall)wall).setMovable(true);
-                allHitWalls.remove(i--);
-                allHitWallsNumber--;
+        List<Spatial> gameObjects = rootNode.getChildren();
+        int gameObjectsNumber = gameObjects.size(); 
+        for(int i = 0; i < gameObjectsNumber; i++){
+            Spatial gameObject = gameObjects.get(i); 
+            if(gameObject.getName().startsWith("Building")){
+                Construction building = (Construction)gameObject; 
+                if(building.isHit()){
+                    building.updateState((Node)building.getChild(0)); 
+                    building.setHit(false);
+                }
             }
         }
     }

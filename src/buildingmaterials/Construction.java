@@ -49,6 +49,7 @@ public class Construction extends Node{
                 if(touchedWall != null){
                     touchedWall.attachChild(wall1);
                     lastAddedWall = wall1; 
+                    wall1.setMovable(false);
                     wall1.swapStaleState();
                     //if(!collisionWithGround) correctLocations(touchedWall.getName()); 
                 }
@@ -72,7 +73,7 @@ public class Construction extends Node{
     
     /**
      * Zwraca najbliższą ścianę z jakiegokolwiek budynku. 
-     * @param wall ściana dla której szukamy najbliższy element z jakiegoś budynku. 
+     * @param measurableObject obiekt dla którego szukamy najbliższy element z jakiegoś budynku. 
      * @return najbliższy element z jakiegokolwiek budynku 
      */
     public static Wall getNearestBuildingWall(Wall wall){
@@ -132,13 +133,14 @@ public class Construction extends Node{
             if(!side.getChildren().isEmpty()){
                 Spatial nextWall = updateState((Node)side.getChild(0));
                 if(nextWall != null){
+                    Wall wall = (Wall)nextWall;
+                    wall.setMovable(true);
                     float distance = nextWall.getWorldTranslation()
                             .distance(side.getWorldTranslation());
-                    if(0.2 < distance){ // umowna granica dozwolonego przesunięcia ściany 
-                        Wall wall = (Wall)nextWall;
+                    if(0.2 < distance){ // umowna granica dozwolonego przesunięcia ściany
                         removeWall(wall);
-                        wall.swapStaleState(); 
-                    }
+                        wall.swapStaleState();
+                    }else  wall.setMovable(false);
                 }
             }
         }

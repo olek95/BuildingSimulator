@@ -102,11 +102,12 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         MobileCrane unit = (MobileCrane)GameManager.getUnit(0);
         unit.updateState();
         List<Spatial> gameObjects = rootNode.getChildren();
-        int gameObjectsNumber = gameObjects.size(); 
+        int gameObjectsNumber = gameObjects.size();
         for(int i = 0; i < gameObjectsNumber; i++){
             Spatial gameObject = gameObjects.get(i); 
             if(gameObject.getName().startsWith("Building")){
                 Construction building = (Construction)gameObject; 
+                System.out.println(building.isHit());
                 if(building.isHit()){
                     building.updateState((Node)building.getChild(0)); 
                     building.setHit(false);

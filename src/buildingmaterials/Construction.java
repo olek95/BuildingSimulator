@@ -49,6 +49,7 @@ public class Construction extends Node{
                 if(touchedWall != null){
                     touchedWall.attachChild(wall1);
                     lastAddedWall = wall1; 
+                    wall1.swapStaleState();
                     //if(!collisionWithGround) correctLocations(touchedWall.getName()); 
                 }
             }
@@ -116,7 +117,8 @@ public class Construction extends Node{
      * @param wall usuwana ściana 
      */
     public void removeWall(Wall wall){
-        if(wall.getParent().equals(this)) this.removeFromParent();
+        System.out.println("WCHODZI");
+        if(wall.getParent().equals(this)) removeFromParent();
         wall.removeFromParent();
         BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(wall);
         lastAddedWall = null;
@@ -132,10 +134,10 @@ public class Construction extends Node{
                 if(nextWall != null){
                     float distance = nextWall.getWorldTranslation()
                             .distance(side.getWorldTranslation());
-                    System.out.println(distance);
-                    if(0.2 < distance){
-                        System.out.println("ROZBIC" + element);
-                        removeWall((Wall)nextWall);
+                    if(0.2 < distance){ // umowna granica dozwolonego przesunięcia ściany 
+                        Wall wall = (Wall)nextWall;
+                        removeWall(wall);
+                        wall.swapStaleState(); 
                     }
                 }
             }

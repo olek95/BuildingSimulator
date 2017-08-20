@@ -21,6 +21,7 @@ import net.wcomohundro.jme3.csg.CSGGeometry;
 import net.wcomohundro.jme3.csg.CSGShape;
 import buildingmaterials.CatchNode.*;
 import com.jme3.asset.AssetManager;
+import com.jme3.material.MatParam;
 import java.util.ArrayList;
 
 /**
@@ -169,6 +170,21 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         int value = notDamped ? 0 : 1; 
         control.setAngularDamping(value);
         control.setLinearDamping(value);
+    }
+    
+    /**
+     * Przełącza stan ściany pomiędzy ścianą połączoną z budynkiem (bez koloru) 
+     * i ścianą po odłączeniu z budynku (czerwoną). 
+     */
+    public void swapStaleState(){
+        System.out.println("Zmiana");
+        Material material = ((CSGGeometry)getChild("Box")).getMaterial();
+        MatParam param = material.getParam("Color");
+        System.out.println(param); 
+        System.out.println(param != null ? param.getValueAsString() : "NIE");
+        // czerwony to 1.0 0.0 0.0 1.0 a biały to same jedynki 
+        material.setColor("Color", param == null || param.getValueAsString()
+                .contains("0.0") ? ColorRGBA.White : ColorRGBA.Red);
     }
     
     /**

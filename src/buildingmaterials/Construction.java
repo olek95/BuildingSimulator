@@ -7,6 +7,8 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Obiekt klasy <code>Construction</code> reprezentuje budowaną konstrukcję. 
@@ -118,7 +120,6 @@ public class Construction extends Node{
      * @param wall usuwana ściana 
      */
     public void removeWall(Wall wall){
-        System.out.println("WCHODZI");
         if(wall.getParent().equals(this)) removeFromParent();
         wall.removeFromParent();
         BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(wall);
@@ -137,9 +138,25 @@ public class Construction extends Node{
                     wall.setMovable(true);
                     float distance = nextWall.getWorldTranslation()
                             .distance(side.getWorldTranslation());
-                    if(0.2 < distance){ // umowna granica dozwolonego przesunięcia ściany
+                    System.out.println(nextWall + " " + nextWall.getWorldTranslation()
+                            + " " + side + " " + side.getWorldTranslation() + " " + distance);
+                    if(wall.getHeight() + 0.01f < distance){ // umowna granica dozwolonego przesunięcia ściany
                         removeWall(wall);
                         wall.swapStaleState();
+                        if(i <= 4){
+                            CatchNode[] ceilingPartsSides = {CatchNode.NORTH_0, 
+                                CatchNode.NORTH_1};
+                            for(int j = 0; j < 2; j++){
+                                List<Spatial> northChildren = ((Node)wall
+                                    .getChild(ceilingPartsSides[i].toString())).getChildren();
+                                int northChildrenAmount = northChildren.size();
+                                for(int k = 0; k < northChildrenAmount; k++){
+                                    Wall ceiling = (Wall)northChildren.get(k);
+                                    removeWall(ceiling); 
+                                    ceiling.swapStaleState();
+                                }
+                            }
+                        }
                     }else  wall.setMovable(false);
                 }
             }
@@ -192,7 +209,7 @@ public class Construction extends Node{
                 }
                 RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
                 control.setPhysicsLocation(calculateProperLocation(
-                        catchNodesLocations[i], foundations, wall1, mode));
+                        catchNodesLocations[i], wall1, mode));
                 control.setPhysicsRotation(calculateProperRotation(wall2,
                         i, !foundations, perpendicularity, ceiling));
                 return catchNodes[i];
@@ -228,9 +245,8 @@ public class Construction extends Node{
         return min; 
     }
     
-    private Vector3f calculateProperLocation(Vector3f edgeLocation,
-            boolean foundations, Wall wall, int mode){
-        return new Vector3f(edgeLocation.x, foundations || mode == 1 ?
+    private Vector3f calculateProperLocation(Vector3f edgeLocation, Wall wall, int mode){
+        return new Vector3f(edgeLocation.x, mode == 1 ?
                 ((RigidBodyControl)wall.getControl(mode)).getPhysicsLocation().y
                 : edgeLocation.y + wall.getHeight(), edgeLocation.z);
     }

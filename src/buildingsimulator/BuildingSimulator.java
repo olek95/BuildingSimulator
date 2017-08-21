@@ -107,10 +107,9 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             Spatial gameObject = gameObjects.get(i); 
             if(gameObject.getName().startsWith("Building")){
                 Construction building = (Construction)gameObject; 
-                System.out.println(building.isHit());
                 if(building.isHit()){
                     building.updateState((Node)building.getChild(0)); 
-                    building.setHit(false);
+                    //building.setHit(false);
                 }
             }
         }

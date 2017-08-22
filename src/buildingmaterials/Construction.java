@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 public class Construction extends Node{
     private static int counter = -1; 
     private Wall lastAddedWall; 
-    private boolean hit = false; 
+    private boolean hit = false, resetWalls = false; 
     public Construction(){
         setName("Building" + (++counter));
     }
@@ -49,10 +49,12 @@ public class Construction extends Node{
                             (Wall)recentlyHitObject, false, wallMode);
                 }
                 if(touchedWall != null){
+                    System.out.println("touched " + touchedWall);
                     touchedWall.attachChild(wall1);
+                    System.out.println("isPu " + touchedWall.getChildren().isEmpty());
                     lastAddedWall = wall1; 
                     wall1.setMovable(false);
-                    wall1.swapStaleState();
+                    wall1.setStale(false);
                     //if(!collisionWithGround) correctLocations(touchedWall.getName()); 
                 }
             }
@@ -127,6 +129,13 @@ public class Construction extends Node{
         wall.setMovable(true);
     }
     
+    /**
+     * Uaktualnia stan budynku. Jeśli jakieś obiekty zostały uderzony lub nie 
+     * posiadają elementów trzymających je, zaczynają spadać powodując rozsypywanie 
+     * się budynku.
+     * @param element element którego dzieci są sprawdzane 
+     * @return sprawdzany element 
+     */
     public Spatial updateState(Node element){
         List<Spatial> buildingWalls = element.getChildren(); 
         for(int i = 1; i < 14; i++){ 
@@ -138,25 +147,30 @@ public class Construction extends Node{
                     wall.setMovable(true);
                     float distance = nextWall.getWorldTranslation()
                             .distance(side.getWorldTranslation());
-                    System.out.println(nextWall + " " + nextWall.getWorldTranslation()
-                            + " " + side + " " + side.getWorldTranslation() + " " + distance);
                     if(wall.getHeight() + 0.01f < distance){ // umowna granica dozwolonego przesunięcia ściany
-                        removeWall(wall);
-                        wall.swapStaleState();
+                        //removeWall(wall);
+                        boolean ceilingStateChanged = false, wallStateChanged = false; 
+                        if(!wall.isStale()){
+                            wall.setStale(true);
+                        }
                         if(i <= 4){
                             CatchNode[] ceilingPartsSides = {CatchNode.NORTH_0, 
                                 CatchNode.NORTH_1};
                             for(int j = 0; j < 2; j++){
                                 List<Spatial> northChildren = ((Node)wall
-                                    .getChild(ceilingPartsSides[i].toString())).getChildren();
+                                    .getChild(ceilingPartsSides[j].toString())).getChildren();
                                 int northChildrenAmount = northChildren.size();
                                 for(int k = 0; k < northChildrenAmount; k++){
                                     Wall ceiling = (Wall)northChildren.get(k);
-                                    removeWall(ceiling); 
-                                    ceiling.swapStaleState();
+                                    //removeWall(ceiling); 
+                                    if(!ceiling.isStale()){
+                                        ceiling.setStale(true);
+                                        ceilingStateChanged = true; 
+                                    }
                                 }
                             }
                         }
+                        if(wallStateChanged || ceilingStateChanged) resetWalls = true; 
                     }else  wall.setMovable(false);
                 }
             }
@@ -182,6 +196,19 @@ public class Construction extends Node{
      */
     public void setHit(boolean hit) { this.hit = hit; } 
     
+    /** Zwraca informację czy stan ścian został zresetowany np. po zburzeniu 
+     * budynków. 
+     * @return true jeśli stan ścian został zresetowany, false w przeciwnym przypadku.  
+     */
+    public boolean isResetWalls() { return resetWalls; }
+    
+    /**
+     * Ustawia informację o zresetowaniu stanu ścian. 
+     * @param resetWalls true jeśli stan ścian został zresetowany, false w przeciwnym 
+     * przypadku 
+     */
+    public void setResetWalls(boolean resetWalls) { this.resetWalls = resetWalls; }
+    
     private Node merge(Wall wall1, Wall wall2, boolean foundations, int mode){
         if(wall2 != null){ 
             Vector3f location = ((RigidBodyControl)wall1.getControl(mode)).getPhysicsLocation();
@@ -199,7 +226,10 @@ public class Construction extends Node{
                     i = minDistance > 3 ? 0 : minDistance; 
             if(foundations) 
                 catchNodes[i] = (Node)wallChildren.get(minDistance); 
-            if(catchNodes[i].getChildren().isEmpty()){
+            System.out.println(catchNodes[i]);
+            System.out.println(catchNodes[i].getChildren().isEmpty());
+            if(checkIfCanBeAdded(catchNodes[i], wall1)){
+                System.out.println("| " + catchNodes[i]);
                 boolean ceiling = mode == 1 && (int)(location.y - 
                         wall2.getWorldTranslation().y) != 0; 
                 if(foundations || ceiling){
@@ -318,5 +348,41 @@ public class Construction extends Node{
                 return (Node)hitObject; 
         }
         return null; 
+    }
+    
+    private boolean checkIfCanBeAdded(Node catchNode, Wall newWall){
+        if(!newWall.isStale()) return catchNode.getChildren().isEmpty();
+        else{
+            List<Spatial> catchNodeChildren = catchNode.getChildren(); 
+            if(catchNodeChildren.isEmpty()) return true; 
+            else {
+                Wall wall = (Wall)catchNodeChildren.get(0); 
+                if(wall.equals(newWall)){
+                    removeWall(wall); 
+                    return true;
+                }else{
+                    float distance = wall.getWorldTranslation().distance(catchNode
+                            .getWorldTranslation());
+                    CatchNode[] catchNodes = CatchNode.values();
+                    CatchNode node = CatchNode.valueOf(catchNode.getName());
+                    int index = -1; 
+                    for(int i = 0; i < catchNodes.length; i++)
+                        if(node.equals(catchNodes[i])) index = i; 
+                    if(index <= 3) {
+                        if(distance > wall.getHeight()){
+                            removeWall(wall); 
+                            return true; 
+                        }
+                        return false; 
+                    }else{
+                        if(distance > wall.getWidth()){
+                            removeWall(wall); 
+                            return true; 
+                        }
+                        return false;
+                    }
+                }
+            }
+        }
     }
 }

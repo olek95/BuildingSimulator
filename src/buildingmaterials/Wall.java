@@ -39,6 +39,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private static int counter = 0; 
     private int actualMode;
     private List<Spatial> hitObjects = new ArrayList();
+    private boolean stale = false; 
     @SuppressWarnings("LeakingThisInConstructor")
     public Wall(CSGShape shape, Vector3f location, CSGShape... differenceShapes){
         BoundingBox bounding = (BoundingBox)shape.getWorldBound();
@@ -174,15 +175,23 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     
     /**
      * Przełącza stan ściany pomiędzy ścianą połączoną z budynkiem (bez koloru) 
-     * i ścianą po odłączeniu z budynku (czerwoną). 
+     * i ścianą po odłączeniu z budynku (czerwoną).
+     * @param stale true jeśli ściana jest w stanie po zburzeniu budynku, false 
+     * w przeciwnym przypadku 
      */
-    public void swapStaleState(){
-        Material material = ((CSGGeometry)getChild("Box")).getMaterial();
-        MatParam param = material.getParam("Color");
-        // czerwony to 1.0 0.0 0.0 1.0 a biały to same jedynki 
-        material.setColor("Color", param == null || param.getValueAsString()
-                .contains("0.0") ? ColorRGBA.White : ColorRGBA.Red);
+    public void setStale(boolean stale){
+        ((CSGGeometry)getChild("Box")).getMaterial().setColor("Color", stale ?
+                ColorRGBA.Red : ColorRGBA.White);
+        this.stale = stale; 
     }
+    
+    /**
+     * Określa czy ściana jest połączona z budynkiem czy w stanie po zniszczeniu 
+     * budynku. 
+     * @return informacja czy ściana połączona z budynkiem czy w stanie po 
+     * zniszczeniu budynku 
+     */
+    public boolean isStale(){ return stale; }
     
     /**
      * Zwraca największy wymiar (długość lub wysokość). 

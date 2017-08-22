@@ -13,7 +13,7 @@ public enum CatchNode {
     UP, 
     RIGHT, 
     LEFT, 
-    CENTER, 
+    CENTER, // do usuniecia? 
     SOUTH_0, 
     SOUTH_1,
     NORTH_0, 

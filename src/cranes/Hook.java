@@ -70,14 +70,20 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     public void attach(boolean vertical){
         if(buildingMaterialJoint == null){
             attachedObject = (Wall)recentlyHitObject;
-            Construction building = Construction.getWholeConstruction(attachedObject); 
-            boolean lastAddedWall = true; 
-            if(building != null){
-                lastAddedWall = attachedObject.equals(building.getLastAddedWall()); 
-                if(lastAddedWall && !attachedObject.isStale()) 
-                    building.removeWall(attachedObject); 
+            System.out.println("-----------");
+            System.out.println(attachedObject);
+            boolean wallStale = attachedObject.isStale(), lastAddedWall = true; 
+            if(!wallStale){
+                Construction building = Construction.getWholeConstruction(attachedObject); 
+                System.out.println(building);
+                if(building != null){
+                    lastAddedWall = attachedObject.equals(building.getLastAddedWall()); 
+                    if(lastAddedWall && !attachedObject.isStale()) 
+                        building.removeWall(attachedObject); 
+                }
             }
-            if(lastAddedWall){
+            System.out.println(lastAddedWall);
+            if(wallStale || lastAddedWall){
                 if(!vertical) joinObject(false, 1, attachedObject.getWidth());
                 else joinObject(true, 2, attachedObject.getHeight());
             }else attachedObject = null; 

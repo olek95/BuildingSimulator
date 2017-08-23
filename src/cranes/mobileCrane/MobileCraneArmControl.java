@@ -163,13 +163,21 @@ public class MobileCraneArmControl extends ArmControl{
                 Spatial a = event.getNodeA(), b = event.getNodeB();
                 if(a != null && b != null){
                     String aName = a.getName(), bName = b.getName(); 
-                    if((aName.startsWith("Wall") && !bName.startsWith("Wall")
-                            && !bName.startsWith("New Scene") && !bName.startsWith("ropeHook"))
-                            || (bName.startsWith("Wall") && !aName.startsWith("Wall")
-                            && !aName.startsWith("New Scene") && !aName.startsWith("ropeHook"))){
+                    if(aName.startsWith("Wall") && !bName.startsWith("Wall")
+                            && !bName.startsWith("New Scene") && !bName.startsWith("ropeHook")
+                            && !((Wall)a).isStale()){
                         Construction building = Construction.getWholeConstruction(a);
                         if(building != null){
                             building.setHit(true);
+                        }
+                    }else{
+                        if(bName.startsWith("Wall") && !aName.startsWith("Wall")
+                                && !aName.startsWith("New Scene") && !aName.startsWith("ropeHook")
+                                && !((Wall)b).isStale()){
+                            Construction building = Construction.getWholeConstruction(b);
+                            if(building != null){
+                                building.setHit(true);
+                            }
                         }
                     }
                     if(a.equals(rectractableCranePart) || a.equals(getHook().getHookHandle())){

@@ -151,6 +151,7 @@ public class Construction extends Node{
                         //removeWall(wall);
                         boolean ceilingStateChanged = false, wallStateChanged = false; 
                         if(!wall.isStale()){
+                            wallStateChanged = true; 
                             wall.setStale(true);
                         }
                         if(i <= 4){
@@ -163,6 +164,7 @@ public class Construction extends Node{
                                 for(int k = 0; k < northChildrenAmount; k++){
                                     Wall ceiling = (Wall)northChildren.get(k);
                                     //removeWall(ceiling); 
+                                    ceiling.setMovable(true);
                                     if(!ceiling.isStale()){
                                         ceiling.setStale(true);
                                         ceilingStateChanged = true; 
@@ -358,6 +360,7 @@ public class Construction extends Node{
             else {
                 Wall wall = (Wall)catchNodeChildren.get(0); 
                 if(wall.equals(newWall)){
+                    System.out.println("Usuwanie0");
                     removeWall(wall); 
                     return true;
                 }else{
@@ -370,12 +373,14 @@ public class Construction extends Node{
                         if(node.equals(catchNodes[i])) index = i; 
                     if(index <= 3) {
                         if(distance > wall.getHeight()){
+                            System.out.println("Usuwanie1");
                             removeWall(wall); 
                             return true; 
                         }
                         return false; 
                     }else{
                         if(distance > wall.getWidth()){
+                            System.out.println("Usuwanie2");
                             removeWall(wall); 
                             return true; 
                         }

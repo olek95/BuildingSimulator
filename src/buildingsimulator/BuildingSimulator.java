@@ -51,7 +51,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         sun.setColor(ColorRGBA.White);
         sun.setDirection(new Vector3f(-.5f,-.5f,-.5f).normalizeLocal());
         rootNode.addLight(sun);
-        
+        bulletAppState.getPhysicsSpace()
+                .addCollisionListener(BuildingCollisionListener.createBuildingCollisionListener());
         // KOD DLA TESTU!!
         GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
                 new Vector3f(0f, 0.3f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));

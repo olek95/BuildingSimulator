@@ -24,7 +24,6 @@ public class BuildingCollisionListener implements PhysicsCollisionListener{
     public void collision(PhysicsCollisionEvent event) {
         Spatial a = event.getNodeA(), b = event.getNodeB();
         if(a != null && b != null){
-            String aName = a.getName(), bName = b.getName(); 
             if(checkIfHitWall(a, b)){
                 Construction building = Construction.getWholeConstruction(a);
                 if(building != null) building.setHit(true);

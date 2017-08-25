@@ -44,7 +44,8 @@ public class BuildingCollisionListener implements PhysicsCollisionListener{
         if(a.getName().startsWith("Wall") && !bName.startsWith("New Scene") 
                 && !((Wall)a).isStale()){
             if(bName.startsWith("Wall")){
-                if(Construction.getWholeConstruction(b) == null) hit = true;
+                if(((Wall)b).isStale() || Construction.getWholeConstruction(b) == null)
+                    hit = true;
             }else hit = true; 
         }
         return hit; 

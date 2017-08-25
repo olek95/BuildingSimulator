@@ -18,6 +18,8 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.texture.Texture;
+import com.jme3.util.SkyFactory;
 import cranes.Hook;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +38,9 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         Spatial scene = assetManager.loadModel("Scenes/gameMap.j3o");
         scene.setLocalTranslation(0, 0, 0);
         flyCam.setMoveSpeed(100);
+        Texture skyTexture = assetManager.loadTexture("Textures/sky3.dds");
+        rootNode.attachChild(SkyFactory.createSky(getAssetManager(),
+                skyTexture, true));
         RigidBodyControl rgc = new RigidBodyControl(0.0f);
         scene.addControl(rgc);
         rootNode.attachChild(scene);

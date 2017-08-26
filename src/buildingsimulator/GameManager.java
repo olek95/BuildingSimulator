@@ -281,6 +281,37 @@ public class GameManager {
         BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(object);
     }
     
+    /**
+     * Tworzy podłoże po którym gracz się porusza. 
+     */
+    public static void createTerrain(){
+        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
+        Node scene = (Node)game.getAssetManager().loadModel("Scenes/gameMap.j3o");
+        int x = 0, z = 254;
+        PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
+        Spatial firstPart = scene.getChild("terrain-gameMap");
+        RigidBodyControl firstPartControl = new RigidBodyControl(0.0f); 
+        firstPart.addControl(firstPartControl);
+        physics.add(firstPartControl); 
+        for(int i = 0; i < 5; i++){
+            for(int k = 0; k < 5; k++){
+                Spatial scenePart = firstPart.clone(true);
+                scenePart.setLocalTranslation(x, 0, z);
+                scene.attachChild(scenePart);
+                RigidBodyControl rgc = new RigidBodyControl(0.0f);
+                scenePart.addControl(rgc);
+                physics.add(rgc);
+                rgc.setPhysicsLocation(new Vector3f(x, 0, z));
+                z += 254;
+            }
+            x += 254;
+            z = 0;
+        }
+        float offset = -243 * 4 / 2;
+        scene.setLocalTranslation(offset, 0, offset);
+        game.getRootNode().attachChild(scene);
+    }
+    
     private static void moveDynamicObject(Spatial element, Vector3f displacement){
         RigidBodyControl elementControl = element.getControl(RigidBodyControl.class);
         elementControl.setPhysicsLocation(elementControl.getPhysicsLocation()

@@ -35,17 +35,9 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
 
     @Override
     public void simpleInitApp() {
-        Spatial scene = assetManager.loadModel("Scenes/gameMap.j3o");
-        scene.setLocalTranslation(0, 0, 0);
-        flyCam.setMoveSpeed(100);
-//        Texture skyTexture = assetManager.loadTexture("Textures/sky3.dds");
-//        rootNode.attachChild(SkyFactory.createSky(getAssetManager(),
-//                skyTexture, true));
-        RigidBodyControl rgc = new RigidBodyControl(0.0f);
-        scene.addControl(rgc);
-        rootNode.attachChild(scene);
         stateManager.attach(bulletAppState);
-        bulletAppState.getPhysicsSpace().add(rgc);
+        GameManager.createTerrain();
+        flyCam.setMoveSpeed(100);
         MobileCrane crane = new MobileCrane();
         GameManager.addUnit(crane);
         GameManager.addUnit(new Crane());

@@ -1,7 +1,5 @@
 package cranes.mobileCrane;
 
-import buildingmaterials.Construction;
-import buildingmaterials.Wall;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.Control;
 import buildingsimulator.GameManager;
@@ -17,7 +15,6 @@ import com.jme3.scene.Spatial;
 import static buildingsimulator.GameManager.*;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
-import java.util.List;
 
 /**
  * Obiekt klasy <code>MobileCraneArmControl</code> reprezentuje kabinę operatora ramienia 
@@ -158,17 +155,16 @@ public class MobileCraneArmControl extends ArmControl{
         /* Dodaje listener sprawdzający kolizję haka z obiektami otoczenia.
          Dla optymalizacji sprawdzam kolizję tylko dla grupy 2, czyli tej w 
          której znajduje sie hak.*/
-        //physics.addCollisionGroupListener(hook.createCollisionListener(), 2);
         physics.addCollisionListener(new PhysicsCollisionListener(){
             @Override
             public void collision(PhysicsCollisionEvent event) {
                 Spatial a = event.getNodeA(), b = event.getNodeB();
                 if(a != null && b != null){
                     if(a.equals(rectractableCranePart) || a.equals(getHook().getHookHandle())){
-                        if(b.equals(GameManager.getCraneRack())) rotateAfterImpact(a);
+                        if(b.getName().startsWith("rack")) rotateAfterImpact(a);
                     }else{
                         if(b.equals(rectractableCranePart) || b.equals(getHook().getHookHandle())){
-                            if(a.equals(GameManager.getCraneRack())) rotateAfterImpact(b);
+                            if(a.getName().startsWith("rack")) rotateAfterImpact(b);
                         }
                     }
                 }

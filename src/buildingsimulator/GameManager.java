@@ -24,8 +24,6 @@ import net.wcomohundro.jme3.csg.CSGGeometry;
  */
 public class GameManager {
     private static String lastAction;
-    private static Spatial craneRack;
-    private static CraneAbstract actualUnit;
     private static ArrayList<CraneAbstract> units = new ArrayList();
     
     /**
@@ -196,22 +194,6 @@ public class GameManager {
     }
     
     /**
-     * Zwraca "stojak" żurawia. 
-     * @return stojak żurawia 
-     */
-    public static Spatial getCraneRack(){
-        return craneRack;
-    }
-    
-    /**
-     * Ustawia "stojak" żurawia. 
-     * @param craneRack stojak żurawia 
-     */
-    public static void setCraneRack(Spatial craneRack){
-        GameManager.craneRack = craneRack;
-    }
-    
-    /**
      * Zwraca aktualną liczbę klatek na sekundę w postaci liczby. 
      * @return FPS w postaci liczby 
      */
@@ -224,24 +206,6 @@ public class GameManager {
         i++;
         for(; i < length; i++) tempFPSString += fpsString.charAt(i);
         return Integer.parseInt(tempFPSString);
-    }
-    
-    
-    
-    /**
-     * Ustawia aktualnie używaną jednostkę. 
-     * @param unit jednostka 
-     */
-    public static void setActualUnit(CraneAbstract unit){
-        actualUnit = unit; 
-    }
-    
-    /**
-     * Zwraca aktualnie używaną jednostkę. 
-     * @return aktualnie używana jednostka.
-     */
-    public static CraneAbstract getActualUnit(){
-        return actualUnit;
     }
     
     /**

@@ -44,9 +44,11 @@ public class CraneArmControl extends ArmControl{
     protected void moveHandleHook(float limit, boolean movingForward, float speed) {
         Vector3f hookHandleTranslation = hookHandleControl.getLocalTranslation();
         if(movingForward && hookHandleTranslation.z >= limit 
-                || !movingForward && hookHandleTranslation.z < limit)
+                || !movingForward && hookHandleTranslation.z < limit){
             hookHandleControl.setLocalTranslation(hookHandleTranslation
                     .addLocal(0 , 0, speed * 3));
+            rotateHook();
+        }
     }
     
     /**

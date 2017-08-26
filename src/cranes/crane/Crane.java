@@ -31,7 +31,6 @@ public class Crane extends CraneAbstract{
     private void initCrane(){
         craneLocation = new Vector3f(10f, 0f, 0f);
         initCraneElements((Node)game.getAssetManager().loadModel("Models/zuraw/zuraw.j3o"));
-        GameManager.setCraneRack(rack);
         game.getRootNode().attachChild(crane);
     }
     

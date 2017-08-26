@@ -35,7 +35,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     private static final float ACCELERATION_FORCE = 100.0f, BRAKE_FORCE = 20.0f,
             FRICTION_FORCE = 10.0f, PROP_LOWERING_SPEED = 0.05f;
     public static final float MAX_PROP_PROTRUSION = 6.35f, MIN_PROP_PROTRUSION = 1f;
-    private float steeringValue = 0f, propsLowering = 1f;
+    private float propsLowering = 1f;
     private String key = "";
     private Vector3f propDisplacement;
     private Actions[] availableActions = {Actions.UP, Actions.DOWN, Actions.LEFT,
@@ -87,10 +87,10 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                 }
                 break;
             case LEFT:
-                craneControl.steer(steeringValue += isPressed ? 0.5f : -0.5f);
+                craneControl.steer(isPressed ? 0.5f : 0);
                 break;
             case RIGHT: 
-                craneControl.steer(steeringValue += isPressed ? -0.5f : 0.5f);
+                craneControl.steer(isPressed ? -0.5f : 0);
                 break;
             case ACTION: if(isPressed) getOff(name);
         }
@@ -141,9 +141,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
      * Ustawia kąt skrętu kół pojazdu. 
      * @param angle kąt 
      */
-    public void setSteeringAngle(float angle){
-        craneControl.steer(steeringValue = angle);
-    }
+    public void setSteeringAngle(float angle){ craneControl.steer(angle); }
     
     private void stop(){
         key = "";

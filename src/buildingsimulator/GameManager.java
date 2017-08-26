@@ -287,28 +287,28 @@ public class GameManager {
     public static void createTerrain(){
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         Node scene = (Node)game.getAssetManager().loadModel("Scenes/gameMap.j3o");
-        int x = 0, z = 254;
+        int x = 0, z = 254, end = 4;
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
         Spatial firstPart = scene.getChild("terrain-gameMap");
         RigidBodyControl firstPartControl = new RigidBodyControl(0.0f); 
         firstPart.addControl(firstPartControl);
         physics.add(firstPartControl); 
+        float offset = -z * 4 / 2;
+        firstPartControl.setPhysicsLocation(new Vector3f(offset, 0, offset));
         for(int i = 0; i < 5; i++){
-            for(int k = 0; k < 5; k++){
+            for(int k = 0; k < end; k++){
                 Spatial scenePart = firstPart.clone(true);
-                scenePart.setLocalTranslation(x, 0, z);
                 scene.attachChild(scenePart);
                 RigidBodyControl rgc = new RigidBodyControl(0.0f);
                 scenePart.addControl(rgc);
                 physics.add(rgc);
-                rgc.setPhysicsLocation(new Vector3f(x, 0, z));
+                rgc.setPhysicsLocation(new Vector3f(x + offset, 0, z + offset));
                 z += 254;
             }
             x += 254;
             z = 0;
+            end = 5;
         }
-        float offset = -243 * 4 / 2;
-        scene.setLocalTranslation(offset, 0, offset);
         game.getRootNode().attachChild(scene);
     }
     

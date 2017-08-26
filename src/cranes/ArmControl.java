@@ -8,18 +8,21 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import buildingsimulator.Control.Actions;
 import buildingsimulator.Controllable;
+import buildingsimulator.GameManager;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.input.controls.ActionListener;
 /**
  * Klasa <code>ArmControl</code> jest klasą abstrakcyjną dla wszystkich klas 
  * reprezentujących sterowanie ramieniem dźwigu w grze. Implementuje ona interfejs
  * AnalogListener, dzięki czemu sterowanie ramieniem dźwigu każdego typu odbywa 
  * się w metodzie onAnalog tej klasy. 
  */
-public abstract class ArmControl implements AnalogListener, Controllable{
+public abstract class ArmControl implements AnalogListener, Controllable, ActionListener{
     private Hook hook;
     private float maxHandleHookDisplacement, minHandleHookDisplacement,
             maxArmHeight = 0, minArmHeight = 0;
-    private boolean usedNotUsingKey = false; 
+    private boolean usedNotUsingKey = false, changingHookLocation = false,
+            changingArmLocation = false; 
     private Node crane, craneControl;
     private Spatial hookHandle;
     private Actions[] availableActions = { Actions.RIGHT, Actions.LEFT,
@@ -66,22 +69,24 @@ public abstract class ArmControl implements AnalogListener, Controllable{
         Spatial recentlyHitObject;
         switch(Actions.valueOf(name)){
             case RIGHT:
-                rotate(-tpf / 5);
+                if(!changingHookLocation) rotate(-tpf / 5);
                 break;
             case LEFT:
-                rotate(tpf / 5);
+                if(!changingHookLocation) rotate(tpf / 5);
                 break;
             case PULL_OUT:
-                moveHandleHook(maxHandleHookDisplacement, true, -tpf / 2);
+                if(!changingHookLocation) 
+                    moveHandleHook(maxHandleHookDisplacement, true, -tpf / 2);
                 break;
             case PULL_IN:
-                moveHandleHook(minHandleHookDisplacement, false, tpf / 2);
+                if(!changingHookLocation)
+                    moveHandleHook(minHandleHookDisplacement, false, tpf / 2);
                 break;
             case LOWER_HOOK:
-                hook.lower();
+                if(!changingArmLocation) hook.lower();
                 break;
             case HEIGHTEN_HOOK:
-                if(hook.getActualLowering() > 1f)
+                if(hook.getActualLowering() > 1f && !changingArmLocation)
                     hook.heighten();
                 break;
             case ATTACH: 
@@ -103,13 +108,13 @@ public abstract class ArmControl implements AnalogListener, Controllable{
                 hook.detach(true); 
                 break;
             case UP:
-                changeArmHeight(maxArmHeight, false);
+                if(!changingHookLocation) changeArmHeight(maxArmHeight, false);
                 break;
             case DOWN:
                 Spatial attachedObject = hook.getAttachedObject();
                 if((BottomCollisionListener.isNothingBelow(hook) && attachedObject == null)
                         || (attachedObject != null && BottomCollisionListener
-                            .isNothingBelow((Wall)attachedObject))){
+                            .isNothingBelow((Wall)attachedObject)) && !changingHookLocation){
                     changeArmHeight(minArmHeight, true); 
                     hook.setRecentlyHitObject(null);
                 }
@@ -131,6 +136,20 @@ public abstract class ArmControl implements AnalogListener, Controllable{
                 }
             }
         }else usedNotUsingKey = false;
+    }
+    
+    public void onAction(String name, boolean isPressed, float tpf){
+        if(isPressed){
+            for(int i = 0; i < 8; i++){
+                if(name.equals(availableActions[i].toString())){
+                    if(i == 4 || i == 5) changingHookLocation = true; 
+                    else changingArmLocation = true; 
+                }
+            }
+        }else{
+            changingHookLocation = false; 
+            changingArmLocation = false; 
+        }
     }
     
     /**

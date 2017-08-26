@@ -136,33 +136,32 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     public void onAction(String name, boolean isPressed, float tpf){
         MobileCrane mobileCrane = (MobileCrane)GameManager.getUnit(0);
         CraneAbstract crane = GameManager.getUnit(1);
-            if(isPressed){
-                if(name.equals(Control.Actions.PHYSICS.toString())){
-                    if(!debug) bulletAppState.getPhysicsSpace().enableDebug(assetManager);
-                    else bulletAppState.getPhysicsSpace().disableDebug();
-                    debug = !debug;
+        if(isPressed){
+            if(name.equals(Control.Actions.PHYSICS.toString())){
+                if(!debug) bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+                else bulletAppState.getPhysicsSpace().disableDebug();
+                debug = !debug;
+            }else{
+                if(name.equals(Control.Actions.FIRST.toString())){
+                    inputManager.removeListener(crane.getArmControl());
+                    crane.setUsing(false);
+                    Control.addListener(((MobileCraneArmControl)mobileCrane
+                            .getArmControl()).isUsing() ? mobileCrane.getArmControl()
+                            : mobileCrane);
+                    mobileCrane.setUsing(true);
                 }else{
-                    if(name.equals(Control.Actions.FIRST.toString())){
-                        inputManager.removeListener(crane.getArmControl());
-                        crane.setUsing(false);
-                        Control.addListener(((MobileCraneArmControl)mobileCrane
-                                .getArmControl()).isUsing() ? mobileCrane.getArmControl()
-                                : mobileCrane);
-                        mobileCrane.setUsing(true);
+                    if(((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing()){
+                        inputManager.removeListener(mobileCrane.getArmControl());
                     }else{
-                        GameManager.setLastAction(name);
-                        if(((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing()){
-                            inputManager.removeListener(mobileCrane.getArmControl());
-                        }else{
-                            mobileCrane.setSteeringAngle(0f);
-                            inputManager.removeListener(mobileCrane);
-                        }
-                        mobileCrane.setUsing(false);
-                        Control.addListener(crane.getArmControl());
-                        crane.setUsing(true);
+                        mobileCrane.setSteeringAngle(0f);
+                        inputManager.removeListener(mobileCrane);
                     }
+                    mobileCrane.setUsing(false);
+                    Control.addListener(crane.getArmControl());
+                    crane.setUsing(true);
                 }
             }
+        }
     }
     /**
      * Pobiera tekstową reprezentację liczby klatek na sekundę. 

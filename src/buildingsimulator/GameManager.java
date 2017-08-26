@@ -293,7 +293,7 @@ public class GameManager {
         RigidBodyControl firstPartControl = new RigidBodyControl(0.0f); 
         firstPart.addControl(firstPartControl);
         physics.add(firstPartControl); 
-        float offset = -z * 4 / 2;
+        float offset = -z * 2; // przesunięcie planszy o połowę 
         firstPartControl.setPhysicsLocation(new Vector3f(offset, 0, offset));
         for(int i = 0; i < 5; i++){
             for(int k = 0; k < end; k++){

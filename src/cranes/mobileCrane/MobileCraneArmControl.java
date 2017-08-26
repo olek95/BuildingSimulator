@@ -84,8 +84,10 @@ public class MobileCraneArmControl extends ArmControl{
     @Override 
     protected void changeArmHeight(float limit, boolean lowering){
         if(limit == getMaxArmHeight() && yCraneOffset + LIFTING_SPEED < limit
-                || limit == getMinArmHeight() && yCraneOffset - LIFTING_SPEED >= limit)
+                || limit == getMinArmHeight() && yCraneOffset - LIFTING_SPEED >= limit){
             controlCrane(lowering);
+            rotateHook();
+        }
     }
     
     /**

@@ -49,13 +49,10 @@ public class Construction extends Node{
                             (Wall)recentlyHitObject, false, wallMode);
                 }
                 if(touchedWall != null){
-                    System.out.println("touched " + touchedWall);
                     touchedWall.attachChild(wall1);
-                    System.out.println("isPu " + touchedWall.getChildren().isEmpty());
                     lastAddedWall = wall1; 
                     wall1.setMovable(false);
                     wall1.setStale(false);
-                    //if(!collisionWithGround) correctLocations(touchedWall.getName()); 
                 }
             }
         }
@@ -228,10 +225,7 @@ public class Construction extends Node{
                     i = minDistance > 3 ? 0 : minDistance; 
             if(foundations) 
                 catchNodes[i] = (Node)wallChildren.get(minDistance); 
-            System.out.println(catchNodes[i]);
-            System.out.println(catchNodes[i].getChildren().isEmpty());
             if(checkIfCanBeAdded(catchNodes[i], wall1)){
-                System.out.println("| " + catchNodes[i]);
                 boolean ceiling = mode == 1 && (int)(location.y - 
                         wall2.getWorldTranslation().y) != 0; 
                 if(foundations || ceiling){
@@ -360,7 +354,6 @@ public class Construction extends Node{
             else {
                 Wall wall = (Wall)catchNodeChildren.get(0); 
                 if(wall.equals(newWall)){
-                    System.out.println("Usuwanie0");
                     removeWall(wall); 
                     return true;
                 }else{
@@ -373,14 +366,12 @@ public class Construction extends Node{
                         if(node.equals(catchNodes[i])) index = i; 
                     if(index <= 3) {
                         if(distance > wall.getHeight()){
-                            System.out.println("Usuwanie1");
                             removeWall(wall); 
                             return true; 
                         }
                         return false; 
                     }else{
                         if(distance > wall.getWidth()){
-                            System.out.println("Usuwanie2");
                             removeWall(wall); 
                             return true; 
                         }

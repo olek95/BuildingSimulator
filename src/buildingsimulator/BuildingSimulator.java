@@ -14,6 +14,7 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Node;
@@ -23,6 +24,9 @@ import com.jme3.util.SkyFactory;
 import cranes.Hook;
 import java.util.ArrayList;
 import java.util.List;
+import menu.MainMenu;
+import tonegod.gui.controls.windows.Window;
+import tonegod.gui.core.Screen;
 
 public class BuildingSimulator extends SimpleApplication implements ActionListener{
     private static BuildingSimulator game;
@@ -35,6 +39,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
 
     @Override
     public void simpleInitApp() {
+        //MainMenu.showMenu();
         stateManager.attach(bulletAppState);
         GameManager.createTerrain();
         flyCam.setMoveSpeed(100);
@@ -63,6 +68,11 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                 new Vector3f(0, 1.9f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
         GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
                 new Vector3f(0, 2.3f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
+        
+        
+        
+        
+        
         //GameManager.addToGame(WallsFactory.createWall(WallType.DOOR, 
          //       new Vector3f(0f, 1.9f, 20f)));
         //WallsFactory.createWall(WallType.DOOR, new Vector3f(0f, 1.5f, 17f));
@@ -97,22 +107,22 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
 
     @Override
     public void simpleUpdate(float tpf) {
-        MobileCrane unit = (MobileCrane)GameManager.getUnit(0);
-        unit.updateState();
-        List<Spatial> gameObjects = rootNode.getChildren();
-        int gameObjectsNumber = gameObjects.size();
-        for(int i = 0; i < gameObjectsNumber; i++){
-            Spatial gameObject = gameObjects.get(i); 
-            if(gameObject.getName().startsWith("Building")){
-                Construction building = (Construction)gameObject; 
-                if(building.isHit()){
-                    building.setResetWalls(false);
-                    building.updateState((Node)building.getChild(0)); 
-                    if(!building.isResetWalls()) building.setHit(false);
-                    //building.setHit(false);
-                }
-            }
-        }
+//        MobileCrane unit = (MobileCrane)GameManager.getUnit(0);
+//        unit.updateState();
+//        List<Spatial> gameObjects = rootNode.getChildren();
+//        int gameObjectsNumber = gameObjects.size();
+//        for(int i = 0; i < gameObjectsNumber; i++){
+//            Spatial gameObject = gameObjects.get(i); 
+//            if(gameObject.getName().startsWith("Building")){
+//                Construction building = (Construction)gameObject; 
+//                if(building.isHit()){
+//                    building.setResetWalls(false);
+//                    building.updateState((Node)building.getChild(0)); 
+//                    if(!building.isResetWalls()) building.setHit(false);
+//                    //building.setHit(false);
+//                }
+//            }
+//        }
     }
 
     @Override

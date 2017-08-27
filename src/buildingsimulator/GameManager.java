@@ -254,11 +254,7 @@ public class GameManager {
         int x = 0, z = 254, end = 4;
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
         Spatial firstPart = scene.getChild("terrain-gameMap");
-        RigidBodyControl firstPartControl = new RigidBodyControl(0.0f); 
-        firstPart.addControl(firstPartControl);
-        physics.add(firstPartControl); 
         float offset = -z * 2; // przesunięcie planszy o połowę 
-        firstPartControl.setPhysicsLocation(new Vector3f(offset, 0, offset));
         for(int i = 0; i < 5; i++){
             for(int k = 0; k < end; k++){
                 Spatial scenePart = firstPart.clone(true);
@@ -273,6 +269,10 @@ public class GameManager {
             z = 0;
             end = 5;
         }
+        RigidBodyControl firstPartControl = new RigidBodyControl(0.0f); 
+        firstPart.addControl(firstPartControl);
+        physics.add(firstPartControl); 
+        firstPartControl.setPhysicsLocation(new Vector3f(offset, 0, offset));
         game.getRootNode().attachChild(scene);
     }
     

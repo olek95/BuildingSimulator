@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <screen>
+        <component type="Window" id="InventoryWindowID" position="15%,15%" dimensions="70%,70%">
+            <method name="setWindowTitle" param0="Inventory" />
+            <component type="Label" position="10,40" dimensions="20%,20" >
+                <method name="setText" param0="First Name:" />
+                <method name="setTextAlign" param0="Right" />
+                <method name="setTextVAlign" param0="Center" />
+            </component>
+        </component>
+    </screen>
+</root>

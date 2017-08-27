@@ -3,34 +3,47 @@
     <screen>
         <component type="Window" id="main_menu" position="0%,0%" dimensions="100%,100%">
             <method name="setWindowTitle" param0="Building Simulator" />
-             <method name="setTextAlign" param0="Center" />
+            <method name="setTextAlign" param0="Center" />
+            <method name="setIsResizable" param0="false" />
             <component type="Button" id="new_game_button" position="40%,20%" dimensions="23%,10%" >
                 <method name="setText" param0="Nowa Gra" />
-                <eventMethod name="onButtonMouseLeftUp" stateMethodName="startGame" />
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="start" />
             </component>
             <component type="Button" id="new_game_button" position="40%,35%" dimensions="23%,10%" >
                 <method name="setText" param0="Wczytaj Gre" />
-                <eventMethod name="onButtonMouseLeftUp" stateMethodName="startGame" />
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="load" />
             </component>
             <component type="Button" id="new_game_button" position="40%,50%" dimensions="23%,10%" >
                 <method name="setText" param0="Statystyki" />
-                <eventMethod name="onButtonMouseLeftUp" stateMethodName="startGame" />
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="showStatistics" />
             </component>
             <component type="Button" id="new_game_button" position="40%,65%" dimensions="23%,10%" >
                 <method name="setText" param0="Opcje" />
-                <eventMethod name="onButtonMouseLeftUp" stateMethodName="startGame" />
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="showOptions" />
             </component>
             <component type="Button" id="new_game_button" position="40%,80%" dimensions="23%,10%" >
                 <method name="setText" param0="Wyjdz z Gry" />
-                <eventMethod name="onButtonMouseLeftUp" stateMethodName="startGame" />
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="exit" />
             </component>
             <component type="Button" id="new_game_button" position="3%,7%" dimensions="12%,8%" >
                 <method name="setText" param0="Logowanie" />
-                <eventMethod name="onButtonMouseLeftUp" stateMethodName="startGame" />
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="signIn" />
             </component>
             <component type="Button" id="new_game_button" position="3%,16%" dimensions="12%,8%" >
                 <method name="setText" param0="Rejestracja" />
-                <eventMethod name="onButtonMouseLeftUp" stateMethodName="startGame" />
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="register" />
+            </component>
+        </component>
+        <component type="Window" id="authorization_popup" position="0%,0%" dimensions="70%,25%">
+            <method name="setWindowTitle" param0="Autoryzacja" />
+            <method name="setIsResizable" param0="false" />
+            <component type="Label" position="100,30" dimensions="20%,20" >
+                <method name="setText" param0="Login:" />
+                <method name="setTextAlign" param0="Left" />
+            </component>
+            <component type="Button" id="login_button" position="40%,20%" dimensions="23%,10%" >
+                <method name="setText" param0="Zaloguj się" />
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="singIn" />
             </component>
         </component>
     </screen>

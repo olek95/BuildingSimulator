@@ -1,6 +1,8 @@
 package menu;
 
+import buildingsimulator.Authorization;
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.GameManager;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
@@ -8,24 +10,45 @@ import com.jme3.input.event.MouseButtonEvent;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
+/**
+ * Singleton <code>MainMenu</code> reprezentuje menu główne gry. Posiada możliwość
+ * uruchomienia nowej gry, wczytania zapisanej gry, pokazania statystyk, zmiany 
+ * ustawień gry, wyjscia z gry oraz logowania i rejestracji. 
+ * @author AleksanderSklorz 
+ */
 public class MainMenu extends AbstractAppState {
     private static Window mainMenu;
     private static Screen screen = new Screen(BuildingSimulator.getBuildingSimulator());
     private static MainMenu menu;
     private MainMenu(){
         screen.parseLayout("Interface/main_menu.gui.xml", this);
-        //mainMenu = (Window)screen.getElementById("main_menu");
-        //inventory.hide();
+        mainMenu = (Window)screen.getElementById("main_menu");
+        ((Window)screen.getElementById("authorization_popup")).hide();
         screen.setUseCustomCursors(true);
+        
     }
     
+    /**
+     * Pokazuje menu główne gry. 
+     */
     public static void showMenu(){
         if(menu == null) menu = new MainMenu(); 
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
     }
     
-    public void startGame(MouseButtonEvent evt, boolean isToggled) {
-        
+    /** 
+     * Uruchamia grę 
+     * @param evt 
+     * @param isToggled 
+     */
+    public void start(MouseButtonEvent evt, boolean isToggled) {
+        mainMenu.hide();
+        screen.setUseCustomCursors(false);
+        GameManager.runGame();
+    }
+    
+    public void signIn(MouseButtonEvent evt, boolean isToggled){
+        Authorization.showPopup(screen);
     }
     
 //    @Override

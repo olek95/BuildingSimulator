@@ -1,19 +1,26 @@
 package buildingsimulator;
 
+import buildingmaterials.WallType;
+import buildingmaterials.WallsFactory;
 import cranes.Hook;
 import cranes.CraneAbstract;
 import com.jme3.bounding.BoundingBox;
+import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.joints.HingeJoint;
 import com.jme3.bullet.util.CollisionShapeFactory;
+import com.jme3.light.DirectionalLight;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import cranes.crane.Crane;
+import cranes.mobileCrane.MobileCrane;
 import java.util.ArrayList;
 import net.wcomohundro.jme3.csg.CSGGeometry;
 
@@ -25,6 +32,39 @@ import net.wcomohundro.jme3.csg.CSGGeometry;
 public class GameManager {
     private static String lastAction;
     private static ArrayList<CraneAbstract> units = new ArrayList();
+    
+    public static void runGame(){
+        BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
+        game.getFlyByCamera().setDragToRotate(false);
+        BulletAppState bas = game.getBulletAppState(); 
+        game.getStateManager().attach(bas);
+        GameManager.createTerrain();
+        MobileCrane crane = new MobileCrane();
+        GameManager.addUnit(crane);
+        GameManager.addUnit(new Crane());
+        crane.setUsing(true);
+        Control.addListener(crane);
+        Control.addListener(game);
+        DirectionalLight sun = new DirectionalLight();
+        sun.setColor(ColorRGBA.White);
+        sun.setDirection(new Vector3f(-.5f,-.5f,-.5f).normalizeLocal());
+        game.getRootNode().addLight(sun);
+        bas.getPhysicsSpace().addCollisionListener(BuildingCollisionListener
+                .createBuildingCollisionListener());
+        // KOD DLA TESTU!!
+        GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
+                new Vector3f(0f, 0.3f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
+        GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
+                new Vector3f(0f, 0.7f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
+        GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
+                new Vector3f(0f, 1.1f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
+        GameManager.addToGame(WallsFactory.createWall(WallType.DOOR, 
+                new Vector3f(0f, 1.5f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
+        GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
+                new Vector3f(0, 1.9f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
+        GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
+                new Vector3f(0, 2.3f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
+    }
     
     /**
      * Tworzy fizykę dla danego obiektu. Stosuje ona klasę RigidBodyControl, 

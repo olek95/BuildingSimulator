@@ -39,35 +39,36 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
 
     @Override
     public void simpleInitApp() {
-        //MainMenu.showMenu();
-        stateManager.attach(bulletAppState);
-        GameManager.createTerrain();
-        flyCam.setMoveSpeed(100);
-        MobileCrane crane = new MobileCrane();
-        GameManager.addUnit(crane);
-        GameManager.addUnit(new Crane());
-        crane.setUsing(true);
-        Control.addListener(crane);
-        Control.addListener(this);
-        DirectionalLight sun = new DirectionalLight();
-        sun.setColor(ColorRGBA.White);
-        sun.setDirection(new Vector3f(-.5f,-.5f,-.5f).normalizeLocal());
-        rootNode.addLight(sun);
-        bulletAppState.getPhysicsSpace()
-                .addCollisionListener(BuildingCollisionListener.createBuildingCollisionListener());
-        // KOD DLA TESTU!!
-        GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
-                new Vector3f(0f, 0.3f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
-        GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
-                new Vector3f(0f, 0.7f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
-        GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
-                new Vector3f(0f, 1.1f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
-        GameManager.addToGame(WallsFactory.createWall(WallType.DOOR, 
-                new Vector3f(0f, 1.5f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
-        GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
-                new Vector3f(0, 1.9f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
-        GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
-                new Vector3f(0, 2.3f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
+        flyCam.setEnabled(false);
+        MainMenu.showMenu();
+//        stateManager.attach(bulletAppState);
+//        GameManager.createTerrain();
+//        flyCam.setMoveSpeed(100);
+//        MobileCrane crane = new MobileCrane();
+//        GameManager.addUnit(crane);
+//        GameManager.addUnit(new Crane());
+//        crane.setUsing(true);
+//        Control.addListener(crane);
+//        Control.addListener(this);
+//        DirectionalLight sun = new DirectionalLight();
+//        sun.setColor(ColorRGBA.White);
+//        sun.setDirection(new Vector3f(-.5f,-.5f,-.5f).normalizeLocal());
+//        rootNode.addLight(sun);
+//        bulletAppState.getPhysicsSpace()
+//                .addCollisionListener(BuildingCollisionListener.createBuildingCollisionListener());
+//        // KOD DLA TESTU!!
+//        GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
+//                new Vector3f(0f, 0.3f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
+//        GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
+//                new Vector3f(0f, 0.7f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
+//        GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
+//                new Vector3f(0f, 1.1f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
+//        GameManager.addToGame(WallsFactory.createWall(WallType.DOOR, 
+//                new Vector3f(0f, 1.5f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
+//        GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
+//                new Vector3f(0, 1.9f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
+//        GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
+//                new Vector3f(0, 2.3f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
         
         
         
@@ -107,22 +108,22 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
 
     @Override
     public void simpleUpdate(float tpf) {
-        MobileCrane unit = (MobileCrane)GameManager.getUnit(0);
-        unit.updateState();
-        List<Spatial> gameObjects = rootNode.getChildren();
-        int gameObjectsNumber = gameObjects.size();
-        for(int i = 0; i < gameObjectsNumber; i++){
-            Spatial gameObject = gameObjects.get(i); 
-            if(gameObject.getName().startsWith("Building")){
-                Construction building = (Construction)gameObject; 
-                if(building.isHit()){
-                    building.setResetWalls(false);
-                    building.updateState((Node)building.getChild(0)); 
-                    if(!building.isResetWalls()) building.setHit(false);
-                    //building.setHit(false);
-                }
-            }
-        }
+//        MobileCrane unit = (MobileCrane)GameManager.getUnit(0);
+//        unit.updateState();
+//        List<Spatial> gameObjects = rootNode.getChildren();
+//        int gameObjectsNumber = gameObjects.size();
+//        for(int i = 0; i < gameObjectsNumber; i++){
+//            Spatial gameObject = gameObjects.get(i); 
+//            if(gameObject.getName().startsWith("Building")){
+//                Construction building = (Construction)gameObject; 
+//                if(building.isHit()){
+//                    building.setResetWalls(false);
+//                    building.updateState((Node)building.getChild(0)); 
+//                    if(!building.isResetWalls()) building.setHit(false);
+//                    //building.setHit(false);
+//                }
+//            }
+//        }
     }
 
     @Override

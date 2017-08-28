@@ -46,7 +46,7 @@
             </component>
             <component type="Password" id="password" position="50%,47%"  dimensions="21%,13%" />
             <component type="Label" id="error_label" position="38%,60%" dimensions="100%,12%" />
-            <component type="Button" id="login_button" position="20%,80%" dimensions="23%,15%" >
+            <component type="Button" id="sending_data_button" position="20%,80%" dimensions="23%,15%" >
                 <method name="setText" param0="Zaloguj sie" />
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="sendData" />
             </component>
@@ -56,6 +56,7 @@
             </component>
             <component type="CheckBox" id="registration_check_box" position="5%, 34%">
                 <method name="setLabelText" param0="Rejestracja" />
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="changeDataSendingButtonLabel" />
             </component>
         </component>
     </screen>

@@ -79,13 +79,13 @@ public class MainMenu extends AbstractAppState {
         error.setFontColor(ColorRGBA.Red);
         if(registration){
             String errorInformation = checkDataLength(login, password); 
-            System.out.println(login);
             if(errorInformation != null){
                 error.setText(errorInformation);
             }else{
                 if(!Authorization.checkIfUserExists(login)){
                     Authorization.signUp(login, password); 
-                    error.setText("");
+                    error.setFontColor(ColorRGBA.Green);
+                    error.setText("Rejestracja zakonczona powodzeniem");
                 }else{
                     error.setText("Uzytkownik juz istnieje!");
                 }
@@ -110,6 +110,16 @@ public class MainMenu extends AbstractAppState {
      */
     public void cancel(MouseButtonEvent evt, boolean isToggled){
          changeAuthorizationPopupState(false); 
+    }
+    
+    /**
+     * Zmienia etykietę przycisku logowania/rejestracji. 
+     * @param evt
+     * @param isToggled true jeśli etykieita rejestracji, false w przeciwnym przypadku 
+     */
+    public void changeDataSendingButtonLabel(MouseButtonEvent evt, boolean isToggled){
+        screen.getElementById("sending_data_button").setText(isToggled 
+                ? "Zarejestruj sie" : "Zaloguj sie");
     }
     
     private void changeAuthorizationPopupState(boolean visible){

@@ -29,25 +29,22 @@
                 <method name="setText" param0="Logowanie" />
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="signIn" />
             </component>
-            <component type="Button" id="new_game_button" position="3%,16%" dimensions="12%,8%" >
-                <method name="setText" param0="Rejestracja" />
-                <eventMethod name="onButtonMouseLeftUp" stateMethodName="register" />
-            </component>
         </component>
         <component type="Window" id="authorization_popup" position="0,0" dimensions="70%,25%">
             <method name="setWindowTitle" param0="Autoryzacja" />
             <method name="setIsResizable" param0="false" />
             <method name="centerToParent"/>
-            <component type="Label" position="35%,23%" dimensions="20%,20" >
+            <component type="Label" position="35%,23%" dimensions="20%,5%" >
                 <method name="setText" param0="Login:" />
                 <method name="setTextAlign" param0="Left" />
             </component>
             <component type="TextField" id="login_text_field" position="50%,25%" />
-            <component type="Label" position="35%,45%" dimensions="20%,20" >
+            <component type="Label" position="35%,45%" dimensions="20%,5%" >
                 <method name="setText" param0="Password:" />
                 <method name="setTextAlign" param0="Left" />
             </component>
-            <component type="Password" id="password" position="50%,47%"  dimensions="23%,20%"/>
+            <component type="Password" id="password" position="50%,47%"  dimensions="21%,13%" />
+            <component type="Label" id="error_label" position="38%,60%" dimensions="100%,12%" />
             <component type="Button" id="login_button" position="20%,80%" dimensions="23%,15%" >
                 <method name="setText" param0="Zaloguj sie" />
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="sendData" />
@@ -56,7 +53,7 @@
                 <method name="setText" param0="Anuluj" />
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="cancel" />
             </component>
-            <component type="CheckBox" id="register_check_box" position="5%, 34%">
+            <component type="CheckBox" id="registration_check_box" position="5%, 34%">
                 <method name="setLabelText" param0="Rejestracja" />
             </component>
         </component>

@@ -6,6 +6,9 @@ import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.input.event.MouseButtonEvent;
+import com.jme3.math.ColorRGBA;
+import tonegod.gui.controls.buttons.CheckBox;
+import tonegod.gui.controls.text.Label;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
@@ -53,10 +56,31 @@ public class MainMenu extends AbstractAppState {
     public void sendData(MouseButtonEvent evt, boolean isToggled){
         String login = screen.getElementById("login_text_field").getText(),
                 password = screen.getElementById("password").getText();
+        boolean registration = ((CheckBox)screen.getElementById("registration_check_box"))
+                .getIsChecked();
         Authorization.createDatabase();
-        if(Authorization.checkIfUserExists(login, password)){
-            
+        Label error = (Label)screen.getElementById("error_label");
+        error.setFontColor(ColorRGBA.Red);
+        if(registration){
+            if(!Authorization.checkIfUserExists(login)){
+                Authorization.signUp(login, password); 
+                error.setText("");
+            }else{
+                error.setText("Uzytkownik juz istnieje!");
+            }
+        }else{
+            if(!Authorization.signIn(login, password)){
+                error.setText("Uzytkownik nie istnieje!");
+            }else{
+                error.setText("");
+            }
         }
+    }
+    
+    public void cancel(MouseButtonEvent evt, boolean isToggled){
+         screen.getElementById("login_text_field").setText("");
+         screen.getElementById("password").setText("");
+         ((Window)screen.getElementById("authorization_popup")).hide();
     }
     
 //    @Override

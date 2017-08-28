@@ -34,18 +34,42 @@ public class Authorization extends AbstractAppState{
         if(authorization == null) authorization = new Authorization(); 
     }
     
-    public static boolean checkIfUserExists(String login, String password){
+    public static boolean checkIfUserExists(String login){
        try(Connection connection = connect()){
            PreparedStatement statement = connection
-                   .prepareStatement("SELECT COUNT(*) FROM Users WHERE login = ?"
-                   + " AND password = ?");
+                   .prepareStatement("SELECT COUNT(*) FROM Users WHERE login = ?");
            statement.setString(1, login);
-           statement.setString(2, password);
            return statement.executeQuery().getInt(1) != 0;
        }catch(SQLException ex){
            ex.printStackTrace();
        }
        return false; 
+    }
+    
+    public static void signUp(String login, String password){
+        try(Connection connection = connect()){
+           PreparedStatement statement = connection
+                   .prepareStatement("INSERT INTO Users(login, password) VALUES(?, ?)");
+           statement.setString(1, login);
+           statement.setString(2, password);
+           statement.execute();
+       }catch(SQLException ex){
+           ex.printStackTrace();
+       }
+    }
+    
+    public static boolean signIn(String login, String password){
+        try(Connection connection = connect()){
+            PreparedStatement statement = connection
+                    .prepareStatement("SELECT COUNT(*) FROM Users WHERE login = ?"
+                    + " AND password = ?");
+            statement.setString(1, login);
+            statement.setString(2, password);
+            return statement.executeQuery().getInt(1) != 0;
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        }
+        return false; 
     }
     
     private static Connection connect(){

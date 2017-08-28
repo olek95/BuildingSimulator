@@ -9,19 +9,19 @@
                 <method name="setText" param0="Nowa Gra" />
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="start" />
             </component>
-            <component type="Button" id="new_game_button" position="40%,35%" dimensions="23%,10%" >
+            <component type="Button" id="load_game_button" position="40%,35%" dimensions="23%,10%" >
                 <method name="setText" param0="Wczytaj Gre" />
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="load" />
             </component>
-            <component type="Button" id="new_game_button" position="40%,50%" dimensions="23%,10%" >
+            <component type="Button" id="statistics_button" position="40%,50%" dimensions="23%,10%" >
                 <method name="setText" param0="Statystyki" />
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="showStatistics" />
             </component>
-            <component type="Button" id="new_game_button" position="40%,65%" dimensions="23%,10%" >
+            <component type="Button" id="options_button" position="40%,65%" dimensions="23%,10%" >
                 <method name="setText" param0="Opcje" />
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="showOptions" />
             </component>
-            <component type="Button" id="new_game_button" position="40%,80%" dimensions="23%,10%" >
+            <component type="Button" id="exit_button" position="40%,80%" dimensions="23%,10%" >
                 <method name="setText" param0="Wyjdz z Gry" />
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="exit" />
             </component>

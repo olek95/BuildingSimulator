@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <screen>
+        <component type="Window" id="options" position="0%,0%" dimensions="100%,100%">
+            <method name="setIsResizable" param0="false" />
+             <component type="Label" position="16%,4%" dimensions="25%,12%" >
+                 <method name="setText" param0="USTAWIENIA GRY:" /> 
+             </component>
+        </component>
+    </screen>
+</root>

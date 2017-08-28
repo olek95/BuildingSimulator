@@ -47,7 +47,16 @@ public class MainMenu extends AbstractAppState {
     }
     
     public void signIn(MouseButtonEvent evt, boolean isToggled){
-        Authorization.showPopup(screen);
+         ((Window)screen.getElementById("authorization_popup")).show();
+    }
+    
+    public void sendData(MouseButtonEvent evt, boolean isToggled){
+        String login = screen.getElementById("login_text_field").getText(),
+                password = screen.getElementById("password").getText();
+        Authorization.createDatabase();
+        if(Authorization.checkIfUserExists(login, password)){
+            
+        }
     }
     
 //    @Override

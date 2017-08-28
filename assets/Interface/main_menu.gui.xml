@@ -47,10 +47,10 @@
                 <method name="setText" param0="Password:" />
                 <method name="setTextAlign" param0="Left" />
             </component>
-            <component type="TextField" id="password_text_field" position="50%,47%" />
+            <component type="Password" id="password" position="50%,47%"  dimensions="23%,20%"/>
             <component type="Button" id="login_button" position="20%,80%" dimensions="23%,15%" >
                 <method name="setText" param0="Zaloguj sie" />
-                <eventMethod name="onButtonMouseLeftUp" stateMethodName="singIn" />
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="sendData" />
             </component>
             <component type="Button" id="cancel_button" position="60%,80%" dimensions="23%,15%" >
                 <method name="setText" param0="Anuluj" />

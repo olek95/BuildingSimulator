@@ -78,11 +78,17 @@ public class MainMenu extends AbstractAppState {
         Label error = (Label)screen.getElementById("error_label");
         error.setFontColor(ColorRGBA.Red);
         if(registration){
-            if(!Authorization.checkIfUserExists(login)){
-                Authorization.signUp(login, password); 
-                error.setText("");
+            String errorInformation = checkDataLength(login, password); 
+            System.out.println(login);
+            if(errorInformation != null){
+                error.setText(errorInformation);
             }else{
-                error.setText("Uzytkownik juz istnieje!");
+                if(!Authorization.checkIfUserExists(login)){
+                    Authorization.signUp(login, password); 
+                    error.setText("");
+                }else{
+                    error.setText("Uzytkownik juz istnieje!");
+                }
             }
         }else{
             if(!Authorization.signIn(login, password)){
@@ -113,6 +119,14 @@ public class MainMenu extends AbstractAppState {
             screen.getElementById("password").setText("");
             ((Window)screen.getElementById("authorization_popup")).hide();
         }
+    }
+    
+    private String checkDataLength(String login, String password){
+        if(login.equals("") && password.equals("")) return "Login i hasło nie mogą być puste";
+        if(login.equals("")) return "Login nie moze byc pusty!";
+        if(password.equals("")) return "Haslo nie moze byc puste!";
+        if(login.length() > 20 || password.length() > 20) return "Za dlugi login lub haslo";
+        return null; 
     }
     
 //    @Override

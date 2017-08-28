@@ -1,6 +1,5 @@
 package menu;
 
-import buildingsimulator.Authorization;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import com.jme3.app.Application;

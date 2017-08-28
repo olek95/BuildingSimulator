@@ -1,6 +1,7 @@
-package buildingsimulator;
+package menu;
 
 import com.jme3.app.state.AbstractAppState;
+import tonegod.gui.controls.buttons.CheckBox;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 

@@ -1,4 +1,4 @@
-package menu;
+package authorization;
 
 import com.jme3.app.state.AbstractAppState;
 import java.sql.Connection;
@@ -7,12 +7,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import tonegod.gui.controls.windows.Window;
-import tonegod.gui.core.Screen;
 
 /**
  * Klasa <code>Authorization</code> odpowiada za obsługę logowania i rejestracji
- * użytkownika. Wyświetla stosowne do tej czynności okienko. 
+ * użytkownika.
  * @author AleksanderSklorz 
  */
 public class Authorization extends AbstractAppState{
@@ -30,10 +28,18 @@ public class Authorization extends AbstractAppState{
         }
     }
     
+    /**
+     * Tworzy bazę danych wraz z tabelkami. 
+     */
     public static void createDatabase(){
         if(authorization == null) authorization = new Authorization(); 
     }
     
+    /**
+     * Sprawdza czy dany użytkownik istnieje. 
+     * @param login nazwa użytkownika 
+     * @return true jeśli użytkownik istnieje, false w przeciwnym przypadku 
+     */
     public static boolean checkIfUserExists(String login){
        try(Connection connection = connect()){
            PreparedStatement statement = connection
@@ -46,6 +52,11 @@ public class Authorization extends AbstractAppState{
        return false; 
     }
     
+    /**
+     * Pozwala na rejestrację nowego użytkownika. 
+     * @param login nazwa użytkownika 
+     * @param password hasło użytkownika 
+     */
     public static void signUp(String login, String password){
         try(Connection connection = connect()){
            PreparedStatement statement = connection
@@ -58,6 +69,13 @@ public class Authorization extends AbstractAppState{
        }
     }
     
+    /**
+     * Pozwala użytkownikowi się zalogować. Sprawdza tez czy taki użytkownik 
+     * już istnieje. 
+     * @param login nazwa użytkownika 
+     * @param password hasło użytkownika 
+     * @return true jeśli udało się zalogować, false w przeciwnym przypadku 
+     */
     public static boolean signIn(String login, String password){
         try(Connection connection = connect()){
             PreparedStatement statement = connection

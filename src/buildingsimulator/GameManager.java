@@ -1,5 +1,6 @@
 package buildingsimulator;
 
+import authorization.User;
 import buildingmaterials.WallType;
 import buildingmaterials.WallsFactory;
 import cranes.Hook;
@@ -32,7 +33,7 @@ import net.wcomohundro.jme3.csg.CSGGeometry;
 public class GameManager {
     private static String lastAction;
     private static ArrayList<CraneAbstract> units = new ArrayList();
-    
+    private static User user; 
     public static void runGame(){
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
         game.getFlyByCamera().setDragToRotate(false);
@@ -315,6 +316,18 @@ public class GameManager {
         firstPartControl.setPhysicsLocation(new Vector3f(offset, 0, offset));
         game.getRootNode().attachChild(scene);
     }
+    
+    /**
+     * Zwraca aktualnego użytkownika. 
+     * @return aktualny użytkownik 
+     */
+    public static User getUser() { return user; }
+    
+    /**
+     * Ustawia aktualnego użytkownika. 
+     * @param user aktualny użytkownik 
+     */
+    public static void setUser(User user) { GameManager.user = user; }
     
     private static void moveDynamicObject(Spatial element, Vector3f displacement){
         RigidBodyControl elementControl = element.getControl(RigidBodyControl.class);

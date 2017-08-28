@@ -25,11 +25,12 @@
                 <method name="setText" param0="Wyjdz z Gry" />
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="exit" />
             </component>
-            <component type="Button" id="new_game_button" position="3%,7%" dimensions="12%,8%" >
-                <method name="setText" param0="Logowanie" />
-                <eventMethod name="onButtonMouseLeftUp" stateMethodName="signIn" />
+            <component type="Button" id="authorization_button" position="3%,7%" dimensions="12%,8%" >
+                <method name="setText" param0="Autoryzacja" />
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="authorize" />
             </component>
-        </component>
+            <component type="Label" id="login_label" position="16%,4%" dimensions="25%,12%"/>
+        </component>    
         <component type="Window" id="authorization_popup" position="0,0" dimensions="70%,25%">
             <method name="setWindowTitle" param0="Autoryzacja" />
             <method name="setIsResizable" param0="false" />

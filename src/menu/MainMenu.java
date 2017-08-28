@@ -1,10 +1,10 @@
 package menu;
 
+import authorization.Authorization;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
-import com.jme3.app.Application;
+import authorization.User;
 import com.jme3.app.state.AbstractAppState;
-import com.jme3.app.state.AppStateManager;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.ColorRGBA;
 import tonegod.gui.controls.buttons.CheckBox;
@@ -25,7 +25,7 @@ public class MainMenu extends AbstractAppState {
     private MainMenu(){
         screen.parseLayout("Interface/main_menu.gui.xml", this);
         mainMenu = (Window)screen.getElementById("main_menu");
-        ((Window)screen.getElementById("authorization_popup")).hide();
+        changeAuthorizationPopupState(false); 
         screen.setUseCustomCursors(true);
         
     }
@@ -49,10 +49,26 @@ public class MainMenu extends AbstractAppState {
         GameManager.runGame();
     }
     
-    public void signIn(MouseButtonEvent evt, boolean isToggled){
-         ((Window)screen.getElementById("authorization_popup")).show();
+    /**
+     * Pozwala na autoryzację lub wylogowanie. 
+     * @param evt
+     * @param isToggled 
+     */
+    public void authorize(MouseButtonEvent evt, boolean isToggled){
+        if(GameManager.getUser() == null)
+            changeAuthorizationPopupState(true); 
+        else{
+            GameManager.setUser(null);
+            screen.getElementById("authorization_button").setText("Autoryzacja");
+            screen.getElementById("login_label").setText("");
+        }
     }
     
+    /**
+     * Przesyła dane do bazy danych. Pozwala na zalogowanie się lub na rejestrację. 
+     * @param evt
+     * @param isToggled 
+     */
     public void sendData(MouseButtonEvent evt, boolean isToggled){
         String login = screen.getElementById("login_text_field").getText(),
                 password = screen.getElementById("password").getText();
@@ -70,17 +86,33 @@ public class MainMenu extends AbstractAppState {
             }
         }else{
             if(!Authorization.signIn(login, password)){
-                error.setText("Uzytkownik nie istnieje!");
+                error.setText("Zly login lub haslo!");
             }else{
                 error.setText("");
+                changeAuthorizationPopupState(false); 
+                GameManager.setUser(new User(login));
+                screen.getElementById("authorization_button").setText("Wyloguj");
+                screen.getElementById("login_label").setText(login);
             }
         }
     }
     
+    /**
+     * Zamyka okienko autoryzacji. 
+     * @param evt
+     * @param isToggled 
+     */
     public void cancel(MouseButtonEvent evt, boolean isToggled){
-         screen.getElementById("login_text_field").setText("");
-         screen.getElementById("password").setText("");
-         ((Window)screen.getElementById("authorization_popup")).hide();
+         changeAuthorizationPopupState(false); 
+    }
+    
+    private void changeAuthorizationPopupState(boolean visible){
+        if(visible)  ((Window)screen.getElementById("authorization_popup")).show();
+        else{
+            screen.getElementById("login_text_field").setText("");
+            screen.getElementById("password").setText("");
+            ((Window)screen.getElementById("authorization_popup")).hide();
+        }
     }
     
 //    @Override

@@ -20,6 +20,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
 import cranes.Hook;
@@ -35,6 +36,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     private boolean debug = false;
     public static void main(String[] args) {
         game = new BuildingSimulator();
+        AppSettings settings = new AppSettings(true);
+        settings.setResolution(800, 600);
         game.start();
     }
 

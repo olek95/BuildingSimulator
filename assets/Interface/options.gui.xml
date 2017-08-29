@@ -3,9 +3,59 @@
     <screen>
         <component type="Window" id="options" position="0%,0%" dimensions="100%,100%">
             <method name="setIsResizable" param0="false" />
-             <component type="Label" position="16%,4%" dimensions="25%,12%" >
-                 <method name="setText" param0="USTAWIENIA GRY:" /> 
-             </component>
+            <component type="Panel" position="0%,4%" dimensions="100%, 20%">
+                <component type="Label" position="16%,40%" dimensions="25%,12%" >
+                    <method name="setText" param0="USTAWIENIA GRY:" /> 
+                </component>
+                <component type="Label" position="16%,80%" dimensions="25%,12%" >
+                    <method name="setText" param0="Jezyk:" />
+                </component>
+                <component type="RadioButton" position="40%,86%" dimensions="13,13">
+                    <method name="setLabelText" param0="Polski" />
+                    <method name="setIsChecked" param0="true" />
+                </component>
+                <component type="RadioButton" position="50%,86%" dimensions="13,13">
+                    <method name="setLabelText" param0="Angielski" />
+                </component>
+            </component>
+            <component type="Panel" position="0%,20%" dimensions="100%,50%">
+                <component type="Label" position="16%,15%" dimensions="25%,12%" >
+                    <method name="setText" param0="GRAFIKA:" />
+                </component>
+                <component type="Label" position="16%,28%" dimensions="25%,12%" >
+                    <method name="setText" param0="Rozdzielczosc ekranu:" />
+                </component>
+                <component type="ComboBox" position="40%,30%" >
+                </component>
+                <component type="Label" position="16%,42%" dimensions="25%,12%" >
+                    <method name="setText" param0="Glebia koloru:" />
+                </component>
+                <component type="RadioButton" position="40%,47%" dimensions="13,13">
+                    <method name="setLabelText" param0="16 bpp" />
+                    <method name="setIsChecked" param0="true" />
+                </component>
+                <component type="RadioButton" position="50%,47%" dimensions="13,13">
+                    <method name="setLabelText" param0="24 bpp" />
+                </component>
+                <component type="RadioButton" position="60%,47%" dimensions="13,13">
+                    <method name="setLabelText" param0="32 bpp" />
+                </component>
+                <component type="Label" position="16%,56%" dimensions="25%,12%" >
+                    <method name="setText" param0="Antyaliasing:" />
+                </component>
+                <component type="ComboBox" position="40%,58%" >
+                </component>
+                <component type="Label" position="16%,70%" dimensions="25%,12%" >
+                    <method name="setText" param0="Pelny ekran:" />
+                </component>
+                <component type="CheckBox" position="40%,73%">
+                </component>
+                <component type="Label" position="16%,84%" dimensions="25%,12%" >
+                    <method name="setText" param0="Czestotliwosc odswiezania:" />
+                </component>
+                <component type="ComboBox" position="40%,86%" >
+                </component>
+            </component>
         </component>
     </screen>
 </root>

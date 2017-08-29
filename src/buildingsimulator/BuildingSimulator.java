@@ -36,8 +36,10 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     private boolean debug = false;
     public static void main(String[] args) {
         game = new BuildingSimulator();
+        game.setShowSettings(false);
         AppSettings settings = new AppSettings(true);
         settings.setResolution(800, 600);
+        game.setSettings(settings);
         game.start();
     }
 

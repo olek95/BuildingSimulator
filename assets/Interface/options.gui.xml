@@ -25,7 +25,7 @@
                 <component type="Label" position="16%,28%" dimensions="25%,12%" >
                     <method name="setText" param0="Rozdzielczosc ekranu:" />
                 </component>
-                <component type="ComboBox" position="40%,30%" >
+                <component type="SelectBox" id="screen_resolution_select_box" position="40%,30%" dimensions="115,24">
                 </component>
                 <component type="Label" position="16%,42%" dimensions="25%,12%" >
                     <method name="setText" param0="Glebia koloru:" />
@@ -43,7 +43,7 @@
                 <component type="Label" position="16%,56%" dimensions="25%,12%" >
                     <method name="setText" param0="Antyaliasing:" />
                 </component>
-                <component type="ComboBox" position="40%,58%" >
+                <component type="SelectBox" position="40%,58%" dimensions="115,24">
                 </component>
                 <component type="Label" position="16%,70%" dimensions="25%,12%" >
                     <method name="setText" param0="Pelny ekran:" />
@@ -53,7 +53,7 @@
                 <component type="Label" position="16%,84%" dimensions="25%,12%" >
                     <method name="setText" param0="Czestotliwosc odswiezania:" />
                 </component>
-                <component type="ComboBox" position="40%,86%" >
+                <component type="SelectBox" id="refresh_rate_select_box" position="40%,86%" dimensions="115,24">
                 </component>
             </component>
         </component>

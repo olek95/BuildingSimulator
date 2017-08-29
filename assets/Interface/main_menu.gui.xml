@@ -25,7 +25,7 @@
                 <method name="setText" param0="Wyjdz z Gry" />
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="exit" />
             </component>
-            <component type="Button" id="authorization_button" position="3%,7%" dimensions="12%,8%" >
+            <component type="Button" id="authorization_button" position="3%,7%" dimensions="15%,8%" >
                 <method name="setText" param0="Autoryzacja" />
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="authorize" />
             </component>

@@ -20,13 +20,38 @@ public class Options extends AbstractAppState  {
     private static Window optionsWindow;
     private static Screen screen = new Screen(BuildingSimulator.getBuildingSimulator());
     private static Options options;
+    private static RadioButtonGroup languageButtonGroup;
     private Options(){
         screen.parseLayout("Interface/options.gui.xml", this);
         optionsWindow = (Window)screen.getElementById("options");
+//        languageButtonGroup = new RadioButtonGroup(screen, "languageGroup") {
+//            @Override
+//            public void onSelect(int index, Button value) {
+//            }
+//        };
+//        System.out.println(languageButtonGroup);
+//        languageButtonGroup.addButton((RadioButton)screen.getElementById("polish_button"));
+//        languageButtonGroup.addButton((RadioButton)screen.getElementById("english_button"));
+//        RadioButton b = (RadioButton)screen.getElementById("polish_button");
+//        languageButtonGroup.addButton(b);
         optionsWindow.getDragBar().setIsMovable(false);
         fillResolutionsSelectBox();
+        add();
         fillSelectBoxSingleValue("refresh_rate_select_box");
         fillSelectBoxSingleValue("color_depth_select_box");
+    }
+    public void add(){
+        languageButtonGroup = new RadioButtonGroup(screen,
+                "color_depth_group") {
+            @Override
+            public void onSelect(int index, Button value) {}
+        };
+        System.out.println(screen); 
+        System.out.println((RadioButton)screen
+                .getElementById("polish"));
+        languageButtonGroup.addButton((RadioButton)screen
+                .getElementById("polish"));
+    
     }
     
     public static void showOptions(){
@@ -47,9 +72,8 @@ public class Options extends AbstractAppState  {
         settings.setSamples(Integer.parseInt((String)((SelectBox)screen
                 .getElementById("antialiasing_select_box")).getSelectedListItem()
                 .getValue()));
-        settings.setFrequency((int)((SelectBox)screen
-                .getElementById("color_depth_select_box")).getSelectedListItem()
-                .getValue());
+        settings.setFrequency((int)((SelectBox)screen.getElementById("color_depth_select_box"))
+                .getSelectedListItem().getValue());
         settings.setFullscreen(((CheckBox)screen.getElementById("fullscreen_checkbox"))
                 .getIsChecked());
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 

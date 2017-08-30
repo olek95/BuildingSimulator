@@ -10,12 +10,9 @@
                 <component type="Label" position="16%,80%" dimensions="25%,12%" >
                     <method name="setText" param0="Jezyk:" />
                 </component>
-                <component type="RadioButton" id="polish" position="40%,86%" dimensions="13,13">
-                    <method name="setLabelText" param0="Polski" />
-                    <method name="setIsChecked" param0="true" />
-                </component>
-                <component type="RadioButton" id="english_button" position="50%,86%" dimensions="13,13">
-                    <method name="setLabelText" param0="Angielski" />
+                <component type="SelectBox" id="language_select_box" position="40%,82%" dimensions="115,24">
+                    <method name="addListItem" param0="Angielski" param1="Angielski"/>
+                    <method name="addListItem" param0="Polski" param1="Polski"/>
                 </component>
             </component>
             <component type="Panel" position="0%,20%" dimensions="100%,50%">

@@ -1,4 +1,0 @@
-settings=Ustawienia Gry
-language=Jezyk
-graphics=Grafika
-screen_resolution=Rozdzielczosc ekranu:

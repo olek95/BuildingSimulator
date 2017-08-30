@@ -8,6 +8,9 @@ import java.awt.DisplayMode;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.ResourceBundle;
+import texts.Labels;
 import tonegod.gui.controls.buttons.Button;
 import tonegod.gui.controls.buttons.CheckBox;
 import tonegod.gui.controls.buttons.RadioButton;
@@ -25,8 +28,11 @@ public class Options extends AbstractAppState  {
         optionsWindow = (Window)screen.getElementById("options");
         optionsWindow.getDragBar().setIsMovable(false);
         fillResolutionsSelectBox();
+        translate(new Locale("pl"));
+        setTexts();
         fillSelectBoxSingleValue("refresh_rate_select_box");
         fillSelectBoxSingleValue("color_depth_select_box");
+        fillLanguageSelectBox();
     }
     
     public static void showOptions(){
@@ -51,6 +57,8 @@ public class Options extends AbstractAppState  {
                 .getSelectedListItem().getValue());
         settings.setFullscreen(((CheckBox)screen.getElementById("fullscreen_checkbox"))
                 .getIsChecked());
+        translate((Locale)((SelectBox)screen.getElementById("language_select_box"))
+                .getSelectedListItem().getValue());
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
         game.setSettings(settings);
         game.restart();
@@ -89,5 +97,40 @@ public class Options extends AbstractAppState  {
             }
             elements.add(value);
         }
+    }
+    
+    private void fillLanguageSelectBox(){
+//        SelectBox languages = (SelectBox)screen.getElementById("language_select_box");
+//        languages.addListItem(Labels.ENGLISH.getValue(), Locale.ENGLISH);
+//        languages.addListItem(Labels.POLISH.getValue(), new Locale("pl"));
+    }
+    
+    private void translate(Locale locale){
+        ResourceBundle bundle = ResourceBundle.getBundle("texts.options", locale);
+        Labels[] labels = Labels.values();
+        for(int i = 0; i < labels.length; i++){
+            labels[i].setValue(bundle.getString(labels[i].toString()));
+        }
+    }
+    
+    private void setTexts() {
+//        screen.getElementById("settings_label").setText(Labels.SETTINGS.getValue());
+//        screen.getElementById("language_label").setText(Labels.LANGUAGE.getValue());
+        screen.getElementById("graphics_label").setText(Labels.GRAPHICS.getValue());
+        screen.getElementById("screen_resolution_label").setText(Labels.SCREEN_RESOLUTION
+                .getValue());
+        screen.getElementById("color_depth_label").setText(Labels.COLOR_DEPTH
+                .getValue());
+        screen.getElementById("antialiasing_label").setText(Labels.ANTIALIASING
+                .getValue());
+        screen.getElementById("fullscreen_label").setText(Labels.FULLSCREEN
+                .getValue());
+        screen.getElementById("refresh_rate_label").setText(Labels.REFRESH_RATE
+                .getValue());
+        SelectBox antialiasingSelectBox = (SelectBox)screen
+                .getElementById("antialiasing_select_box");
+        antialiasingSelectBox.removeListItem(0);
+        antialiasingSelectBox.insertListItem(0, Labels.DISABLED_ANTIALIASING
+                .getValue(), 0);
     }
 }

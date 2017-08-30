@@ -30,15 +30,7 @@
                 <component type="Label" position="16%,42%" dimensions="25%,12%" >
                     <method name="setText" param0="Glebia koloru:" />
                 </component>
-                <component type="RadioButton" id="color_depth_16" position="40%,47%" dimensions="13,13">
-                    <method name="setLabelText" param0="16 bpp" />
-                    <method name="setIsChecked" param0="true" />
-                </component>
-                <component type="RadioButton" id="color_depth_24" position="50%,47%" dimensions="13,13">
-                    <method name="setLabelText" param0="24 bpp" />
-                </component>
-                <component type="RadioButton" id="color_depth_32" position="60%,47%" dimensions="13,13">
-                    <method name="setLabelText" param0="32 bpp" />
+                <component type="SelectBox" id="color_depth_select_box" position="40%,44%" dimensions="115,24">
                 </component>
                 <component type="Label" position="16%,56%" dimensions="25%,12%" >
                     <method name="setText" param0="Antyaliasing:" />

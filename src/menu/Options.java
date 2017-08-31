@@ -29,7 +29,7 @@ public class Options extends AbstractAppState  {
         optionsWindow.getDragBar().setIsMovable(false);
         fillResolutionsSelectBox();
         translate(new Locale("pl"));
-        setTexts();
+        
         fillSelectBoxSingleValue("refresh_rate_select_box");
         fillSelectBoxSingleValue("color_depth_select_box");
         fillLanguageSelectBox();
@@ -100,9 +100,9 @@ public class Options extends AbstractAppState  {
     }
     
     private void fillLanguageSelectBox(){
-//        SelectBox languages = (SelectBox)screen.getElementById("language_select_box");
-//        languages.addListItem(Labels.ENGLISH.getValue(), Locale.ENGLISH);
-//        languages.addListItem(Labels.POLISH.getValue(), new Locale("pl"));
+        SelectBox languages = (SelectBox)screen.getElementById("language_select_box");
+        languages.addListItem(Labels.ENGLISH.getValue(), Locale.ENGLISH);
+        languages.addListItem(Labels.POLISH.getValue(), new Locale("pl"));
     }
     
     private void translate(Locale locale){
@@ -111,11 +111,12 @@ public class Options extends AbstractAppState  {
         for(int i = 0; i < labels.length; i++){
             labels[i].setValue(bundle.getString(labels[i].toString()));
         }
+        setTexts();
     }
     
     private void setTexts() {
-//        screen.getElementById("settings_label").setText(Labels.SETTINGS.getValue());
-//        screen.getElementById("language_label").setText(Labels.LANGUAGE.getValue());
+        screen.getElementById("settings_label").setText(Labels.SETTINGS.getValue());
+        screen.getElementById("language_label").setText(Labels.LANGUAGE.getValue());
         screen.getElementById("graphics_label").setText(Labels.GRAPHICS.getValue());
         screen.getElementById("screen_resolution_label").setText(Labels.SCREEN_RESOLUTION
                 .getValue());

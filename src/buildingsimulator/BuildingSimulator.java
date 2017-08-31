@@ -27,6 +27,8 @@ import cranes.Hook;
 import java.util.ArrayList;
 import java.util.List;
 import menu.MainMenu;
+import menu.MenuFactory;
+import menu.MenuTypes;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
@@ -47,7 +49,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     public void simpleInitApp() {
         flyCam.setMoveSpeed(100);
         flyCam.setDragToRotate(true);
-        MainMenu.showMenu();
+        MenuFactory.showMenu(MenuTypes.MAIN_MENU);
     }
 
     @Override

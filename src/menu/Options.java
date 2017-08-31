@@ -20,11 +20,11 @@ import tonegod.gui.controls.lists.SelectBox;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
-public class Options extends AbstractAppState  {
+public class Options extends Menu  {
     private static Window optionsWindow;
     private static Screen screen = new Screen(BuildingSimulator.getBuildingSimulator());
     private static Options options;
-    private Options(){
+    public Options(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout("Interface/options.gui.xml", this);
         optionsWindow = (Window)screen.getElementById("options");
@@ -34,14 +34,7 @@ public class Options extends AbstractAppState  {
         fillSelectBoxSingleValue("refresh_rate_select_box");
         fillSelectBoxSingleValue("color_depth_select_box");
         fillLanguageSelectBox();
-    }
-    
-    public static void showOptions(){
-        Node guiNode = BuildingSimulator.getBuildingSimulator().getGuiNode();
-        guiNode.removeControl(screen);
-        options = new Options();
-        guiNode.addControl(screen);
-        optionsWindow.show();
+        BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
     }
     
     public void accept(MouseButtonEvent evt, boolean isToggled) {
@@ -70,7 +63,8 @@ public class Options extends AbstractAppState  {
     
     public void cancel(MouseButtonEvent evt, boolean isToggled) {
         optionsWindow.hide();
-        MainMenu.showMenu();
+        BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
+        MenuFactory.showMenu(MenuTypes.MAIN_MENU);
     }
     
     private void fillResolutionsSelectBox() {

@@ -20,29 +20,18 @@ import tonegod.gui.core.Screen;
  * ustawień gry, wyjscia z gry oraz logowania i rejestracji. 
  * @author AleksanderSklorz 
  */
-public class MainMenu extends AbstractAppState {
-    private static Window mainMenu;
+public class MainMenu extends Menu {
     private static Screen screen;
-    private MainMenu(){
+    public MainMenu(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout("Interface/main_menu.gui.xml", this);
-        mainMenu = (Window)screen.getElementById("main_menu");
-        mainMenu.getDragBar().setIsMovable(false);
+        window = (Window)screen.getElementById("main_menu");
+        window.getDragBar().setIsMovable(false);
         ((Window)screen.getElementById("authorization_popup")).getDragBar()
                 .setIsMovable(false);
         changeAuthorizationPopupState(false); 
         screen.setUseCustomCursors(true);
-    }
-    
-    /**
-     * Pokazuje menu główne gry. 
-     */
-    public static void showMenu(){
-        Node guiNode = BuildingSimulator.getBuildingSimulator().getGuiNode();
-        guiNode.removeControl(screen);
-        new MainMenu();
-        guiNode.addControl(screen);
-        mainMenu.show();
+        BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
     }
     
     /** 
@@ -51,7 +40,7 @@ public class MainMenu extends AbstractAppState {
      * @param isToggled 
      */
     public void start(MouseButtonEvent evt, boolean isToggled) {
-        mainMenu.hide();
+        window.hide();
         screen.setUseCustomCursors(false);
         GameManager.runGame();
     }
@@ -144,8 +133,9 @@ public class MainMenu extends AbstractAppState {
     }
     
     public void showOptions(MouseButtonEvent evt, boolean isToggled){
-        mainMenu.hide();
-        Options.showOptions();
+        window.hide();
+        BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
+        MenuFactory.showMenu(MenuTypes.OPTIONS);
     }
     
     private void changeAuthorizationPopupState(boolean visible){

@@ -21,19 +21,18 @@ import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
 public class Options extends Menu  {
-    private static Window optionsWindow;
-    private static Screen screen = new Screen(BuildingSimulator.getBuildingSimulator());
-    private static Options options;
+    private static Screen screen;
     public Options(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout("Interface/options.gui.xml", this);
-        optionsWindow = (Window)screen.getElementById("options");
-        optionsWindow.getDragBar().setIsMovable(false);
+        window = (Window)screen.getElementById("options");
+        window.getDragBar().setIsMovable(false);
         fillResolutionsSelectBox();
         translate(new Locale("pl"));
         fillSelectBoxSingleValue("refresh_rate_select_box");
         fillSelectBoxSingleValue("color_depth_select_box");
         fillLanguageSelectBox();
+        fillAntialiasingSelectBox();
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
     }
     
@@ -47,9 +46,9 @@ public class Options extends Menu  {
         settings.setFrequency((int)((SelectBox)screen
                 .getElementById("refresh_rate_select_box")).getSelectedListItem()
                 .getValue());
-        settings.setSamples(Integer.parseInt((String)((SelectBox)screen
+        settings.setSamples((int)((SelectBox)screen
                 .getElementById("antialiasing_select_box")).getSelectedListItem()
-                .getValue()));
+                .getValue());
         settings.setFrequency((int)((SelectBox)screen.getElementById("color_depth_select_box"))
                 .getSelectedListItem().getValue());
         settings.setFullscreen(((CheckBox)screen.getElementById("fullscreen_checkbox"))
@@ -59,10 +58,11 @@ public class Options extends Menu  {
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
         game.setSettings(settings);
         game.restart();
+        refresh(); 
     }
     
-    public void cancel(MouseButtonEvent evt, boolean isToggled) {
-        optionsWindow.hide();
+    public void back(MouseButtonEvent evt, boolean isToggled) {
+        window.hide();
         BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
         MenuFactory.showMenu(MenuTypes.MAIN_MENU);
     }
@@ -108,6 +108,16 @@ public class Options extends Menu  {
         languages.addListItem(Labels.POLISH.getValue(), new Locale("pl"));
     }
     
+    private void fillAntialiasingSelectBox() { 
+        int[] values = {0, 2, 4, 6, 8, 16};
+        SelectBox antialiasingSelectBox = (SelectBox)screen
+                .getElementById("antialiasing_select_box");
+        antialiasingSelectBox.addListItem(Labels.DISABLED_ANTIALIASING.getValue(),
+                values[0]);
+        for(int i = 1; i < values.length; i++)
+            antialiasingSelectBox.addListItem(values[i] + "x", values[i]);
+    }
+    
     private void translate(Locale locale){
         ResourceBundle bundle = ResourceBundle.getBundle("texts.options", locale);
         Labels[] labels = Labels.values();
@@ -131,9 +141,14 @@ public class Options extends Menu  {
                 .getValue());
         screen.getElementById("refresh_rate_label").setText(Labels.REFRESH_RATE
                 .getValue());
-        SelectBox antialiasingSelectBox = (SelectBox)screen
-                .getElementById("antialiasing_select_box");
-        antialiasingSelectBox.insertListItem(0, Labels.DISABLED_ANTIALIASING
-                .getValue(), "0");
+        screen.getElementById("accepting_button").setText(Labels.ACCEPTING.getValue());
+        screen.getElementById("return_button").setText(Labels.RETURN.getValue());
+    }
+    
+    private void refresh(){
+        window.hide();
+        BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
+        MenuFactory.showMenu(MenuTypes.OPTIONS);
+        System.out.println(123);
     }
 }

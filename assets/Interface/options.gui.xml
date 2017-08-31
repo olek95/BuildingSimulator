@@ -4,53 +4,38 @@
         <component type="Window" id="options" position="0%,0%" dimensions="100%,100%">
             <method name="setIsResizable" param0="false" />
             <component type="Label" id="settings_label" position="16%,8%" dimensions="25%,12%" >
-                <method name="setText" param0="USTAWIENIA GRY:" /> 
             </component>
             <component type="Label" id="language_label" position="16%,16%" dimensions="25%,12%" >
-                <method name="setText" param0="Jezyk:" />
             </component>
             <component type="SelectBox" id="language_select_box" position="40%,20%" dimensions="115,24">
             </component>
             <component type="Label" id="graphics_label" position="16%,24%" dimensions="25%,12%" >
-                <method name="setText" param0="GRAFIKA:" />
             </component>
             <component type="Label" id="screen_resolution_label" position="16%,32%" dimensions="25%,12%" >
-                <method name="setText" param0="Rozdzielczosc ekranu:" />
             </component>
             <component type="SelectBox" id="screen_resolution_select_box" position="40%,36%" dimensions="115,24">
             </component>
             <component type="Label" id="color_depth_label" position="16%,39%" dimensions="25%,12%" >
-                <method name="setText" param0="Glebia koloru:" />
             </component>
             <component type="SelectBox" id="color_depth_select_box" position="40%,43%" dimensions="115,24">
             </component>
             <component type="Label" id="antialiasing_label" position="16%,46%" dimensions="25%,12%" >
-                <method name="setText" param0="Antyaliasing:" />
             </component>
             <component type="SelectBox" id="antialiasing_select_box" position="40%,50%" dimensions="115,24">
-                <method name="addListItem" param0="2x" param1="2"/>
-                <method name="addListItem" param0="4x" param1="4"/>
-                <method name="addListItem" param0="6x" param1="6"/>
-                <method name="addListItem" param0="8x" param1="8"/>
-                <method name="addListItem" param0="16x" param1="16"/>
             </component>
             <component type="Label" id="fullscreen_label" position="16%,53%" dimensions="25%,12%" >
-                <method name="setText" param0="Pelny ekran:" />
             </component>
             <component type="CheckBox" id="fullscreen_checkbox" position="40%,57%">
             </component>
             <component type="Label" id="refresh_rate_label" position="16%,60%" dimensions="25%,12%" >
-                <method name="setText" param0="Czestotliwosc odswiezania:" />
             </component>
             <component type="SelectBox" id="refresh_rate_select_box" position="40%,64%" dimensions="115,24">
             </component>
-            <component type="Button" id="accept_button" position="40%,90%">
-                <method name="setText" param0="Akceptuj" />
+            <component type="Button" id="accepting_button" position="40%,90%">
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="accept"/>
             </component>
-            <component type="Button" id="cancel_button" position="60%,90%">
-                <method name="setText" param0="Anuluj" />
-                <eventMethod name="onButtonMouseLeftUp" stateMethodName="cancel"/>
+            <component type="Button" id="return_button" position="60%,90%">
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="back"/>
             </component>
         </component>
     </screen>

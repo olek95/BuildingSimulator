@@ -7,6 +7,7 @@ import authorization.User;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.ColorRGBA;
+import com.jme3.scene.Node;
 import java.sql.SQLException;
 import tonegod.gui.controls.buttons.CheckBox;
 import tonegod.gui.controls.text.Label;
@@ -21,9 +22,9 @@ import tonegod.gui.core.Screen;
  */
 public class MainMenu extends AbstractAppState {
     private static Window mainMenu;
-    private static Screen screen = new Screen(BuildingSimulator.getBuildingSimulator());
-    private static MainMenu menu;
+    private static Screen screen;
     private MainMenu(){
+        screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout("Interface/main_menu.gui.xml", this);
         mainMenu = (Window)screen.getElementById("main_menu");
         mainMenu.getDragBar().setIsMovable(false);
@@ -37,8 +38,11 @@ public class MainMenu extends AbstractAppState {
      * Pokazuje menu główne gry. 
      */
     public static void showMenu(){
-        if(menu == null) menu = new MainMenu(); 
-        BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
+        Node guiNode = BuildingSimulator.getBuildingSimulator().getGuiNode();
+        guiNode.removeControl(screen);
+        new MainMenu();
+        guiNode.addControl(screen);
+        mainMenu.show();
     }
     
     /** 

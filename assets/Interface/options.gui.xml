@@ -28,7 +28,6 @@
                 <method name="setText" param0="Antyaliasing:" />
             </component>
             <component type="SelectBox" id="antialiasing_select_box" position="40%,50%" dimensions="115,24">
-                <method name="addListItem" param0="Disabled" param1="0"/>
                 <method name="addListItem" param0="2x" param1="2"/>
                 <method name="addListItem" param0="4x" param1="4"/>
                 <method name="addListItem" param0="6x" param1="6"/>
@@ -48,6 +47,10 @@
             <component type="Button" id="accept_button" position="40%,90%">
                 <method name="setText" param0="Akceptuj" />
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="accept"/>
+            </component>
+            <component type="Button" id="cancel_button" position="60%,90%">
+                <method name="setText" param0="Anuluj" />
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="cancel"/>
             </component>
         </component>
     </screen>

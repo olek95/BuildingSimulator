@@ -3,6 +3,7 @@ package menu;
 import buildingsimulator.BuildingSimulator;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.input.event.MouseButtonEvent;
+import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
 import java.awt.DisplayMode;
 import java.awt.GraphicsDevice;
@@ -24,20 +25,23 @@ public class Options extends AbstractAppState  {
     private static Screen screen = new Screen(BuildingSimulator.getBuildingSimulator());
     private static Options options;
     private Options(){
+        screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout("Interface/options.gui.xml", this);
         optionsWindow = (Window)screen.getElementById("options");
         optionsWindow.getDragBar().setIsMovable(false);
         fillResolutionsSelectBox();
         translate(new Locale("pl"));
-        
         fillSelectBoxSingleValue("refresh_rate_select_box");
         fillSelectBoxSingleValue("color_depth_select_box");
         fillLanguageSelectBox();
     }
     
     public static void showOptions(){
-        if(options == null) options = new Options();
-        BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
+        Node guiNode = BuildingSimulator.getBuildingSimulator().getGuiNode();
+        guiNode.removeControl(screen);
+        options = new Options();
+        guiNode.addControl(screen);
+        optionsWindow.show();
     }
     
     public void accept(MouseButtonEvent evt, boolean isToggled) {
@@ -64,9 +68,14 @@ public class Options extends AbstractAppState  {
         game.restart();
     }
     
+    public void cancel(MouseButtonEvent evt, boolean isToggled) {
+        optionsWindow.hide();
+        MainMenu.showMenu();
+    }
+    
     private void fillResolutionsSelectBox() {
          DisplayMode[] modes = GraphicsEnvironment.getLocalGraphicsEnvironment()
-                .getDefaultScreenDevice().getDisplayModes();;
+                .getDefaultScreenDevice().getDisplayModes();
          ArrayList<String> elements = new ArrayList(); 
          SelectBox screenResolutions = (SelectBox)screen.getElementById("screen_resolution_select_box");
          for(int i = 0; i < modes.length; i++){
@@ -130,8 +139,7 @@ public class Options extends AbstractAppState  {
                 .getValue());
         SelectBox antialiasingSelectBox = (SelectBox)screen
                 .getElementById("antialiasing_select_box");
-        antialiasingSelectBox.removeListItem(0);
         antialiasingSelectBox.insertListItem(0, Labels.DISABLED_ANTIALIASING
-                .getValue(), 0);
+                .getValue(), "0");
     }
 }

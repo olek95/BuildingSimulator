@@ -1,27 +1,28 @@
 package menu;
 
 import buildingsimulator.BuildingSimulator;
-import com.jme3.app.state.AbstractAppState;
 import com.jme3.input.event.MouseButtonEvent;
-import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
 import java.awt.DisplayMode;
-import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import texts.Labels;
-import tonegod.gui.controls.buttons.Button;
 import tonegod.gui.controls.buttons.CheckBox;
-import tonegod.gui.controls.buttons.RadioButton;
-import tonegod.gui.controls.buttons.RadioButtonGroup;
 import tonegod.gui.controls.lists.SelectBox;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
+/**
+ * Klasa <code>Options</code> reprezentuje menu opcji gry. Pozwala ono na zmianę 
+ * ustawień gry, graficznych oraz sterowania. 
+ * @author AleksanderSklorz 
+ */
 public class Options extends Menu  {
     private static Screen screen;
+    private static boolean stale = false;
+    private static int newHeight = 0, newWidth = 0; 
     public Options(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout("Interface/options.gui.xml", this);
@@ -36,13 +37,19 @@ public class Options extends Menu  {
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
     }
     
+    /**
+     * Potwierdza wybrane zmiany. 
+     * @param evt
+     * @param isToggled 
+     */
     public void accept(MouseButtonEvent evt, boolean isToggled) {
         AppSettings settings = new AppSettings(true);
         String[] selectedResolution = ((String)((SelectBox)screen
                 .getElementById("screen_resolution_select_box")).getSelectedListItem()
                 .getValue()).split("x");
-        settings.setResolution(Integer.parseInt(selectedResolution[0]),
-                Integer.parseInt(selectedResolution[1]));
+        newWidth = Integer.parseInt(selectedResolution[0]);
+        newHeight = Integer.parseInt(selectedResolution[1]);
+        settings.setResolution(newWidth, newHeight);
         settings.setFrequency((int)((SelectBox)screen
                 .getElementById("refresh_rate_select_box")).getSelectedListItem()
                 .getValue());
@@ -58,14 +65,49 @@ public class Options extends Menu  {
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
         game.setSettings(settings);
         game.restart();
-        refresh(); 
+        window.hide();
+        stale = true; 
     }
     
+    /**
+     * Cofa do menu głównego. 
+     * @param evt
+     * @param isToggled 
+     */
     public void back(MouseButtonEvent evt, boolean isToggled) {
         window.hide();
         BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
         MenuFactory.showMenu(MenuTypes.MAIN_MENU);
     }
+    
+    /**
+     * Odświeża menu opcji, aby widoczne były np. zmiany rozdzielczości. 
+     */
+    public static void refresh(){
+        BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
+        stale = false;
+        MenuFactory.showMenu(MenuTypes.OPTIONS);
+    }
+    
+    /**
+     * Sprawdza czy nastąpiły już zmiany rozdzielczości ekranu. 
+     * @return true jesli zmiany są już widoczne, false w przeciwnym przypadku 
+     */
+    public static boolean isResolutionChanged(){
+        return screen.getWidth() == newWidth && screen.getHeight() == newHeight; 
+    }
+    
+    /**
+     * Informuje czy dokonane zostały jakiekolwiek zmiany.
+     * @return true jeśli wykonano jakieś zmiany, false w przeciwnym przypadku 
+     */
+    public static boolean getStale() { return stale; }
+    
+    /**
+     * Zwraca widoczny ekran opcji. 
+     * @return ekran 
+     */
+    public static Screen getScreen () { return screen; }
     
     private void fillResolutionsSelectBox() {
          DisplayMode[] modes = GraphicsEnvironment.getLocalGraphicsEnvironment()
@@ -143,12 +185,5 @@ public class Options extends Menu  {
                 .getValue());
         screen.getElementById("accepting_button").setText(Labels.ACCEPTING.getValue());
         screen.getElementById("return_button").setText(Labels.RETURN.getValue());
-    }
-    
-    private void refresh(){
-        window.hide();
-        BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
-        MenuFactory.showMenu(MenuTypes.OPTIONS);
-        System.out.println(123);
     }
 }

@@ -29,6 +29,7 @@ import java.util.List;
 import menu.MainMenu;
 import menu.MenuFactory;
 import menu.MenuTypes;
+import menu.Options;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
@@ -54,6 +55,10 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
 
     @Override
     public void simpleUpdate(float tpf) {
+        if(Options.getScreen() != null && Options.isResolutionChanged()
+                && Options.getStale()){
+            Options.refresh(); 
+        }
 //        MobileCrane unit = (MobileCrane)GameManager.getUnit(0);
 //        unit.updateState();
 //        List<Spatial> gameObjects = rootNode.getChildren();

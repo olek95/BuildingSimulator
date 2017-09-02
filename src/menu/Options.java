@@ -2,6 +2,7 @@ package menu;
 
 import buildingsimulator.BuildingSimulator;
 import com.jme3.input.event.MouseButtonEvent;
+import com.jme3.math.Vector2f;
 import com.jme3.system.AppSettings;
 import java.awt.DisplayMode;
 import java.awt.GraphicsEnvironment;
@@ -11,6 +12,8 @@ import java.util.ResourceBundle;
 import texts.Labels;
 import tonegod.gui.controls.buttons.CheckBox;
 import tonegod.gui.controls.lists.SelectBox;
+import tonegod.gui.controls.windows.AlertBox;
+import tonegod.gui.controls.windows.DialogBox;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
@@ -23,6 +26,7 @@ public class Options extends Menu  {
     private static Screen screen;
     private static boolean stale = false;
     private static int newHeight = 0, newWidth = 0; 
+    private int counter = 0; 
     public Options(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout("Interface/options.gui.xml", this);
@@ -75,9 +79,28 @@ public class Options extends Menu  {
      * @param isToggled 
      */
     public void back(MouseButtonEvent evt, boolean isToggled) {
-        window.hide();
-        BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
-        MenuFactory.showMenu(MenuTypes.MAIN_MENU);
+        if(stale){
+            DialogBox alert = new DialogBox(screen, "closingAlert", new Vector2f(0f, 0f), 
+                    new Vector2f(400, 190)
+            ) {
+                @Override
+                public void onButtonCancelPressed(MouseButtonEvent mbe, boolean bln) {
+                    screen.removeElement(this);
+                }
+
+                @Override
+                public void onButtonOkPressed(MouseButtonEvent mbe, boolean bln) {
+                    exit(this); 
+                }
+            };
+            alert.centerToParent();
+            alert.getDragBar().setIsMovable(false);
+            alert.setIsModal(true);
+            alert.showAsModal(true);
+            alert.setMsg("Changes aren't saved. Are you sure you want to leave?");
+            alert.setButtonOkText("Yes");
+            screen.addElement(alert);
+        } else exit(null); 
     }
     
     /**
@@ -102,6 +125,11 @@ public class Options extends Menu  {
      * @return true jeśli wykonano jakieś zmiany, false w przeciwnym przypadku 
      */
     public static boolean getStale() { return stale; }
+    
+    public void setStale(int selectedIndex, Object value) {
+        if(counter > 4) stale = true; 
+        else counter++; 
+    }
     
     /**
      * Zwraca widoczny ekran opcji. 
@@ -185,5 +213,13 @@ public class Options extends Menu  {
                 .getValue());
         screen.getElementById("accepting_button").setText(Labels.ACCEPTING.getValue());
         screen.getElementById("return_button").setText(Labels.RETURN.getValue());
+    }
+    
+    private void exit(DialogBox dialogBox){ 
+        window.hide();
+        BuildingSimulator.getBuildingSimulator().getGuiNode()
+                .removeControl(screen);
+        MenuFactory.showMenu(MenuTypes.MAIN_MENU);
+        screen.removeElement(dialogBox); 
     }
 }

@@ -26,10 +26,12 @@ import com.jme3.util.SkyFactory;
 import cranes.Hook;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import menu.MainMenu;
 import menu.MenuFactory;
 import menu.MenuTypes;
 import menu.Options;
+import texts.Translator;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
@@ -42,6 +44,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
        // game.setShowSettings(false);
         AppSettings settings = new AppSettings(true);
         settings.setResolution(800, 600);
+        Translator.translate(new Locale("pl"));
         game.setSettings(settings);
         game.start();
     }

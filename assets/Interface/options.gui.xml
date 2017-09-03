@@ -36,6 +36,9 @@
             <component type="SelectBox" id="refresh_rate_select_box" position="40%,64%" dimensions="115,24">
                 <eventMethod name="onChange" stateMethodName="setStale"/>
             </component>
+            <component type="Button" id="control_configuration_button" position="16%,75%" dimensions="25%,6%">
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="showControlConfiguration"/>
+            </component>
             <component type="Button" id="accepting_button" position="40%,90%">
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="accept"/>
             </component>

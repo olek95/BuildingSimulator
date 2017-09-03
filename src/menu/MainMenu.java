@@ -7,9 +7,12 @@ import authorization.User;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import java.sql.SQLException;
+import texts.Translator;
 import tonegod.gui.controls.buttons.CheckBox;
+import tonegod.gui.controls.lists.Dial;
 import tonegod.gui.controls.text.Label;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
@@ -27,6 +30,12 @@ public class MainMenu extends Menu {
         screen.parseLayout("Interface/main_menu.gui.xml", this);
         window = (Window)screen.getElementById("main_menu");
         window.getDragBar().setIsMovable(false);
+        Translator.setTexts(new String[]{"new_game_button", "load_game_button", "statistics_button",
+            "options_button", "exit_button", "authorization_button", "cancel_button",
+            "username_label", "password_label", "sending_data_button"},
+            new Translator[]{Translator.NEW_GAME, Translator.LOAD_GAME, Translator.STATISTICS,
+            Translator.SETTINGS, Translator.QUIT_GAME, Translator.AUTHORIZATION, Translator.CANCELLATION,
+            Translator.USERNAME, Translator.PASSWORD, Translator.LOGIN}, screen);
         ((Window)screen.getElementById("authorization_popup")).getDragBar()
                 .setIsMovable(false);
         changeAuthorizationPopupState(false); 
@@ -94,7 +103,8 @@ public class MainMenu extends Menu {
                     error.setText("");
                     changeAuthorizationPopupState(false); 
                     GameManager.setUser(new User(login));
-                    screen.getElementById("authorization_button").setText("Wyloguj");
+                    screen.getElementById("authorization_button")
+                            .setText(Translator.LOGOUT.getValue());
                     screen.getElementById("login_label").setText(login);
                 }
             }
@@ -120,7 +130,7 @@ public class MainMenu extends Menu {
      */
     public void changeDataSendingButtonLabel(MouseButtonEvent evt, boolean isToggled){
         screen.getElementById("sending_data_button").setText(isToggled 
-                ? "Zarejestruj sie" : "Zaloguj sie");
+                ? Translator.REGISTERING.getValue() : Translator.LOGIN.getValue());
     }
     
     /**

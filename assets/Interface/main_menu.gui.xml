@@ -6,27 +6,21 @@
             <method name="setTextAlign" param0="Center" />
             <method name="setIsResizable" param0="false" />
             <component type="Button" id="new_game_button" position="40%,20%" dimensions="23%,10%" >
-                <method name="setText" param0="Nowa Gra" />
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="start" />
             </component>
             <component type="Button" id="load_game_button" position="40%,35%" dimensions="23%,10%" >
-                <method name="setText" param0="Wczytaj Gre" />
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="load" />
             </component>
             <component type="Button" id="statistics_button" position="40%,50%" dimensions="23%,10%" >
-                <method name="setText" param0="Statystyki" />
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="showStatistics" />
             </component>
             <component type="Button" id="options_button" position="40%,65%" dimensions="23%,10%" >
-                <method name="setText" param0="Opcje" />
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="showOptions" />
             </component>
             <component type="Button" id="exit_button" position="40%,80%" dimensions="23%,10%" >
-                <method name="setText" param0="Wyjdz z Gry" />
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="exit" />
             </component>
             <component type="Button" id="authorization_button" position="3%,7%" dimensions="15%,8%" >
-                <method name="setText" param0="Autoryzacja" />
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="authorize" />
             </component>
             <component type="Label" id="login_label" position="16%,4%" dimensions="25%,12%"/>
@@ -35,23 +29,19 @@
             <method name="setWindowTitle" param0="Autoryzacja" />
             <method name="setIsResizable" param0="false" />
             <method name="centerToParent"/>
-            <component type="Label" position="35%,23%" dimensions="20%,5%" >
-                <method name="setText" param0="Login:" />
+            <component type="Label" id="username_label" position="35%,23%" dimensions="20%,5%" >
                 <method name="setTextAlign" param0="Left" />
             </component>
             <component type="TextField" id="login_text_field" position="50%,25%" />
-            <component type="Label" position="35%,45%" dimensions="20%,5%" >
-                <method name="setText" param0="Password:" />
+            <component type="Label" id="password_label" position="35%,45%" dimensions="20%,5%" >
                 <method name="setTextAlign" param0="Left" />
             </component>
             <component type="Password" id="password" position="50%,47%"  dimensions="21%,13%" />
             <component type="Label" id="error_label" position="38%,60%" dimensions="100%,12%" />
             <component type="Button" id="sending_data_button" position="20%,80%" dimensions="23%,15%" >
-                <method name="setText" param0="Zaloguj sie" />
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="sendData" />
             </component>
             <component type="Button" id="cancel_button" position="60%,80%" dimensions="23%,15%" >
-                <method name="setText" param0="Anuluj" />
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="cancel" />
             </component>
             <component type="CheckBox" id="registration_check_box" position="5%, 34%">

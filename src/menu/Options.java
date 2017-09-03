@@ -9,13 +9,16 @@ import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import texts.Labels;
+import texts.Translator;
 import tonegod.gui.controls.buttons.CheckBox;
 import tonegod.gui.controls.lists.SelectBox;
+import tonegod.gui.controls.lists.Table;
+import tonegod.gui.controls.lists.Table.TableRow;
 import tonegod.gui.controls.windows.AlertBox;
 import tonegod.gui.controls.windows.DialogBox;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
+import tonegod.gui.core.layouts.Layout;
 
 /**
  * Klasa <code>Options</code> reprezentuje menu opcji gry. Pozwala ono na zmianę 
@@ -29,11 +32,30 @@ public class Options extends Menu  {
     private int counter = 0; 
     public Options(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
+//        window = new Window(screen, "options", new Vector2f(0, 0),
+//                new Vector2f(screen.getWidth(), screen.getHeight()));
+//        screen.addElement(window);
+//        window.centerToParent();
+//        Table table = new Table(screen, new Vector2f(0, 0), new Vector2f(screen.getWidth(), screen.getHeight())) {
+//            @Override
+//            public void onChange() {
+//                ((TableCell)this.getSelectedRows().get(0).getChild(2)).setText("asd");
+//            }
+//        };
+//        table.center();
+//        table.addColumn("Akcja");
+//        table.addColumn("Przycisk");
+//        TableRow row = new TableRow(screen, table); 
+//        row.addCell("a", "a1");
+//        row.addCell("b", "b1");
+//        
+//        table.addRow(row);
+//        window.addChild(table);
         screen.parseLayout("Interface/options.gui.xml", this);
         window = (Window)screen.getElementById("options");
         window.getDragBar().setIsMovable(false);
         fillResolutionsSelectBox();
-        translate(new Locale("pl"));
+        setTexts();
         fillSelectBoxSingleValue("refresh_rate_select_box");
         fillSelectBoxSingleValue("color_depth_select_box");
         fillLanguageSelectBox();
@@ -64,8 +86,9 @@ public class Options extends Menu  {
                 .getSelectedListItem().getValue());
         settings.setFullscreen(((CheckBox)screen.getElementById("fullscreen_checkbox"))
                 .getIsChecked());
-        translate((Locale)((SelectBox)screen.getElementById("language_select_box"))
+        Translator.translate((Locale)((SelectBox)screen.getElementById("language_select_box"))
                 .getSelectedListItem().getValue());
+        setTexts();
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
         game.setSettings(settings);
         game.restart();
@@ -90,7 +113,8 @@ public class Options extends Menu  {
 
                 @Override
                 public void onButtonOkPressed(MouseButtonEvent mbe, boolean bln) {
-                    exit(this); 
+                    exit();
+                    Options.screen.removeElement(this);
                 }
             };
             alert.centerToParent();
@@ -100,7 +124,13 @@ public class Options extends Menu  {
             alert.setMsg("Changes aren't saved. Are you sure you want to leave?");
             alert.setButtonOkText("Yes");
             screen.addElement(alert);
-        } else exit(null); 
+        } else exit(); 
+    }
+    
+    public void showControlConfiguration(MouseButtonEvent evt, boolean isToggled) {
+        window.hide();
+        BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
+        MenuFactory.showMenu(MenuTypes.CONTROL_CONFIGURATION);
     }
     
     /**
@@ -174,52 +204,35 @@ public class Options extends Menu  {
     
     private void fillLanguageSelectBox(){
         SelectBox languages = (SelectBox)screen.getElementById("language_select_box");
-        languages.addListItem(Labels.ENGLISH.getValue(), Locale.ENGLISH);
-        languages.addListItem(Labels.POLISH.getValue(), new Locale("pl"));
+        languages.addListItem(Translator.ENGLISH.getValue(), Locale.ENGLISH);
+        languages.addListItem(Translator.POLISH.getValue(), new Locale("pl"));
     }
     
     private void fillAntialiasingSelectBox() { 
         int[] values = {0, 2, 4, 6, 8, 16};
         SelectBox antialiasingSelectBox = (SelectBox)screen
                 .getElementById("antialiasing_select_box");
-        antialiasingSelectBox.addListItem(Labels.DISABLED_ANTIALIASING.getValue(),
+        antialiasingSelectBox.addListItem(Translator.DISABLED_ANTIALIASING.getValue(),
                 values[0]);
         for(int i = 1; i < values.length; i++)
             antialiasingSelectBox.addListItem(values[i] + "x", values[i]);
     }
     
-    private void translate(Locale locale){
-        ResourceBundle bundle = ResourceBundle.getBundle("texts.options", locale);
-        Labels[] labels = Labels.values();
-        for(int i = 0; i < labels.length; i++){
-            labels[i].setValue(bundle.getString(labels[i].toString()));
-        }
-        setTexts();
-    }
-    
     private void setTexts() {
-        screen.getElementById("settings_label").setText(Labels.SETTINGS.getValue());
-        screen.getElementById("language_label").setText(Labels.LANGUAGE.getValue());
-        screen.getElementById("graphics_label").setText(Labels.GRAPHICS.getValue());
-        screen.getElementById("screen_resolution_label").setText(Labels.SCREEN_RESOLUTION
-                .getValue());
-        screen.getElementById("color_depth_label").setText(Labels.COLOR_DEPTH
-                .getValue());
-        screen.getElementById("antialiasing_label").setText(Labels.ANTIALIASING
-                .getValue());
-        screen.getElementById("fullscreen_label").setText(Labels.FULLSCREEN
-                .getValue());
-        screen.getElementById("refresh_rate_label").setText(Labels.REFRESH_RATE
-                .getValue());
-        screen.getElementById("accepting_button").setText(Labels.ACCEPTING.getValue());
-        screen.getElementById("return_button").setText(Labels.RETURN.getValue());
+        Translator.setTexts(new String[]{"settings_label", "language_label", "graphics_label",
+            "screen_resolution_label", "color_depth_label", "antialiasing_label",
+            "fullscreen_label", "refresh_rate_label", "accepting_button", 
+            "return_button", "control_configuration_button"},
+            new Translator[]{Translator.GAME_SETTINGS, Translator.LANGUAGE, Translator.GRAPHICS,
+            Translator.SCREEN_RESOLUTION, Translator.COLOR_DEPTH, Translator.ANTIALIASING, 
+            Translator.FULLSCREEN, Translator.REFRESH_RATE, Translator.ACCEPTING, Translator.RETURN,
+            Translator.CONTROL_CONFIGURATION}, screen);
     }
     
-    private void exit(DialogBox dialogBox){ 
+    private void exit(){ 
         window.hide();
         BuildingSimulator.getBuildingSimulator().getGuiNode()
                 .removeControl(screen);
-        MenuFactory.showMenu(MenuTypes.MAIN_MENU);
-        screen.removeElement(dialogBox); 
+        MenuFactory.showMenu(MenuTypes.MAIN_MENU); 
     }
 }

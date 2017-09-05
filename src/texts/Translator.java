@@ -47,7 +47,15 @@ public enum Translator {
     LOGIN,
     REGISTERING,
     CANCELLATION,
-    LOGOUT;
+    LOGOUT,
+    DB_EXCEPTION,
+    REGISTRATION_SUCCESSFUL,
+    DUPLICATED_USER,
+    INCORRECT_DATA,
+    EMPTY_LOGIN_PASSWORD,
+    EMPTY_LOGIN,
+    EMPTY_PASSWORD,
+    TOO_LONG_LOGIN_PASSWORD;
     
     private String value; 
     

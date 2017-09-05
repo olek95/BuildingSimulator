@@ -4,6 +4,7 @@ import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.InputListener;
 import com.jme3.input.controls.KeyTrigger;
+import texts.Translator;
 
 /**
  * Klasa <code>Control</code> reprezentuje sterowanie elementami gry. Zezwala
@@ -36,8 +37,12 @@ public class Control {
         PHYSICS(KeyInput.KEY_P),
         FIRST(KeyInput.KEY_1),
         SECOND(KeyInput.KEY_2);
-        private Actions(int key){ 
+        private Actions(int key){
             inputManager.addMapping(toString(), new KeyTrigger(key));
+        }
+        
+        public String getValue(){
+            return Translator.valueOf(toString()).getValue();
         }
     }
     

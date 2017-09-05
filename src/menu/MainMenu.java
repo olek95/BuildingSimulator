@@ -4,15 +4,11 @@ import authorization.Authorization;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import authorization.User;
-import com.jme3.app.state.AbstractAppState;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Vector2f;
-import com.jme3.scene.Node;
 import java.sql.SQLException;
 import texts.Translator;
 import tonegod.gui.controls.buttons.CheckBox;
-import tonegod.gui.controls.lists.Dial;
 import tonegod.gui.controls.text.Label;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
@@ -64,7 +60,8 @@ public class MainMenu extends Menu {
             changeAuthorizationPopupState(true); 
         else{
             GameManager.setUser(null);
-            screen.getElementById("authorization_button").setText("Autoryzacja");
+            screen.getElementById("authorization_button").setText(Translator
+                    .AUTHORIZATION.getValue());
             screen.getElementById("login_label").setText("");
         }
     }
@@ -77,13 +74,11 @@ public class MainMenu extends Menu {
     public void sendData(MouseButtonEvent evt, boolean isToggled){
         String login = screen.getElementById("login_text_field").getText(),
                 password = screen.getElementById("password").getText();
-        boolean registration = ((CheckBox)screen.getElementById("registration_check_box"))
-                .getIsChecked();
         Label error = (Label)screen.getElementById("error_label");
         error.setFontColor(ColorRGBA.Red);
         try{
             Authorization.createDatabase();
-            if(registration){
+            if(((CheckBox)screen.getElementById("registration_check_box")).getIsChecked()){
                 String errorInformation = getTextForDataState(login, password); 
                 if(errorInformation != null){
                     error.setText(errorInformation);
@@ -91,14 +86,14 @@ public class MainMenu extends Menu {
                     if(!Authorization.checkIfUserExists(login)){
                         Authorization.signUp(login, password); 
                         error.setFontColor(ColorRGBA.Green);
-                        error.setText("Rejestracja zakonczona powodzeniem");
+                        error.setText(Translator.REGISTRATION_SUCCESSFUL.getValue());
                     }else{
-                        error.setText("Uzytkownik juz istnieje!");
+                        error.setText(Translator.DUPLICATED_USER.getValue());
                     }
                 }
             }else{
                 if(!Authorization.signIn(login, password)){
-                    error.setText("Zly login lub haslo!");
+                    error.setText(Translator.INCORRECT_DATA.getValue());
                 }else{
                     error.setText("");
                     changeAuthorizationPopupState(false); 
@@ -109,7 +104,7 @@ public class MainMenu extends Menu {
                 }
             }
         }catch(ClassNotFoundException | SQLException ex){
-            error.setText("Problem z polaczeniem z baza danych");
+            error.setText(Translator.DB_EXCEPTION.getValue());
             ex.printStackTrace();
         }
     }
@@ -159,10 +154,11 @@ public class MainMenu extends Menu {
     }
     
     private String getTextForDataState(String login, String password){
-        if(login.equals("") && password.equals("")) return "Login i hasło nie mogą być puste";
-        if(login.equals("")) return "Login nie moze byc pusty!";
-        if(password.equals("")) return "Haslo nie moze byc puste!";
-        if(login.length() > 20 || password.length() > 20) return "Za dlugi login lub haslo";
+        if(login.equals("") && password.equals("")) return Translator.EMPTY_LOGIN_PASSWORD.getValue();
+        if(login.equals("")) return Translator.EMPTY_LOGIN.getValue();
+        if(password.equals("")) return Translator.EMPTY_PASSWORD.getValue();
+        if(login.length() > 20 || password.length() > 20) 
+            return Translator.TOO_LONG_LOGIN_PASSWORD.getValue();
         return null; 
     }
     

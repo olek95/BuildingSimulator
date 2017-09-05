@@ -60,7 +60,8 @@ public class ControlConfigurationMenu extends Menu{
         Control.Actions[] actions = Control.Actions.values();
         for(int i = 0; i < actions.length; i++){
             TableRow row = new TableRow(screen, table);
-            row.addCell(actions.toString(), actions.toString());
+            String actionName = actions[i].getValue();
+            row.addCell(actionName, actionName);
             row.addCell("b", "b");
             table.addRow(row);
         }

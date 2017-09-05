@@ -19,6 +19,7 @@ public enum Translator {
     ACCEPTING,
     RETURN,
     CONTROL_CONFIGURATION,
+    LEFT,
     RIGHT,
     UP,
     DOWN,

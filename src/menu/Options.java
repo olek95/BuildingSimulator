@@ -3,12 +3,16 @@ package menu;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.Control;
 import static buildingsimulator.Control.Actions.values;
+import com.jme3.input.awt.AwtKeyInput;
+import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.system.AppSettings;
 import java.awt.DisplayMode;
 import java.awt.GraphicsEnvironment;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -36,11 +40,12 @@ public class Options extends Menu  {
         window = (Window)screen.getElementById("options");
         window.getDragBar().setIsMovable(false);
         fillResolutionsSelectBox();
-        setTexts();
         fillSelectBoxSingleValue("refresh_rate_select_box");
         fillSelectBoxSingleValue("color_depth_select_box");
         fillLanguageSelectBox();
         fillAntialiasingSelectBox();
+        loadSettings();
+        setTexts();
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
     }
     
@@ -77,7 +82,7 @@ public class Options extends Menu  {
                 .getIsChecked());
         Locale locale = (Locale)((SelectBox)screen.getElementById("language_select_box"))
                 .getSelectedListItem().getValue();
-        values.setProperty("LANGUAGE", locale.getDisplayLanguage());
+        values.setProperty("LANGUAGE", locale.getLanguage());
         Translator.translate((Locale)((SelectBox)screen.getElementById("language_select_box"))
                 .getSelectedListItem().getValue());
         setTexts();
@@ -221,5 +226,29 @@ public class Options extends Menu  {
         }catch(IOException ex){
             ex.printStackTrace();
         }
+    }
+    
+    private static void loadSettings() {
+        Properties settings = new Properties();
+            try(InputStream input = new FileInputStream("src/settings/settings.properties")){
+                settings.load(input);
+                ((SelectBox)screen.getElementById("screen_resolution_select_box"))
+                        .setSelectedByValue(settings.getProperty("RESOLUTION"), false);
+                ((SelectBox)screen.getElementById("refresh_rate_select_box"))
+                        .setSelectedByValue(Integer.valueOf(settings.getProperty("FREQUENCY")),
+                        false);
+                ((SelectBox)screen.getElementById("antialiasing_select_box"))
+                        .setSelectedByValue(Integer.valueOf(settings.getProperty("SAMPLES")),
+                        false);
+                ((SelectBox)screen.getElementById("color_depth_select_box"))
+                        .setSelectedByValue(Integer.valueOf(settings.getProperty("BITS_PER_PIXEL")),
+                        false);
+                ((CheckBox)screen.getElementById("fullscreen_checkbox"))
+                        .setIsChecked(Boolean.parseBoolean(settings.getProperty("FULLSCREEN")));
+                ((SelectBox)screen.getElementById("language_select_box"))
+                        .setSelectedByValue(settings.getProperty("LANGUAGE"), false);
+            }catch(IOException ex){
+                ex.printStackTrace();
+            }
     }
 }

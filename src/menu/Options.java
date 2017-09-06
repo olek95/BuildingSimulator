@@ -1,12 +1,18 @@
 package menu;
 
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.Control;
+import static buildingsimulator.Control.Actions.values;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.system.AppSettings;
 import java.awt.DisplayMode;
 import java.awt.GraphicsEnvironment;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Properties;
 import texts.Translator;
 import tonegod.gui.controls.buttons.CheckBox;
 import tonegod.gui.controls.lists.SelectBox;
@@ -26,25 +32,6 @@ public class Options extends Menu  {
     private int counter = 0; 
     public Options(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
-//        window = new Window(screen, "options", new Vector2f(0, 0),
-//                new Vector2f(screen.getWidth(), screen.getHeight()));
-//        screen.addElement(window);
-//        window.centerToParent();
-//        Table table = new Table(screen, new Vector2f(0, 0), new Vector2f(screen.getWidth(), screen.getHeight())) {
-//            @Override
-//            public void onChange() {
-//                ((TableCell)this.getSelectedRows().get(0).getChild(2)).setText("asd");
-//            }
-//        };
-//        table.center();
-//        table.addColumn("Akcja");
-//        table.addColumn("Przycisk");
-//        TableRow row = new TableRow(screen, table); 
-//        row.addCell("a", "a1");
-//        row.addCell("b", "b1");
-//        
-//        table.addRow(row);
-//        window.addChild(table);
         screen.parseLayout("Interface/options.gui.xml", this);
         window = (Window)screen.getElementById("options");
         window.getDragBar().setIsMovable(false);
@@ -64,22 +51,33 @@ public class Options extends Menu  {
      */
     public void accept(MouseButtonEvent evt, boolean isToggled) {
         AppSettings settings = new AppSettings(true);
-        String[] selectedResolution = ((String)((SelectBox)screen
-                .getElementById("screen_resolution_select_box")).getSelectedListItem()
-                .getValue()).split("x");
+        Properties values = new Properties();
+        values.setProperty("RESOLUTION", (String)((SelectBox)screen
+                .getElementById("screen_resolution_select_box")).getSelectedListItem().getValue());
+        String[] selectedResolution = values.getProperty("RESOLUTION").split("x");
         newWidth = Integer.parseInt(selectedResolution[0]);
         newHeight = Integer.parseInt(selectedResolution[1]);
         settings.setResolution(newWidth, newHeight);
-        settings.setFrequency((int)((SelectBox)screen
-                .getElementById("refresh_rate_select_box")).getSelectedListItem()
-                .getValue());
-        settings.setSamples((int)((SelectBox)screen
-                .getElementById("antialiasing_select_box")).getSelectedListItem()
-                .getValue());
-        settings.setFrequency((int)((SelectBox)screen.getElementById("color_depth_select_box"))
-                .getSelectedListItem().getValue());
+        int frequency = (int)((SelectBox)screen.getElementById("refresh_rate_select_box"))
+                .getSelectedListItem().getValue();
+        values.setProperty("FREQUENCY", frequency + "");
+        settings.setFrequency(frequency);
+        int samples = (int)((SelectBox)screen.getElementById("antialiasing_select_box"))
+                .getSelectedListItem().getValue();
+        values.setProperty("SAMPLES", samples + "");
+        settings.setSamples(samples);
+        int bitsPerPixel = (int)((SelectBox)screen.getElementById("color_depth_select_box"))
+                .getSelectedListItem().getValue();
+        values.setProperty("BITS_PER_PIXEL", bitsPerPixel + "");
+        settings.setBitsPerPixel(bitsPerPixel);
+        boolean fullscreen = ((CheckBox)screen.getElementById("fullscreen_checkbox"))
+                .getIsChecked();
+        values.setProperty("FULLSCREEN", fullscreen + "");
         settings.setFullscreen(((CheckBox)screen.getElementById("fullscreen_checkbox"))
                 .getIsChecked());
+        Locale locale = (Locale)((SelectBox)screen.getElementById("language_select_box"))
+                .getSelectedListItem().getValue();
+        values.setProperty("LANGUAGE", locale.getDisplayLanguage());
         Translator.translate((Locale)((SelectBox)screen.getElementById("language_select_box"))
                 .getSelectedListItem().getValue());
         setTexts();
@@ -87,6 +85,7 @@ public class Options extends Menu  {
         game.setSettings(settings);
         game.restart();
         window.hide();
+        saveSettings(values); 
         stale = true; 
     }
     
@@ -114,6 +113,19 @@ public class Options extends Menu  {
         BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
         stale = false;
         MenuFactory.showMenu(MenuTypes.OPTIONS);
+    }
+    
+    @Override
+    public void closeWindow() {
+        window.hide();
+        Element closingAlert = screen.getElementById("closing_alert");
+        if(closingAlert != null){
+            closingAlert.hide();
+            screen.removeElement(closingAlert);
+        }
+        BuildingSimulator.getBuildingSimulator().getGuiNode()
+                .removeControl(screen);
+        MenuFactory.showMenu(MenuTypes.MAIN_MENU);
     }
     
     /**
@@ -202,17 +214,12 @@ public class Options extends Menu  {
             Translator.FULLSCREEN, Translator.REFRESH_RATE, Translator.ACCEPTING, Translator.RETURN,
             Translator.CONTROL_CONFIGURATION}, screen);
     }
-
-    @Override
-    public void closeWindow() {
-        window.hide();
-        Element closingAlert = screen.getElementById("closing_alert");
-        if(closingAlert != null){
-            closingAlert.hide();
-            screen.removeElement(closingAlert);
+    
+    private static void saveSettings(Properties settings){
+        try(OutputStream output = new FileOutputStream("src/settings/settings.properties")){
+            settings.store(output, null);
+        }catch(IOException ex){
+            ex.printStackTrace();
         }
-        BuildingSimulator.getBuildingSimulator().getGuiNode()
-                .removeControl(screen);
-        MenuFactory.showMenu(MenuTypes.MAIN_MENU);
     }
 }

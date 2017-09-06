@@ -2,24 +2,17 @@ package menu;
 
 import buildingsimulator.BuildingSimulator;
 import com.jme3.input.event.MouseButtonEvent;
-import com.jme3.math.Vector2f;
 import com.jme3.system.AppSettings;
 import java.awt.DisplayMode;
 import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.ResourceBundle;
 import texts.Translator;
 import tonegod.gui.controls.buttons.CheckBox;
 import tonegod.gui.controls.lists.SelectBox;
-import tonegod.gui.controls.lists.Table;
-import tonegod.gui.controls.lists.Table.TableRow;
-import tonegod.gui.controls.windows.AlertBox;
-import tonegod.gui.controls.windows.DialogBox;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Element;
 import tonegod.gui.core.Screen;
-import tonegod.gui.core.layouts.Layout;
 
 /**
  * Klasa <code>Options</code> reprezentuje menu opcji gry. Pozwala ono na zmianę 
@@ -214,8 +207,10 @@ public class Options extends Menu  {
     public void closeWindow() {
         window.hide();
         Element closingAlert = screen.getElementById("closing_alert");
-        closingAlert.hide();
-        screen.removeElement(closingAlert);
+        if(closingAlert != null){
+            closingAlert.hide();
+            screen.removeElement(closingAlert);
+        }
         BuildingSimulator.getBuildingSimulator().getGuiNode()
                 .removeControl(screen);
         MenuFactory.showMenu(MenuTypes.MAIN_MENU);

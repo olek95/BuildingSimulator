@@ -20,6 +20,7 @@ public abstract class Menu extends AbstractAppState{
             ) {
                 @Override
                 public void onButtonCancelPressed(MouseButtonEvent mbe, boolean bln) {
+                    hide();
                     screen.removeElement(this);
                 }
 

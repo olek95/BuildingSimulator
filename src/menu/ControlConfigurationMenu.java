@@ -77,8 +77,11 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
     public void closeWindow() {
         window.hide();
         Element closingAlert = screen.getElementById("closing_alert");
-        closingAlert.hide();
-        screen.removeElement(closingAlert);
+        if(closingAlert != null){
+            closingAlert.hide();
+            screen.removeElement(closingAlert);
+            stale = false;
+        }
         BuildingSimulator.getBuildingSimulator().getGuiNode()
                 .removeControl(screen);
         MenuFactory.showMenu(MenuTypes.OPTIONS);
@@ -138,6 +141,7 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
                             keys[i] = ((Table.TableCell)rows.get(i).getChild(2)).getText();
                         }
                         Control.Actions.saveSettings(keys);
+                        closeWindow();
                     }
                 };
         controlTable.addChild(button);

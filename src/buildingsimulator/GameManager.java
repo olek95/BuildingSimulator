@@ -337,12 +337,6 @@ public class GameManager {
      */
     public static boolean isStartedGame() { return startedGame; }
     
-    /**
-     * Ustawia czy gra się już rozpoczęła.
-     * @param startedGame true jeśli gra się rozpoczęła, false w przeciwnym przypadku 
-     */
-    public static void setStartedGame(boolean startedGame) { GameManager.startedGame = startedGame; }
-    
     private static void moveDynamicObject(Spatial element, Vector3f displacement){
         RigidBodyControl elementControl = element.getControl(RigidBodyControl.class);
         elementControl.setPhysicsLocation(elementControl.getPhysicsLocation()

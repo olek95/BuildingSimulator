@@ -28,41 +28,47 @@ public class Control {
      * użytkownik w grze. Do każdej możliwej akcji przypisany jest jakiś klawisz. 
      */
     public enum Actions{
-        LEFT(KeyInput.KEY_H), 
-        RIGHT(KeyInput.KEY_K), 
-        UP(KeyInput.KEY_U),
-        DOWN(KeyInput.KEY_J),
-        ACTION(KeyInput.KEY_F),
-        PULL_OUT(KeyInput.KEY_E),
-        PULL_IN(KeyInput.KEY_SPACE),
-        LOWER_HOOK(KeyInput.KEY_R),
-        HEIGHTEN_HOOK(KeyInput.KEY_T),
-        ATTACH(KeyInput.KEY_Y),
-        VERTICAL_ATTACH(KeyInput.KEY_V),
-        DETACH(KeyInput.KEY_B),
-        MERGE(KeyInput.KEY_N),
-        PHYSICS(KeyInput.KEY_P),
-        FIRST(KeyInput.KEY_1),
-        SECOND(KeyInput.KEY_2);
-        private Actions(int key){
+        LEFT, 
+        RIGHT, 
+        UP,
+        DOWN,
+        ACTION,
+        PULL_OUT,
+        PULL_IN,
+        LOWER_HOOK,
+        HEIGHTEN_HOOK,
+        ATTACH,
+        VERTICAL_ATTACH,
+        DETACH,
+        MERGE,
+        PHYSICS,
+        FIRST,
+        SECOND;
+        private char key;
+        private Actions(){
 //            System.out.println(KeyEvent.VK_H);
 //            System.out.println(KeyEvent.VK_LEFT);
 //            System.out.println(AwtKeyInput.convertAwtKey(KeyEvent.VK_LEFT));
 //            System.out.println(key);
-//            Properties control = new Properties();
-//            try(InputStream input = new FileInputStream("src/settings/control.properties")){
-//                control.load(input);
-//                char key2 = control.getProperty(toString()).charAt(0); 
-////                System.out.println((int)key2);
+            Properties control = new Properties();
+            try(InputStream input = new FileInputStream("src/settings/control.properties")){
+                control.load(input);
+//                System.out.println((int)key2);
 //                System.out.println(AwtKeyInput.convertAwtKey(key2));
-//            }catch(IOException ex){
-//                ex.printStackTrace();
-//            }
-            inputManager.addMapping(toString(), new KeyTrigger(key));
+                key = control.getProperty(toString()).charAt(0);
+                inputManager.addMapping(toString(), new KeyTrigger(AwtKeyInput
+                        .convertAwtKey(key)));
+            }catch(IOException ex){
+                ex.printStackTrace();
+            }
         }
         
         public String getValue(){
             return Translator.valueOf(toString()).getValue();
+        }
+        
+        public char getKey() {
+            return key; 
         }
     }
     

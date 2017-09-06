@@ -42,15 +42,14 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     public static void main(String[] args) {
         game = new BuildingSimulator();
        // game.setShowSettings(false);
-        AppSettings settings = new AppSettings(true);
-        settings.setResolution(800, 600);
         Translator.translate(new Locale("pl"));
-        game.setSettings(settings);
+        game.setSettings(Options.restoreSettings(Options.loadProperties()));
         game.start();
     }
 
     @Override
     public void simpleInitApp() {
+        restart();
         flyCam.setMoveSpeed(100);
         flyCam.setDragToRotate(true);
         MenuFactory.showMenu(MenuTypes.MAIN_MENU);

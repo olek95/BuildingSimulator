@@ -59,27 +59,18 @@ public class Options extends Menu  {
         Properties values = new Properties();
         values.setProperty("RESOLUTION", (String)((SelectBox)screen
                 .getElementById("screen_resolution_select_box")).getSelectedListItem().getValue());
-        String[] selectedResolution = values.getProperty("RESOLUTION").split("x");
-        newWidth = Integer.parseInt(selectedResolution[0]);
-        newHeight = Integer.parseInt(selectedResolution[1]);
-        settings.setResolution(newWidth, newHeight);
         int frequency = (int)((SelectBox)screen.getElementById("refresh_rate_select_box"))
                 .getSelectedListItem().getValue();
         values.setProperty("FREQUENCY", frequency + "");
-        settings.setFrequency(frequency);
         int samples = (int)((SelectBox)screen.getElementById("antialiasing_select_box"))
                 .getSelectedListItem().getValue();
         values.setProperty("SAMPLES", samples + "");
-        settings.setSamples(samples);
         int bitsPerPixel = (int)((SelectBox)screen.getElementById("color_depth_select_box"))
                 .getSelectedListItem().getValue();
         values.setProperty("BITS_PER_PIXEL", bitsPerPixel + "");
-        settings.setBitsPerPixel(bitsPerPixel);
         boolean fullscreen = ((CheckBox)screen.getElementById("fullscreen_checkbox"))
                 .getIsChecked();
         values.setProperty("FULLSCREEN", fullscreen + "");
-        settings.setFullscreen(((CheckBox)screen.getElementById("fullscreen_checkbox"))
-                .getIsChecked());
         Locale locale = (Locale)((SelectBox)screen.getElementById("language_select_box"))
                 .getSelectedListItem().getValue();
         values.setProperty("LANGUAGE", locale.getLanguage());
@@ -87,7 +78,7 @@ public class Options extends Menu  {
                 .getSelectedListItem().getValue());
         setTexts();
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
-        game.setSettings(settings);
+        game.setSettings(restoreSettings(values));
         game.restart();
         window.hide();
         saveSettings(values); 
@@ -230,25 +221,74 @@ public class Options extends Menu  {
     
     private static void loadSettings() {
         Properties settings = new Properties();
-            try(InputStream input = new FileInputStream("src/settings/settings.properties")){
-                settings.load(input);
-                ((SelectBox)screen.getElementById("screen_resolution_select_box"))
-                        .setSelectedByValue(settings.getProperty("RESOLUTION"), false);
-                ((SelectBox)screen.getElementById("refresh_rate_select_box"))
-                        .setSelectedByValue(Integer.valueOf(settings.getProperty("FREQUENCY")),
-                        false);
-                ((SelectBox)screen.getElementById("antialiasing_select_box"))
-                        .setSelectedByValue(Integer.valueOf(settings.getProperty("SAMPLES")),
-                        false);
-                ((SelectBox)screen.getElementById("color_depth_select_box"))
-                        .setSelectedByValue(Integer.valueOf(settings.getProperty("BITS_PER_PIXEL")),
-                        false);
-                ((CheckBox)screen.getElementById("fullscreen_checkbox"))
-                        .setIsChecked(Boolean.parseBoolean(settings.getProperty("FULLSCREEN")));
-                ((SelectBox)screen.getElementById("language_select_box"))
-                        .setSelectedByValue(settings.getProperty("LANGUAGE"), false);
-            }catch(IOException ex){
-                ex.printStackTrace();
-            }
+        try(InputStream input = new FileInputStream("src/settings/settings.properties")){
+            settings.load(input);
+            ((SelectBox)screen.getElementById("screen_resolution_select_box"))
+                    .setSelectedByValue(settings.getProperty("RESOLUTION"), false);
+            ((SelectBox)screen.getElementById("refresh_rate_select_box"))
+                    .setSelectedByValue(Integer.valueOf(settings.getProperty("FREQUENCY")),
+                    false);
+            ((SelectBox)screen.getElementById("antialiasing_select_box"))
+                    .setSelectedByValue(Integer.valueOf(settings.getProperty("SAMPLES")),
+                    false);
+            ((SelectBox)screen.getElementById("color_depth_select_box"))
+                    .setSelectedByValue(Integer.valueOf(settings.getProperty("BITS_PER_PIXEL")),
+                    false);
+            ((CheckBox)screen.getElementById("fullscreen_checkbox"))
+                    .setIsChecked(Boolean.parseBoolean(settings.getProperty("FULLSCREEN")));
+            ((SelectBox)screen.getElementById("language_select_box"))
+                    .setSelectedByValue(settings.getProperty("LANGUAGE"), false);
+        }catch(IOException ex){
+            ex.printStackTrace();
+        }
     }
+    
+    public static AppSettings restoreSettings(Properties settings){
+        AppSettings appSettings = new AppSettings(true);
+        String[] selectedResolution = settings.getProperty("RESOLUTION").split("x");
+        newWidth = Integer.parseInt(selectedResolution[0]);
+        newHeight = Integer.parseInt(selectedResolution[1]);
+        appSettings.setResolution(newWidth, newHeight);
+        appSettings.setFrequency(Integer.valueOf(settings.getProperty("FREQUENCY")));
+        appSettings.setSamples(Integer.valueOf(settings.getProperty("SAMPLES")));
+        appSettings.setBitsPerPixel(Integer.valueOf(settings.getProperty("BITS_PER_PIXEL")));
+        appSettings.setFullscreen(Boolean.valueOf(settings.getProperty("FULLSCREEN")));
+        return appSettings; 
+    }
+    
+    public static Properties loadProperties(){
+        Properties settings = new Properties();
+        try(InputStream input = new FileInputStream("src/settings/settings.properties")){
+            settings.load(input);
+        }catch(IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            return settings; 
+        }
+    }
+    
+//    public void restoreSavedSettings() {
+//        Properties savedSettings = new Properties();
+//        AppSettings settings = new AppSettings(true);
+//        try(InputStream input = new FileInputStream("src/settings/settings.properties")){
+//            savedSettings.load(input);
+//            ((SelectBox)screen.getElementById("screen_resolution_select_box"))
+//                    .setSelectedByValue(savedSettings.getProperty("RESOLUTION"), false);
+//            ((SelectBox)screen.getElementById("refresh_rate_select_box"))
+//                    .setSelectedByValue(Integer.valueOf(savedSettings.getProperty("FREQUENCY")),
+//                    false);
+//            ((SelectBox)screen.getElementById("antialiasing_select_box"))
+//                    .setSelectedByValue(Integer.valueOf(savedSettings.getProperty("SAMPLES")),
+//                    false);
+//            ((SelectBox)screen.getElementById("color_depth_select_box"))
+//                    .setSelectedByValue(Integer.valueOf(savedSettings.getProperty("BITS_PER_PIXEL")),
+//                    false);
+//            ((CheckBox)screen.getElementById("fullscreen_checkbox"))
+//                    .setIsChecked(Boolean.parseBoolean(savedSettings.getProperty("FULLSCREEN")));
+//            ((SelectBox)screen.getElementById("language_select_box"))
+//                    .setSelectedByValue(savedSettings.getProperty("LANGUAGE"), false);
+//        }catch(IOException ex){
+//            ex.printStackTrace();
+//        }
+//    }
 }

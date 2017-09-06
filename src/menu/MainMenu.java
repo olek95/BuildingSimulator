@@ -169,4 +169,7 @@ public class MainMenu extends Menu {
 //        // Useful place for running load effects
 //        inventory.showWithEffect();
 //    }
+
+    @Override
+    public void closeWindow() {}
 }

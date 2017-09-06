@@ -35,6 +35,8 @@ public enum Translator {
     PHYSICS,
     FIRST,
     SECOND,
+    ACTIVITY,
+    KEY,
     NEW_GAME, 
     LOAD_GAME,
     STATISTICS,

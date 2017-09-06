@@ -17,6 +17,7 @@ import tonegod.gui.controls.lists.Table.TableRow;
 import tonegod.gui.controls.windows.AlertBox;
 import tonegod.gui.controls.windows.DialogBox;
 import tonegod.gui.controls.windows.Window;
+import tonegod.gui.core.Element;
 import tonegod.gui.core.Screen;
 import tonegod.gui.core.layouts.Layout;
 
@@ -103,28 +104,8 @@ public class Options extends Menu  {
      */
     public void back(MouseButtonEvent evt, boolean isToggled) {
         if(stale){
-            DialogBox alert = new DialogBox(screen, "closingAlert", new Vector2f(0f, 0f), 
-                    new Vector2f(400, 190)
-            ) {
-                @Override
-                public void onButtonCancelPressed(MouseButtonEvent mbe, boolean bln) {
-                    screen.removeElement(this);
-                }
-
-                @Override
-                public void onButtonOkPressed(MouseButtonEvent mbe, boolean bln) {
-                    exit();
-                    Options.screen.removeElement(this);
-                }
-            };
-            alert.centerToParent();
-            alert.getDragBar().setIsMovable(false);
-            alert.setIsModal(true);
-            alert.showAsModal(true);
-            alert.setMsg("Changes aren't saved. Are you sure you want to leave?");
-            alert.setButtonOkText("Yes");
-            screen.addElement(alert);
-        } else exit(); 
+            screen.addElement(createNotSavedChangesAlert(screen));
+        } else closeWindow(); 
     }
     
     public void showControlConfiguration(MouseButtonEvent evt, boolean isToggled) {
@@ -228,11 +209,15 @@ public class Options extends Menu  {
             Translator.FULLSCREEN, Translator.REFRESH_RATE, Translator.ACCEPTING, Translator.RETURN,
             Translator.CONTROL_CONFIGURATION}, screen);
     }
-    
-    private void exit(){ 
+
+    @Override
+    public void closeWindow() {
         window.hide();
+        Element closingAlert = screen.getElementById("closing_alert");
+        closingAlert.hide();
+        screen.removeElement(closingAlert);
         BuildingSimulator.getBuildingSimulator().getGuiNode()
                 .removeControl(screen);
-        MenuFactory.showMenu(MenuTypes.MAIN_MENU); 
+        MenuFactory.showMenu(MenuTypes.MAIN_MENU);
     }
 }

@@ -34,6 +34,7 @@ public class GameManager {
     private static String lastAction;
     private static ArrayList<CraneAbstract> units = new ArrayList();
     private static User user; 
+    private static boolean startedGame = false;
     public static void runGame(){
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
         game.getFlyByCamera().setDragToRotate(false);
@@ -65,6 +66,7 @@ public class GameManager {
                 new Vector3f(0, 1.9f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
         GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
                 new Vector3f(0, 2.3f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
+        startedGame = true; 
     }
     
     /**
@@ -328,6 +330,18 @@ public class GameManager {
      * @param user aktualny użytkownik 
      */
     public static void setUser(User user) { GameManager.user = user; }
+    
+    /**
+     * Określa czy gra się już rozpoczeła. 
+     * @return true jeśli gra się rozpoczęła, false w przeciwnym przypadku 
+     */
+    public static boolean isStartedGame() { return startedGame; }
+    
+    /**
+     * Ustawia czy gra się już rozpoczęła.
+     * @param startedGame true jeśli gra się rozpoczęła, false w przeciwnym przypadku 
+     */
+    public static void setStartedGame(boolean startedGame) { GameManager.startedGame = startedGame; }
     
     private static void moveDynamicObject(Spatial element, Vector3f displacement){
         RigidBodyControl elementControl = element.getControl(RigidBodyControl.class);

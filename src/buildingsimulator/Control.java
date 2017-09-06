@@ -2,8 +2,15 @@ package buildingsimulator;
 
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
+import com.jme3.input.awt.AwtKeyInput;
 import com.jme3.input.controls.InputListener;
 import com.jme3.input.controls.KeyTrigger;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import texts.Translator;
 
 /**
@@ -38,6 +45,19 @@ public class Control {
         FIRST(KeyInput.KEY_1),
         SECOND(KeyInput.KEY_2);
         private Actions(int key){
+//            System.out.println(KeyEvent.VK_H);
+//            System.out.println(KeyEvent.VK_LEFT);
+//            System.out.println(AwtKeyInput.convertAwtKey(KeyEvent.VK_LEFT));
+//            System.out.println(key);
+//            Properties control = new Properties();
+//            try(InputStream input = new FileInputStream("src/settings/control.properties")){
+//                control.load(input);
+//                char key2 = control.getProperty(toString()).charAt(0); 
+////                System.out.println((int)key2);
+//                System.out.println(AwtKeyInput.convertAwtKey(key2));
+//            }catch(IOException ex){
+//                ex.printStackTrace();
+//            }
             inputManager.addMapping(toString(), new KeyTrigger(key));
         }
         

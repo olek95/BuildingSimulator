@@ -2,6 +2,14 @@ package menu;
 
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.Control;
+import com.jme3.input.InputManager;
+import com.jme3.input.RawInputListener;
+import com.jme3.input.event.JoyAxisEvent;
+import com.jme3.input.event.JoyButtonEvent;
+import com.jme3.input.event.KeyInputEvent;
+import com.jme3.input.event.MouseButtonEvent;
+import com.jme3.input.event.MouseMotionEvent;
+import com.jme3.input.event.TouchEvent;
 import com.jme3.math.Vector2f;
 import tonegod.gui.controls.lists.Table;
 import tonegod.gui.controls.lists.Table.TableColumn;
@@ -9,7 +17,7 @@ import tonegod.gui.controls.lists.Table.TableRow;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
-public class ControlConfigurationMenu extends Menu{
+public class ControlConfigurationMenu extends Menu implements RawInputListener{
     private static Screen screen;
     public ControlConfigurationMenu(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
@@ -33,6 +41,8 @@ public class ControlConfigurationMenu extends Menu{
         Table table = createTable(); 
         window.addChild(table);
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
+        InputManager inputManager = BuildingSimulator.getBuildingSimulator().getInputManager();
+        inputManager.addRawInputListener(this);
     }
     
     
@@ -66,4 +76,30 @@ public class ControlConfigurationMenu extends Menu{
             table.addRow(row);
         }
     }
+
+    @Override
+    public void beginInput() {}
+
+    @Override
+    public void endInput() {}
+
+    @Override
+    public void onJoyAxisEvent(JoyAxisEvent evt) {}
+
+    @Override
+    public void onJoyButtonEvent(JoyButtonEvent evt) {}
+
+    @Override
+    public void onMouseMotionEvent(MouseMotionEvent evt) {}
+
+    @Override
+    public void onMouseButtonEvent(MouseButtonEvent evt) {}
+
+    @Override
+    public void onKeyEvent(KeyInputEvent evt) {
+        System.out.println(evt.getKeyCode());
+    }
+
+    @Override
+    public void onTouchEvent(TouchEvent evt) {}
 }

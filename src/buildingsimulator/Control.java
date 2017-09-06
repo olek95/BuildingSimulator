@@ -8,8 +8,10 @@ import com.jme3.input.controls.KeyTrigger;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 import texts.Translator;
 
@@ -46,15 +48,9 @@ public class Control {
         SECOND;
         private char key;
         private Actions(){
-//            System.out.println(KeyEvent.VK_H);
-//            System.out.println(KeyEvent.VK_LEFT);
-//            System.out.println(AwtKeyInput.convertAwtKey(KeyEvent.VK_LEFT));
-//            System.out.println(key);
             Properties control = new Properties();
             try(InputStream input = new FileInputStream("src/settings/control.properties")){
                 control.load(input);
-//                System.out.println((int)key2);
-//                System.out.println(AwtKeyInput.convertAwtKey(key2));
                 key = control.getProperty(toString()).charAt(0);
                 inputManager.addMapping(toString(), new KeyTrigger(AwtKeyInput
                         .convertAwtKey(key)));
@@ -69,6 +65,21 @@ public class Control {
         
         public char getKey() {
             return key; 
+        }
+        
+        public static void saveSettings(String[] keys){
+            Properties control = new Properties();
+            try(OutputStream output = new FileOutputStream("src/settings/control.properties")){
+                Actions[] values = values(); 
+                for(int i = 0; i < values.length; i++){
+                    char newKey = keys[i].charAt(0);
+                    values[i].key = newKey;
+                    control.setProperty(values[i].toString(), newKey + "");
+                }
+                control.store(output, null);
+            }catch(IOException ex){
+                ex.printStackTrace();
+            }
         }
     }
     

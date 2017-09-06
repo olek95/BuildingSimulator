@@ -19,6 +19,7 @@ import tonegod.gui.controls.lists.Table;
 import tonegod.gui.controls.lists.Table.TableColumn;
 import tonegod.gui.controls.lists.Table.TableRow;
 import tonegod.gui.controls.windows.Window;
+import tonegod.gui.core.Element;
 import tonegod.gui.core.Screen;
 
 public class ControlConfigurationMenu extends Menu implements RawInputListener{
@@ -75,6 +76,9 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
     @Override
     public void closeWindow() {
         window.hide();
+        Element closingAlert = screen.getElementById("closing_alert");
+        closingAlert.hide();
+        screen.removeElement(closingAlert);
         BuildingSimulator.getBuildingSimulator().getGuiNode()
                 .removeControl(screen);
         MenuFactory.showMenu(MenuTypes.OPTIONS);
@@ -114,9 +118,8 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
         Control.Actions[] actions = Control.Actions.values();
         for(int i = 0; i < actions.length; i++){
             TableRow row = new TableRow(screen, table);
-            String actionName = actions[i].getValue();
             char key = actions[i].getKey(); 
-            row.addCell(actionName, actionName);
+            row.addCell(actions[i].getValue(), actions[i]);
             row.addCell(key + "", key);
             table.addRow(row);
         }
@@ -128,7 +131,13 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
                 new Vector2f(100, 30)) {
                     @Override
                     public void onButtonMouseLeftUp(MouseButtonEvent mbe, boolean bln) {
-                        System.out.println(123);
+                        List<Table.TableRow> rows = controlTable.getRows();
+                        int rowsAmount = rows.size();
+                        String[] keys = new String[rowsAmount];
+                        for(int i = 0; i < rowsAmount; i++){
+                            keys[i] = ((Table.TableCell)rows.get(i).getChild(2)).getText();
+                        }
+                        Control.Actions.saveSettings(keys);
                     }
                 };
         controlTable.addChild(button);

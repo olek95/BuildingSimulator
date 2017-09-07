@@ -74,13 +74,15 @@ public class Options extends Menu  {
         Locale locale = (Locale)((SelectBox)screen.getElementById("language_select_box"))
                 .getSelectedListItem().getValue();
         values.setProperty("LANGUAGE", locale.getLanguage());
-//        Translator.translate((Locale)((SelectBox)screen.getElementById("language_select_box"))
-//                .getSelectedListItem().getValue());
-        System.out.println(locale);
-        saveSettings(values); 
-        BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
-        game.setSettings(restoreSettings(values));
+        Translator.translate((Locale)((SelectBox)screen.getElementById("language_select_box"))
+                .getSelectedListItem().getValue());
         setTexts();
+        System.out.println(locale);
+//        saveSettings(values); 
+        BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
+        game.setSettings(restoreSettings(values, false));
+//        setTexts();
+        saveSettings(values);
         game.restart();
         window.hide();
         stale = true; 
@@ -238,18 +240,23 @@ public class Options extends Menu  {
             ((CheckBox)screen.getElementById("fullscreen_checkbox"))
                     .setIsChecked(Boolean.parseBoolean(settings.getProperty("FULLSCREEN")));
             ((SelectBox)screen.getElementById("language_select_box"))
-                    .setSelectedByValue(new Locale(settings.getProperty("LANGUAGE")), false);
+                    .setSelectedByValue(settings.getProperty("LANGUAGE"), false);
         }catch(IOException ex){
             ex.printStackTrace();
         }
     }
     
-    public static AppSettings restoreSettings(Properties settings){
+    public static AppSettings restoreSettings(Properties settings, boolean startingGame){
         AppSettings appSettings = new AppSettings(true);
         String[] selectedResolution = settings.getProperty("RESOLUTION").split("x");
-        newWidth = Integer.parseInt(selectedResolution[0]);
-        newHeight = Integer.parseInt(selectedResolution[1]);
-        appSettings.setResolution(newWidth, newHeight);
+        int width = Integer.parseInt(selectedResolution[0]), 
+                height = Integer.parseInt(selectedResolution[1]);
+        appSettings.setResolution(width, height);
+        if(!startingGame) {
+            newWidth = width; 
+            newHeight = height; 
+        }
+        System.out.println(Integer.valueOf(settings.getProperty("FREQUENCY")));
         appSettings.setFrequency(Integer.valueOf(settings.getProperty("FREQUENCY")));
         appSettings.setSamples(Integer.valueOf(settings.getProperty("SAMPLES")));
         appSettings.setBitsPerPixel(Integer.valueOf(settings.getProperty("BITS_PER_PIXEL")));

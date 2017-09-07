@@ -140,7 +140,7 @@ public class MainMenu extends Menu {
     public void showOptions(MouseButtonEvent evt, boolean isToggled){
         window.hide();
         BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
-        MenuFactory.showMenu(MenuTypes.OPTIONS, null);
+        MenuFactory.showMenu(MenuTypes.OPTIONS);
     }
     
     private void changeAuthorizationPopupState(boolean visible){

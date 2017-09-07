@@ -33,7 +33,7 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
     private static Screen screen;
     private static Table controlTable;
     private static boolean stale; 
-    public ControlConfigurationMenu(Properties storedSettings){
+    public ControlConfigurationMenu(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         window = new Window(screen, "controlConfiguration", new Vector2f(0, 0),
                 new Vector2f(screen.getWidth(), screen.getHeight()));
@@ -95,7 +95,7 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
         }
         BuildingSimulator.getBuildingSimulator().getGuiNode()
                 .removeControl(screen);
-        MenuFactory.showMenu(MenuTypes.OPTIONS, null);
+        MenuFactory.showMenu(MenuTypes.OPTIONS);
     }
     
     private boolean existsDuplicate(String key) {

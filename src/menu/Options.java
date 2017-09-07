@@ -36,7 +36,7 @@ public class Options extends Menu  {
     private int counter = 0; 
     private static Properties restoredSettings = new Properties(), 
             storedSettings; 
-    public Options(Properties storedSettings){
+    public Options(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout("Interface/options.gui.xml", this);
         window = (Window)screen.getElementById("options");
@@ -48,6 +48,7 @@ public class Options extends Menu  {
         fillAntialiasingSelectBox();
         loadSettings();
         setTexts();
+        setStale(); 
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
     }
     
@@ -88,7 +89,8 @@ public class Options extends Menu  {
     public void showControlConfiguration(MouseButtonEvent evt, boolean isToggled) {
         window.hide();
         BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
-        MenuFactory.showMenu(MenuTypes.CONTROL_CONFIGURATION, getSelectedSettings());
+        storedSettings = getSelectedSettings(); 
+        MenuFactory.showMenu(MenuTypes.CONTROL_CONFIGURATION);
     }
     
     /**
@@ -99,7 +101,7 @@ public class Options extends Menu  {
         stale = false;
         newHeight = 0; 
         newWidth = 0;
-        MenuFactory.showMenu(MenuTypes.OPTIONS, null);
+        MenuFactory.showMenu(MenuTypes.OPTIONS);
     }
     
     @Override
@@ -112,7 +114,7 @@ public class Options extends Menu  {
         }
         BuildingSimulator.getBuildingSimulator().getGuiNode()
                 .removeControl(screen);
-        MenuFactory.showMenu(MenuTypes.MAIN_MENU, null);
+        MenuFactory.showMenu(MenuTypes.MAIN_MENU);
     }
     
     /**
@@ -170,27 +172,31 @@ public class Options extends Menu  {
     public static boolean getStale() { return stale; }
     
     /**
-     * Określa opcje jako nieświeże, jeśli użytkownik wybrał jakąś inną opcję niż 
-     * domyślnie ustawiona podczas uruchomienia menu opcji. 
+     * Sprawdza czy stan opcji jest nieświeży (został zmieniony). Jeśli tak to 
+     * ustawia true, w przeciwnym przypadku false. Dodatkowo blokuje przycisk 
+     * akceptacji, jeśli nic nie zostało zmienione. 
+     */
+    private void setStale() {
+        if(counter > 5){
+            stale = isChanged(); 
+            ((Button)screen.getElementById("accepting_button")).setIsEnabled(stale);
+        }else counter++;
+    }
+    
+    /**
+     * Sprawdza czy zmieniono jakąś opcję z listy rozwijanej. Jeśli tak to ustawia 
+     * jako zmodyfkowane.
      * @param selectedIndex indeks wybranego elementu 
      * @param value wybrana wartość 
      */
-    public void setStale(int selectedIndex, Object value) {
-        if(counter > 5) 
-            ((Button)screen.getElementById("accepting_button")).setIsEnabled(isChanged());
-        else counter++; 
-    }
+    public void checkIfChanged(int selectedIndex, Object value) { setStale(); }
     
     /**
      * Ustawia opcje jako zmienone w przypadku gdy następuje zmiana trybu fullscreen. 
      * @param evt
      * @param isToggled 
      */
-    public void changeFullscreen(MouseButtonEvent evt, boolean isToggled) {
-        if(counter > 5)
-            ((Button)screen.getElementById("accepting_button")).setIsEnabled(isChanged());
-        else counter++;
-    }
+    public void changeFullscreen(MouseButtonEvent evt, boolean isToggled) { setStale(); }
     
     /**
      * Zwraca widoczny ekran opcji. 
@@ -291,9 +297,15 @@ public class Options extends Menu  {
     }
     
     private static void loadSettings() {
-        restoredSettings = new Properties();
+        Properties temp = null; 
         try(InputStream input = new FileInputStream("src/settings/settings.properties")){
-            restoredSettings.load(input);
+            if(storedSettings == null){
+                restoredSettings = new Properties();
+                restoredSettings.load(input);
+            }else{
+                temp = restoredSettings; 
+                restoredSettings = storedSettings;
+            }
             ((SelectBox)screen.getElementById("screen_resolution_select_box"))
                     .setSelectedByValue(restoredSettings.getProperty("RESOLUTION"), false);
             ((SelectBox)screen.getElementById("refresh_rate_select_box"))
@@ -311,6 +323,9 @@ public class Options extends Menu  {
                     .setSelectedByValue(new Locale(restoredSettings.getProperty("LANGUAGE")), false);
         }catch(IOException ex){
             ex.printStackTrace();
+        }finally{
+            storedSettings = null; 
+            if(temp != null) restoredSettings = temp;
         }
     }
     
@@ -319,9 +334,8 @@ public class Options extends Menu  {
         for(Map.Entry<Object, Object> entry : restoredSettings.entrySet()) {
             System.out.println(settings.getProperty((String)entry.getKey()) + " " +
                     entry.getValue());
-            if(!settings.getProperty((String)entry.getKey()).equals(entry.getValue())){
+            if(!settings.getProperty((String)entry.getKey()).equals(entry.getValue()))
                 return true; 
-            }
         }
         return false; 
     }

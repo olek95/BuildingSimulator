@@ -22,6 +22,12 @@ import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Element;
 import tonegod.gui.core.Screen;
 
+/**
+ * Obiekt klasy <code>ControlConfigurationMenu</code> reprezentuje menu umożliwiające 
+ * zmianę ustawień sterowania w grze. Wyświetla tabelkę z dwoma kolumnami - nazwa 
+ * czynności oraz przypisany do niej przycisk. 
+ * @author AleksanderSklorz 
+ */
 public class ControlConfigurationMenu extends Menu implements RawInputListener{
     private static Screen screen;
     private static Table controlTable;
@@ -60,7 +66,11 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
 
     @Override
     public void onMouseButtonEvent(MouseButtonEvent evt) {}
-
+    
+    /**
+     * Ustawia nowy przycisk dla wybranego wiersza (czynności). 
+     * @param evt 
+     */
     @Override
     public void onKeyEvent(KeyInputEvent evt) { 
         String key = String.valueOf((char)AwtKeyInput.convertJmeCode(evt.getKeyCode()));

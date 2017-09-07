@@ -42,10 +42,6 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     public static void main(String[] args) {
         game = new BuildingSimulator();
         game.setShowSettings(false);
-//        Translator.translate(new Locale("pl"));
-//        AppSettings s = new AppSettings(true); 
-//        s.setResolution(800, 600);
-//        game.setSettings(s);
         game.setSettings(Options.restoreSettings(Options.loadProperties(), true));
         game.start();
     }

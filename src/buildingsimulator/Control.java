@@ -59,14 +59,26 @@ public class Control {
             }
         }
         
+        /**
+         * Zwraca odpowiednią dla użytkownika nazwę akcji, w aktualnym języku. 
+         * @return odpowiednia dla użytkownika nazwa akcji  
+         */
         public String getValue(){
             return Translator.valueOf(toString()).getValue();
         }
         
+        /**
+         * Zwraca przycisk przypisany do danej czynności. 
+         * @return przycisk dla danej czynności 
+         */
         public char getKey() {
             return key; 
         }
         
+        /**
+         * Zapisuje ustawienia sterowania do pliku. 
+         * @param keys nowe przyciski dla czynności 
+         */
         public static void saveSettings(String[] keys){
             Properties control = new Properties();
             try(OutputStream output = new FileOutputStream("src/settings/control.properties")){

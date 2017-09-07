@@ -1,7 +1,15 @@
 package menu;
 
-
+/**
+ * Klasa <code>MenuFactory</code> reprezentuje fabrykę służącą do wyświetlania 
+ * wybranego menu. 
+ * @author AleksanderSklorz 
+ */
 public class MenuFactory {
+    /**
+     * Pokazuje wybrane menu. 
+     * @param type typ wybranego menu 
+     */
     public static void showMenu(MenuTypes type) {
         Menu menu = null;
         if(type.equals(MenuTypes.MAIN_MENU)) menu = new MainMenu(); 

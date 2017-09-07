@@ -4,6 +4,11 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import tonegod.gui.core.Screen;
 
+/**
+ * Typ wyliczeniowy <code>Translator</code> reprezentuje wszystkie teksty interfejsu 
+ * użytkownika. Umożliwia ich przetłumaczenie na język angielski lub polski. 
+ * @author AleksanderSklorz
+ */
 public enum Translator {
     GAME_SETTINGS,
     LANGUAGE,
@@ -61,6 +66,10 @@ public enum Translator {
     
     private String value; 
     
+    /**
+     * Tłumaczy wszystkie teksty na wybrany język. 
+     * @param locale lokalizacja z której pobrany jest język 
+     */
     public static void translate(Locale locale){
         ResourceBundle bundle = ResourceBundle.getBundle("texts.labels", locale);
         Translator[] labels = values();
@@ -69,12 +78,20 @@ public enum Translator {
         }
     }
     
-    public static void setTexts(String[] labels, Translator[] newLabels, Screen screen) {
-        for(int i = 0; i < labels.length; i++)
-            screen.getElementById(labels[i]).setText(newLabels[i].value);
+    /**
+     * Ustawia wszystkie teksty z danego ekranu. 
+     * @param ids tablica id elementów dla których ustawiamy teksty 
+     * @param newLabels tablica przetłumaczonych tekstów 
+     * @param screen ekran z którego pobieramy elementy do przetłumaczenia 
+     */
+    public static void setTexts(String[] ids, Translator[] newLabels, Screen screen) {
+        for(int i = 0; i < ids.length; i++)
+            screen.getElementById(ids[i]).setText(newLabels[i].value);
     }
     
+    /**
+     * Zwraca tekst w aktualnym języku. 
+     * @return tekst w aktualnym języku 
+     */
     public String getValue(){ return value; }
-    
-    public void setValue(String value) { this.value = value; }
 }

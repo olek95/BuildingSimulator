@@ -30,6 +30,7 @@
             <component type="Label" id="fullscreen_label" position="16%,53%" dimensions="25%,12%" >
             </component>
             <component type="CheckBox" id="fullscreen_checkbox" position="40%,57%">
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="changeFullscreen"/>
             </component>
             <component type="Label" id="refresh_rate_label" position="16%,60%" dimensions="25%,12%" >
             </component>
@@ -40,6 +41,7 @@
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="showControlConfiguration"/>
             </component>
             <component type="Button" id="accepting_button" position="40%,90%">
+                <method name="setIsEnabled" value0="false"/>
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="accept"/>
             </component>
             <component type="Button" id="return_button" position="60%,90%">

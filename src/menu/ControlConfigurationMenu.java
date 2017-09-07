@@ -13,6 +13,7 @@ import com.jme3.input.event.MouseMotionEvent;
 import com.jme3.input.event.TouchEvent;
 import com.jme3.math.Vector2f;
 import java.util.List;
+import java.util.Properties;
 import texts.Translator;
 import tonegod.gui.controls.buttons.ButtonAdapter;
 import tonegod.gui.controls.lists.Table;
@@ -32,7 +33,7 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
     private static Screen screen;
     private static Table controlTable;
     private static boolean stale; 
-    public ControlConfigurationMenu(){
+    public ControlConfigurationMenu(Properties storedSettings){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         window = new Window(screen, "controlConfiguration", new Vector2f(0, 0),
                 new Vector2f(screen.getWidth(), screen.getHeight()));
@@ -94,7 +95,7 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
         }
         BuildingSimulator.getBuildingSimulator().getGuiNode()
                 .removeControl(screen);
-        MenuFactory.showMenu(MenuTypes.OPTIONS);
+        MenuFactory.showMenu(MenuTypes.OPTIONS, null);
     }
     
     private boolean existsDuplicate(String key) {

@@ -34,8 +34,9 @@ public class Options extends Menu  {
     private static boolean stale = false;
     private static int newHeight = 0, newWidth = 0; 
     private int counter = 0; 
-    private static Properties restoredSettings = new Properties(); 
-    public Options(){
+    private static Properties restoredSettings = new Properties(), 
+            storedSettings; 
+    public Options(Properties storedSettings){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout("Interface/options.gui.xml", this);
         window = (Window)screen.getElementById("options");
@@ -87,7 +88,7 @@ public class Options extends Menu  {
     public void showControlConfiguration(MouseButtonEvent evt, boolean isToggled) {
         window.hide();
         BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
-        MenuFactory.showMenu(MenuTypes.CONTROL_CONFIGURATION);
+        MenuFactory.showMenu(MenuTypes.CONTROL_CONFIGURATION, getSelectedSettings());
     }
     
     /**
@@ -98,7 +99,7 @@ public class Options extends Menu  {
         stale = false;
         newHeight = 0; 
         newWidth = 0;
-        MenuFactory.showMenu(MenuTypes.OPTIONS);
+        MenuFactory.showMenu(MenuTypes.OPTIONS, null);
     }
     
     @Override
@@ -111,7 +112,7 @@ public class Options extends Menu  {
         }
         BuildingSimulator.getBuildingSimulator().getGuiNode()
                 .removeControl(screen);
-        MenuFactory.showMenu(MenuTypes.MAIN_MENU);
+        MenuFactory.showMenu(MenuTypes.MAIN_MENU, null);
     }
     
     /**

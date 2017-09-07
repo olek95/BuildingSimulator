@@ -77,7 +77,6 @@ public class Options extends Menu  {
         Translator.translate((Locale)((SelectBox)screen.getElementById("language_select_box"))
                 .getSelectedListItem().getValue());
         setTexts();
-        System.out.println(locale);
 //        saveSettings(values); 
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
         game.setSettings(restoreSettings(values, false));
@@ -111,6 +110,8 @@ public class Options extends Menu  {
     public static void refresh(){
         BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
         stale = false;
+        newHeight = 0; 
+        newWidth = 0;
         MenuFactory.showMenu(MenuTypes.OPTIONS);
     }
     
@@ -256,7 +257,6 @@ public class Options extends Menu  {
             newWidth = width; 
             newHeight = height; 
         }
-        System.out.println(Integer.valueOf(settings.getProperty("FREQUENCY")));
         appSettings.setFrequency(Integer.valueOf(settings.getProperty("FREQUENCY")));
         appSettings.setSamples(Integer.valueOf(settings.getProperty("SAMPLES")));
         appSettings.setBitsPerPixel(Integer.valueOf(settings.getProperty("BITS_PER_PIXEL")));

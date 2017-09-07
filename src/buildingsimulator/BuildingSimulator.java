@@ -41,15 +41,18 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     private boolean debug = false;
     public static void main(String[] args) {
         game = new BuildingSimulator();
-       // game.setShowSettings(false);
+        game.setShowSettings(false);
 //        Translator.translate(new Locale("pl"));
-        game.setSettings(Options.restoreSettings(Options.loadProperties()));
+//        AppSettings s = new AppSettings(true); 
+//        s.setResolution(800, 600);
+//        game.setSettings(s);
+        game.setSettings(Options.restoreSettings(Options.loadProperties(), true));
         game.start();
     }
 
     @Override
     public void simpleInitApp() {
-        restart();
+//        restart();
         flyCam.setMoveSpeed(100);
         flyCam.setDragToRotate(true);
         MenuFactory.showMenu(MenuTypes.MAIN_MENU);
@@ -60,6 +63,10 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         if(Options.getScreen() != null && Options.isResolutionChanged()
                 && Options.getStale()){
             Options.refresh(); 
+        }
+        if(Options.getScreen() != null){
+            System.out.println("res "+Options.isResolutionChanged());
+            System.out.println("stal "+Options.getStale());
         }
         if(GameManager.isStartedGame()){
             MobileCrane unit = (MobileCrane)GameManager.getUnit(0);

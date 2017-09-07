@@ -75,6 +75,8 @@ public class Control {
                     char newKey = keys[i].charAt(0);
                     values[i].key = newKey;
                     control.setProperty(values[i].toString(), newKey + "");
+                    inputManager.addMapping(values[i].toString(), new KeyTrigger(AwtKeyInput
+                            .convertAwtKey((int)newKey)));
                 }
                 control.store(output, null);
             }catch(IOException ex){

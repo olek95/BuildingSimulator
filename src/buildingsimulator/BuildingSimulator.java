@@ -64,10 +64,6 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                 && Options.getStale()){
             Options.refresh(); 
         }
-        if(Options.getScreen() != null){
-            System.out.println("res "+Options.isResolutionChanged());
-            System.out.println("stal "+Options.getStale());
-        }
         if(GameManager.isStartedGame()){
             MobileCrane unit = (MobileCrane)GameManager.getUnit(0);
             unit.updateState();

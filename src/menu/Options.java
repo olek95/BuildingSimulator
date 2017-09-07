@@ -74,14 +74,15 @@ public class Options extends Menu  {
         Locale locale = (Locale)((SelectBox)screen.getElementById("language_select_box"))
                 .getSelectedListItem().getValue();
         values.setProperty("LANGUAGE", locale.getLanguage());
-        Translator.translate((Locale)((SelectBox)screen.getElementById("language_select_box"))
-                .getSelectedListItem().getValue());
-        setTexts();
+//        Translator.translate((Locale)((SelectBox)screen.getElementById("language_select_box"))
+//                .getSelectedListItem().getValue());
+        System.out.println(locale);
+        saveSettings(values); 
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
         game.setSettings(restoreSettings(values));
+        setTexts();
         game.restart();
         window.hide();
-        saveSettings(values); 
         stale = true; 
     }
     
@@ -237,7 +238,7 @@ public class Options extends Menu  {
             ((CheckBox)screen.getElementById("fullscreen_checkbox"))
                     .setIsChecked(Boolean.parseBoolean(settings.getProperty("FULLSCREEN")));
             ((SelectBox)screen.getElementById("language_select_box"))
-                    .setSelectedByValue(settings.getProperty("LANGUAGE"), false);
+                    .setSelectedByValue(new Locale(settings.getProperty("LANGUAGE")), false);
         }catch(IOException ex){
             ex.printStackTrace();
         }
@@ -253,6 +254,7 @@ public class Options extends Menu  {
         appSettings.setSamples(Integer.valueOf(settings.getProperty("SAMPLES")));
         appSettings.setBitsPerPixel(Integer.valueOf(settings.getProperty("BITS_PER_PIXEL")));
         appSettings.setFullscreen(Boolean.valueOf(settings.getProperty("FULLSCREEN")));
+        Translator.translate(new Locale(settings.getProperty("LANGUAGE")));
         return appSettings; 
     }
     

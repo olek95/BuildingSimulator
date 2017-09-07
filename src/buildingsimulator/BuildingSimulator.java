@@ -42,7 +42,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     public static void main(String[] args) {
         game = new BuildingSimulator();
        // game.setShowSettings(false);
-        Translator.translate(new Locale("pl"));
+//        Translator.translate(new Locale("pl"));
         game.setSettings(Options.restoreSettings(Options.loadProperties()));
         game.start();
     }

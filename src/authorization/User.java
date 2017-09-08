@@ -5,4 +5,6 @@ public class User {
     public User(String login){
         this.login = login; 
     }
+    
+    public String getLogin() { return login; }
 }

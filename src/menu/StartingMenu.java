@@ -116,13 +116,9 @@ public class StartingMenu extends MainMenu{
                 ? Translator.REGISTERING.getValue() : Translator.LOGIN.getValue());
     }
     
-    /**
-     * Wychodzi z gry. 
-     * @param evt
-     * @param isToggled 
-     */
+    @Override
     public void exit(MouseButtonEvent evt, boolean isToggled){
-        System.exit(0);
+        super.exit(evt, isToggled);
     }
     
     private void changeAuthorizationPopupState(boolean visible){

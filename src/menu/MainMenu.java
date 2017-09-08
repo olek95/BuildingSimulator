@@ -50,6 +50,15 @@ public class MainMenu extends Menu {
         MenuFactory.showMenu(MenuTypes.OPTIONS);
     }
     
+    /**
+     * Wychodzi z gry. 
+     * @param evt
+     * @param isToggled 
+     */
+    public void exit(MouseButtonEvent evt, boolean isToggled){
+        System.exit(0);
+    }
+    
     public static Screen getScreen() { return screen; }
     
 //    @Override

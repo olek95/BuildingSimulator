@@ -18,9 +18,23 @@
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="showOptions" />
             </component>
             <component type="Button" id="exit_button" position="40%,80%" dimensions="23%,10%" >
-                <eventMethod name="onButtonMouseLeftUp" stateMethodName="exit" />
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="showExitPopup" />
             </component>
             <component type="Label" id="login_label" position="16%,4%" dimensions="25%,12%"/>
         </component>    
+        <component type="Window" id="exit_popup" position="0,0" dimensions="70%,25%">
+            <method name="setWindowTitle" param0="Wyjscie z Gry" />
+            <method name="setIsResizable" param0="false" />
+            <method name="centerToParent"/>
+            <component type="Label" id="exit_label" position="35%,40%" dimensions="100%,5%" >
+                <method name="setTextAlign" param0="Left" />
+            </component>
+            <component type="Button" id="exit_game_button" position="20%,80%" dimensions="23%,15%" >
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="exit" />
+            </component>
+            <component type="Button" id="cancel_button" position="60%,80%" dimensions="23%,15%" >
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="cancel" />
+            </component>
+        </component>
     </screen>
 </root>

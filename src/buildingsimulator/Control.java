@@ -57,18 +57,6 @@ public class Control {
             }
         }
         
-        public static int getJmeKeyCode(String keyName) {
-            if(keyName.length() > 1){
-                if(keyName.equals("ESC")) return KeyInput.KEY_ESCAPE;
-                if(keyName.equals("SPACE")) return KeyInput.KEY_SPACE;
-                if(keyName.equals("LEFT")) return KeyInput.KEY_LEFT;
-                if(keyName.equals("RIGHT")) return KeyInput.KEY_RIGHT;
-                if(keyName.equals("UP")) return KeyInput.KEY_UP;
-                if(keyName.equals("DOWN")) return KeyInput.KEY_DOWN;
-            }
-            return AwtKeyInput.convertAwtKey(keyName.charAt(0)); 
-        }
-        
         /**
          * Zwraca odpowiednią dla użytkownika nazwę akcji, w aktualnym języku. 
          * @return odpowiednia dla użytkownika nazwa akcji  
@@ -85,6 +73,14 @@ public class Control {
             return key; 
         }
         
+        /**
+         * Zamienia kod przycisku na nazwę przycisku. W AWT znaki są kodowane według ASCII.
+         * Przyciski nie występujące w ASCII są zastępowane kodem ASCII przycisku 
+         * który nie może być wybrany (jest w górnej części przycisku - przyciski z dwoma znakami).
+         * Przykładem są strzałki - lewa to %, prawa to ', górna to &, dolna to (
+         * @param keyCode kod przycisku 
+         * @return nazwa przycisku 
+         */
         public static String getKey(int keyCode){
             char convertedChar = (char)AwtKeyInput.convertJmeCode(keyCode);
             /* W AWT znaki są kodowane według ASCII. Przyciski nie występujące w ASCII
@@ -101,7 +97,8 @@ public class Control {
         }
         
         /**
-         * Zapisuje ustawienia sterowania do pliku. 
+         * Zapisuje ustawienia sterowania do pliku. Dodatkowo ustawia przycisk dla 
+         * akcji. 
          * @param keys nowe przyciski dla czynności 
          */
         public static void saveSettings(String[] keys){
@@ -119,6 +116,18 @@ public class Control {
             }catch(IOException ex){
                 ex.printStackTrace();
             }
+        }
+        
+        private static int getJmeKeyCode(String keyName) {
+            if(keyName.length() > 1){
+                if(keyName.equals("ESC")) return KeyInput.KEY_ESCAPE;
+                if(keyName.equals("SPACE")) return KeyInput.KEY_SPACE;
+                if(keyName.equals("LEFT")) return KeyInput.KEY_LEFT;
+                if(keyName.equals("RIGHT")) return KeyInput.KEY_RIGHT;
+                if(keyName.equals("UP")) return KeyInput.KEY_UP;
+                if(keyName.equals("DOWN")) return KeyInput.KEY_DOWN;
+            }
+            return AwtKeyInput.convertAwtKey(keyName.charAt(0)); 
         }
     }
     

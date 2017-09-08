@@ -104,10 +104,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         CraneAbstract crane = GameManager.getUnit(1);
         if(isPressed){
             if(name.equals(Control.Actions.PAUSE.toString())){
-                flyCam.setDragToRotate(true);
-                GameManager.setStarted(false); 
-                GameManager.setPaused(true); 
-                MenuFactory.showMenu(MenuTypes.PAUSE_MENU);
+                GameManager.pauseGame();
             }else{
                 if(name.equals(Control.Actions.PHYSICS.toString())){
                     if(!debug) bulletAppState.getPhysicsSpace().enableDebug(assetManager);

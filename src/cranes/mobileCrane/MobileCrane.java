@@ -62,6 +62,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
      */
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
+        System.out.println(name); 
         switch(Actions.valueOf(name)){
             case UP:
                 if(isPressed){

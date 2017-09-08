@@ -23,6 +23,8 @@ import com.jme3.scene.Spatial;
 import cranes.crane.Crane;
 import cranes.mobileCrane.MobileCrane;
 import java.util.ArrayList;
+import menu.MenuFactory;
+import menu.MenuTypes;
 import net.wcomohundro.jme3.csg.CSGGeometry;
 
 /**
@@ -34,7 +36,7 @@ public class GameManager {
     private static String lastAction;
     private static ArrayList<CraneAbstract> units = new ArrayList();
     private static User user; 
-    private static boolean startedGame = false, pausedGame = false;
+    private static boolean startedGame = false;
     public static void runGame(){
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
         game.getFlyByCamera().setDragToRotate(false);
@@ -67,6 +69,19 @@ public class GameManager {
         GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
                 new Vector3f(0, 2.3f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
         startedGame = true; 
+    }
+    
+    public static void continueGame() {
+        BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(false);
+        Control.addListener(Control.getActualListener());
+        startedGame = true;
+    }
+    
+    public static void pauseGame() {
+        BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(true);
+        Control.removeListener(Control.getActualListener());
+        startedGame = false;
+        MenuFactory.showMenu(MenuTypes.PAUSE_MENU);
     }
     
     /**
@@ -338,8 +353,6 @@ public class GameManager {
     public static boolean isStartedGame() { return startedGame; }
     
     public static void setStarted(boolean startedGame) { GameManager.startedGame = startedGame; }
-    
-    public static void setPaused(boolean pausedGame) { GameManager.pausedGame = pausedGame; }
     
     private static void moveDynamicObject(Spatial element, Vector3f displacement){
         RigidBodyControl elementControl = element.getControl(RigidBodyControl.class);

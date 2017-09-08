@@ -145,7 +145,7 @@ public class MainMenu extends Menu {
     
     private void changeAuthorizationPopupState(boolean visible){
         if(visible){
-            ((Window)screen.getElementById("authorization_popup")).show();
+            ((Window)screen.getElementById("authorization_popup")).showAsModal(true);
         }else{
             screen.getElementById("login_text_field").setText("");
             screen.getElementById("password").setText("");

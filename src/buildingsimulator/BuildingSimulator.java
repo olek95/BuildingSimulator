@@ -49,9 +49,10 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     @Override
     public void simpleInitApp() {
 //        restart();
+        inputManager.deleteMapping(INPUT_MAPPING_EXIT);
         flyCam.setMoveSpeed(100);
         flyCam.setDragToRotate(true);
-        MenuFactory.showMenu(MenuTypes.MAIN_MENU);
+        MenuFactory.showMenu(MenuTypes.STARTING_MENU);
     }
 
     @Override
@@ -102,28 +103,35 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         MobileCrane mobileCrane = (MobileCrane)GameManager.getUnit(0);
         CraneAbstract crane = GameManager.getUnit(1);
         if(isPressed){
-            if(name.equals(Control.Actions.PHYSICS.toString())){
-                if(!debug) bulletAppState.getPhysicsSpace().enableDebug(assetManager);
-                else bulletAppState.getPhysicsSpace().disableDebug();
-                debug = !debug;
+            if(name.equals(Control.Actions.PAUSE.toString())){
+                flyCam.setDragToRotate(true);
+                GameManager.setStarted(false); 
+                GameManager.setPaused(true); 
+                MenuFactory.showMenu(MenuTypes.PAUSE_MENU);
             }else{
-                if(name.equals(Control.Actions.FIRST.toString())){
-                    inputManager.removeListener(crane.getArmControl());
-                    crane.setUsing(false);
-                    Control.addListener(((MobileCraneArmControl)mobileCrane
-                            .getArmControl()).isUsing() ? mobileCrane.getArmControl()
-                            : mobileCrane);
-                    mobileCrane.setUsing(true);
+                if(name.equals(Control.Actions.PHYSICS.toString())){
+                    if(!debug) bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+                    else bulletAppState.getPhysicsSpace().disableDebug();
+                    debug = !debug;
                 }else{
-                    if(((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing()){
-                        inputManager.removeListener(mobileCrane.getArmControl());
+                    if(name.equals(Control.Actions.FIRST.toString())){
+                        inputManager.removeListener(crane.getArmControl());
+                        crane.setUsing(false);
+                        Control.addListener(((MobileCraneArmControl)mobileCrane
+                                .getArmControl()).isUsing() ? mobileCrane.getArmControl()
+                                : mobileCrane);
+                        mobileCrane.setUsing(true);
                     }else{
-                        mobileCrane.setSteeringAngle(0f);
-                        inputManager.removeListener(mobileCrane);
+                        if(((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing()){
+                            inputManager.removeListener(mobileCrane.getArmControl());
+                        }else{
+                            mobileCrane.setSteeringAngle(0f);
+                            inputManager.removeListener(mobileCrane);
+                        }
+                        mobileCrane.setUsing(false);
+                        Control.addListener(crane.getArmControl());
+                        crane.setUsing(true);
                     }
-                    mobileCrane.setUsing(false);
-                    Control.addListener(crane.getArmControl());
-                    crane.setUsing(true);
                 }
             }
         }

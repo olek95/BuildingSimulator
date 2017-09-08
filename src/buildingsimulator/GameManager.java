@@ -34,7 +34,7 @@ public class GameManager {
     private static String lastAction;
     private static ArrayList<CraneAbstract> units = new ArrayList();
     private static User user; 
-    private static boolean startedGame = false;
+    private static boolean startedGame = false, pausedGame = false;
     public static void runGame(){
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
         game.getFlyByCamera().setDragToRotate(false);
@@ -336,6 +336,10 @@ public class GameManager {
      * @return true jeśli gra się rozpoczęła, false w przeciwnym przypadku 
      */
     public static boolean isStartedGame() { return startedGame; }
+    
+    public static void setStarted(boolean startedGame) { GameManager.startedGame = startedGame; }
+    
+    public static void setPaused(boolean pausedGame) { GameManager.pausedGame = pausedGame; }
     
     private static void moveDynamicObject(Spatial element, Vector3f displacement){
         RigidBodyControl elementControl = element.getControl(RigidBodyControl.class);

@@ -62,7 +62,8 @@ public enum Translator {
     EMPTY_LOGIN_PASSWORD,
     EMPTY_LOGIN,
     EMPTY_PASSWORD,
-    TOO_LONG_LOGIN_PASSWORD;
+    TOO_LONG_LOGIN_PASSWORD,
+    GAME_CONTINUATION;
     
     private String value; 
     

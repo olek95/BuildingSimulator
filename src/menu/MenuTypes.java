@@ -6,7 +6,8 @@ package menu;
  * @author AleksanderSklorz
  */
 public enum MenuTypes {
-    MAIN_MENU,
+    STARTING_MENU,
     OPTIONS,
-    CONTROL_CONFIGURATION;
+    CONTROL_CONFIGURATION,
+    PAUSE_MENU;
 }

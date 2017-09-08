@@ -114,7 +114,7 @@ public class Options extends Menu  {
         }
         BuildingSimulator.getBuildingSimulator().getGuiNode()
                 .removeControl(screen);
-        MenuFactory.showMenu(MenuTypes.MAIN_MENU);
+        MenuFactory.showMenu(MenuTypes.STARTING_MENU);
     }
     
     /**

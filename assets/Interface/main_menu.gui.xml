@@ -5,7 +5,7 @@
             <method name="setWindowTitle" param0="Building Simulator" />
             <method name="setTextAlign" param0="Center" />
             <method name="setIsResizable" param0="false" />
-            <component type="Button" id="new_game_button" position="40%,20%" dimensions="23%,10%" >
+            <component type="Button" id="start_game_button" position="40%,20%" dimensions="23%,10%" >
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="start" />
             </component>
             <component type="Button" id="load_game_button" position="40%,35%" dimensions="23%,10%" >

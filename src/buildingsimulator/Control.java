@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Properties;
 import texts.Translator;
 
@@ -45,13 +46,15 @@ public class Control {
         MERGE,
         PHYSICS,
         FIRST,
-        SECOND;
-        private char key;
+        SECOND,
+        PAUSE;
+        private int key;
         private Actions(){
             Properties control = new Properties();
             try(InputStream input = new FileInputStream("src/settings/control.properties")){
                 control.load(input);
-                key = control.getProperty(toString()).charAt(0);
+                String value = control.getProperty(toString());
+                key = value.length() > 1 ? getValueForNotCharKey(value) : value.charAt(0);
                 inputManager.addMapping(toString(), new KeyTrigger(AwtKeyInput
                         .convertAwtKey(key)));
             }catch(IOException ex){
@@ -72,7 +75,7 @@ public class Control {
          * @return przycisk dla danej czynności 
          */
         public char getKey() {
-            return key; 
+            return (char)key; 
         }
         
         /**
@@ -95,6 +98,11 @@ public class Control {
                 ex.printStackTrace();
             }
         }
+        
+        private int getValueForNotCharKey(String key) {
+            if(key.equals("ESC")) return KeyEvent.VK_ESCAPE;
+            return 0; 
+        }
     }
     
     /**
@@ -111,6 +119,7 @@ public class Control {
             inputManager.addListener(o, Actions.PHYSICS.toString());
             inputManager.addListener(o, Actions.FIRST.toString());
             inputManager.addListener(o, Actions.SECOND.toString());
+            inputManager.addListener(o, Actions.PAUSE.toString());
         }
     }
     

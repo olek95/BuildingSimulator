@@ -332,8 +332,6 @@ public class Options extends Menu  {
     private boolean isChanged() {
         Properties settings = getSelectedSettings(); 
         for(Map.Entry<Object, Object> entry : restoredSettings.entrySet()) {
-            System.out.println(settings.getProperty((String)entry.getKey()) + " " +
-                    entry.getValue());
             if(!settings.getProperty((String)entry.getKey()).equals(entry.getValue()))
                 return true; 
         }

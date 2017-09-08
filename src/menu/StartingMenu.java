@@ -25,9 +25,15 @@ public class StartingMenu extends MainMenu{
         changeAuthorizationPopupState(false);
     }
     
+    @Override
     public void start(MouseButtonEvent evt, boolean isToggled) {
         super.start(evt, isToggled); 
         GameManager.runGame();
+    }
+    
+    @Override
+    public void showOptions(MouseButtonEvent evt, boolean isToggled){ 
+        super.showOptions(evt, isToggled);
     }
     
     /**

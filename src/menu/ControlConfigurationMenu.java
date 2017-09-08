@@ -2,6 +2,7 @@ package menu;
 
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.Control;
+import buildingsimulator.Control.Actions;
 import com.jme3.input.InputManager;
 import com.jme3.input.RawInputListener;
 import com.jme3.input.awt.AwtKeyInput;
@@ -74,7 +75,7 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
      */
     @Override
     public void onKeyEvent(KeyInputEvent evt) { 
-        String key = String.valueOf((char)AwtKeyInput.convertJmeCode(evt.getKeyCode()));
+        String key = Actions.getKey(evt.getKeyCode());
         if(controlTable.isAnythingSelected() && !existsDuplicate(key)){
             stale = true; 
             ((Table.TableCell)controlTable.getSelectedRows().get(0).getChild(2)).setText(key); 
@@ -132,9 +133,9 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
         Control.Actions[] actions = Control.Actions.values();
         for(int i = 0; i < actions.length; i++){
             TableRow row = new TableRow(screen, table);
-            char key = actions[i].getKey(); 
+            String key = actions[i].getKey();
             row.addCell(actions[i].getValue(), actions[i]);
-            row.addCell(key + "", key);
+            row.addCell(key, key);
             table.addRow(row);
         }
     }

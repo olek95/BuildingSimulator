@@ -40,6 +40,7 @@ public enum Translator {
     PHYSICS,
     FIRST,
     SECOND,
+    PAUSE,
     ACTIVITY,
     KEY,
     NEW_GAME, 

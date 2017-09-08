@@ -11,8 +11,14 @@ public class PauseMenu extends MainMenu{
                 new Translator[]{Translator.GAME_CONTINUATION}, MainMenu.getScreen());
     }
     
+    @Override
     public void start(MouseButtonEvent evt, boolean isToggled) {
         super.start(evt, isToggled); 
         GameManager.continueGame();
+    }
+    
+    @Override
+    public void showOptions(MouseButtonEvent evt, boolean isToggled){ 
+        super.showOptions(evt, isToggled);
     }
 }

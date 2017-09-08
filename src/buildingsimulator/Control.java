@@ -48,18 +48,23 @@ public class Control {
         FIRST,
         SECOND,
         PAUSE;
-        private int key;
+        private String key;
         private Actions(){
             Properties control = new Properties();
             try(InputStream input = new FileInputStream("src/settings/control.properties")){
                 control.load(input);
-                String value = control.getProperty(toString());
-                key = value.length() > 1 ? getValueForNotCharKey(value) : value.charAt(0);
-                inputManager.addMapping(toString(), new KeyTrigger(AwtKeyInput
-                        .convertAwtKey(key)));
+//                String value = control.getProperty(toString());
+                key = control.getProperty(toString()); 
+                //key = value.length() > 1 ? getValueForNotCharKey(value) : value.charAt(0);
+                inputManager.addMapping(toString(), new KeyTrigger(getJmeKeyCode(key)));
             }catch(IOException ex){
                 ex.printStackTrace();
             }
+        }
+        
+        public static int getJmeKeyCode(String keyName) {
+            if(keyName.equals("ESC")) return KeyInput.KEY_ESCAPE;
+            return AwtKeyInput.convertAwtKey(keyName.charAt(0)); 
         }
         
         /**
@@ -74,8 +79,14 @@ public class Control {
          * Zwraca przycisk przypisany do danej czynności. 
          * @return przycisk dla danej czynności 
          */
-        public char getKey() {
-            return (char)key; 
+        public String getKey() {
+            return key; 
+        }
+        
+        public static String getKey(int keyCode){
+            char convertedChar = (char)AwtKeyInput.convertJmeCode(keyCode);
+            if(convertedChar == 27) return "ESC";
+            return convertedChar + "";
         }
         
         /**
@@ -87,11 +98,12 @@ public class Control {
             try(OutputStream output = new FileOutputStream("src/settings/control.properties")){
                 Actions[] values = values(); 
                 for(int i = 0; i < values.length; i++){
-                    char newKey = keys[i].charAt(0);
-                    values[i].key = newKey;
-                    control.setProperty(values[i].toString(), newKey + "");
-                    inputManager.addMapping(values[i].toString(), new KeyTrigger(AwtKeyInput
-                            .convertAwtKey((int)newKey)));
+                    System.out.println(keys[i]);
+                    values[i].key = keys[i];
+                    control.setProperty(values[i].toString(), keys[i]);
+                    System.out.println(values[i] + " " + keys[i]);
+                    inputManager.addMapping(values[i].toString(),
+                            new KeyTrigger(getJmeKeyCode(keys[i])));
                 }
                 control.store(output, null);
             }catch(IOException ex){

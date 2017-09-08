@@ -49,6 +49,7 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
         inputManager.addRawInputListener(this);
         Translator.setTexts(new String[]{"accepting_button", "return_button"}, 
                 new Translator[]{Translator.ACCEPTING, Translator.RETURN}, screen);
+        controlTable.setEnableKeyboardNavigation(false);
     }
 
     @Override
@@ -74,7 +75,7 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
      * @param evt 
      */
     @Override
-    public void onKeyEvent(KeyInputEvent evt) { 
+    public void onKeyEvent(KeyInputEvent evt) {
         String key = Actions.getKey(evt.getKeyCode());
         if(controlTable.isAnythingSelected() && !existsDuplicate(key)){
             stale = true; 

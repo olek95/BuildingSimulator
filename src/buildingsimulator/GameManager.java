@@ -42,10 +42,10 @@ public class GameManager {
         game.getFlyByCamera().setDragToRotate(false);
         BulletAppState bas = game.getBulletAppState(); 
         game.getStateManager().attach(bas);
-        GameManager.createTerrain();
+        createTerrain();
         MobileCrane crane = new MobileCrane();
-        GameManager.addUnit(crane);
-        GameManager.addUnit(new Crane());
+        addUnit(crane);
+        addUnit(new Crane());
         crane.setUsing(true);
         Control.addListener(crane);
         Control.addListener(game);

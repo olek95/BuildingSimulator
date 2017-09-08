@@ -5,14 +5,11 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.awt.AwtKeyInput;
 import com.jme3.input.controls.InputListener;
 import com.jme3.input.controls.KeyTrigger;
-import java.awt.event.KeyEvent;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.Properties;
 import texts.Translator;
 
@@ -53,9 +50,7 @@ public class Control {
             Properties control = new Properties();
             try(InputStream input = new FileInputStream("src/settings/control.properties")){
                 control.load(input);
-//                String value = control.getProperty(toString());
                 key = control.getProperty(toString()); 
-                //key = value.length() > 1 ? getValueForNotCharKey(value) : value.charAt(0);
                 inputManager.addMapping(toString(), new KeyTrigger(getJmeKeyCode(key)));
             }catch(IOException ex){
                 ex.printStackTrace();
@@ -63,7 +58,14 @@ public class Control {
         }
         
         public static int getJmeKeyCode(String keyName) {
-            if(keyName.equals("ESC")) return KeyInput.KEY_ESCAPE;
+            if(keyName.length() > 1){
+                if(keyName.equals("ESC")) return KeyInput.KEY_ESCAPE;
+                if(keyName.equals("SPACE")) return KeyInput.KEY_SPACE;
+                if(keyName.equals("LEFT")) return KeyInput.KEY_LEFT;
+                if(keyName.equals("RIGHT")) return KeyInput.KEY_RIGHT;
+                if(keyName.equals("UP")) return KeyInput.KEY_UP;
+                if(keyName.equals("DOWN")) return KeyInput.KEY_DOWN;
+            }
             return AwtKeyInput.convertAwtKey(keyName.charAt(0)); 
         }
         
@@ -85,7 +87,16 @@ public class Control {
         
         public static String getKey(int keyCode){
             char convertedChar = (char)AwtKeyInput.convertJmeCode(keyCode);
+            /* W AWT znaki są kodowane według ASCII. Przyciski nie występujące w ASCII
+             * są zastępowane kodem ASCII przycisku który nie może być wybrany (jest w 
+             * górnej części przycisku - przyciski z dwoma znakami). Przykładem są strzałki. 
+             */
             if(convertedChar == 27) return "ESC";
+            if(convertedChar == 32) return "SPACE";
+            if(convertedChar == 37) return "LEFT";
+            if(convertedChar == 39) return "RIGHT";
+            if(convertedChar == 38) return "UP";
+            if(convertedChar == 40) return "DOWN";
             return convertedChar + "";
         }
         
@@ -98,22 +109,16 @@ public class Control {
             try(OutputStream output = new FileOutputStream("src/settings/control.properties")){
                 Actions[] values = values(); 
                 for(int i = 0; i < values.length; i++){
-                    System.out.println(keys[i]);
                     values[i].key = keys[i];
-                    control.setProperty(values[i].toString(), keys[i]);
-                    System.out.println(values[i] + " " + keys[i]);
-                    inputManager.addMapping(values[i].toString(),
-                            new KeyTrigger(getJmeKeyCode(keys[i])));
+                    String actionName = values[i].toString();
+                    control.setProperty(actionName, keys[i]);
+                    inputManager.deleteMapping(actionName);
+                    inputManager.addMapping(actionName, new KeyTrigger(getJmeKeyCode(keys[i])));
                 }
                 control.store(output, null);
             }catch(IOException ex){
                 ex.printStackTrace();
             }
-        }
-        
-        private int getValueForNotCharKey(String key) {
-            if(key.equals("ESC")) return KeyEvent.VK_ESCAPE;
-            return 0; 
         }
     }
     

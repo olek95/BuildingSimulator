@@ -12,9 +12,14 @@ import tonegod.gui.controls.text.Label;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
+/**
+ * Menu wyświetlane po uruchomieniu gry. Dodatkowo posiada możliwość logowania 
+ * i rejestracji. 
+ * @author AleksanderSklorz
+ */
 public class StartingMenu extends MainMenu{
     public StartingMenu(){
-        super("Interface/main_menu.gui.xml");
+        super("Interface/starting_menu.gui.xml");
         Translator.setTexts(new String[]{"start_game_button",  "authorization_button",
             "cancel_button", "username_label", "password_label", "sending_data_button"},
                 new Translator[]{Translator.NEW_GAME, Translator.AUTHORIZATION,

@@ -14,12 +14,12 @@ import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
 /**
- * Singleton <code>MainMenu</code> reprezentuje menu główne gry. Posiada możliwość
- * uruchomienia nowej gry, wczytania zapisanej gry, pokazania statystyk, zmiany 
- * ustawień gry, wyjscia z gry oraz logowania i rejestracji. 
+ * Klasa <code>MainMenu</code> reprezentuje menu główne gry. Stanowi nadklasę dla 
+ * menu startowego i menu podczas pauzy. Posiada możliwość uruchomienia nowej gry,
+ * wczytania zapisanej gry, pokazania statystyk, zmiany ustawień gry, wyjscia z gry. 
  * @author AleksanderSklorz 
  */
-public class MainMenu extends Menu {
+public abstract class MainMenu extends Menu {
     private static Screen screen;
     public MainMenu(String layoutName){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
@@ -44,6 +44,11 @@ public class MainMenu extends Menu {
         screen.setUseCustomCursors(false);
     }
     
+    /**
+     * Wyświetla menu opcji gry. 
+     * @param evt
+     * @param isToggled 
+     */
     public void showOptions(MouseButtonEvent evt, boolean isToggled){
         window.hide();
         BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
@@ -60,14 +65,6 @@ public class MainMenu extends Menu {
     }
     
     public static Screen getScreen() { return screen; }
-    
-//    @Override
-//    public void initialize(AppStateManager stateManager, Application app) {
-//        super.initialize(stateManager, app);
-//
-//        // Useful place for running load effects
-//        inventory.showWithEffect();
-//    }
 
     @Override
     public void closeWindow() {}

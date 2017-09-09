@@ -66,7 +66,8 @@ public enum Translator {
     TOO_LONG_LOGIN_PASSWORD,
     GAME_CONTINUATION,
     EXIT_WARNING,
-    EXIT_DESKTOP;
+    EXIT_DESKTOP,
+    RETURN_TO_STARTING_MENU;
     
     private String value; 
     

@@ -29,10 +29,13 @@
             <component type="Label" id="exit_label" position="35%,40%" dimensions="100%,5%" >
                 <method name="setTextAlign" param0="Left" />
             </component>
-            <component type="Button" id="exit_game_button" position="20%,80%" dimensions="23%,15%" >
+            <component type="Button" id="exit_game_button" position="7%,80%" dimensions="27%,15%" >
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="exit" />
             </component>
-            <component type="Button" id="cancel_button" position="60%,80%" dimensions="23%,15%" >
+            <component type="Button" id="return_starting_menu_button" position="37%,80%" dimensions="27%,15%" >
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="returnToStartingMenu" />
+            </component>
+            <component type="Button" id="cancel_button" position="67%,80%" dimensions="27%,15%" >
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="cancel" />
             </component>
         </component>

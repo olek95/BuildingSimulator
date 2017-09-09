@@ -45,7 +45,15 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         game.setSettings(Options.restoreSettings(Options.loadProperties(), true));
         game.start();
     }
-
+    
+    public static void createNewGame() {
+        game.renderer.cleanup();
+        game.bulletAppState.getPhysicsSpace().removeAll(game.rootNode);
+//        game.getStateManager().cleanup();
+//        game.getStateManager().attach(new BulletAppState());
+        game.rootNode.detachAllChildren();
+    }
+    
     @Override
     public void simpleInitApp() {
 //        restart();

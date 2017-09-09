@@ -38,6 +38,7 @@ public class GameManager {
     private static User user; 
     private static boolean startedGame = false;
     public static void runGame(){
+        System.out.println(123); 
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
         game.getFlyByCamera().setDragToRotate(false);
         BulletAppState bas = game.getBulletAppState(); 

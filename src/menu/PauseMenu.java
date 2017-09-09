@@ -71,7 +71,7 @@ public class PauseMenu extends MainMenu{
         Screen screen = MainMenu.getScreen(); 
         screen.removeElement(exitPopup);
         BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
-        BuildingSimulator.createNewGame();
+        GameManager.deleteGame();
         MenuFactory.showMenu(MenuTypes.STARTING_MENU);
     }
 }

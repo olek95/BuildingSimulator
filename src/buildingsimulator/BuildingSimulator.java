@@ -46,20 +46,16 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         game.start();
     }
     
-    public static void createNewGame() {
-        game.renderer.cleanup();
-        game.bulletAppState.getPhysicsSpace().removeAll(game.rootNode);
-//        game.getStateManager().cleanup();
-//        game.getStateManager().attach(new BulletAppState());
-        game.rootNode.detachAllChildren();
-    }
-    
     @Override
     public void simpleInitApp() {
 //        restart();
         inputManager.deleteMapping(INPUT_MAPPING_EXIT);
         flyCam.setMoveSpeed(100);
         flyCam.setDragToRotate(true);
+        DirectionalLight sun = new DirectionalLight();
+        sun.setColor(ColorRGBA.White);
+        sun.setDirection(new Vector3f(-.5f,-.5f,-.5f).normalizeLocal());
+        rootNode.addLight(sun);
         MenuFactory.showMenu(MenuTypes.STARTING_MENU);
     }
 

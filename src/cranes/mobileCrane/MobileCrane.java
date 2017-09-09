@@ -43,7 +43,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     public MobileCrane(){
         createMobileCranePhysics();
         scaleTiresTexture();
-        createMirrors();
+//        createMirrors();
         game.getRootNode().attachChild(crane);
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
         physics.add(craneControl);

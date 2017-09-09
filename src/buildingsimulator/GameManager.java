@@ -38,7 +38,6 @@ public class GameManager {
     private static User user; 
     private static boolean startedGame = false;
     public static void runGame(){
-        System.out.println(123); 
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
         game.getFlyByCamera().setDragToRotate(false);
         BulletAppState bas = game.getBulletAppState(); 
@@ -50,10 +49,6 @@ public class GameManager {
         crane.setUsing(true);
         Control.addListener(crane);
         Control.addListener(game);
-        DirectionalLight sun = new DirectionalLight();
-        sun.setColor(ColorRGBA.White);
-        sun.setDirection(new Vector3f(-.5f,-.5f,-.5f).normalizeLocal());
-        game.getRootNode().addLight(sun);
         bas.getPhysicsSpace().addCollisionListener(BuildingCollisionListener
                 .createBuildingCollisionListener());
         // KOD DLA TESTU!!
@@ -83,6 +78,15 @@ public class GameManager {
         Control.removeListener(Control.getActualListener());
         startedGame = false;
         MenuFactory.showMenu(MenuTypes.PAUSE_MENU);
+    }
+    
+    public static void deleteGame() {
+        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
+        game.getRenderer().cleanup();
+        Node rootNode = game.getRootNode(); 
+        game.getBulletAppState().getPhysicsSpace().removeAll(rootNode);
+        rootNode.detachAllChildren();
+        removeAllUnits();
     }
     
     /**
@@ -283,6 +287,8 @@ public class GameManager {
     public static CraneAbstract getUnit(int i){
         return units.get(i);
     }
+    
+    public static void removeAllUnits() { units.clear(); }
     
     /**
      * Zwraca jednostkę, która jest aktualnie używana przez gracza. 

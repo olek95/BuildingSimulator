@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <screen>
+        <component type="Button" id="finish_building_button" position="95%,0%" dimensions="32,32">
+             <eventMethod name="onButtonMouseLeftUp" stateMethodName="validateBuildings" />
+        </component>
+    </screen>
+</root>

@@ -23,6 +23,7 @@ import com.jme3.scene.Spatial;
 import cranes.crane.Crane;
 import cranes.mobileCrane.MobileCrane;
 import java.util.ArrayList;
+import menu.HUD;
 import menu.MenuFactory;
 import menu.MenuTypes;
 import net.wcomohundro.jme3.csg.CSGGeometry;
@@ -40,6 +41,7 @@ public class GameManager {
     private static boolean pausedGame = false; 
     public static void runGame(){
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
+        addHUD();
         game.getFlyByCamera().setDragToRotate(false);
         BulletAppState bas = game.getBulletAppState(); 
         game.getStateManager().attach(bas);
@@ -91,6 +93,11 @@ public class GameManager {
         rootNode.detachAllChildren();
         pausedGame = false; 
         removeAllUnits();
+    }
+    
+    private static void addHUD() {
+        BuildingSimulator.getBuildingSimulator().getGuiNode()
+                .addControl(new HUD().getScreen());
     }
     
     /**

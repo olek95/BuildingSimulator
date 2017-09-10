@@ -43,6 +43,7 @@ public enum Translator {
     FIRST,
     SECOND,
     PAUSE,
+    SHOW_CURSOR,
     ACTIVITY,
     KEY,
     NEW_GAME, 

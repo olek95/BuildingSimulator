@@ -44,7 +44,8 @@ public class Control {
         PHYSICS,
         FIRST,
         SECOND,
-        PAUSE;
+        PAUSE,
+        SHOW_CURSOR;
         private String key;
         private Actions(){
             Properties control = new Properties();
@@ -146,6 +147,7 @@ public class Control {
             inputManager.addListener(o, Actions.FIRST.toString());
             inputManager.addListener(o, Actions.SECOND.toString());
             inputManager.addListener(o, Actions.PAUSE.toString());
+            inputManager.addListener(o, Actions.SHOW_CURSOR.toString());
         }
     }
     

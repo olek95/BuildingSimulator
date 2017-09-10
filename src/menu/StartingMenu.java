@@ -2,7 +2,6 @@ package menu;
 
 import authorization.Authorization;
 import authorization.User;
-import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.ColorRGBA;
@@ -11,7 +10,6 @@ import texts.Translator;
 import tonegod.gui.controls.buttons.CheckBox;
 import tonegod.gui.controls.text.Label;
 import tonegod.gui.controls.windows.Window;
-import tonegod.gui.core.Element;
 import tonegod.gui.core.Screen;
 
 /**
@@ -38,7 +36,7 @@ public class StartingMenu extends MainMenu{
         Screen screen = MainMenu.getScreen(); 
         if(GameManager.getUser() == null) {
             screen.addElement(createNotSavedChangesAlert(MainMenu.getScreen(),
-                    Translator.NOT_LOGGED_IN_ALERT.getValue()));
+                    Translator.NOT_LOGGED_IN_ALERT.getValue(), null));
         } else {
             super.start(); 
             GameManager.runGame();
@@ -46,24 +44,15 @@ public class StartingMenu extends MainMenu{
     }
     
     @Override
-    public void closeWindow() {
-        Screen screen = MainMenu.getScreen(); 
-        window.hide();
-        Element closingAlert = screen.getElementById("closing_alert");
-        if(closingAlert != null){
-            closingAlert.hide();
-            screen.removeElement(closingAlert);
-        }
-        BuildingSimulator.getBuildingSimulator().getGuiNode()
-                .removeControl(screen);
+    protected void doWhenAcceptedExit(Screen screen, MenuTypes type) {
+        super.doWhenAcceptedExit(screen, null); 
         GameManager.setUser(new User("Anonim"));
-        super.start();
+        super.start(); 
         GameManager.runGame();
     }
     
-    @Override
     public void showOptions(MouseButtonEvent evt, boolean isToggled){ 
-        super.showOptions(evt, isToggled);
+        showOptions();
     }
     
     /**
@@ -144,10 +133,8 @@ public class StartingMenu extends MainMenu{
                 ? Translator.REGISTERING.getValue() : Translator.LOGIN.getValue());
     }
     
-    @Override
-    public void exit(MouseButtonEvent evt, boolean isToggled){
-        super.exit(evt, isToggled);
-    }
+    
+    public void exit(MouseButtonEvent evt, boolean isToggled){ exit(); }
     
     private void changeAuthorizationPopupState(boolean visible){
         Screen screen = MainMenu.getScreen();

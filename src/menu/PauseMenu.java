@@ -33,15 +33,10 @@ public class PauseMenu extends MainMenu{
         GameManager.continueGame();
     }
     
-    @Override
-    public void showOptions(MouseButtonEvent evt, boolean isToggled){ 
-        super.showOptions(evt, isToggled);
-    }
+    public void showOptions(MouseButtonEvent evt, boolean isToggled){ showOptions(); }
     
-    @Override
-    public void exit(MouseButtonEvent evt, boolean isToggled){
-        super.exit(evt, isToggled);
-    }
+    
+    public void exit(MouseButtonEvent evt, boolean isToggled){ exit(); }
     
     /**
      * Wyświetla okienko ostrzegające przed wyjściem z gry. Umożliwia wyjście 

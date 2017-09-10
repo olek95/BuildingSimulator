@@ -5,7 +5,6 @@ import buildingsimulator.Control;
 import buildingsimulator.Control.Actions;
 import com.jme3.input.InputManager;
 import com.jme3.input.RawInputListener;
-import com.jme3.input.awt.AwtKeyInput;
 import com.jme3.input.event.JoyAxisEvent;
 import com.jme3.input.event.JoyButtonEvent;
 import com.jme3.input.event.KeyInputEvent;
@@ -14,14 +13,15 @@ import com.jme3.input.event.MouseMotionEvent;
 import com.jme3.input.event.TouchEvent;
 import com.jme3.math.Vector2f;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import texts.Translator;
+import tonegod.gui.controls.buttons.Button;
 import tonegod.gui.controls.buttons.ButtonAdapter;
 import tonegod.gui.controls.lists.Table;
 import tonegod.gui.controls.lists.Table.TableColumn;
 import tonegod.gui.controls.lists.Table.TableRow;
 import tonegod.gui.controls.windows.Window;
-import tonegod.gui.core.Element;
 import tonegod.gui.core.Screen;
 
 /**
@@ -34,12 +34,14 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
     private static Screen screen;
     private static Table controlTable;
     private static boolean stale; 
+    private static Properties restoredSettings;
     public ControlConfigurationMenu(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         window = new Window(screen, "controlConfiguration", new Vector2f(0, 0),
                 new Vector2f(screen.getWidth(), screen.getHeight()));
         screen.addElement(window);
         window.centerToParent();
+        restoredSettings = new Properties();
         createTable(); 
         createAcceptingButton(); 
         createReturnButton();
@@ -50,6 +52,7 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
         Translator.setTexts(new String[]{"accepting_button", "return_button"}, 
                 new Translator[]{Translator.ACCEPTING, Translator.RETURN}, screen);
         controlTable.setEnableKeyboardNavigation(false);
+        setStale();
     }
 
     @Override
@@ -78,27 +81,13 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
     public void onKeyEvent(KeyInputEvent evt) {
         String key = Actions.getKey(evt.getKeyCode());
         if(controlTable.isAnythingSelected() && !existsDuplicate(key)){
-            stale = true; 
-            ((Table.TableCell)controlTable.getSelectedRows().get(0).getChild(2)).setText(key); 
+            ((Table.TableCell)controlTable.getSelectedRows().get(0).getChild(2)).setText(key);
+            setStale();
         }
     }
 
     @Override
     public void onTouchEvent(TouchEvent evt) {}
-    
-    @Override
-    public void closeWindow() {
-        window.hide();
-        Element closingAlert = screen.getElementById("closing_alert");
-        if(closingAlert != null){
-            closingAlert.hide();
-            screen.removeElement(closingAlert);
-            stale = false;
-        }
-        BuildingSimulator.getBuildingSimulator().getGuiNode()
-                .removeControl(screen);
-        MenuFactory.showMenu(MenuTypes.OPTIONS);
-    }
     
     private boolean existsDuplicate(String key) {
         List<TableRow> rows = controlTable.getRows();
@@ -134,9 +123,10 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
         Control.Actions[] actions = Control.Actions.values();
         for(int i = 0; i < actions.length; i++){
             TableRow row = new TableRow(screen, table);
-            String key = actions[i].getKey();
-            row.addCell(actions[i].getValue(), actions[i]);
+            String key = actions[i].getKey(), actionName = actions[i].getValue();
+            row.addCell(actionName, actions[i]);
             row.addCell(key, key);
+            restoredSettings.put(actionName, key);
             table.addRow(row);
         }
     }
@@ -154,7 +144,7 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
                             keys[i] = ((Table.TableCell)rows.get(i).getChild(2)).getText();
                         }
                         Control.Actions.saveSettings(keys);
-                        closeWindow();
+                        doWhenAcceptedExit(ControlConfigurationMenu.screen, MenuTypes.OPTIONS);
                     }
                 };
         controlTable.addChild(button);
@@ -169,10 +159,36 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
                         if(stale){
                             ControlConfigurationMenu.screen
                                     .addElement(createNotSavedChangesAlert(ControlConfigurationMenu
-                                    .screen, Translator.NOT_SAVED_CHANGES.getValue()));
-                        } else closeWindow();
+                                    .screen, Translator.NOT_SAVED_CHANGES.getValue(), MenuTypes.OPTIONS));
+                        } else doWhenAcceptedExit(ControlConfigurationMenu.screen, MenuTypes.OPTIONS);
                     }
                 };
         controlTable.addChild(button);
+    }
+    
+    private Properties getSelectedSettings() {
+        Properties settings = new Properties(); 
+        List<TableRow> rows = controlTable.getRows();
+        int rowsCount = rows.size(); 
+        for(int i = 0; i < rowsCount; i++){
+            TableRow row = rows.get(i);
+            settings.put(((Table.TableCell)row.getChild(1)).getText(), ((Table.TableCell)row
+                    .getChild(2)).getText());
+        }
+        return settings; 
+    }
+    
+    private boolean isChanged() {
+        Properties settings = getSelectedSettings(); 
+        for(Map.Entry<Object, Object> entry : restoredSettings.entrySet()) {
+            if(!settings.getProperty(entry.getKey().toString()).equals(entry.getValue()))
+                return true; 
+        }
+        return false; 
+    }
+    
+    private void setStale() {
+        stale = isChanged();
+        ((Button)screen.getElementById("accepting_button")).setIsEnabled(stale);
     }
 }

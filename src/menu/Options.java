@@ -20,7 +20,6 @@ import tonegod.gui.controls.buttons.Button;
 import tonegod.gui.controls.buttons.CheckBox;
 import tonegod.gui.controls.lists.SelectBox;
 import tonegod.gui.controls.windows.Window;
-import tonegod.gui.core.Element;
 import tonegod.gui.core.Screen;
 
 /**
@@ -79,8 +78,10 @@ public class Options extends Menu  {
     public void back(MouseButtonEvent evt, boolean isToggled) {
         if(stale){
             screen.addElement(createNotSavedChangesAlert(screen, 
-                    Translator.NOT_SAVED_CHANGES.getValue()));
-        } else closeWindow(); 
+                    Translator.NOT_SAVED_CHANGES.getValue(), GameManager.isPausedGame()
+                    ? MenuTypes.PAUSE_MENU : MenuTypes.STARTING_MENU));
+        } else doWhenAcceptedExit(screen, GameManager.isPausedGame()
+                    ? MenuTypes.PAUSE_MENU : MenuTypes.STARTING_MENU); 
     }
     
     /**
@@ -104,20 +105,6 @@ public class Options extends Menu  {
         newHeight = 0; 
         newWidth = 0;
         MenuFactory.showMenu(MenuTypes.OPTIONS);
-    }
-    
-    @Override
-    public void closeWindow() {
-        window.hide();
-        Element closingAlert = screen.getElementById("closing_alert");
-        if(closingAlert != null){
-            closingAlert.hide();
-            screen.removeElement(closingAlert);
-        }
-        BuildingSimulator.getBuildingSimulator().getGuiNode()
-                .removeControl(screen);
-        MenuFactory.showMenu(GameManager.isPausedGame() ? MenuTypes.PAUSE_MENU : 
-                MenuTypes.STARTING_MENU);
     }
     
     /**

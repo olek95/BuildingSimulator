@@ -1,9 +1,9 @@
 package cranes;
 
-import buildingmaterials.Wall;
+import building.Wall;
 import buildingsimulator.BottomCollisionListener;
 import buildingsimulator.BuildingSimulator;
-import buildingmaterials.Construction;
+import building.Construction;
 import buildingsimulator.GameManager;
 import static buildingsimulator.GameManager.*;
 import buildingsimulator.RememberingRecentlyHitObject;
@@ -100,7 +100,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 Spatial wallRecentlyHitObject = attachedObject.getRecentlyHitObject(); 
                 if(wallRecentlyHitObject != null){
                     Wall nearestBuildingWall = null; 
-                    if(oldMode == 1 && wallRecentlyHitObject.getName().equals("New Scene"))
+                    if(oldMode == 1 && wallRecentlyHitObject.getName().equals("terrain-gameMap"))
                         nearestBuildingWall = Construction.getNearestBuildingWall(attachedObject);
                     Construction construction = Construction
                             .getWholeConstruction(nearestBuildingWall == null ? 

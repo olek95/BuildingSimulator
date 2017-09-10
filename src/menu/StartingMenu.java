@@ -28,6 +28,7 @@ public class StartingMenu extends MainMenu{
         ((Window)MainMenu.getScreen().getElementById("authorization_popup")).getDragBar()
                 .setIsMovable(false);
         changeAuthorizationPopupState(false);
+        if(GameManager.getUser() != null) setUser();
     }
     
     @Override
@@ -91,9 +92,7 @@ public class StartingMenu extends MainMenu{
                     error.setText("");
                     changeAuthorizationPopupState(false); 
                     GameManager.setUser(new User(login));
-                    screen.getElementById("authorization_button")
-                            .setText(Translator.LOGOUT.getValue());
-                    screen.getElementById("login_label").setText(login);
+                    setUser();
                 }
             }
         }catch(ClassNotFoundException | SQLException ex){
@@ -144,5 +143,11 @@ public class StartingMenu extends MainMenu{
         if(login.length() > 20 || password.length() > 20) 
             return Translator.TOO_LONG_LOGIN_PASSWORD.getValue();
         return null; 
+    }
+    
+    private void setUser() {
+        Screen screen = MainMenu.getScreen(); 
+        screen.getElementById("authorization_button").setText(Translator.LOGOUT.getValue());
+        screen.getElementById("login_label").setText(GameManager.getUser().getLogin());
     }
 }

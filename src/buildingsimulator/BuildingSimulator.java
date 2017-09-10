@@ -1,9 +1,10 @@
 package buildingsimulator;
 
-import buildingmaterials.Construction;
-import buildingmaterials.Wall;
-import buildingmaterials.WallType;
-import buildingmaterials.WallsFactory;
+import building.BuildingValidation;
+import building.Construction;
+import building.Wall;
+import building.WallType;
+import building.WallsFactory;
 import cranes.mobileCrane.MobileCraneArmControl;
 import cranes.mobileCrane.MobileCrane;
 import cranes.crane.Crane;
@@ -108,6 +109,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         CraneAbstract crane = GameManager.getUnit(1);
         if(isPressed){
             if(name.equals(Control.Actions.PAUSE.toString())){
+                BuildingValidation.validate();
+                System.out.println(GameManager.getUser().getPoints());
                 GameManager.pauseGame();
             }else{
                 if(name.equals(Control.Actions.PHYSICS.toString())){

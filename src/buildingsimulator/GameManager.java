@@ -1,8 +1,8 @@
 package buildingsimulator;
 
 import authorization.User;
-import buildingmaterials.WallType;
-import buildingmaterials.WallsFactory;
+import building.WallType;
+import building.WallsFactory;
 import cranes.Hook;
 import cranes.CraneAbstract;
 import com.jme3.bounding.BoundingBox;
@@ -37,6 +37,7 @@ public class GameManager {
     private static ArrayList<CraneAbstract> units = new ArrayList();
     private static User user; 
     private static boolean startedGame = false;
+    private static boolean pausedGame = false; 
     public static void runGame(){
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
         game.getFlyByCamera().setDragToRotate(false);
@@ -71,12 +72,14 @@ public class GameManager {
         BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(false);
         Control.addListener(Control.getActualListener());
         startedGame = true;
+        pausedGame = false; 
     }
     
     public static void pauseGame() {
         BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(true);
         Control.removeListener(Control.getActualListener());
         startedGame = false;
+        pausedGame = true; 
         MenuFactory.showMenu(MenuTypes.PAUSE_MENU);
     }
     
@@ -86,6 +89,7 @@ public class GameManager {
         Node rootNode = game.getRootNode(); 
         game.getBulletAppState().getPhysicsSpace().removeAll(rootNode);
         rootNode.detachAllChildren();
+        pausedGame = false; 
         removeAllUnits();
     }
     
@@ -360,6 +364,8 @@ public class GameManager {
     public static boolean isStartedGame() { return startedGame; }
     
     public static void setStarted(boolean startedGame) { GameManager.startedGame = startedGame; }
+    
+    public static boolean isPausedGame() { return pausedGame; }
     
     private static void moveDynamicObject(Spatial element, Vector3f displacement){
         RigidBodyControl elementControl = element.getControl(RigidBodyControl.class);

@@ -1,6 +1,6 @@
 package cranes;
 
-import buildingmaterials.Wall;
+import building.Wall;
 import buildingsimulator.BottomCollisionListener;
 import buildingsimulator.Control;
 import com.jme3.input.controls.AnalogListener;

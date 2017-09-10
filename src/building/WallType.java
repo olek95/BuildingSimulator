@@ -1,4 +1,4 @@
-package buildingmaterials;
+package building;
 
 /**
  * Typ wyliczeniowy <code>WallType</code> reprezentuje dostępne typy materiałów 

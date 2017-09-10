@@ -1,4 +1,4 @@
-package buildingmaterials;
+package building;
 
 import buildingsimulator.BuildingSimulator;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -36,7 +36,7 @@ public class Construction extends Node{
         Spatial recentlyHitObject = wall1.getRecentlyHitObject();
         if(recentlyHitObject != null){ 
             String recentlyHitObjectName = recentlyHitObject.getName(); 
-            boolean collisionWithGround = recentlyHitObjectName.startsWith("New Scene");
+            boolean collisionWithGround = recentlyHitObjectName.startsWith("terrain-gameMap");
             if(collisionWithGround || recentlyHitObjectName.startsWith("Wall")){
                 Node touchedWall; 
                 if(wallMode == 2){ 

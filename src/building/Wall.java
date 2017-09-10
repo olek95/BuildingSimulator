@@ -1,4 +1,4 @@
-package buildingmaterials;
+package building;
 
 import buildingsimulator.BottomCollisionListener;
 import buildingsimulator.BuildingSimulator;
@@ -19,7 +19,7 @@ import com.jme3.scene.shape.Cylinder;
 import java.util.List;
 import net.wcomohundro.jme3.csg.CSGGeometry;
 import net.wcomohundro.jme3.csg.CSGShape;
-import buildingmaterials.CatchNode.*;
+import building.CatchNode.*;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.MatParam;
 import java.util.ArrayList;

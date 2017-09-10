@@ -1,6 +1,7 @@
 package menu;
 
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.GameManager;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.system.AppSettings;
 import java.awt.DisplayMode;
@@ -114,7 +115,8 @@ public class Options extends Menu  {
         }
         BuildingSimulator.getBuildingSimulator().getGuiNode()
                 .removeControl(screen);
-        MenuFactory.showMenu(MenuTypes.STARTING_MENU);
+        MenuFactory.showMenu(GameManager.isPausedGame() ? MenuTypes.PAUSE_MENU : 
+                MenuTypes.STARTING_MENU);
     }
     
     /**

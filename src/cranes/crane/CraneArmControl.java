@@ -1,6 +1,6 @@
 package cranes.crane;
 
-import buildingmaterials.Wall;
+import building.Wall;
 import buildingsimulator.BuildingSimulator;
 import cranes.ArmControl;
 import com.jme3.bullet.PhysicsSpace;

@@ -24,14 +24,12 @@ public class PauseMenu extends MainMenu{
                     Translator.RETURN_TO_STARTING_MENU}, screen);
         MainMenu.getScreen().getElementById("exit_popup").hide();
         User user = GameManager.getUser();
-        screen.getElementById("login_label").setText(user == null ? "Anonim" :
-                user.getLogin());
+        screen.getElementById("login_label").setText(user.getLogin());
         ((Window)screen.getElementById("exit_popup")).getDragBar().setIsMovable(false);
     }
     
-    @Override
     public void start(MouseButtonEvent evt, boolean isToggled) {
-        super.start(evt, isToggled); 
+        super.start(); 
         GameManager.continueGame();
     }
     

@@ -78,7 +78,8 @@ public class Options extends Menu  {
      */
     public void back(MouseButtonEvent evt, boolean isToggled) {
         if(stale){
-            screen.addElement(createNotSavedChangesAlert(screen));
+            screen.addElement(createNotSavedChangesAlert(screen, 
+                    Translator.NOT_SAVED_CHANGES.getValue()));
         } else closeWindow(); 
     }
     

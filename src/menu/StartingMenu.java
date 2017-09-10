@@ -2,6 +2,7 @@ package menu;
 
 import authorization.Authorization;
 import authorization.User;
+import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.ColorRGBA;
@@ -10,6 +11,7 @@ import texts.Translator;
 import tonegod.gui.controls.buttons.CheckBox;
 import tonegod.gui.controls.text.Label;
 import tonegod.gui.controls.windows.Window;
+import tonegod.gui.core.Element;
 import tonegod.gui.core.Screen;
 
 /**
@@ -28,12 +30,34 @@ public class StartingMenu extends MainMenu{
         ((Window)MainMenu.getScreen().getElementById("authorization_popup")).getDragBar()
                 .setIsMovable(false);
         changeAuthorizationPopupState(false);
-        if(GameManager.getUser() != null) setUser();
+        User user = GameManager.getUser(); 
+        if(user != null && !user.getLogin().equals("Anonim")) setUser();
+    }
+    
+    public void start(MouseButtonEvent evt, boolean isToggled) {
+        Screen screen = MainMenu.getScreen(); 
+        if(GameManager.getUser() == null) {
+            screen.addElement(createNotSavedChangesAlert(MainMenu.getScreen(),
+                    Translator.NOT_LOGGED_IN_ALERT.getValue()));
+        } else {
+            super.start(); 
+            GameManager.runGame();
+        }
     }
     
     @Override
-    public void start(MouseButtonEvent evt, boolean isToggled) {
-        super.start(evt, isToggled); 
+    public void closeWindow() {
+        Screen screen = MainMenu.getScreen(); 
+        window.hide();
+        Element closingAlert = screen.getElementById("closing_alert");
+        if(closingAlert != null){
+            closingAlert.hide();
+            screen.removeElement(closingAlert);
+        }
+        BuildingSimulator.getBuildingSimulator().getGuiNode()
+                .removeControl(screen);
+        GameManager.setUser(new User("Anonim"));
+        super.start();
         GameManager.runGame();
     }
     

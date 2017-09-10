@@ -3,6 +3,7 @@ package menu;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.Vector2f;
+import texts.Translator;
 import tonegod.gui.controls.windows.DialogBox;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
@@ -27,7 +28,7 @@ public abstract class Menu extends AbstractAppState{
      * @param screen ekran dla którego chce się wyświetlić okienko alarmowe
      * @return okno alarmowe ostrzegające przed niezapisanymi zmianami 
      */
-    public DialogBox createNotSavedChangesAlert(final Screen screen) {
+    public DialogBox createNotSavedChangesAlert(final Screen screen, String message) {
         DialogBox alert = new DialogBox(screen, "closing_alert", new Vector2f(0f, 0f), 
                     new Vector2f(400, 190)
             ) {
@@ -47,8 +48,8 @@ public abstract class Menu extends AbstractAppState{
             alert.getDragBar().setIsMovable(false);
             alert.setIsModal(true);
             alert.showAsModal(true);
-            alert.setMsg("Changes aren't saved. Are you sure you want to leave?");
-            alert.setButtonOkText("Yes");
+            alert.setMsg(message);
+            alert.setButtonOkText(Translator.CONFIRMATION.getValue());
             return alert; 
     }
     

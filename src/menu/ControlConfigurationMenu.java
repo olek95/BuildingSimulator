@@ -168,7 +168,8 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
                     public void onButtonMouseLeftUp(MouseButtonEvent mbe, boolean bln) {
                         if(stale){
                             ControlConfigurationMenu.screen
-                                    .addElement(createNotSavedChangesAlert(ControlConfigurationMenu.screen));
+                                    .addElement(createNotSavedChangesAlert(ControlConfigurationMenu
+                                    .screen, Translator.NOT_SAVED_CHANGES.getValue()));
                         } else closeWindow();
                     }
                 };

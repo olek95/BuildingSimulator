@@ -36,10 +36,8 @@ public abstract class MainMenu extends Menu {
     
     /** 
      * Uruchamia grę 
-     * @param evt 
-     * @param isToggled 
      */
-    public void start(MouseButtonEvent evt, boolean isToggled) {
+    public void start() {
         window.hide();
         screen.setUseCustomCursors(false);
     }

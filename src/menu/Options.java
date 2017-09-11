@@ -1,6 +1,7 @@
 package menu;
 
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.FilesManager;
 import buildingsimulator.GameManager;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.system.AppSettings;
@@ -8,9 +9,11 @@ import java.awt.DisplayMode;
 import java.awt.GraphicsEnvironment;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
@@ -138,13 +141,7 @@ public class Options extends Menu  {
      */
     public static Properties loadProperties(){
         Properties settings = new Properties();
-        try(InputStream input = new FileInputStream("src/settings/settings.properties")){
-            settings.load(input);
-        }catch(IOException ex) {
-            ex.printStackTrace();
-        } finally {
-            return settings; 
-        }
+        return FilesManager.loadAllProperties("settings/settings.properties");
     }
     
     /**
@@ -279,8 +276,10 @@ public class Options extends Menu  {
     }
     
     private static void saveSettings(Properties settings){
-        try(OutputStream output = new FileOutputStream("src/settings/settings.properties")){
-            settings.store(output, null);
+        try(PrintWriter output = new PrintWriter(new FileWriter("settings/settings.properties"))){
+            for(Map.Entry<Object, Object> entry : settings.entrySet()){
+                output.println(entry.getKey().toString() + "=" + entry.getValue().toString());
+            }
         }catch(IOException ex){
             ex.printStackTrace();
         }
@@ -288,10 +287,9 @@ public class Options extends Menu  {
     
     private static void loadSettings() {
         Properties temp = null; 
-        try(InputStream input = new FileInputStream("src/settings/settings.properties")){
+//        try(InputStream input = Options.class.getResourceAsStream("settings.properties")){
             if(storedSettings == null){
-                restoredSettings = new Properties();
-                restoredSettings.load(input);
+                restoredSettings = FilesManager.loadAllProperties("settings/settings.properties");
             }else{
                 temp = restoredSettings; 
                 restoredSettings = storedSettings;
@@ -311,12 +309,12 @@ public class Options extends Menu  {
                     .setIsChecked(Boolean.parseBoolean(restoredSettings.getProperty("FULLSCREEN")));
             ((SelectBox)screen.getElementById("language_select_box"))
                     .setSelectedByValue(new Locale(restoredSettings.getProperty("LANGUAGE")), false);
-        }catch(IOException ex){
-            ex.printStackTrace();
-        }finally{
+//        }catch(IOException ex){
+//            ex.printStackTrace();
+//        }finally{
             storedSettings = null; 
             if(temp != null) restoredSettings = temp;
-        }
+//        }
     }
     
     private boolean isChanged() {

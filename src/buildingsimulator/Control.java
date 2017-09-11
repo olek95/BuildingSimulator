@@ -5,11 +5,14 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.awt.AwtKeyInput;
 import com.jme3.input.controls.InputListener;
 import com.jme3.input.controls.KeyTrigger;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.Properties;
 import texts.Translator;
 
@@ -48,14 +51,8 @@ public class Control {
         SHOW_CURSOR;
         private String key;
         private Actions(){
-            Properties control = new Properties();
-            try(InputStream input = new FileInputStream("src/settings/control.properties")){
-                control.load(input);
-                key = control.getProperty(toString()); 
-                inputManager.addMapping(toString(), new KeyTrigger(getJmeKeyCode(key)));
-            }catch(IOException ex){
-                ex.printStackTrace();
-            }
+            key = FilesManager.getValue(toString(), "settings/control.properties");
+            inputManager.addMapping(toString(), new KeyTrigger(getJmeKeyCode(key)));
         }
         
         /**
@@ -103,17 +100,15 @@ public class Control {
          * @param keys nowe przyciski dla czynności 
          */
         public static void saveSettings(String[] keys){
-            Properties control = new Properties();
-            try(OutputStream output = new FileOutputStream("src/settings/control.properties")){
-                Actions[] values = values(); 
+            try(PrintWriter output = new PrintWriter(new FileWriter("settings/control.properties"))){
+                Actions[] values = values();
                 for(int i = 0; i < values.length; i++){
                     values[i].key = keys[i];
                     String actionName = values[i].toString();
-                    control.setProperty(actionName, keys[i]);
+                    output.println(actionName + "=" + keys[i]);
                     inputManager.deleteMapping(actionName);
                     inputManager.addMapping(actionName, new KeyTrigger(getJmeKeyCode(keys[i])));
                 }
-                control.store(output, null);
             }catch(IOException ex){
                 ex.printStackTrace();
             }

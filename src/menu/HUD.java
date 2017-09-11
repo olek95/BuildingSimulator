@@ -21,7 +21,6 @@ public class HUD extends AbstractAppState{
     }
     
     public void validateBuildings(MouseButtonEvent evt, boolean isToggled) {
-        System.out.println(123);
         BuildingValidator.validate();
     }
     

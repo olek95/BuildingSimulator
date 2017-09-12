@@ -147,6 +147,7 @@ public class StartingMenu extends MainMenu{
         }else{
             screen.getElementById("login_text_field").setText("");
             screen.getElementById("password").setText("");
+            screen.getElementById("error_label").setText("");
             ((Window)screen.getElementById("authorization_popup")).hide();
         }
     }

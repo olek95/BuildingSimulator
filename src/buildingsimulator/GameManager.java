@@ -72,6 +72,7 @@ public class GameManager {
     
     public static void continueGame() {
         BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(false);
+        addHUD();
         Control.addListener(Control.getActualListener());
         startedGame = true;
         pausedGame = false; 
@@ -98,6 +99,11 @@ public class GameManager {
     private static void addHUD() {
         BuildingSimulator.getBuildingSimulator().getGuiNode()
                 .addControl(new HUD().getScreen());
+    }
+    
+    public static void removeHUD() {
+        HUD.hideElements();
+        BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(HUD.getScreen());
     }
     
     /**

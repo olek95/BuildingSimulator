@@ -26,7 +26,12 @@ public class HUD extends AbstractAppState{
         System.out.println(123); 
     }
     
-    public Screen getScreen() { return screen; }
+    public static void hideElements() {
+        screen.getElementById("finish_building_button").hide();
+        screen.getElementById("shop_button").hide();
+    }
+    
+    public static Screen getScreen() { return screen; }
     
     private void improveButtonAppearance(String id, String path) {
         Button button = (Button)screen.getElementById(id);

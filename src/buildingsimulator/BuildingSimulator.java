@@ -110,6 +110,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         if(isPressed){
             if(name.equals(Control.Actions.PAUSE.toString())){
                 GameManager.pauseGame();
+                GameManager.removeHUD(); 
             }else{
                 if(name.equals(Control.Actions.SHOW_CURSOR.toString())){
                     flyCam.setDragToRotate(true);

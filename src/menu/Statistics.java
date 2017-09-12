@@ -16,64 +16,30 @@ import tonegod.gui.controls.lists.Table;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
-public class Statistics extends Menu{
-    private static Screen screen;
-    private static Table controlTable;
+public class Statistics extends TableMenu{
     public Statistics(){
-        screen = new Screen(BuildingSimulator.getBuildingSimulator());
-        window = new Window(screen, "statistics", new Vector2f(0, 0),
-                new Vector2f(screen.getWidth(), screen.getHeight()));
-        screen.addElement(window);
-        window.centerToParent();
-        createTable(); 
-        createReturnButton();
-        window.addChild(controlTable);
-        BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
+        super("statistics");
+        Screen screen = getScreen(); 
+        window.addChild(createTable(new String[]{"user_column", "points_column"},
+                new Translator[]{Translator.USER, Translator.POINTS}));
+        createReturnButton(screen.getWidth() * 0.45f);
         Translator.setTexts(new String[]{"return_button"},
                 new Translator[]{Translator.RETURN}, screen);
     }
     
-    private void createTable() {
-        float width = screen.getWidth();
-        controlTable = new Table(screen, new Vector2f(0, 0), new Vector2f(width,
-                screen.getHeight())) {
-            @Override
-            public void onChange() {}
-        };
-        controlTable.center();
-        Table.TableColumn userColumn = new Table.TableColumn(controlTable, screen, "user_column"),
-                pointsColumn = new Table.TableColumn(controlTable, screen, "points_column"); 
-        userColumn.setText(Translator.USER.getValue());
-        userColumn.setWidth(width / 2 + 100);
-        controlTable.addColumn(userColumn);
-        pointsColumn.setText(Translator.POINTS.getValue());
-        pointsColumn.setWidth(width / 2 - 100);
-        controlTable.addColumn(pointsColumn);
-        addRows(controlTable); 
+    @Override
+    protected void clickReturnButton() {
+        doWhenAcceptedExit(getScreen(), GameManager.isPausedGame()
+                ? MenuTypes.PAUSE_MENU : MenuTypes.STARTING_MENU);
     }
     
-    private void createReturnButton(){
-        ButtonAdapter button = new ButtonAdapter(screen, "return_button", 
-                new Vector2f(screen.getWidth() * 0.6f, screen.getHeight() * 0.9f),
-                new Vector2f(100, 30)) {
-                    @Override
-                    public void onButtonMouseLeftUp(MouseButtonEvent mbe, boolean bln) {
-                        doWhenAcceptedExit(Statistics.screen, GameManager.isPausedGame()
-                                ? MenuTypes.PAUSE_MENU : MenuTypes.STARTING_MENU);
-                    }
-                };
-        controlTable.addChild(button);
-    }
-    
-    private void addRows(Table table){
+    @Override
+    protected void addRows(){
         try{
             Map<String, String> statistics = DBManager.getAllStatistics(); 
             for(Map.Entry<String, String> entry : statistics.entrySet()){
-                Table.TableRow row = new Table.TableRow(screen, table);
-                String login = entry.getKey(), points = entry.getValue();
-                row.addCell(login, login);
-                row.addCell(points, points);
-                table.addRow(row);
+                String login = entry.getKey();
+                addRow(login, login, entry.getValue());
             }
         }catch(SQLException|ClassNotFoundException ex){
         }

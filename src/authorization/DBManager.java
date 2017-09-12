@@ -90,15 +90,12 @@ public class DBManager extends AbstractAppState{
      */
     public static void savePoints(User user) throws SQLException, ClassNotFoundException{
         String login = user.getLogin();
-        System.out.println(2); 
         try(Connection connection = connect()) {
-            System.out.println(3); 
             PreparedStatement statement = connection
                     .prepareStatement("UPDATE Users SET points = ? WHERE login=?");
             statement.setInt(1, user.getPoints());
             statement.setString(2, login);
             statement.execute(); 
-            System.out.println(user.getPoints() + " " + login); 
         }
     }
     

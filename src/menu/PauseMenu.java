@@ -76,11 +76,8 @@ public class PauseMenu extends MainMenu{
     public void returnToStartingMenu(MouseButtonEvent evt, boolean isToggled) {
         window.hide();
         User user = GameManager.getUser(); 
-        System.out.println(123);
         if(!user.getLogin().equalsIgnoreCase("Anonim")) {
-            System.out.println(222);
             try {
-                System.out.println(1); 
                 DBManager.savePoints(user);
             }catch(SQLException|ClassNotFoundException ex) {
                 ex.printStackTrace();

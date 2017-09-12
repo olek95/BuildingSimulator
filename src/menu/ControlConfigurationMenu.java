@@ -30,28 +30,22 @@ import tonegod.gui.core.Screen;
  * czynności oraz przypisany do niej przycisk. 
  * @author AleksanderSklorz 
  */
-public class ControlConfigurationMenu extends Menu implements RawInputListener{
-    private static Screen screen;
-    private static Table controlTable;
+public class ControlConfigurationMenu extends TableMenu implements RawInputListener{
     private static boolean stale; 
     private static Properties restoredSettings;
     public ControlConfigurationMenu(){
-        screen = new Screen(BuildingSimulator.getBuildingSimulator());
-        window = new Window(screen, "controlConfiguration", new Vector2f(0, 0),
-                new Vector2f(screen.getWidth(), screen.getHeight()));
-        screen.addElement(window);
-        window.centerToParent();
-        restoredSettings = new Properties();
-        createTable(); 
+        super("controlConfiguration");
+        Screen screen = getScreen();
+        restoredSettings = new Properties(); 
+        Table table = createTable(new String[]{"action_column", "key_column"},
+                new Translator[]{Translator.ACTIVITY, Translator.KEY}); 
+        window.addChild(table);
         createAcceptingButton(); 
-        createReturnButton();
-        window.addChild(controlTable);
-        BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
-        InputManager inputManager = BuildingSimulator.getBuildingSimulator().getInputManager();
-        inputManager.addRawInputListener(this);
+        createReturnButton(screen.getWidth() * 0.6f);
+        BuildingSimulator.getBuildingSimulator().getInputManager().addRawInputListener(this);
         Translator.setTexts(new String[]{"accepting_button", "return_button"}, 
                 new Translator[]{Translator.ACCEPTING, Translator.RETURN}, screen);
-        controlTable.setEnableKeyboardNavigation(false);
+        table.setEnableKeyboardNavigation(false);
         setStale();
     }
 
@@ -80,8 +74,9 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
     @Override
     public void onKeyEvent(KeyInputEvent evt) {
         String key = Actions.getKey(evt.getKeyCode());
-        if(controlTable.isAnythingSelected() && !existsDuplicate(key)){
-            ((Table.TableCell)controlTable.getSelectedRows().get(0).getChild(2)).setText(key);
+        Table table = getTable(); 
+        if(table.isAnythingSelected() && !existsDuplicate(key)){
+            ((Table.TableCell)table.getSelectedRows().get(0).getChild(2)).setText(key);
             setStale();
         }
     }
@@ -90,7 +85,7 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
     public void onTouchEvent(TouchEvent evt) {}
     
     private boolean existsDuplicate(String key) {
-        List<TableRow> rows = controlTable.getRows();
+        List<TableRow> rows = getTable().getRows();
         int rowsNumber = rows.size();
         for(int i = 0; i < rowsNumber; i++){
             if(((Table.TableCell)rows.get(i).getChild(2)).getText().equals(key)){
@@ -100,75 +95,49 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
         return false; 
     }
     
-    private void createTable(){
-        float width = screen.getWidth();
-        controlTable = new Table(screen, new Vector2f(0, 0), new Vector2f(width,
-                screen.getHeight())) {
-            @Override
-            public void onChange() {}
-        };
-        controlTable.center();
-        TableColumn actionsColumn = new TableColumn(controlTable, screen, "action_column"),
-                keysColumn = new TableColumn(controlTable, screen, "action_column"); 
-        actionsColumn.setText(Translator.ACTIVITY.getValue());
-        actionsColumn.setWidth(width / 2 + 100);
-        controlTable.addColumn(actionsColumn);
-        keysColumn.setText(Translator.KEY.getValue());
-        keysColumn.setWidth(width / 2 - 100);
-        controlTable.addColumn(keysColumn);
-        addRows(controlTable); 
-    }
-    
-    private void addRows(Table table){
+    @Override
+    protected void addRows(){
         Control.Actions[] actions = Control.Actions.values();
         for(int i = 0; i < actions.length; i++){
-            TableRow row = new TableRow(screen, table);
             String key = actions[i].getKey(), actionName = actions[i].getValue();
-            row.addCell(actionName, actions[i]);
-            row.addCell(key, key);
+            addRow(actionName, actions[i], key); 
             restoredSettings.put(actionName, key);
-            table.addRow(row);
         }
     }
     
     private void createAcceptingButton(){
-        ButtonAdapter button = new ButtonAdapter(screen, "accepting_button", 
-                new Vector2f(screen.getWidth() * 0.4f, screen.getHeight() * 0.9f),
+        final Screen s = getScreen();
+        final Table table = getTable(); 
+        ButtonAdapter button = new ButtonAdapter(s, "accepting_button", 
+                new Vector2f(s.getWidth() * 0.4f, s.getHeight() * 0.9f),
                 new Vector2f(100, 30)) {
                     @Override
                     public void onButtonMouseLeftUp(MouseButtonEvent mbe, boolean bln) {
-                        List<Table.TableRow> rows = controlTable.getRows();
+                        List<Table.TableRow> rows = table.getRows();
                         int rowsAmount = rows.size();
                         String[] keys = new String[rowsAmount];
                         for(int i = 0; i < rowsAmount; i++){
                             keys[i] = ((Table.TableCell)rows.get(i).getChild(2)).getText();
                         }
                         Control.Actions.saveSettings(keys);
-                        doWhenAcceptedExit(ControlConfigurationMenu.screen, MenuTypes.OPTIONS);
+                        doWhenAcceptedExit(s, MenuTypes.OPTIONS);
                     }
                 };
-        controlTable.addChild(button);
+        table.addChild(button);
     }
     
-    private void createReturnButton(){
-        ButtonAdapter button = new ButtonAdapter(screen, "return_button", 
-                new Vector2f(screen.getWidth() * 0.6f, screen.getHeight() * 0.9f),
-                new Vector2f(100, 30)) {
-                    @Override
-                    public void onButtonMouseLeftUp(MouseButtonEvent mbe, boolean bln) {
-                        if(stale){
-                            ControlConfigurationMenu.screen
-                                    .addElement(createNotSavedChangesAlert(ControlConfigurationMenu
-                                    .screen, Translator.NOT_SAVED_CHANGES.getValue(), MenuTypes.OPTIONS));
-                        } else doWhenAcceptedExit(ControlConfigurationMenu.screen, MenuTypes.OPTIONS);
-                    }
-                };
-        controlTable.addChild(button);
+    @Override
+    protected void clickReturnButton() {
+        Screen screen = getScreen(); 
+        if(stale){
+            screen.addElement(createNotSavedChangesAlert(screen,
+                    Translator.NOT_SAVED_CHANGES.getValue(), MenuTypes.OPTIONS));
+        } else doWhenAcceptedExit(screen, MenuTypes.OPTIONS);
     }
     
     private Properties getSelectedSettings() {
         Properties settings = new Properties(); 
-        List<TableRow> rows = controlTable.getRows();
+        List<TableRow> rows = getTable().getRows();
         int rowsCount = rows.size(); 
         for(int i = 0; i < rowsCount; i++){
             TableRow row = rows.get(i);
@@ -189,6 +158,6 @@ public class ControlConfigurationMenu extends Menu implements RawInputListener{
     
     private void setStale() {
         stale = isChanged();
-        ((Button)screen.getElementById("accepting_button")).setIsEnabled(stale);
+        ((Button)getScreen().getElementById("accepting_button")).setIsEnabled(stale);
     }
 }

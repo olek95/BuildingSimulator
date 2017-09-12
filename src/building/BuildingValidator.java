@@ -13,7 +13,6 @@ public class BuildingValidator {
         int objectsAmount = gameObjects.size(), points = 0; 
         for(int i = 0; i < objectsAmount; i++){
             Spatial object = gameObjects.get(i); 
-//            System.out.println(object.getName());
             if(object.getName().startsWith("Building"))
                 points += calculatePointsForBuilding((Node)object);
         }

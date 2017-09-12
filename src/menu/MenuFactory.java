@@ -27,6 +27,9 @@ public class MenuFactory {
                 break;
             case STATISTICS: 
                 menu = new Statistics(); 
+                break;
+            case SHOP: 
+                menu = new Shop();
         }
         menu.getWindow().show();
     }

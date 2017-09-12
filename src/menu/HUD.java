@@ -38,7 +38,7 @@ public class HUD extends AbstractAppState{
      * @param isToggled 
      */
     public void showShop(MouseButtonEvent evt, boolean isToggled) {
-        System.out.println(123); 
+        MenuFactory.showMenu(MenuTypes.SHOP); 
     }
     
     /**

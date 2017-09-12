@@ -10,5 +10,6 @@ public enum MenuTypes {
     OPTIONS,
     CONTROL_CONFIGURATION,
     PAUSE_MENU,
-    STATISTICS;
+    STATISTICS,
+    SHOP;
 }

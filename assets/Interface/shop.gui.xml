@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <screen>
+        <component type="Window" id="options" position="20%,20%" dimensions="60%,60%">
+            <component type="Button" id="buying_button" position="25%,80%" dimensions="25%,6%"> 
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="buy"/>
+            </component>
+        </component>
+    </screen>
+</root>

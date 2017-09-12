@@ -14,15 +14,24 @@ public class HUD extends AbstractAppState{
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         screen = new Screen(game);
         screen.parseLayout("Interface/hud.gui.xml", this);
-        Button finishBuildingButton = (Button)screen.getElementById("finish_building_button");
-        finishBuildingButton.removeEffect(Effect.EffectEvent.Hover);
-        finishBuildingButton.removeEffect(Effect.EffectEvent.Press);
-        finishBuildingButton.setColorMap("Interface/hudIcons/end_building_icon.png");
+        improveButtonAppearance("finish_building_button", "Interface/hudIcons/end_building_icon.png"); 
+        improveButtonAppearance("shop_button", "Interface/hudIcons/shop_icon.png");
     }
     
     public void validateBuildings(MouseButtonEvent evt, boolean isToggled) {
         BuildingValidator.validate();
     }
     
+    public void showShop(MouseButtonEvent evt, boolean isToggled) {
+        System.out.println(123); 
+    }
+    
     public Screen getScreen() { return screen; }
+    
+    private void improveButtonAppearance(String id, String path) {
+        Button button = (Button)screen.getElementById(id);
+        button.removeEffect(Effect.EffectEvent.Hover);
+        button.removeEffect(Effect.EffectEvent.Press);
+        button.setColorMap(path);
+    }
 }

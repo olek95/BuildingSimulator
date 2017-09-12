@@ -3,7 +3,6 @@ package menu;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.Control;
 import buildingsimulator.Control.Actions;
-import com.jme3.input.InputManager;
 import com.jme3.input.RawInputListener;
 import com.jme3.input.event.JoyAxisEvent;
 import com.jme3.input.event.JoyButtonEvent;
@@ -12,16 +11,14 @@ import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.input.event.MouseMotionEvent;
 import com.jme3.input.event.TouchEvent;
 import com.jme3.math.Vector2f;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import texts.Translator;
 import tonegod.gui.controls.buttons.Button;
 import tonegod.gui.controls.buttons.ButtonAdapter;
 import tonegod.gui.controls.lists.Table;
-import tonegod.gui.controls.lists.Table.TableColumn;
 import tonegod.gui.controls.lists.Table.TableRow;
-import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
 /**
@@ -32,11 +29,11 @@ import tonegod.gui.core.Screen;
  */
 public class ControlConfigurationMenu extends TableMenu implements RawInputListener{
     private static boolean stale; 
-    private static Properties restoredSettings;
+    private static Map<String, String> restoredSettings;
     public ControlConfigurationMenu(){
         super("controlConfiguration");
         Screen screen = getScreen();
-        restoredSettings = new Properties(); 
+        restoredSettings = new HashMap(); 
         Table table = createTable(new String[]{"action_column", "key_column"},
                 new Translator[]{Translator.ACTIVITY, Translator.KEY}); 
         window.addChild(table);
@@ -135,8 +132,8 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
         } else doWhenAcceptedExit(screen, MenuTypes.OPTIONS);
     }
     
-    private Properties getSelectedSettings() {
-        Properties settings = new Properties(); 
+    private Map<String, String> getSelectedSettings() {
+        Map<String, String> settings = new HashMap(); 
         List<TableRow> rows = getTable().getRows();
         int rowsCount = rows.size(); 
         for(int i = 0; i < rowsCount; i++){
@@ -148,9 +145,9 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
     }
     
     private boolean isChanged() {
-        Properties settings = getSelectedSettings(); 
-        for(Map.Entry<Object, Object> entry : restoredSettings.entrySet()) {
-            if(!settings.getProperty(entry.getKey().toString()).equals(entry.getValue()))
+        Map<String, String> settings = getSelectedSettings(); 
+        for(Map.Entry<String, String> entry : restoredSettings.entrySet()) {
+            if(!settings.get(entry.getKey()).equals(entry.getValue()))
                 return true; 
         }
         return false; 

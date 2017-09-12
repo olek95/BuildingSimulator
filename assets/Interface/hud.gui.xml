@@ -4,5 +4,8 @@
         <component type="Button" id="finish_building_button" position="95%,0%" dimensions="32,32">
              <eventMethod name="onButtonMouseLeftUp" stateMethodName="validateBuildings" />
         </component>
+        <component type="Button" id="shop_button" position="90%,0%" dimensions="32,32">
+             <eventMethod name="onButtonMouseLeftUp" stateMethodName="showShop" />
+        </component>
     </screen>
 </root>

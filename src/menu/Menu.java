@@ -53,6 +53,7 @@ public abstract class Menu extends AbstractAppState{
             alert.setIsModal(true);
             alert.showAsModal(true);
             alert.setMsg(message);
+            alert.setButtonCancelText(Translator.CANCELLATION.getValue());
             alert.setButtonOkText(Translator.CONFIRMATION.getValue());
             return alert; 
     }

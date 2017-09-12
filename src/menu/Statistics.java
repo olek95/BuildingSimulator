@@ -1,19 +1,10 @@
 package menu;
 
 import authorization.DBManager;
-import buildingsimulator.BuildingSimulator;
-import buildingsimulator.Control;
 import buildingsimulator.GameManager;
-import com.jme3.input.InputManager;
-import com.jme3.input.event.MouseButtonEvent;
-import com.jme3.math.Vector2f;
 import java.sql.SQLException;
 import java.util.Map;
-import java.util.Properties;
 import texts.Translator;
-import tonegod.gui.controls.buttons.ButtonAdapter;
-import tonegod.gui.controls.lists.Table;
-import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
 public class Statistics extends TableMenu{

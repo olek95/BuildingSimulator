@@ -78,13 +78,17 @@ public class Control {
             /* W AWT znaki są kodowane według ASCII. Przyciski nie występujące w ASCII
              * są zastępowane kodem ASCII przycisku który nie może być wybrany (jest w 
              * górnej części przycisku - przyciski z dwoma znakami). Przykładem są strzałki. 
-             */
+             */ 
             if(convertedChar == 27) return "ESC";
             if(convertedChar == 32) return "SPACE";
             if(convertedChar == 37) return "LEFT";
             if(convertedChar == 39) return "RIGHT";
             if(convertedChar == 38) return "UP";
             if(convertedChar == 40) return "DOWN";
+            if(convertedChar == 16) {
+                if(keyCode == 42) return "LSHIFT";
+                if(keyCode == 54) return "RSHIFT";
+            }
             return convertedChar + "";
         }
         
@@ -116,6 +120,8 @@ public class Control {
                 if(keyName.equals("RIGHT")) return KeyInput.KEY_RIGHT;
                 if(keyName.equals("UP")) return KeyInput.KEY_UP;
                 if(keyName.equals("DOWN")) return KeyInput.KEY_DOWN;
+                if(keyName.equals("LSHIFT")) return KeyInput.KEY_LSHIFT;
+                if(keyName.equals("RSHIFT")) return KeyInput.KEY_RSHIFT;
             }
             return AwtKeyInput.convertAwtKey(keyName.charAt(0)); 
         }

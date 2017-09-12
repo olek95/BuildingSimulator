@@ -1,7 +1,5 @@
 package menu;
 
-import java.util.Properties;
-
 /**
  * Klasa <code>MenuFactory</code> reprezentuje fabrykę służącą do wyświetlania 
  * wybranego menu. 

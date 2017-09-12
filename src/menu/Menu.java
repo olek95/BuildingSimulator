@@ -6,7 +6,6 @@ import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.Vector2f;
 import texts.Translator;
 import tonegod.gui.controls.windows.DialogBox;
-import tonegod.gui.controls.windows.Panel;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
@@ -62,12 +61,21 @@ public abstract class Menu extends AbstractAppState{
     /**
      * Wykonuje się w chwili gdy wyjście z obecnego okna jest potwierdzone. 
      * @param screen ekran dla którego akceptujemy wyjście 
-     * @param menu typ menu do którego przechodzimy po akceptacji wyjścia. Jesli null, 
+     * @param menuType typ menu do którego przechodzimy po akceptacji wyjścia. Jesli null, 
      * to po prostu tylko zamyka się obecne okno
      */
-    protected void doWhenAcceptedExit(Screen screen, MenuTypes menu){
+    protected void doWhenAcceptedExit(Screen screen, MenuTypes menuType){
+        goNextMenu(screen, menuType); 
+    }
+    
+    /**
+     * Przechodzi do kolejnego menu. 
+     * @param screen ekran aktualnego menu 
+     * @param menuType typ menu do którego przechodzimy 
+     */
+    protected void goNextMenu(Screen screen, MenuTypes menuType) {
         window.hide();
         BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
-        if(menu != null) MenuFactory.showMenu(menu);
+        if(menuType != null) MenuFactory.showMenu(menuType);
     }
 }

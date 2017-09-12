@@ -7,6 +7,11 @@ import java.util.Map;
 import texts.Translator;
 import tonegod.gui.core.Screen;
 
+/**
+ * Klasa <code>Statistics</code> reprezentuje okno wyświetlające statystyki 
+ * wszystkich graczy. 
+ * @author AleksanderSklorz
+ */
 public class Statistics extends TableMenu{
     public Statistics(){
         super("statistics");

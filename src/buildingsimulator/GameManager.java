@@ -39,6 +39,10 @@ public class GameManager {
     private static User user; 
     private static boolean startedGame = false;
     private static boolean pausedGame = false; 
+    
+    /**
+     * Uruchamia grę. 
+     */
     public static void runGame(){
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
         addHUD();
@@ -70,6 +74,9 @@ public class GameManager {
         startedGame = true; 
     }
     
+    /**
+     * Kontynuuje grę od stanu z przed zatrzymania. 
+     */
     public static void continueGame() {
         BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(false);
         addHUD();
@@ -78,6 +85,9 @@ public class GameManager {
         pausedGame = false; 
     }
     
+    /**
+     * Zatrzymuje grę. 
+     */
     public static void pauseGame() {
         BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(true);
         Control.removeListener(Control.getActualListener());
@@ -86,6 +96,9 @@ public class GameManager {
         MenuFactory.showMenu(MenuTypes.PAUSE_MENU);
     }
     
+    /**
+     * Usuwa aktualną grę. 
+     */
     public static void deleteGame() {
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         game.getRenderer().cleanup();
@@ -101,6 +114,9 @@ public class GameManager {
                 .addControl(new HUD().getScreen());
     }
     
+    /**
+     * Usuwa HUD. 
+     */
     public static void removeHUD() {
         HUD.hideElements();
         BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(HUD.getScreen());

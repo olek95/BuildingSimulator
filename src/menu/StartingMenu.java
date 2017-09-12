@@ -32,6 +32,11 @@ public class StartingMenu extends MainMenu{
         if(user != null && !user.getLogin().equals("Anonim")) setUser();
     }
     
+    /**
+     * Uruchamia grę. 
+     * @param evt
+     * @param isToggled 
+     */
     public void start(MouseButtonEvent evt, boolean isToggled) {
         Screen screen = MainMenu.getScreen(); 
         if(GameManager.getUser() == null) {
@@ -43,20 +48,22 @@ public class StartingMenu extends MainMenu{
         }
     }
     
-    @Override
-    protected void doWhenAcceptedExit(Screen screen, MenuTypes type) {
-        super.doWhenAcceptedExit(screen, null); 
-        GameManager.setUser(new User("Anonim"));
-        super.start(); 
-        GameManager.runGame();
-    }
-    
+    /**
+     * Wyświetla opcje gry. 
+     * @param evt
+     * @param isToggled 
+     */
     public void showOptions(MouseButtonEvent evt, boolean isToggled){ 
-        showOptions();
+        goNextMenu(MainMenu.getScreen(), MenuTypes.OPTIONS);
     }
     
+    /**
+     * Wyświetla statystyki. 
+     * @param evt
+     * @param isToggled 
+     */
     public void showStatistics(MouseButtonEvent evt, boolean isToggled) {
-        showStatistics(); 
+        goNextMenu(MainMenu.getScreen(), MenuTypes.STATISTICS); 
     }
     
     /**
@@ -137,8 +144,20 @@ public class StartingMenu extends MainMenu{
                 ? Translator.REGISTERING.getValue() : Translator.LOGIN.getValue());
     }
     
-    
+    /**
+     * Wychodzi z gry. 
+     * @param evt
+     * @param isToggled 
+     */
     public void exit(MouseButtonEvent evt, boolean isToggled){ exit(); }
+    
+    @Override
+    protected void doWhenAcceptedExit(Screen screen, MenuTypes type) {
+        super.doWhenAcceptedExit(screen, null); 
+        GameManager.setUser(new User("Anonim"));
+        super.start(); 
+        GameManager.runGame();
+    }
     
     private void changeAuthorizationPopupState(boolean visible){
         Screen screen = MainMenu.getScreen();

@@ -81,6 +81,25 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
     @Override
     public void onTouchEvent(TouchEvent evt) {}
     
+    @Override
+    protected void addRows(){
+        Control.Actions[] actions = Control.Actions.values();
+        for(int i = 0; i < actions.length; i++){
+            String key = actions[i].getKey(), actionName = actions[i].getValue();
+            addRow(actionName, actions[i], key); 
+            restoredSettings.put(actionName, key);
+        }
+    }
+    
+    @Override
+    protected void clickReturnButton() {
+        Screen screen = getScreen(); 
+        if(stale){
+            screen.addElement(createNotSavedChangesAlert(screen,
+                    Translator.NOT_SAVED_CHANGES.getValue(), MenuTypes.OPTIONS));
+        } else doWhenAcceptedExit(screen, MenuTypes.OPTIONS);
+    }
+    
     private boolean existsDuplicate(String key) {
         List<TableRow> rows = getTable().getRows();
         int rowsNumber = rows.size();
@@ -90,16 +109,6 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
             }
         }
         return false; 
-    }
-    
-    @Override
-    protected void addRows(){
-        Control.Actions[] actions = Control.Actions.values();
-        for(int i = 0; i < actions.length; i++){
-            String key = actions[i].getKey(), actionName = actions[i].getValue();
-            addRow(actionName, actions[i], key); 
-            restoredSettings.put(actionName, key);
-        }
     }
     
     private void createAcceptingButton(){
@@ -121,15 +130,6 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
                     }
                 };
         table.addChild(button);
-    }
-    
-    @Override
-    protected void clickReturnButton() {
-        Screen screen = getScreen(); 
-        if(stale){
-            screen.addElement(createNotSavedChangesAlert(screen,
-                    Translator.NOT_SAVED_CHANGES.getValue(), MenuTypes.OPTIONS));
-        } else doWhenAcceptedExit(screen, MenuTypes.OPTIONS);
     }
     
     private Map<String, String> getSelectedSettings() {

@@ -30,18 +30,39 @@ public class PauseMenu extends MainMenu{
         ((Window)screen.getElementById("exit_popup")).getDragBar().setIsMovable(false);
     }
     
+    /**
+     * Kontynuuje grę. 
+     * @param evt
+     * @param isToggled 
+     */
     public void start(MouseButtonEvent evt, boolean isToggled) {
         super.start(); 
         GameManager.continueGame();
     }
     
+    /**
+     * Pokazuje statystyki. 
+     * @param evt
+     * @param isToggled 
+     */
     public void showStatistics(MouseButtonEvent evt, boolean isToggled) {
-        showStatistics(); 
+        goNextMenu(MainMenu.getScreen(), MenuTypes.STATISTICS);
     }
     
-    public void showOptions(MouseButtonEvent evt, boolean isToggled){ showOptions(); }
+    /**
+     * Pokazuje opcje gry. 
+     * @param evt
+     * @param isToggled 
+     */
+    public void showOptions(MouseButtonEvent evt, boolean isToggled){ 
+        goNextMenu(MainMenu.getScreen(), MenuTypes.OPTIONS);
+    }
     
-    
+    /**
+     * Wychodzi z gry. 
+     * @param evt
+     * @param isToggled 
+     */
     public void exit(MouseButtonEvent evt, boolean isToggled){ 
         User user = GameManager.getUser(); 
         if(!user.getLogin().equalsIgnoreCase("Anonim")) {
@@ -73,6 +94,11 @@ public class PauseMenu extends MainMenu{
         MainMenu.getScreen().getElementById("exit_popup").hide();
     }
     
+    /**
+     * Powraca do menu startowego. 
+     * @param evt
+     * @param isToggled 
+     */
     public void returnToStartingMenu(MouseButtonEvent evt, boolean isToggled) {
         window.hide();
         User user = GameManager.getUser(); 

@@ -40,21 +40,6 @@ public abstract class MainMenu extends Menu {
     }
     
     /**
-     * Wyświetla menu opcji gry. 
-     */
-    protected void showOptions(){
-        window.hide();
-        BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
-        MenuFactory.showMenu(MenuTypes.OPTIONS);
-    }
-    
-    protected void showStatistics() {
-        window.hide(); 
-        BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
-        MenuFactory.showMenu(MenuTypes.STATISTICS);
-    }
-    
-    /**
      * Wychodzi z gry. 
      */
     protected void exit(){

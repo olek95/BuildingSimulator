@@ -18,7 +18,6 @@ import texts.Translator;
 import tonegod.gui.controls.buttons.Button;
 import tonegod.gui.controls.buttons.CheckBox;
 import tonegod.gui.controls.lists.SelectBox;
-import tonegod.gui.controls.windows.Panel;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
@@ -90,10 +89,8 @@ public class Options extends Menu  {
      * @param isToggled 
      */
     public void showControlConfiguration(MouseButtonEvent evt, boolean isToggled) {
-        window.hide();
-        BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
-        storedSettings = getSelectedSettings(); 
-        MenuFactory.showMenu(MenuTypes.CONTROL_CONFIGURATION);
+        storedSettings = getSelectedSettings();
+        goNextMenu(screen, MenuTypes.CONTROL_CONFIGURATION);
     }
     
     /**
@@ -155,18 +152,6 @@ public class Options extends Menu  {
     public static boolean getStale() { return stale; }
     
     /**
-     * Sprawdza czy stan opcji jest nieświeży (został zmieniony). Jeśli tak to 
-     * ustawia true, w przeciwnym przypadku false. Dodatkowo blokuje przycisk 
-     * akceptacji, jeśli nic nie zostało zmienione. 
-     */
-    private void setStale() {
-        if(counter > 5){
-            stale = isChanged(); 
-            ((Button)screen.getElementById("accepting_button")).setIsEnabled(stale);
-        }else counter++;
-    }
-    
-    /**
      * Sprawdza czy zmieniono jakąś opcję z listy rozwijanej. Jeśli tak to ustawia 
      * jako zmodyfkowane.
      * @param selectedIndex indeks wybranego elementu 
@@ -186,6 +171,18 @@ public class Options extends Menu  {
      * @return ekran 
      */
     public static Screen getScreen () { return screen; }
+    
+    /**
+     * Sprawdza czy stan opcji jest nieświeży (został zmieniony). Jeśli tak to 
+     * ustawia true, w przeciwnym przypadku false. Dodatkowo blokuje przycisk 
+     * akceptacji, jeśli nic nie zostało zmienione. 
+     */
+    private void setStale() {
+        if(counter > 5){
+            stale = isChanged(); 
+            ((Button)screen.getElementById("accepting_button")).setIsEnabled(stale);
+        }else counter++;
+    }
     
     private void fillResolutionsSelectBox() {
          DisplayMode[] modes = GraphicsEnvironment.getLocalGraphicsEnvironment()

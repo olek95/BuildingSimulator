@@ -2,7 +2,9 @@ package menu;
 
 import buildingsimulator.BuildingSimulator;
 import com.jme3.input.event.MouseButtonEvent;
+import com.jme3.math.Vector2f;
 import texts.Translator;
+import tonegod.gui.controls.windows.Panel;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
@@ -18,7 +20,7 @@ public abstract class MainMenu extends Menu {
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout(layoutName, this);
         window = (Window)screen.getElementById("main_menu");
-        window.getDragBar().setIsMovable(false);
+        window.getDragBar().removeFromParent();
         Translator.setTexts(new String[]{"load_game_button", "statistics_button",
             "options_button", "exit_button"},
             new Translator[]{Translator.LOAD_GAME, Translator.STATISTICS,

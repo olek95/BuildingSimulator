@@ -18,6 +18,7 @@ import texts.Translator;
 import tonegod.gui.controls.buttons.Button;
 import tonegod.gui.controls.buttons.CheckBox;
 import tonegod.gui.controls.lists.SelectBox;
+import tonegod.gui.controls.windows.Panel;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
@@ -39,7 +40,7 @@ public class Options extends Menu  {
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout("Interface/options.gui.xml", this);
         window = (Window)screen.getElementById("options");
-        window.getDragBar().setIsMovable(false);
+        window.getDragBar().removeFromParent();
         fillResolutionsSelectBox();
         fillSelectBoxSingleValue("refresh_rate_select_box");
         fillSelectBoxSingleValue("color_depth_select_box");

@@ -7,6 +7,7 @@ import com.jme3.math.Vector2f;
 import texts.Translator;
 import tonegod.gui.controls.buttons.ButtonAdapter;
 import tonegod.gui.controls.lists.Table;
+import tonegod.gui.controls.windows.Panel;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 

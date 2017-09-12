@@ -2,7 +2,6 @@
 <root>
     <screen>
         <component type="Window" id="options" position="0%,0%" dimensions="100%,100%">
-            
             <component type="Label" id="settings_label" position="16%,8%" dimensions="25%,12%" >
             </component>
             <component type="Label" id="language_label" position="16%,16%" dimensions="25%,12%" >

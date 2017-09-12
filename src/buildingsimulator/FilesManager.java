@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class FilesManager {
@@ -21,8 +23,8 @@ public class FilesManager {
         return null; 
     }
     
-    public static Properties loadAllProperties(String path){
-        Properties settings = new Properties(); 
+    public static Map<String, String> loadAllProperties(String path){
+        Map<String, String> settings = new HashMap(); 
         try(BufferedReader input = new BufferedReader(new FileReader(path))){
             String line; 
             while((line = input.readLine()) != null){

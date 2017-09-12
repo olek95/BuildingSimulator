@@ -5,15 +5,9 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.awt.AwtKeyInput;
 import com.jme3.input.controls.InputListener;
 import com.jme3.input.controls.KeyTrigger;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.Properties;
 import texts.Translator;
 
 /**

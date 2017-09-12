@@ -7,17 +7,13 @@ import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.system.AppSettings;
 import java.awt.DisplayMode;
 import java.awt.GraphicsEnvironment;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 import texts.Translator;
 import tonegod.gui.controls.buttons.Button;
 import tonegod.gui.controls.buttons.CheckBox;
@@ -37,7 +33,7 @@ public class Options extends Menu  {
     private static boolean stale = false;
     private static int newHeight = 0, newWidth = 0; 
     private int counter = 0; 
-    private static Properties restoredSettings = new Properties(), 
+    private static Map<String, String> restoredSettings = new HashMap(), 
             storedSettings; 
     public Options(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
@@ -61,7 +57,7 @@ public class Options extends Menu  {
      * @param isToggled 
      */
     public void accept(MouseButtonEvent evt, boolean isToggled) {
-        Properties settings = getSelectedSettings(); 
+        Map<String, String> settings = getSelectedSettings(); 
         Translator.translate((Locale)((SelectBox)screen.getElementById("language_select_box"))
                 .getSelectedListItem().getValue());
         setTexts();
@@ -117,9 +113,9 @@ public class Options extends Menu  {
      * w przeciwnym przypadku 
      * @return wcześniej zapisane ustawienia dla aplikacji 
      */
-    public static AppSettings restoreSettings(Properties settings, boolean startingGame){
+    public static AppSettings restoreSettings(Map<String, String> settings, boolean startingGame){
         AppSettings appSettings = new AppSettings(true);
-        String[] selectedResolution = settings.getProperty("RESOLUTION").split("x");
+        String[] selectedResolution = settings.get("RESOLUTION").split("x");
         int width = Integer.parseInt(selectedResolution[0]), 
                 height = Integer.parseInt(selectedResolution[1]);
         appSettings.setResolution(width, height);
@@ -127,11 +123,11 @@ public class Options extends Menu  {
             newWidth = width; 
             newHeight = height; 
         }
-        appSettings.setFrequency(Integer.valueOf(settings.getProperty("FREQUENCY")));
-        appSettings.setSamples(Integer.valueOf(settings.getProperty("SAMPLES")));
-        appSettings.setBitsPerPixel(Integer.valueOf(settings.getProperty("BITS_PER_PIXEL")));
-        appSettings.setFullscreen(Boolean.valueOf(settings.getProperty("FULLSCREEN")));
-        Translator.translate(new Locale(settings.getProperty("LANGUAGE")));
+        appSettings.setFrequency(Integer.valueOf(settings.get("FREQUENCY")));
+        appSettings.setSamples(Integer.valueOf(settings.get("SAMPLES")));
+        appSettings.setBitsPerPixel(Integer.valueOf(settings.get("BITS_PER_PIXEL")));
+        appSettings.setFullscreen(Boolean.valueOf(settings.get("FULLSCREEN")));
+        Translator.translate(new Locale(settings.get("LANGUAGE")));
         return appSettings; 
     }
     
@@ -139,8 +135,7 @@ public class Options extends Menu  {
      * Wczytuje plik z zapisanymi wcześniej właściwościami. 
      * @return mapa z zapisanymi właściwościami 
      */
-    public static Properties loadProperties(){
-        Properties settings = new Properties();
+    public static Map<String, String> loadProperties(){
         return FilesManager.loadAllProperties("settings/settings.properties");
     }
     
@@ -253,32 +248,32 @@ public class Options extends Menu  {
             Translator.CONTROL_CONFIGURATION}, screen);
     }
     
-    private Properties getSelectedSettings() {
-        Properties settings = new Properties();
-        settings.setProperty("RESOLUTION", (String)((SelectBox)screen
+    private Map<String, String> getSelectedSettings() {
+        Map<String, String> settings = new HashMap();
+        settings.put("RESOLUTION", (String)((SelectBox)screen
                 .getElementById("screen_resolution_select_box")).getSelectedListItem().getValue());
         int frequency = (int)((SelectBox)screen.getElementById("refresh_rate_select_box"))
                 .getSelectedListItem().getValue();
-        settings.setProperty("FREQUENCY", frequency + "");
+        settings.put("FREQUENCY", frequency + "");
         int samples = (int)((SelectBox)screen.getElementById("antialiasing_select_box"))
                 .getSelectedListItem().getValue();
-        settings.setProperty("SAMPLES", samples + "");
+        settings.put("SAMPLES", samples + "");
         int bitsPerPixel = (int)((SelectBox)screen.getElementById("color_depth_select_box"))
                 .getSelectedListItem().getValue();
-        settings.setProperty("BITS_PER_PIXEL", bitsPerPixel + "");
+        settings.put("BITS_PER_PIXEL", bitsPerPixel + "");
         boolean fullscreen = ((CheckBox)screen.getElementById("fullscreen_checkbox"))
                 .getIsChecked();
-        settings.setProperty("FULLSCREEN", fullscreen + "");
+        settings.put("FULLSCREEN", fullscreen + "");
         Locale locale = (Locale)((SelectBox)screen.getElementById("language_select_box"))
                 .getSelectedListItem().getValue();
-        settings.setProperty("LANGUAGE", locale.getLanguage());
+        settings.put("LANGUAGE", locale.getLanguage());
         return settings; 
     }
     
-    private static void saveSettings(Properties settings){
+    private static void saveSettings(Map<String, String> settings){
         try(PrintWriter output = new PrintWriter(new FileWriter("settings/settings.properties"))){
-            for(Map.Entry<Object, Object> entry : settings.entrySet()){
-                output.println(entry.getKey().toString() + "=" + entry.getValue().toString());
+            for(Map.Entry<String, String> entry : settings.entrySet()){
+                output.println(entry.getKey() + "=" + entry.getValue());
             }
         }catch(IOException ex){
             ex.printStackTrace();
@@ -286,41 +281,36 @@ public class Options extends Menu  {
     }
     
     private static void loadSettings() {
-        Properties temp = null; 
-//        try(InputStream input = Options.class.getResourceAsStream("settings.properties")){
-            if(storedSettings == null){
-                restoredSettings = FilesManager.loadAllProperties("settings/settings.properties");
-            }else{
-                temp = restoredSettings; 
-                restoredSettings = storedSettings;
-            }
-            ((SelectBox)screen.getElementById("screen_resolution_select_box"))
-                    .setSelectedByValue(restoredSettings.getProperty("RESOLUTION"), false);
-            ((SelectBox)screen.getElementById("refresh_rate_select_box"))
-                    .setSelectedByValue(Integer.valueOf(restoredSettings.getProperty("FREQUENCY")),
-                    false);
-            ((SelectBox)screen.getElementById("antialiasing_select_box"))
-                    .setSelectedByValue(Integer.valueOf(restoredSettings.getProperty("SAMPLES")),
-                    false);
-            ((SelectBox)screen.getElementById("color_depth_select_box"))
-                    .setSelectedByValue(Integer.valueOf(restoredSettings.getProperty("BITS_PER_PIXEL")),
-                    false);
-            ((CheckBox)screen.getElementById("fullscreen_checkbox"))
-                    .setIsChecked(Boolean.parseBoolean(restoredSettings.getProperty("FULLSCREEN")));
-            ((SelectBox)screen.getElementById("language_select_box"))
-                    .setSelectedByValue(new Locale(restoredSettings.getProperty("LANGUAGE")), false);
-//        }catch(IOException ex){
-//            ex.printStackTrace();
-//        }finally{
-            storedSettings = null; 
-            if(temp != null) restoredSettings = temp;
-//        }
+        Map<String, String> temp = null; 
+        if(storedSettings == null){
+            restoredSettings = FilesManager.loadAllProperties("settings/settings.properties");
+        }else{
+            temp = restoredSettings; 
+            restoredSettings = storedSettings;
+        }
+        ((SelectBox)screen.getElementById("screen_resolution_select_box"))
+                .setSelectedByValue(restoredSettings.get("RESOLUTION"), false);
+        ((SelectBox)screen.getElementById("refresh_rate_select_box"))
+                .setSelectedByValue(Integer.valueOf(restoredSettings.get("FREQUENCY")),
+                false);
+        ((SelectBox)screen.getElementById("antialiasing_select_box"))
+                .setSelectedByValue(Integer.valueOf(restoredSettings.get("SAMPLES")),
+                false);
+        ((SelectBox)screen.getElementById("color_depth_select_box"))
+                .setSelectedByValue(Integer.valueOf(restoredSettings.get("BITS_PER_PIXEL")),
+                false);
+        ((CheckBox)screen.getElementById("fullscreen_checkbox"))
+                .setIsChecked(Boolean.parseBoolean(restoredSettings.get("FULLSCREEN")));
+        ((SelectBox)screen.getElementById("language_select_box"))
+                .setSelectedByValue(new Locale(restoredSettings.get("LANGUAGE")), false);
+        storedSettings = null; 
+        if(temp != null) restoredSettings = temp;
     }
     
     private boolean isChanged() {
-        Properties settings = getSelectedSettings(); 
-        for(Map.Entry<Object, Object> entry : restoredSettings.entrySet()) {
-            if(!settings.getProperty((String)entry.getKey()).equals(entry.getValue()))
+        Map<String, String> settings = getSelectedSettings(); 
+        for(Map.Entry<String, String> entry : restoredSettings.entrySet()) {
+            if(!settings.get(entry.getKey()).equals(entry.getValue()))
                 return true; 
         }
         return false; 

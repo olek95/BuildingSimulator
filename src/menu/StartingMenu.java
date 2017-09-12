@@ -1,6 +1,6 @@
 package menu;
 
-import authorization.Authorization;
+import authorization.DBManager;
 import authorization.User;
 import buildingsimulator.GameManager;
 import com.jme3.input.event.MouseButtonEvent;
@@ -55,6 +55,10 @@ public class StartingMenu extends MainMenu{
         showOptions();
     }
     
+    public void showStatistics(MouseButtonEvent evt, boolean isToggled) {
+        showStatistics(); 
+    }
+    
     /**
      * Pozwala na autoryzację lub wylogowanie. 
      * @param evt
@@ -84,14 +88,14 @@ public class StartingMenu extends MainMenu{
         Label error = (Label)screen.getElementById("error_label");
         error.setFontColor(ColorRGBA.Red);
         try{
-            Authorization.createDatabase();
+            DBManager.createDatabase();
             if(((CheckBox)screen.getElementById("registration_check_box")).getIsChecked()){
                 String errorInformation = getTextForDataState(login, password); 
                 if(errorInformation != null){
                     error.setText(errorInformation);
                 }else{
-                    if(!Authorization.checkIfUserExists(login)){
-                        Authorization.signUp(login, password); 
+                    if(!DBManager.checkIfUserExists(login)){
+                        DBManager.signUp(login, password); 
                         error.setFontColor(ColorRGBA.Green);
                         error.setText(Translator.REGISTRATION_SUCCESSFUL.getValue());
                     }else{
@@ -99,7 +103,7 @@ public class StartingMenu extends MainMenu{
                     }
                 }
             }else{
-                if(!Authorization.signIn(login, password)){
+                if(!DBManager.signIn(login, password)){
                     error.setText(Translator.INCORRECT_DATA.getValue());
                 }else{
                     error.setText("");

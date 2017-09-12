@@ -9,5 +9,6 @@ public enum MenuTypes {
     STARTING_MENU,
     OPTIONS,
     CONTROL_CONFIGURATION,
-    PAUSE_MENU;
+    PAUSE_MENU,
+    STATISTICS;
 }

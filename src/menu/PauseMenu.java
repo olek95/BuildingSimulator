@@ -1,9 +1,11 @@
 package menu;
 
+import authorization.DBManager;
 import authorization.User;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import com.jme3.input.event.MouseButtonEvent;
+import java.sql.SQLException;
 import texts.Translator;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Element;
@@ -33,10 +35,21 @@ public class PauseMenu extends MainMenu{
         GameManager.continueGame();
     }
     
+    public void showStatistics(MouseButtonEvent evt, boolean isToggled) {
+        showStatistics(); 
+    }
+    
     public void showOptions(MouseButtonEvent evt, boolean isToggled){ showOptions(); }
     
     
-    public void exit(MouseButtonEvent evt, boolean isToggled){ exit(); }
+    public void exit(MouseButtonEvent evt, boolean isToggled){ 
+        exit(); 
+        try {
+            DBManager.savePoints(GameManager.getUser());
+        }catch(SQLException|ClassNotFoundException ex) {
+            
+        }
+    }
     
     /**
      * Wyświetla okienko ostrzegające przed wyjściem z gry. Umożliwia wyjście 

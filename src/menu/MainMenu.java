@@ -27,6 +27,8 @@ public abstract class MainMenu extends Menu {
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
     }
     
+    public static Screen getScreen() { return screen; }
+    
     /** 
      * Uruchamia grę 
      */
@@ -44,12 +46,16 @@ public abstract class MainMenu extends Menu {
         MenuFactory.showMenu(MenuTypes.OPTIONS);
     }
     
+    protected void showStatistics() {
+        window.hide(); 
+        BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
+        MenuFactory.showMenu(MenuTypes.STATISTICS);
+    }
+    
     /**
      * Wychodzi z gry. 
      */
     protected void exit(){
         System.exit(0);
     }
-    
-    public static Screen getScreen() { return screen; }
 }

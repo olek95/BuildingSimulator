@@ -9,20 +9,20 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * Klasa <code>Authorization</code> odpowiada za obsługę logowania i rejestracji
+ * Klasa <code>DBManager</code> odpowiada za obsługę logowania i rejestracji
  * użytkownika.
  * @author AleksanderSklorz 
  */
-public class Authorization extends AbstractAppState{
+public class DBManager extends AbstractAppState{
     private static final String DRIVER = "org.sqlite.JDBC";
     private static final String DB_URL = "jdbc:sqlite:building_simulator.db";
-    private static Authorization authorization; 
-    private Authorization() throws ClassNotFoundException, SQLException{
+    private static DBManager authorization; 
+    private DBManager() throws ClassNotFoundException, SQLException{
         try(Connection connection = connect()){
             Statement statement = connection.createStatement();
             statement.execute("CREATE TABLE IF NOT EXISTS Users "
-                    + "(id_user INTEGER PRIMARY KEY AUTOINCREMENT, login varchar(20),"
-                    + " password varchar(20))");
+                    + "(id_user INTEGER PRIMARY KEY AUTOINCREMENT, login VARCHAR(20),"
+                    + " password VARCHAR(20), points INTEGER)");
         }
     }
     
@@ -30,7 +30,7 @@ public class Authorization extends AbstractAppState{
      * Tworzy bazę danych wraz z tabelkami. 
      */
     public static void createDatabase() throws ClassNotFoundException, SQLException{
-        if(authorization == null) authorization = new Authorization(); 
+        if(authorization == null) authorization = new DBManager(); 
     }
     
     /**
@@ -55,7 +55,7 @@ public class Authorization extends AbstractAppState{
     public static void signUp(String login, String password) throws ClassNotFoundException, SQLException{
         try(Connection connection = connect()){
            PreparedStatement statement = connection
-                   .prepareStatement("INSERT INTO Users(login, password) VALUES(?, ?)");
+                   .prepareStatement("INSERT INTO Users(login, password, points) VALUES(?, ?, 0)");
            statement.setString(1, login);
            statement.setString(2, password);
            statement.execute();
@@ -77,6 +77,22 @@ public class Authorization extends AbstractAppState{
             statement.setString(1, login);
             statement.setString(2, password);
             return statement.executeQuery().getInt(1) != 0;
+        }
+    }
+    
+    /**
+     * Zapisuje punkty dla danego użytkownika. 
+     * @param user użytkownik dla którego zapisują się punkty 
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
+    public static void savePoints(User user) throws SQLException, ClassNotFoundException{
+        String login = user.getLogin();
+        try(Connection connection = connect()) {
+            PreparedStatement statement = connection
+                    .prepareStatement("UPDATE Users SET points = ? WHERE login=?");
+            statement.setInt(1, user.getPoints());
+            statement.setString(2, login);
         }
     }
     

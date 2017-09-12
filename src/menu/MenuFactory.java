@@ -27,6 +27,8 @@ public class MenuFactory {
             case PAUSE_MENU:
                 menu = new PauseMenu(); 
                 break;
+            case STATISTICS: 
+                menu = new Statistics(); 
         }
         menu.getWindow().show();
     }

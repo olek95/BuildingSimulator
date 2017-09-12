@@ -7,6 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Klasa <code>DBManager</code> odpowiada za obsługę logowania i rejestracji
@@ -88,11 +90,29 @@ public class DBManager extends AbstractAppState{
      */
     public static void savePoints(User user) throws SQLException, ClassNotFoundException{
         String login = user.getLogin();
+        System.out.println(2); 
         try(Connection connection = connect()) {
+            System.out.println(3); 
             PreparedStatement statement = connection
                     .prepareStatement("UPDATE Users SET points = ? WHERE login=?");
             statement.setInt(1, user.getPoints());
             statement.setString(2, login);
+            statement.execute(); 
+            System.out.println(user.getPoints() + " " + login); 
+        }
+    }
+    
+    public static Map<String, String> getAllStatistics() throws SQLException, ClassNotFoundException{
+        Map<String, String> statistics = new HashMap();
+        try(Connection connection = connect()) {
+            PreparedStatement statement = connection
+                    .prepareStatement("SELECT login, points FROM Users");
+            ResultSet restoredStatistics = statement.executeQuery();
+            while(restoredStatistics.next()){
+                statistics.put(restoredStatistics.getString(1), restoredStatistics.getString(2));
+            }
+        }finally{
+            return statistics; 
         }
     }
     

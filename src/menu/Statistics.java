@@ -1,10 +1,14 @@
 package menu;
 
+import authorization.DBManager;
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.Control;
 import buildingsimulator.GameManager;
 import com.jme3.input.InputManager;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.Vector2f;
+import java.sql.SQLException;
+import java.util.Map;
 import java.util.Properties;
 import texts.Translator;
 import tonegod.gui.controls.buttons.ButtonAdapter;
@@ -15,8 +19,6 @@ import tonegod.gui.core.Screen;
 public class Statistics extends Menu{
     private static Screen screen;
     private static Table controlTable;
-    private static boolean stale; 
-    private static Properties restoredSettings;
     public Statistics(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         window = new Window(screen, "statistics", new Vector2f(0, 0),
@@ -47,7 +49,7 @@ public class Statistics extends Menu{
         pointsColumn.setText(Translator.POINTS.getValue());
         pointsColumn.setWidth(width / 2 - 100);
         controlTable.addColumn(pointsColumn);
-//        addRows(controlTable); 
+        addRows(controlTable); 
     }
     
     private void createReturnButton(){
@@ -61,5 +63,19 @@ public class Statistics extends Menu{
                     }
                 };
         controlTable.addChild(button);
+    }
+    
+    private void addRows(Table table){
+        try{
+            Map<String, String> statistics = DBManager.getAllStatistics(); 
+            for(Map.Entry<String, String> entry : statistics.entrySet()){
+                Table.TableRow row = new Table.TableRow(screen, table);
+                String login = entry.getKey(), points = entry.getValue();
+                row.addCell(login, login);
+                row.addCell(points, points);
+                table.addRow(row);
+            }
+        }catch(SQLException|ClassNotFoundException ex){
+        }
     }
 }

@@ -19,10 +19,13 @@ public class Shop extends Menu{
         window.setWindowTitle(Translator.SHOP.getValue());
         window.getDragBar().setTextAlign(BitmapFont.Align.Center);
         Translator.setTexts(new String[]{"buying_button", "cancellation_button",
-            "type_label", "amount_label", "dimensions_label", "cost_label", "change_page_button"},
+            "type_label", "amount_label", "dimensions_label", "cost_label", "change_page_button", 
+            "height_change_label", "actual_height_label", "new_height_label"},
                 new Translator[]{Translator.BUYING, Translator.CANCELLATION, Translator.TYPE,
-                    Translator.AMOUNT, Translator.DIMENSIONS, Translator.COST, Translator.NEXT}, screen);
+                    Translator.AMOUNT, Translator.DIMENSIONS, Translator.COST, Translator.NEXT, 
+                    Translator.HEIGHT_CHANGE, Translator.ACTUAL_HEIGHT, Translator.NEW_HEIGHT}, screen);
         fillTypeSelectBox();
+        screen.getElementById("vehicles_panel").hide();
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
         displayedShop = this; 
     }
@@ -42,8 +45,10 @@ public class Shop extends Menu{
         if(elementsPanel.getIsVisible()) {
             screen.getElementById("change_page_button").setText(Translator.PREVIOUS.getValue());
             elementsPanel.hide();
+            screen.getElementById("vehicles_panel").show();
         } else {
             screen.getElementById("change_page_button").setText(Translator.NEXT.getValue());
+            screen.getElementById("vehicles_panel").hide();
             elementsPanel.show();
         }
     }

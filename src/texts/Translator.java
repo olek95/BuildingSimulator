@@ -86,7 +86,10 @@ public enum Translator {
     BUYING,
     COST,
     NEXT,
-    PREVIOUS;
+    PREVIOUS,
+    HEIGHT_CHANGE,
+    ACTUAL_HEIGHT,
+    NEW_HEIGHT;
     
     private String value; 
     

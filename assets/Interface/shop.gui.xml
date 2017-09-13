@@ -7,7 +7,7 @@
                 <component type="SelectBox" id="type_select_box" position="35%,19%" dimensions="40%,7%">
                 </component>
                 <component type="Label" id="amount_label" position="25%,29%" dimensions="10%,12%"/>
-                <component type="Spinner" id="amount_spinner" position="35%,32%" dimensions="20%,7%" orientation="HORIZONTAL">
+                <component type="Spinner" id="amount_spinner" position="35%,32%" dimensions="20%,7%" orientation="VERTICAL">
                     <method name="setStepIntegerRange" param0="0" param1="100" param2="1"/>
                 </component>
                 <component type="Label" id="dimensions_label" position="25%,42%" dimensions="20%,12%"/>
@@ -23,9 +23,17 @@
                 <component type="TextField" id="y_text_field" position="35%,65%">
                     <method name="setType" param0="NUMERIC"/>
                 </component>
-                <component type="Label" id="cost_label" position="25%,76%" dimensions="30%,12%">
-                    <method name="setFontSize" param0="40"/>
+            </component>
+            <component type="Panel" id="vehicles_panel" position="0,0" dimensions="100%,91%">
+                <component type="Label" id="height_change_label" position="25%,16%" dimensions="50%,12%"/>
+                <component type="Label" id="actual_height_label" position="25%,26%" dimensions="30%,12%"/>
+                <component type="Label" id="new_height_label" position="25%,36%" dimensions="30%,12%"/>
+                <component type="Spinner" id="crane_height_spinner" position="50%,39%" dimensions="10%,7%" orientation="VERTICAL">
+                    <method name="setStepIntegerRange" param0="0" param1="4" param2="1"/>
                 </component>
+            </component>
+            <component type="Label" id="cost_label" position="25%,70%" dimensions="30%,12%">
+                <method name="setFontSize" param0="40"/>
             </component>
             <component type="Button" id="buying_button" position="8%,90%" dimensions="25%,6%">
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="buy"/>

@@ -5,8 +5,6 @@ import com.jme3.font.BitmapFont;
 import com.jme3.input.event.MouseButtonEvent;
 import texts.Translator;
 import tonegod.gui.controls.lists.SelectBox;
-import tonegod.gui.controls.lists.Spinner;
-import tonegod.gui.controls.text.TextField;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Element;
 import tonegod.gui.core.Screen;
@@ -21,11 +19,10 @@ public class Shop extends Menu{
         window.setWindowTitle(Translator.SHOP.getValue());
         window.getDragBar().setTextAlign(BitmapFont.Align.Center);
         Translator.setTexts(new String[]{"buying_button", "cancellation_button",
-            "type_label", "amount_label", "dimensions_label"}, new Translator[]{Translator.BUYING, Translator.CANCELLATION,
-                Translator.TYPE, Translator.AMOUNT, Translator.DIMENSIONS}, screen);
+            "type_label", "amount_label", "dimensions_label", "cost_label", "change_page_button"},
+                new Translator[]{Translator.BUYING, Translator.CANCELLATION, Translator.TYPE,
+                    Translator.AMOUNT, Translator.DIMENSIONS, Translator.COST, Translator.NEXT}, screen);
         fillTypeSelectBox();
-        TextField f = (TextField)screen.getElementById("x_text_field");
-//        f.setType(TextField.Type.NUMERIC);
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
         displayedShop = this; 
     }
@@ -38,6 +35,17 @@ public class Shop extends Menu{
         displayedShop = null; 
         BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(false);
         goNextMenu(screen, null);
+    }
+    
+    public void changePage(MouseButtonEvent evt, boolean isToggled) {
+        Element elementsPanel = screen.getElementById("elements_panel");
+        if(elementsPanel.getIsVisible()) {
+            screen.getElementById("change_page_button").setText(Translator.PREVIOUS.getValue());
+            elementsPanel.hide();
+        } else {
+            screen.getElementById("change_page_button").setText(Translator.NEXT.getValue());
+            elementsPanel.show();
+        }
     }
     
     public static Shop getDisplayedShop() { return displayedShop; }

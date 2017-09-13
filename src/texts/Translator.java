@@ -83,7 +83,10 @@ public enum Translator {
     DOOR,
     AMOUNT,
     DIMENSIONS,
-    BUYING;
+    BUYING,
+    COST,
+    NEXT,
+    PREVIOUS;
     
     private String value; 
     

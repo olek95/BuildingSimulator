@@ -74,6 +74,7 @@ public enum Translator {
     EXIT_WARNING,
     EXIT_DESKTOP,
     RETURN_TO_STARTING_MENU,
+    SHOP,
     TYPE,
     BLANK_WALL,
     WINDOWS,

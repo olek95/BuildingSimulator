@@ -1,6 +1,7 @@
 package menu;
 
 import buildingsimulator.BuildingSimulator;
+import com.jme3.font.BitmapFont;
 import com.jme3.input.event.MouseButtonEvent;
 import texts.Translator;
 import tonegod.gui.controls.lists.SelectBox;
@@ -12,10 +13,13 @@ import tonegod.gui.core.Screen;
 
 public class Shop extends Menu{
     private static Screen screen;
+    private static Shop displayedShop = null; 
     public Shop(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout("Interface/shop.gui.xml", this);
-        window = (Window)screen.getElementById("options");
+        window = (Window)screen.getElementById("shop");
+        window.setWindowTitle(Translator.SHOP.getValue());
+        window.getDragBar().setTextAlign(BitmapFont.Align.Center);
         Translator.setTexts(new String[]{"buying_button", "cancellation_button",
             "type_label", "amount_label", "dimensions_label"}, new Translator[]{Translator.BUYING, Translator.CANCELLATION,
                 Translator.TYPE, Translator.AMOUNT, Translator.DIMENSIONS}, screen);
@@ -23,6 +27,7 @@ public class Shop extends Menu{
         TextField f = (TextField)screen.getElementById("x_text_field");
 //        f.setType(TextField.Type.NUMERIC);
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
+        displayedShop = this; 
     }
     
     public void buy(MouseButtonEvent evt, boolean isToggled) {
@@ -30,8 +35,12 @@ public class Shop extends Menu{
     }
     
     public void cancel(MouseButtonEvent evt, boolean isToggled) {
-        
+        displayedShop = null; 
+        BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(false);
+        goNextMenu(screen, null);
     }
+    
+    public static Shop getDisplayedShop() { return displayedShop; }
     
     private void fillTypeSelectBox() {
         Translator[] values = {Translator.BLANK_WALL, Translator.WINDOWS,

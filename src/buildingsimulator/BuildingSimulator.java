@@ -28,10 +28,12 @@ import cranes.Hook;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import menu.HUD;
 import menu.MainMenu;
 import menu.MenuFactory;
 import menu.MenuTypes;
 import menu.Options;
+import menu.Shop;
 import texts.Translator;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
@@ -109,6 +111,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         CraneAbstract crane = GameManager.getUnit(1);
         if(isPressed){
             if(name.equals(Control.Actions.PAUSE.toString())){
+                Shop shop = Shop.getDisplayedShop();
+                if(shop != null) shop.cancel(null, true);
                 GameManager.pauseGame();
                 GameManager.removeHUD(); 
             }else{
@@ -142,7 +146,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                 }
             }
         } else {
-            if(name.equals(Control.Actions.SHOW_CURSOR.toString())){
+            if(name.equals(Control.Actions.SHOW_CURSOR.toString()) && Shop.getDisplayedShop() == null){
                 flyCam.setDragToRotate(false);
             }
         }

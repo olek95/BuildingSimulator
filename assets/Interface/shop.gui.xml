@@ -2,8 +2,31 @@
 <root>
     <screen>
         <component type="Window" id="options" position="20%,20%" dimensions="60%,60%">
-            <component type="Button" id="buying_button" position="25%,80%" dimensions="25%,6%"> 
+            <component type="Label" id="type_label" position="5%,10%" dimensions="10%,12%"/>
+            <component type="SelectBox" id="type_select_box" position="15%,13%" dimensions="40%,7%">
+            </component>
+            <component type="Label" id="amount_label" position="5%,23%" dimensions="10%,12%"/>
+            <component type="Spinner" id="amount_spinner" position="15%,26%" dimensions="20%,7%" orientation="HORIZONTAL">
+                <method name="setStepIntegerRange" param0="0" param1="100" param2="1"/>
+            </component>
+            <component type="Label" id="dimensions_label" position="5%,36%" dimensions="20%,12%"/>
+            <component type="Label" position="5%,46%" dimensions="10%,12%">
+                <method name="setText" param0="x = " />
+            </component>
+            <component type="TextField" id="x_text_field" position="15%,49%">
+                <method name="setType" param0="NUMERIC"/>
+            </component>
+            <component type="Label" position="5%,56%" dimensions="10%,12%">
+                <method name="setText" param0="y = " />
+            </component>
+            <component type="TextField" id="y_text_field" position="15%,59%">
+                <method name="setType" param0="NUMERIC"/>
+            </component>
+            <component type="Button" id="buying_button" position="23%,90%" dimensions="25%,6%"> 
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="buy"/>
+            </component>
+            <component type="Button" id="cancellation_button" position="52%,90%" dimensions="25%,6%"> 
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="cancel"/>
             </component>
         </component>
     </screen>

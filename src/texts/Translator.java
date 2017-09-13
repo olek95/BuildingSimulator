@@ -73,7 +73,16 @@ public enum Translator {
     GAME_CONTINUATION,
     EXIT_WARNING,
     EXIT_DESKTOP,
-    RETURN_TO_STARTING_MENU;
+    RETURN_TO_STARTING_MENU,
+    TYPE,
+    BLANK_WALL,
+    WINDOWS,
+    ONE_BIG_WINDOW,
+    ONE_BIGGER_WINDOW,
+    DOOR,
+    AMOUNT,
+    DIMENSIONS,
+    BUYING;
     
     private String value; 
     

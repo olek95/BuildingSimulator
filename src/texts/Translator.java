@@ -89,7 +89,8 @@ public enum Translator {
     PREVIOUS,
     HEIGHT_CHANGE,
     ACTUAL_HEIGHT,
-    NEW_HEIGHT;
+    NEW_HEIGHT,
+    BAD_DATA;
     
     private String value; 
     

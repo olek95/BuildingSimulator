@@ -6,6 +6,7 @@ import buildingsimulator.GameManager;
 import com.jme3.font.BitmapFont;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.input.event.MouseButtonEvent;
+import com.jme3.math.Vector2f;
 import cranes.crane.Crane;
 import texts.Translator;
 import tonegod.gui.controls.lists.SelectBox;
@@ -37,6 +38,8 @@ public class Shop extends Menu{
                     Translator.AMOUNT, Translator.DIMENSIONS, Translator.COST, Translator.NEXT, 
                     Translator.HEIGHT_CHANGE, Translator.ACTUAL_HEIGHT, Translator.NEW_HEIGHT}, screen);
         fillTypeSelectBox();
+        createTextField("x_text_field", 0.35f, 0.55f);
+        createTextField("y_text_field", 0.35f, 0.65f);
         screen.getElementById("vehicles_panel").hide();
         screen.getElementById("actual_height_value").setText(((Crane)GameManager
                 .getUnit(1)).getHeightLevel() + "");
@@ -83,14 +86,15 @@ public class Shop extends Menu{
         }
     }
     
-    public void setCost(int selectedIndex, Object value) {
-        screen.getElementById("cost_value_label").setText(calculateCost() + "");
+    public void beginCalculateCost(int selectedIndex, Object value) {
+        setCost(); 
     }
     
-    public void a(KeyInputEvent evt) {
-        System.out.println(123); 
+    public static void setCost() {
+        int cost = calculateCost(); 
+        screen.getElementById("cost_value_label").setText(cost != -1 ? cost + ""
+                : Translator.BAD_DATA.getValue());
     }
-    
     /**
      * Zwraca aktualnie wyświetlany obiekt sklepu. 
      * @return aktualny obiekt sklepu 
@@ -105,12 +109,27 @@ public class Shop extends Menu{
         }
     }
     
-    private int calculateCost() {
-        int result = ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex()
-                * (int)((TextField)screen.getElementById("x_text_field")).parseFloat()
-                * (int)((TextField)screen.getElementById("y_text_field")).parseFloat()
-                + ((WallType)((SelectBox)screen.getElementById("type_select_box")).getSelectedListItem()
-                .getValue()).getPrice();
+    private static int calculateCost() {
+        Element xTextField = screen.getElementById("x_text_field"),
+                yTextField = screen.getElementById("y_text_field");
+        int result = -1;
+        if(xTextField != null && yTextField != null) {
+            String x = xTextField.getText(), y = yTextField.getText();
+            if(x.matches("\\d+(\\.\\d+)*") && y.matches("\\d+(\\.\\d+)*")) { 
+                result = ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex()
+                        * ((int)Float.parseFloat(x) * (int)Float.parseFloat(y)
+                        + ((WallType)((SelectBox)screen.getElementById("type_select_box")).getSelectedListItem()
+                        .getValue()).getPrice());
+            }
+        }
         return result; 
+    }
+    
+    private void createTextField(String id, float x, float y) {
+        Element panel = screen.getElementById("elements_panel");
+        DimensionTextField textField = new DimensionTextField(screen, id,
+                new Vector2f(panel.getWidth() * x, panel.getHeight() * y));
+        textField.setType(TextField.Type.NUMERIC);
+        panel.addChild(textField);
     }
 }

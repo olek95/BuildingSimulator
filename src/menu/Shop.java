@@ -4,6 +4,7 @@ import building.WallType;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import com.jme3.font.BitmapFont;
+import com.jme3.input.event.KeyInputEvent;
 import com.jme3.input.event.MouseButtonEvent;
 import cranes.crane.Crane;
 import texts.Translator;
@@ -49,7 +50,7 @@ public class Shop extends Menu{
      * @param isToggled 
      */
     public void buy(MouseButtonEvent evt, boolean isToggled) {
-        System.out.println(calculateCost());
+        
     }
     
     /**
@@ -80,6 +81,14 @@ public class Shop extends Menu{
             screen.getElementById("vehicles_panel").hide();
             elementsPanel.show();
         }
+    }
+    
+    public void setCost(int selectedIndex, Object value) {
+        screen.getElementById("cost_value_label").setText(calculateCost() + "");
+    }
+    
+    public void a(KeyInputEvent evt) {
+        System.out.println(123); 
     }
     
     /**

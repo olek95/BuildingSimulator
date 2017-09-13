@@ -28,6 +28,12 @@ public class Crane extends CraneAbstract{
         initCrane();
     }
     
+    /**
+     * Zwraca poziom wysokości żurawia. 
+     * @return poziom wysokości 
+     */
+    public int getHeightLevel() { return heightLevel; }
+    
     private void initCrane(){
         craneLocation = new Vector3f(10f, 0f, 0f);
         initCraneElements((Node)game.getAssetManager().loadModel("Models/zuraw/zuraw.j3o"));

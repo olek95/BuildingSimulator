@@ -76,7 +76,7 @@ public enum Translator {
     RETURN_TO_STARTING_MENU,
     SHOP,
     TYPE,
-    BLANK_WALL,
+    WALL,
     WINDOWS,
     ONE_BIG_WINDOW,
     ONE_BIGGER_WINDOW,

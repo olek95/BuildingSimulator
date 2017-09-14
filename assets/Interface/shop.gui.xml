@@ -26,7 +26,8 @@
                 <component type="Label" id="actual_height_value" position="55%,26%" dimensions="10%,12%"/>
                 <component type="Label" id="new_height_label" position="25%,36%" dimensions="30%,12%"/>
                 <component type="Spinner" id="crane_height_spinner" position="55%,39%" dimensions="10%,7%" orientation="VERTICAL">
-                    <method name="setStepIntegerRange" param0="0" param1="4" param2="1"/>
+                    <method name="setStepIntegerRange" param0="0" param1="6" param2="1"/>
+                    <eventMethod name="onChange" stateMethodName="beginCalculateCost"/>
                 </component>
             </component>
             <component type="Label" id="cost_label" position="25%,70%" dimensions="30%,12%">

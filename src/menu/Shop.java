@@ -41,8 +41,10 @@ public class Shop extends Menu{
         createTextField("x_text_field", 0.35f, 0.55f);
         createTextField("y_text_field", 0.35f, 0.65f);
         screen.getElementById("vehicles_panel").hide();
-        screen.getElementById("actual_height_value").setText(((Crane)GameManager
-                .getUnit(1)).getHeightLevel() + "");
+        int craneHeight = ((Crane)GameManager.getUnit(1)).getHeightLevel();
+        screen.getElementById("actual_height_value").setText(craneHeight + "");
+        ((Spinner)screen.getElementById("crane_height_spinner")).setSelectedIndex(craneHeight);
+        setCost();
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
         displayedShop = this; 
     }
@@ -92,8 +94,13 @@ public class Shop extends Menu{
     
     public static void setCost() {
         int cost = calculateCost(); 
-        screen.getElementById("cost_value_label").setText(cost != -1 ? cost + ""
-                : Translator.BAD_DATA.getValue());
+        if(cost == -1) {
+            screen.getElementById("cost_value_label").setText(Translator.BAD_DATA.getValue());
+            screen.getElementById("buying_button").setIsEnabled(false);
+        } else {
+            screen.getElementById("cost_value_label").setText(cost + "");
+            screen.getElementById("buying_button").setIsEnabled(true);
+        }
     }
     /**
      * Zwraca aktualnie wyświetlany obiekt sklepu. 
@@ -120,6 +127,14 @@ public class Shop extends Menu{
                         * ((int)Float.parseFloat(x) * (int)Float.parseFloat(y)
                         + ((WallType)((SelectBox)screen.getElementById("type_select_box")).getSelectedListItem()
                         .getValue()).getPrice());
+                int selectedHeight = ((Spinner)screen.getElementById("crane_height_spinner"))
+                        .getSelectedIndex(), actualHeight = Integer.parseInt(screen
+                        .getElementById("actual_height_value").getText());
+                if(actualHeight < selectedHeight) {
+                    result += selectedHeight * 100; 
+                } else {
+                    result += (actualHeight - selectedHeight) * 100;
+                }
             }
         }
         return result; 
@@ -130,6 +145,7 @@ public class Shop extends Menu{
         DimensionTextField textField = new DimensionTextField(screen, id,
                 new Vector2f(panel.getWidth() * x, panel.getHeight() * y));
         textField.setType(TextField.Type.NUMERIC);
+        textField.setText("0");
         panel.addChild(textField);
     }
 }

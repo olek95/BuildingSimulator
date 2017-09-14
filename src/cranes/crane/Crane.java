@@ -18,7 +18,8 @@ public class Crane extends CraneAbstract{
     private Node crane;
     private Spatial rack, entrancePlatform;
     private Vector3f craneLocation;
-    private int heightLevel = 3;
+    public int heightLevel = 3;
+    public Spatial penultimateRack, lastRack; 
     public Crane(){
         initCrane();
     }
@@ -59,17 +60,26 @@ public class Crane extends CraneAbstract{
         entrancePlatform = crane.getChild("entrancePlatform");
         physics.add(setProperControlLocation(entrancePlatform, craneLocation));
         setArmControl(new CraneArmControl(crane));
-        raiseHeight(rack1, rack2);
+        penultimateRack = rack1;
+        lastRack = rack2;
+        raiseHeight(heightLevel);
     }
     
-    private void raiseHeight(Spatial penultimateRack, Spatial lastRack){
+    public void raiseHeight(int height){
+        boolean initial = false; 
+        heightLevel = height; 
+        Node rootNode = game.getRootNode();
+        if(game.getRootNode().hasChild(crane)) {
+            initial = true; 
+            rootNode.detachChild(crane);
+        }
         Vector3f firstRackLocation = penultimateRack.getLocalTranslation(),
                 secondRackLocation = lastRack.getLocalTranslation();
         Spatial copyingLadder = crane.getChild("ladder2");
         float y = secondRackLocation.y, distanceBetweenRacks = y - firstRackLocation.y,
                 distanceBetweenLadders = copyingLadder.getLocalTranslation().y - y;
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
-        for(int i = 3; i < heightLevel; i++){
+        for(int i = 3; i < height; i++){
             Spatial newRack = lastRack.clone(), newLadder = copyingLadder.clone(); 
             moveElementToEnd(distanceBetweenRacks, newRack, lastRack);
             crane.attachChild(newRack);
@@ -82,6 +92,9 @@ public class Crane extends CraneAbstract{
                 entrancePlatform, lastRack);
         Node craneControl = getArmControl().getCraneControl();
         moveElementToEnd(craneControl.getLocalTranslation().y - y, craneControl, lastRack);
+        if(initial) {
+            rootNode.attachChild(crane);
+        }
     }
     
     private void moveElementToEnd(float yDistance, Spatial movingElement, Spatial lastElement){

@@ -52,7 +52,7 @@ public class GameManager {
         createTerrain();
         MobileCrane crane = new MobileCrane();
         addUnit(crane);
-        addUnit(new Crane());
+        addUnit(new Crane(3));
         crane.setUsing(true);
         Control.addListener(crane);
         Control.addListener(game);

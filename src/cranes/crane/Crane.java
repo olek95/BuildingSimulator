@@ -41,10 +41,9 @@ public class Crane extends CraneAbstract{
             initial = true; 
             rootNode.detachChild(crane);
         }
-        Vector3f firstRackLocation = penultimateRack.getLocalTranslation(),
-                secondRackLocation = lastRack.getLocalTranslation();
         Spatial copyingLadder = crane.getChild("ladder2");
-        float y = secondRackLocation.y, distanceBetweenRacks = y - firstRackLocation.y,
+        float y = lastRack.getLocalTranslation().y, distanceBetweenRacks = y 
+                - penultimateRack.getLocalTranslation().y,
                 distanceBetweenLadders = copyingLadder.getLocalTranslation().y - y;
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
         for(int i = heightLevel; i < height; i++){
@@ -61,12 +60,17 @@ public class Crane extends CraneAbstract{
         moveElementToEnd(entrancePlatform.getLocalTranslation().y - y,
                 entrancePlatform, lastRack);
         Node craneControl = getArmControl().getCraneControl();
-        moveElementToEnd(craneControl.getLocalTranslation().y - y, craneControl, lastRack);
+        moveElementToEnd(craneControl.getLocalTranslation().y - y, craneControl,
+                lastRack);
         if(initial) {
             rootNode.attachChild(crane);
         }
     }
     
+    /**
+     * Zmniejsza wysokość żurawia. 
+     * @param height wysokość żurawia 
+     */
     public void decreaseHeight(int height) {
         Node rootNode = game.getRootNode();
         rootNode.detachChild(crane);
@@ -76,11 +80,6 @@ public class Crane extends CraneAbstract{
         float distance = secondRackLocation.y - penultimateRack.getLocalTranslation().y; 
         Spatial lastRackCopy = lastRack.clone();
         int i;
-//        System.out.println(lastRack);
-//        System.out.println(penultimateRack);
-        for(int k = 0; k < rackElements.size(); k++) {
-            System.out.println("A " + rackElements.get(k));
-        }
         for(i = 0; i < difference * 2; i += 2) {
             rackElements.get(lastIndex - i).removeFromParent(); // usunięcie drabinki
             rackElements.get(lastIndex - i - 1).removeFromParent(); // usunięcie kawałka stojaka
@@ -93,12 +92,6 @@ public class Crane extends CraneAbstract{
                 - distance * difference, craneControl, lastRackCopy);
         lastRack = rackElements.get(lastIndex - i - 1); 
         penultimateRack = rackElements.get(lastIndex - i - 3); 
-        for(int k = 0; k < rackElements.size(); k++) {
-            System.out.println("B " + rackElements.get(k));
-        }
-//        System.out.println(lastRack);
-//        System.out.println(penultimateRack);
-//        System.out.println("------------");
         rootNode.attachChild(crane);
     }
     

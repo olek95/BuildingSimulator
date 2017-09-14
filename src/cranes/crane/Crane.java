@@ -19,16 +19,16 @@ public class Crane extends CraneAbstract{
     private Node crane;
     private Spatial rack, entrancePlatform;
     private Vector3f craneLocation;
-    public int heightLevel = 3;
+    public int heightLevel = 0;
     public Spatial penultimateRack, lastRack; 
     public Crane(){
         initCrane();
     }
     
-    public Crane(int heightLevel){
-        this.heightLevel = heightLevel;
-        initCrane();
-    }
+//    public Crane(int heightLevel){
+//        this.heightLevel = heightLevel;
+//        initCrane();
+//    }
     
     /**
      * Zwiększa wysokość żurawia. 
@@ -76,16 +76,29 @@ public class Crane extends CraneAbstract{
         float distance = secondRackLocation.y - penultimateRack.getLocalTranslation().y; 
         Spatial lastRackCopy = lastRack.clone();
         int i;
-        for(i = 0; i < difference; i++) {
-            rackElements.get(lastIndex - i).removeFromParent();
+//        System.out.println(lastRack);
+//        System.out.println(penultimateRack);
+        for(int k = 0; k < rackElements.size(); k++) {
+            System.out.println("A " + rackElements.get(k));
         }
+        for(i = 0; i < difference * 2; i += 2) {
+            rackElements.get(lastIndex - i).removeFromParent(); // usunięcie drabinki
+            rackElements.get(lastIndex - i - 1).removeFromParent(); // usunięcie kawałka stojaka
+        }
+        heightLevel = height;
         moveElementToEnd(entrancePlatform.getLocalTranslation().y - secondRackLocation.y
-                - distance, entrancePlatform, lastRackCopy);
+                - distance * difference, entrancePlatform, lastRackCopy);
         Node craneControl = getArmControl().getCraneControl();
         moveElementToEnd(craneControl.getLocalTranslation().y - secondRackLocation.y
-                - distance, craneControl, lastRack);
-        lastRack = rackElements.get(lastIndex - i); 
-        penultimateRack = rackElements.get(lastIndex - (++i)); 
+                - distance * difference, craneControl, lastRackCopy);
+        lastRack = rackElements.get(lastIndex - i - 1); 
+        penultimateRack = rackElements.get(lastIndex - i - 3); 
+        for(int k = 0; k < rackElements.size(); k++) {
+            System.out.println("B " + rackElements.get(k));
+        }
+//        System.out.println(lastRack);
+//        System.out.println(penultimateRack);
+//        System.out.println("------------");
         rootNode.attachChild(crane);
     }
     
@@ -122,7 +135,7 @@ public class Crane extends CraneAbstract{
         setArmControl(new CraneArmControl(crane));
         penultimateRack = rack1;
         lastRack = rack2;
-        raiseHeight(heightLevel);
+        raiseHeight(0);
     }
     
     private void moveElementToEnd(float yDistance, Spatial movingElement, Spatial lastElement){

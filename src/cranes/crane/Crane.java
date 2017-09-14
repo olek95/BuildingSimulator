@@ -75,7 +75,8 @@ public class Crane extends CraneAbstract{
         Vector3f secondRackLocation = lastRack.getLocalTranslation();
         float distance = secondRackLocation.y - penultimateRack.getLocalTranslation().y; 
         Spatial lastRackCopy = lastRack.clone();
-        for(int i = 0; i < difference; i++) {
+        int i;
+        for(i = 0; i < difference; i++) {
             rackElements.get(lastIndex - i).removeFromParent();
         }
         moveElementToEnd(entrancePlatform.getLocalTranslation().y - secondRackLocation.y
@@ -83,6 +84,8 @@ public class Crane extends CraneAbstract{
         Node craneControl = getArmControl().getCraneControl();
         moveElementToEnd(craneControl.getLocalTranslation().y - secondRackLocation.y
                 - distance, craneControl, lastRack);
+        lastRack = rackElements.get(lastIndex - i); 
+        penultimateRack = rackElements.get(lastIndex - (++i)); 
         rootNode.attachChild(crane);
     }
     

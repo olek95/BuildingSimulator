@@ -30,6 +30,43 @@ public class Crane extends CraneAbstract{
     }
     
     /**
+     * Zwiększa wysokość żurawia. 
+     * @param height nowa wysokość 
+     */
+    public void raiseHeight(int height){
+        boolean initial = false; 
+        Node rootNode = game.getRootNode();
+        if(rootNode.hasChild(crane)) {
+            initial = true; 
+            rootNode.detachChild(crane);
+        }
+        Vector3f firstRackLocation = penultimateRack.getLocalTranslation(),
+                secondRackLocation = lastRack.getLocalTranslation();
+        Spatial copyingLadder = crane.getChild("ladder2");
+        float y = secondRackLocation.y, distanceBetweenRacks = y - firstRackLocation.y,
+                distanceBetweenLadders = copyingLadder.getLocalTranslation().y - y;
+        PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
+        for(int i = heightLevel; i < height; i++){
+            Spatial newRack = lastRack.clone(), newLadder = copyingLadder.clone(); 
+            moveElementToEnd(distanceBetweenRacks, newRack, lastRack);
+            crane.attachChild(newRack);
+            physics.add(newRack.getControl(0));
+            moveElementToEnd(distanceBetweenLadders, newLadder, newRack);
+            penultimateRack = lastRack;
+            lastRack = newRack;
+            crane.attachChild(newLadder);
+        }
+        heightLevel = height;
+        moveElementToEnd(entrancePlatform.getLocalTranslation().y - y,
+                entrancePlatform, lastRack);
+        Node craneControl = getArmControl().getCraneControl();
+        moveElementToEnd(craneControl.getLocalTranslation().y - y, craneControl, lastRack);
+        if(initial) {
+            rootNode.attachChild(crane);
+        }
+    }
+    
+    /**
      * Zwraca poziom wysokości żurawia. 
      * @return poziom wysokości 
      */
@@ -63,38 +100,6 @@ public class Crane extends CraneAbstract{
         penultimateRack = rack1;
         lastRack = rack2;
         raiseHeight(heightLevel);
-    }
-    
-    public void raiseHeight(int height){
-        boolean initial = false; 
-        heightLevel = height; 
-        Node rootNode = game.getRootNode();
-        if(game.getRootNode().hasChild(crane)) {
-            initial = true; 
-            rootNode.detachChild(crane);
-        }
-        Vector3f firstRackLocation = penultimateRack.getLocalTranslation(),
-                secondRackLocation = lastRack.getLocalTranslation();
-        Spatial copyingLadder = crane.getChild("ladder2");
-        float y = secondRackLocation.y, distanceBetweenRacks = y - firstRackLocation.y,
-                distanceBetweenLadders = copyingLadder.getLocalTranslation().y - y;
-        PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
-        for(int i = 3; i < height; i++){
-            Spatial newRack = lastRack.clone(), newLadder = copyingLadder.clone(); 
-            moveElementToEnd(distanceBetweenRacks, newRack, lastRack);
-            crane.attachChild(newRack);
-            physics.add(newRack.getControl(0));
-            moveElementToEnd(distanceBetweenLadders, newLadder, newRack);
-            lastRack = newRack;
-            crane.attachChild(newLadder);
-        }
-        moveElementToEnd(entrancePlatform.getLocalTranslation().y - y,
-                entrancePlatform, lastRack);
-        Node craneControl = getArmControl().getCraneControl();
-        moveElementToEnd(craneControl.getLocalTranslation().y - y, craneControl, lastRack);
-        if(initial) {
-            rootNode.attachChild(crane);
-        }
     }
     
     private void moveElementToEnd(float yDistance, Spatial movingElement, Spatial lastElement){

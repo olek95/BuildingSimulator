@@ -8,6 +8,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import cranes.CraneAbstract;
+import java.util.List;
 
 /**
  * Obiekt klasy <code>Crane</code> reprezentuje żuraw. 
@@ -64,6 +65,25 @@ public class Crane extends CraneAbstract{
         if(initial) {
             rootNode.attachChild(crane);
         }
+    }
+    
+    public void decreaseHeight(int height) {
+        Node rootNode = game.getRootNode();
+        rootNode.detachChild(crane);
+        List<Spatial> rackElements = crane.getChildren();
+        int lastIndex = rackElements.size() - 1, difference = heightLevel - height; 
+        Vector3f secondRackLocation = lastRack.getLocalTranslation();
+        float distance = secondRackLocation.y - penultimateRack.getLocalTranslation().y; 
+        Spatial lastRackCopy = lastRack.clone();
+        for(int i = 0; i < difference; i++) {
+            rackElements.get(lastIndex - i).removeFromParent();
+        }
+        moveElementToEnd(entrancePlatform.getLocalTranslation().y - secondRackLocation.y
+                - distance, entrancePlatform, lastRackCopy);
+        Node craneControl = getArmControl().getCraneControl();
+        moveElementToEnd(craneControl.getLocalTranslation().y - secondRackLocation.y
+                - distance, craneControl, lastRack);
+        rootNode.attachChild(crane);
     }
     
     /**

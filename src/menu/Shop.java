@@ -55,14 +55,15 @@ public class Shop extends Menu{
      * @param isToggled 
      */
     public void buy(MouseButtonEvent evt, boolean isToggled) {
-        int selectedHeight = ((Spinner)screen.getElementById("crane_height_spinner"))
-                        .getSelectedIndex();
-        Element actualHeightLabel = screen.getElementById("actual_height_value");
-        if(Integer.parseInt(actualHeightLabel.getText()) != selectedHeight) {
-            ((Crane)GameManager.getUnit(1)).raiseHeight(selectedHeight);
-            actualHeightLabel.setText(selectedHeight + "");
-            setCost();
-        }
+//        int selectedHeight = ((Spinner)screen.getElementById("crane_height_spinner"))
+//                        .getSelectedIndex();
+//        Element actualHeightLabel = screen.getElementById("actual_height_value");
+//        if(Integer.parseInt(actualHeightLabel.getText()) != selectedHeight) {
+//            ((Crane)GameManager.getUnit(1)).raiseHeight(selectedHeight);
+//            actualHeightLabel.setText(selectedHeight + "");
+//            setCost();
+//        }
+        ((Crane)GameManager.getUnit(1)).decreaseHeight(2);
     }
     
     /**

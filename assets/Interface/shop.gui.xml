@@ -17,7 +17,7 @@
                     <method name="setText" param0="x = " />
                 </component>
                 <component type="Label" position="25%,62%" dimensions="10%,12%">
-                    <method name="setText" param0="y = " />
+                    <method name="setText" param0="z = " />
                 </component>
             </component>
             <component type="Panel" id="vehicles_panel" position="0,0" dimensions="100%,91%">

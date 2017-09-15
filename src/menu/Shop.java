@@ -1,12 +1,14 @@
 package menu;
 
 import building.WallType;
+import building.WallsFactory;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import com.jme3.font.BitmapFont;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
 import cranes.crane.Crane;
 import texts.Translator;
 import tonegod.gui.controls.lists.SelectBox;
@@ -39,7 +41,7 @@ public class Shop extends Menu{
                     Translator.HEIGHT_CHANGE, Translator.ACTUAL_HEIGHT, Translator.NEW_HEIGHT}, screen);
         fillTypeSelectBox();
         createTextField("x_text_field", 0.35f, 0.55f);
-        createTextField("y_text_field", 0.35f, 0.65f);
+        createTextField("z_text_field", 0.35f, 0.65f);
         screen.getElementById("vehicles_panel").hide();
         int craneHeight = ((Crane)GameManager.getUnit(1)).getHeightLevel();
         screen.getElementById("actual_height_value").setText(craneHeight + "");
@@ -55,20 +57,9 @@ public class Shop extends Menu{
      * @param isToggled 
      */
     public void buy(MouseButtonEvent evt, boolean isToggled) {
-        Element actualHeightLabel = screen.getElementById("actual_height_value");
-        int selectedHeight = ((Spinner)screen.getElementById("crane_height_spinner"))
-                .getSelectedIndex(), actualHeight = Integer
-                .parseInt(actualHeightLabel.getText());
-        if(actualHeight < selectedHeight) {
-            ((Crane)GameManager.getUnit(1)).raiseHeight(selectedHeight);
-        } else {
-            if(actualHeight > selectedHeight) 
-                ((Crane)GameManager.getUnit(1)).decreaseHeight(selectedHeight);
-        }
-        if(actualHeight != selectedHeight) {
-            actualHeightLabel.setText(selectedHeight + "");
-            setCost();
-        }
+        buyCraneHeight();
+        buyWalls();
+        cancel(null, true);
     }
     
     /**
@@ -131,13 +122,13 @@ public class Shop extends Menu{
     
     private static int calculateCost() {
         Element xTextField = screen.getElementById("x_text_field"),
-                yTextField = screen.getElementById("y_text_field");
+                zTextField = screen.getElementById("z_text_field");
         int result = -1;
-        if(xTextField != null && yTextField != null) {
-            String x = xTextField.getText(), y = yTextField.getText();
-            if(x.matches("\\d+(\\.\\d+)*") && y.matches("\\d+(\\.\\d+)*")) { 
+        if(xTextField != null && zTextField != null) {
+            String x = xTextField.getText(), z = zTextField.getText();
+            if(x.matches("\\d+(\\.\\d+)*") && z.matches("\\d+(\\.\\d+)*")) { 
                 result = ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex()
-                        * ((int)Float.parseFloat(x) * (int)Float.parseFloat(y)
+                        * ((int)Float.parseFloat(x) * (int)Float.parseFloat(z)
                         + ((WallType)((SelectBox)screen.getElementById("type_select_box")).getSelectedListItem()
                         .getValue()).getPrice());
                 int selectedHeight = ((Spinner)screen.getElementById("crane_height_spinner"))
@@ -160,5 +151,35 @@ public class Shop extends Menu{
         textField.setType(TextField.Type.NUMERIC);
         textField.setText("0");
         panel.addChild(textField);
+    }
+    
+    private void buyCraneHeight() {
+        Element actualHeightLabel = screen.getElementById("actual_height_value");
+        int selectedHeight = ((Spinner)screen.getElementById("crane_height_spinner"))
+                .getSelectedIndex(), actualHeight = Integer
+                .parseInt(actualHeightLabel.getText());
+        if(actualHeight < selectedHeight) {
+            ((Crane)GameManager.getUnit(1)).raiseHeight(selectedHeight);
+        } else {
+            if(actualHeight > selectedHeight) 
+                ((Crane)GameManager.getUnit(1)).decreaseHeight(selectedHeight);
+        }
+        if(actualHeight != selectedHeight) {
+            actualHeightLabel.setText(selectedHeight + "");
+            setCost();
+        }
+    }
+    
+    private void buyWalls() {
+        int amount = ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex();
+        WallType type = (WallType)((SelectBox)screen.getElementById("type_select_box"))
+                .getSelectedListItem().getValue();
+        Vector3f dimensions = new Vector3f(((TextField)screen.getElementById("x_text_field"))
+                .parseFloat(), 0.2f, ((TextField)screen.getElementById("z_text_field"))
+                .parseFloat()), location = new Vector3f(0f, 0.3f, 20f);
+        for(int i = 0; i < amount; i++) {
+            GameManager.addToGame(WallsFactory.createWall(type, location, dimensions));
+            location.y += 0.4f;
+        }
     }
 }

@@ -34,35 +34,26 @@ public class BirdsEyeView implements ActionListener{
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
         Camera cam = BuildingSimulator.getBuildingSimulator().getCamera();
-//        List<Spatial> gameObjects = BuildingSimulator.getBuildingSimulator()
-//                .getRootNode().getChildren();
-//        int objectsCount = gameObjects.size(); 
-//        for(int i = 0; i < objectsCount; i++) {
-//            System.out.println(gameObjects.get(i));
-//        }
-//        shop.buyWalls();
-        Node scene = (Node)BuildingSimulator.getBuildingSimulator().getRootNode()
-                .getChild("New Scene");
         CollisionResults results = new CollisionResults();
-                Vector2f click2d = BuildingSimulator.getBuildingSimulator().getInputManager().getCursorPosition().clone();
-        Vector3f click3d = cam.getWorldCoordinates(
-            click2d, 0f).clone();
-        Vector3f dir = cam.getWorldCoordinates(
-            click2d, 1f).subtractLocal(click3d).normalizeLocal();
-        Ray ray = new Ray(click3d, dir);
-        scene.collideWith(ray, results);
+        Vector2f click2d = BuildingSimulator.getBuildingSimulator().getInputManager()
+                .getCursorPosition().clone();
+        Vector3f click3d = cam.getWorldCoordinates(click2d, 0f).clone(),
+                dir = cam.getWorldCoordinates(click2d, 1f).subtractLocal(click3d)
+                .normalizeLocal();
+        BuildingSimulator.getBuildingSimulator().getRootNode().getChild("New Scene")
+                .collideWith(new Ray(click3d, dir), results);
         Vector3f location = null;
-        List<Spatial> sceneChilds = scene.getChildren();
-//        for(int i = 0; i < sceneChilds.size(); i++) {
-//            System.out.println(sceneChilds.get(i)); 
-//        }
-        for(int i = 0; i < results.size(); i++) {
-            CollisionResult result = results.getCollision(i);
-            if(result.getGeometry().getName().startsWith("terrain")) {
-                location = result.getContactPoint();
-            }
-        }
-        location.setY(0.3f);
-        shop.buyWalls(location);
+        CollisionResult result;
+        int i = 0; 
+        do {
+            result = results.getCollision(i++);
+        }while(!result.getGeometry().getName().startsWith("terrain"));
+        location = result.getContactPoint().setY(0.3f);
+        shop.buyWalls(location, this);
+    }
+    
+    private boolean checkIfCollide() {
+        
+        return false; 
     }
 }

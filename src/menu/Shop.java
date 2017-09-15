@@ -1,17 +1,23 @@
 package menu;
 
+import building.Wall;
 import building.WallType;
 import building.WallsFactory;
 import buildingsimulator.BirdsEyeView;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.Control;
 import buildingsimulator.GameManager;
+import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
+import com.jme3.bullet.collision.PhysicsCollisionObject;
+import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.font.BitmapFont;
+import com.jme3.input.FlyByCamera;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.jme3.scene.Spatial;
 import cranes.crane.Crane;
 import texts.Translator;
 import tonegod.gui.controls.lists.SelectBox;
@@ -30,6 +36,7 @@ import tonegod.gui.core.Screen;
 public class Shop extends Menu{
     private static Screen screen;
     private static Shop displayedShop = null; 
+    boolean found = false; 
     public Shop(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout("Interface/shop.gui.xml", this);
@@ -175,7 +182,7 @@ public class Shop extends Menu{
         }
     }
     
-    public void buyWalls(Vector3f location) {
+    public void buyWalls(Vector3f location, BirdsEyeView view) {
         int amount = ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex();
         WallType type = (WallType)((SelectBox)screen.getElementById("type_select_box"))
                 .getSelectedListItem().getValue();
@@ -183,11 +190,32 @@ public class Shop extends Menu{
                 z = ((TextField)screen.getElementById("z_text_field")).parseFloat();
         if(x != 0 && z != 0) {
             Vector3f dimensions = new Vector3f(x, 0.2f, z);
+            Vector3f tempDimensions = dimensions.clone(); 
+            tempDimensions.multLocal(1, amount, 1);
+            Wall tempWall = WallsFactory.createWall(type, location, tempDimensions);
+            tempWall.getControl(RigidBodyControl.class).setCollisionGroup(6);
             for(int i = 0; i < amount; i++) {
-                System.out.println(123);
-                GameManager.addToGame(WallsFactory.createWall(type, location, dimensions));
+                Wall wall = WallsFactory.createWall(type, location, dimensions);
+                BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
+                        .addCollisionGroupListener(new PhysicsCollisionGroupListener(){
+
+                    @Override
+                    public boolean collide(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
+                        String nameA = ((Spatial)nodeA.getUserObject()).getName(),
+                                nameB = ((Spatial)nodeB.getUserObject()).getName();
+                        if(!nameA.startsWith("terrain") && !nameB.startsWith("terrain") && !found) {
+                            found = true;
+                        }
+                        return true;
+                    }}, 6);
+                if(found)
+                GameManager.addToGame(wall);
                 location.y += 0.4f;
             }
         }
+        Control.removeListener(view);
+        FlyByCamera camera = BuildingSimulator.getBuildingSimulator().getFlyByCamera();
+        camera.setEnabled(true);
+        camera.setDragToRotate(false);
     }
 }

@@ -85,6 +85,9 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     }
                 }
             }
+            if(Shop.getDisplayedShop() != null && Shop.hasOrder()) {
+                Shop.getDisplayedShop().realizeOrder(); 
+            }
         }
     }
 

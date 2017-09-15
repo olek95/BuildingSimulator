@@ -36,7 +36,10 @@ import tonegod.gui.core.Screen;
 public class Shop extends Menu{
     private static Screen screen;
     private static Shop displayedShop = null; 
+    private static boolean order = false; 
     boolean found = false; 
+    public BirdsEyeView v = null;
+    public Vector3f l = null;
     public Shop(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout("Interface/shop.gui.xml", this);
@@ -70,7 +73,7 @@ public class Shop extends Menu{
         buyCraneHeight();
         BirdsEyeView.changeViewMode(this);
 //        buyWalls();
-        displayedShop = null; 
+//        displayedShop = null; 
         goNextMenu(screen, null);
     }
     
@@ -183,6 +186,39 @@ public class Shop extends Menu{
     }
     
     public void buyWalls(Vector3f location, BirdsEyeView view) {
+        order = true; 
+        l = location; 
+        v = view; 
+        float x = ((TextField)screen.getElementById("x_text_field")).parseFloat(),
+                z = ((TextField)screen.getElementById("z_text_field")).parseFloat();
+        Vector3f dimensions = new Vector3f(x, 0.2f, z);
+            Vector3f tempDimensions = dimensions.clone();
+        WallType type = (WallType)((SelectBox)screen.getElementById("type_select_box"))
+                .getSelectedListItem().getValue();
+            Wall tempWall = WallsFactory.createWall(type, location, tempDimensions);
+            tempWall.getControl(RigidBodyControl.class).setCollisionGroup(6);
+            BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
+                        .addCollisionGroupListener(new PhysicsCollisionGroupListener(){
+
+                    @Override
+                    public boolean collide(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
+                        Spatial a = (Spatial)nodeA.getUserObject(), 
+                                b = (Spatial)nodeB.getUserObject();
+                        String nameA = a.getName(), nameB = b.getName();
+                        if(!nameA.startsWith("terrain") && !(a instanceof Wall) && !found) {
+                            System.out.println(1);
+                            found = true;
+                        } else {
+                            if(!nameB.startsWith("terrain")  && !(b instanceof Wall) && !found) {
+                                System.out.println(2);
+                                found = true;
+                            }
+                        }
+                        return true;
+                    }}, 6);
+    }
+    
+    public void realizeOrder() {
         int amount = ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex();
         WallType type = (WallType)((SelectBox)screen.getElementById("type_select_box"))
                 .getSelectedListItem().getValue();
@@ -192,30 +228,19 @@ public class Shop extends Menu{
             Vector3f dimensions = new Vector3f(x, 0.2f, z);
             Vector3f tempDimensions = dimensions.clone(); 
             tempDimensions.multLocal(1, amount, 1);
-            Wall tempWall = WallsFactory.createWall(type, location, tempDimensions);
-            tempWall.getControl(RigidBodyControl.class).setCollisionGroup(6);
             for(int i = 0; i < amount; i++) {
-                Wall wall = WallsFactory.createWall(type, location, dimensions);
-                BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
-                        .addCollisionGroupListener(new PhysicsCollisionGroupListener(){
-
-                    @Override
-                    public boolean collide(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
-                        String nameA = ((Spatial)nodeA.getUserObject()).getName(),
-                                nameB = ((Spatial)nodeB.getUserObject()).getName();
-                        if(!nameA.startsWith("terrain") && !nameB.startsWith("terrain") && !found) {
-                            found = true;
-                        }
-                        return true;
-                    }}, 6);
-                if(found)
+                if(!found) {
+//                    System.out.println(found);
+                Wall wall = WallsFactory.createWall(type, l, dimensions);
                 GameManager.addToGame(wall);
-                location.y += 0.4f;
+                l.y += 0.4f; }
             }
         }
-        Control.removeListener(view);
+        Control.removeListener(v);
         FlyByCamera camera = BuildingSimulator.getBuildingSimulator().getFlyByCamera();
         camera.setEnabled(true);
         camera.setDragToRotate(false);
     }
+    
+    public static boolean hasOrder() { return order; }
 }

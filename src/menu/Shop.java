@@ -2,13 +2,16 @@ package menu;
 
 import building.WallType;
 import building.WallsFactory;
+import buildingsimulator.BirdsEyeView;
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.Control;
 import buildingsimulator.GameManager;
 import com.jme3.font.BitmapFont;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.Camera;
 import cranes.crane.Crane;
 import texts.Translator;
 import tonegod.gui.controls.lists.SelectBox;
@@ -58,8 +61,10 @@ public class Shop extends Menu{
      */
     public void buy(MouseButtonEvent evt, boolean isToggled) {
         buyCraneHeight();
-        buyWalls();
-        cancel(null, true);
+        BirdsEyeView.changeViewMode(this);
+//        buyWalls();
+        displayedShop = null; 
+        goNextMenu(screen, null);
     }
     
     /**
@@ -170,16 +175,19 @@ public class Shop extends Menu{
         }
     }
     
-    private void buyWalls() {
+    public void buyWalls(Vector3f location) {
         int amount = ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex();
         WallType type = (WallType)((SelectBox)screen.getElementById("type_select_box"))
                 .getSelectedListItem().getValue();
-        Vector3f dimensions = new Vector3f(((TextField)screen.getElementById("x_text_field"))
-                .parseFloat(), 0.2f, ((TextField)screen.getElementById("z_text_field"))
-                .parseFloat()), location = new Vector3f(0f, 0.3f, 20f);
-        for(int i = 0; i < amount; i++) {
-            GameManager.addToGame(WallsFactory.createWall(type, location, dimensions));
-            location.y += 0.4f;
+        float x = ((TextField)screen.getElementById("x_text_field")).parseFloat(),
+                z = ((TextField)screen.getElementById("z_text_field")).parseFloat();
+        if(x != 0 && z != 0) {
+            Vector3f dimensions = new Vector3f(x, 0.2f, z);
+            for(int i = 0; i < amount; i++) {
+                System.out.println(123);
+                GameManager.addToGame(WallsFactory.createWall(type, location, dimensions));
+                location.y += 0.4f;
+            }
         }
     }
 }

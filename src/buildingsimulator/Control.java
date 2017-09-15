@@ -2,9 +2,11 @@ package buildingsimulator;
 
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
+import com.jme3.input.MouseInput;
 import com.jme3.input.awt.AwtKeyInput;
 import com.jme3.input.controls.InputListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.MouseButtonTrigger;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -42,11 +44,16 @@ public class Control {
         FIRST,
         SECOND,
         PAUSE,
-        SHOW_CURSOR;
+        SHOW_CURSOR,
+        SELECT_WAREHOUSE(MouseInput.BUTTON_LEFT);
         private String key;
         private Actions(){
             key = FilesManager.getValue(toString(), "settings/control.properties");
             inputManager.addMapping(toString(), new KeyTrigger(getJmeKeyCode(key)));
+        }
+        
+        private Actions(int mouseKey) {
+            inputManager.addMapping(toString(), new MouseButtonTrigger(mouseKey));
         }
         
         /**
@@ -138,11 +145,15 @@ public class Control {
                 inputManager.addListener(o, names[i].toString());
             actualListener = o;
         }else{
-            inputManager.addListener(o, Actions.PHYSICS.toString());
-            inputManager.addListener(o, Actions.FIRST.toString());
-            inputManager.addListener(o, Actions.SECOND.toString());
-            inputManager.addListener(o, Actions.PAUSE.toString());
-            inputManager.addListener(o, Actions.SHOW_CURSOR.toString());
+                if(o instanceof BuildingSimulator) {
+                    inputManager.addListener(o, Actions.PHYSICS.toString());
+                    inputManager.addListener(o, Actions.FIRST.toString());
+                    inputManager.addListener(o, Actions.SECOND.toString());
+                    inputManager.addListener(o, Actions.PAUSE.toString());
+                    inputManager.addListener(o, Actions.SHOW_CURSOR.toString());
+                } else {
+                    inputManager.addListener(o, Actions.SELECT_WAREHOUSE.toString());
+                }
         }
     }
     

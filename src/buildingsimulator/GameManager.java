@@ -356,6 +356,7 @@ public class GameManager {
         for(int i = 0; i < 5; i++){
             for(int k = 0; k < end; k++){
                 Spatial scenePart = firstPart.clone(true);
+                scenePart.setName(i+" " +k);
                 scene.attachChild(scenePart);
                 RigidBodyControl rgc = new RigidBodyControl(0.0f);
                 scenePart.addControl(rgc);

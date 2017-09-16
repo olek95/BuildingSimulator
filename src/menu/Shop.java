@@ -38,7 +38,8 @@ public class Shop extends Menu{
     private static Screen screen;
     private static Shop displayedShop = null; 
     private Vector3f warehouseLocation = null;
-    private static DummyCollisionListener listener; 
+    private DummyCollisionListener listener; 
+    private BirdsEyeView view; 
     public Shop(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout("Interface/shop.gui.xml", this);
@@ -70,7 +71,7 @@ public class Shop extends Menu{
      */
     public void buy(MouseButtonEvent evt, boolean isToggled) {
         buyCraneHeight();
-        BirdsEyeView.changeViewMode(this);
+        view = new BirdsEyeView(this); 
 //        buyWalls();
 //        displayedShop = null; 
         goNextMenu(screen, null);
@@ -203,7 +204,7 @@ public class Shop extends Menu{
                 }
             }
         }
-        Control.removeListener(BirdsEyeView.getBirdsEyeView());
+        Control.removeListener(view);
         FlyByCamera camera = BuildingSimulator.getBuildingSimulator().getFlyByCamera();
         camera.setEnabled(true);
         camera.setDragToRotate(false);

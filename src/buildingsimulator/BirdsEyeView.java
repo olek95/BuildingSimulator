@@ -14,14 +14,14 @@ import java.util.List;
 import menu.Shop;
 
 public class BirdsEyeView implements ActionListener{
-    private static BirdsEyeView birdsEyeView = null;
-    private static Shop shop;
-    private BirdsEyeView() {
+    private Shop shop;
+    public BirdsEyeView(Shop shop) {
+        this.shop = shop;
         Control.addListener(this);
+        changeViewMode();
     }
-    public static void changeViewMode(Shop shop) {
-        if(birdsEyeView == null) birdsEyeView = new BirdsEyeView();
-        BirdsEyeView.shop = shop;
+    
+    private void changeViewMode() {
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         Camera cam = game.getCamera();
         Vector3f actualUnitLocation = GameManager.findActualUnit().getArmControl().getCrane()
@@ -51,9 +51,5 @@ public class BirdsEyeView implements ActionListener{
         location = result.getContactPoint().setY(0.3f);
         shop.setWarehouseLocation(location);
         shop.setListener(DummyCollisionListener.createListener());
-    }
-    
-    public static BirdsEyeView getBirdsEyeView() {
-        return birdsEyeView; 
     }
 }

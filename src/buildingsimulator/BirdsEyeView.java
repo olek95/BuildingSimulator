@@ -49,11 +49,11 @@ public class BirdsEyeView implements ActionListener{
             result = results.getCollision(i++);
         }while(!result.getGeometry().getName().startsWith("terrain"));
         location = result.getContactPoint().setY(0.3f);
-        shop.buyWalls(location, this);
+        shop.setWarehouseLocation(location);
+        shop.setListener(DummyCollisionListener.createListener());
     }
     
-    private boolean checkIfCollide() {
-        
-        return false; 
+    public static BirdsEyeView getBirdsEyeView() {
+        return birdsEyeView; 
     }
 }

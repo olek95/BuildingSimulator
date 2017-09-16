@@ -6,6 +6,7 @@ import building.WallsFactory;
 import buildingsimulator.BirdsEyeView;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.Control;
+import buildingsimulator.DummyCollisionListener;
 import buildingsimulator.GameManager;
 import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
@@ -36,10 +37,8 @@ import tonegod.gui.core.Screen;
 public class Shop extends Menu{
     private static Screen screen;
     private static Shop displayedShop = null; 
-    private static boolean order = false; 
-    boolean found = false; 
-    public BirdsEyeView v = null;
-    public Vector3f l = null;
+    private Vector3f warehouseLocation = null;
+    private static DummyCollisionListener listener; 
     public Shop(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout("Interface/shop.gui.xml", this);
@@ -185,39 +184,6 @@ public class Shop extends Menu{
         }
     }
     
-    public void buyWalls(Vector3f location, BirdsEyeView view) {
-        order = true; 
-        l = location; 
-        v = view; 
-        float x = ((TextField)screen.getElementById("x_text_field")).parseFloat(),
-                z = ((TextField)screen.getElementById("z_text_field")).parseFloat();
-        Vector3f dimensions = new Vector3f(x, 0.2f, z);
-            Vector3f tempDimensions = dimensions.clone();
-        WallType type = (WallType)((SelectBox)screen.getElementById("type_select_box"))
-                .getSelectedListItem().getValue();
-            Wall tempWall = WallsFactory.createWall(type, location, tempDimensions);
-            tempWall.getControl(RigidBodyControl.class).setCollisionGroup(6);
-            BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
-                        .addCollisionGroupListener(new PhysicsCollisionGroupListener(){
-
-                    @Override
-                    public boolean collide(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
-                        Spatial a = (Spatial)nodeA.getUserObject(), 
-                                b = (Spatial)nodeB.getUserObject();
-                        String nameA = a.getName(), nameB = b.getName();
-                        if(!nameA.startsWith("terrain") && !(a instanceof Wall) && !found) {
-                            System.out.println(1);
-                            found = true;
-                        } else {
-                            if(!nameB.startsWith("terrain")  && !(b instanceof Wall) && !found) {
-                                System.out.println(2);
-                                found = true;
-                            }
-                        }
-                        return true;
-                    }}, 6);
-    }
-    
     public void realizeOrder() {
         int amount = ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex();
         WallType type = (WallType)((SelectBox)screen.getElementById("type_select_box"))
@@ -229,18 +195,33 @@ public class Shop extends Menu{
             Vector3f tempDimensions = dimensions.clone(); 
             tempDimensions.multLocal(1, amount, 1);
             for(int i = 0; i < amount; i++) {
-                if(!found) {
-//                    System.out.println(found);
-                Wall wall = WallsFactory.createWall(type, l, dimensions);
-                GameManager.addToGame(wall);
-                l.y += 0.4f; }
+                if(!listener.isCollision()) {
+                    Wall wall = WallsFactory.createWall(type, warehouseLocation,
+                            dimensions);
+                    GameManager.addToGame(wall);
+                    warehouseLocation.y += 0.4f; 
+                }
             }
         }
-        Control.removeListener(v);
+        Control.removeListener(BirdsEyeView.getBirdsEyeView());
         FlyByCamera camera = BuildingSimulator.getBuildingSimulator().getFlyByCamera();
         camera.setEnabled(true);
         camera.setDragToRotate(false);
+        displayedShop = null; 
+        BuildingSimulator.getBuildingSimulator().getBulletAppState()
+                .getPhysicsSpace().removeCollisionGroupListener(6);
     }
     
-    public static boolean hasOrder() { return order; }
+    public void setListener(DummyCollisionListener listener) {
+        this.listener = listener; 
+        listener.createDummyWall(this, warehouseLocation);
+    }
+    
+    public DummyCollisionListener getListener() { return listener; }
+    
+    public void setWarehouseLocation(Vector3f location) { 
+        warehouseLocation = location; 
+    }
+    
+    public Screen getScreen() { return screen; }
 }

@@ -88,7 +88,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             Shop shop = Shop.getDisplayedShop(); 
             if(shop != null) {
                 DummyCollisionListener shopListener = shop.getListener();
-                if(shopListener != null && shopListener.isEnd())
+                if(shopListener != null && shopListener.isEnd() 
+                        && !shopListener.isCollision())
                     Shop.getDisplayedShop().realizeOrder(); 
             }
         }

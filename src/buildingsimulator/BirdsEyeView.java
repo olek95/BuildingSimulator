@@ -47,7 +47,7 @@ public class BirdsEyeView implements ActionListener{
             }while(!result.getGeometry().getName().startsWith("terrain"));
             Vector3f location = result.getContactPoint().setY(0.3f);
             shop.setWarehouseLocation(location);
-            shop.setListener(DummyCollisionListener.createListener());
+            shop.setListener(new DummyCollisionListener());
         }
     }
     

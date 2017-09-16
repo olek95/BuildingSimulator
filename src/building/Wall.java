@@ -21,7 +21,6 @@ import net.wcomohundro.jme3.csg.CSGGeometry;
 import net.wcomohundro.jme3.csg.CSGShape;
 import building.CatchNode.*;
 import com.jme3.asset.AssetManager;
-import com.jme3.material.MatParam;
 import java.util.ArrayList;
 
 /**
@@ -40,7 +39,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private int actualMode;
     private List<Spatial> hitObjects = new ArrayList();
     private boolean stale = false; 
-    @SuppressWarnings("LeakingThisInConstructor")
+    
     public Wall(CSGShape shape, Vector3f location, CSGShape... differenceShapes){
         BoundingBox bounding = (BoundingBox)shape.getWorldBound();
         width = bounding.getYExtent(); 

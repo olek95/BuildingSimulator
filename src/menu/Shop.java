@@ -132,6 +132,7 @@ public class Shop extends Menu{
      * wyłącza tryb widoku z lotu ptaka. 
      */
     public void realizeOrder() {
+        listener.deleteDummyWallControl();
         int amount = ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex();
         WallType type = (WallType)((SelectBox)screen.getElementById("type_select_box"))
                 .getSelectedListItem().getValue();
@@ -142,12 +143,10 @@ public class Shop extends Menu{
             Vector3f tempDimensions = dimensions.clone(); 
             tempDimensions.multLocal(1, amount, 1);
             for(int i = 0; i < amount; i++) {
-                if(!listener.isCollision()) {
-                    Wall wall = WallsFactory.createWall(type, warehouseLocation,
-                            dimensions);
-                    GameManager.addToGame(wall);
-                    warehouseLocation.y += 0.4f; 
-                }
+                Wall wall = WallsFactory.createWall(type, warehouseLocation,
+                        dimensions);
+                GameManager.addToGame(wall);
+                warehouseLocation.y += 0.4f; 
             }
         }
         Control.removeListener(view);
@@ -165,7 +164,9 @@ public class Shop extends Menu{
      */
     public void setListener(DummyCollisionListener listener) {
         this.listener = listener; 
-        listener.createDummyWall(this, warehouseLocation);
+        listener.createDummyWall(warehouseLocation, new Vector3f(((TextField)screen
+                .getElementById("x_text_field")).parseFloat(), 0.2f, 
+                ((TextField)screen.getElementById("z_text_field")).parseFloat()));
     }
     
     /**

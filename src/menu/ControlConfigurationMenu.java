@@ -84,7 +84,8 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
     @Override
     protected void addRows(){
         Control.Actions[] actions = Control.Actions.values();
-        for(int i = 0; i < actions.length; i++){
+        // -1 bo ostatni klawisz (lewy przycisk myszy) nie da się zmienic
+        for(int i = 0; i < actions.length - 1; i++){ 
             String key = actions[i].getKey(), actionName = actions[i].getValue();
             addRow(actionName, actions[i], key); 
             restoredSettings.put(actionName, key);

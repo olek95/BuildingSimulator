@@ -1,16 +1,14 @@
 package buildingsimulator;
 
-import building.Wall;
-import building.WallType;
-import building.WallsFactory;
 import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import menu.Shop;
-import tonegod.gui.controls.text.TextField;
-import tonegod.gui.core.Screen;
+import com.jme3.scene.shape.Box;
+import com.jme3.scene.control.Control;
 
 /**
  * Obiekt klasy <code>DummyCollisionListener</code> reprezentuje słuchacza 
@@ -19,24 +17,9 @@ import tonegod.gui.core.Screen;
  * @author AleksanderSklorz
  */
 public class DummyCollisionListener implements PhysicsCollisionGroupListener {
-    private Spatial first, collisionOwner;
-    private boolean end, collision; 
-    private static DummyCollisionListener listener; 
-    public DummyCollisionListener(){
-        first = null;
-        collisionOwner = null;
-        end = false; 
-        collision = false; 
-    }
-    
-    /**
-     * Tworzy słuchacza. 
-     * @return słuchacz 
-     */
-    public static DummyCollisionListener createListener() {
-        if(listener == null) listener = new DummyCollisionListener(); 
-        return listener; 
-    }
+    private Spatial first = null;
+    private Node collisionOwner = null; 
+    private boolean end = false, collision = false; 
     
     /**
      * Sprawdza kolizje poprzez sprawdzanie kolizji z sztucznym obiektem. 
@@ -47,7 +30,7 @@ public class DummyCollisionListener implements PhysicsCollisionGroupListener {
     @Override
     public boolean collide(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB){
         Spatial a = (Spatial)nodeA.getUserObject(), b = (Spatial)nodeB.getUserObject();
-        String nameA = a.getName(), nameB = b.getName();
+        String nameA = a.getName();
         if(first == null) {
             if(a.equals(collisionOwner)) first = b; 
             else first = a; 
@@ -56,11 +39,11 @@ public class DummyCollisionListener implements PhysicsCollisionGroupListener {
                 end = true; 
             }
         }
-        if(!nameA.startsWith("terrain") && !(a instanceof Wall) && !collision) {
-            collision = true;
-        } else {
-            if(!nameB.startsWith("terrain")  && !(b instanceof Wall) && !collision) {
-                collision = true;
+        if(!collision) {
+            if(nameA.equals("DummyWall")) {
+                if(!b.getName().startsWith("terrain")) collision = true;
+            } else {
+                if(!nameA.startsWith("terrain")) collision = true;
             }
         }
         return true;
@@ -71,18 +54,27 @@ public class DummyCollisionListener implements PhysicsCollisionGroupListener {
      * @param shop właściciel słuchacza 
      * @param location położenie sztucznego obiektu 
      */
-    public void createDummyWall(Shop shop, Vector3f location) {
-        Screen screen = shop.getScreen(); 
-        float x = ((TextField)screen.getElementById("x_text_field")).parseFloat(),
-                z = ((TextField)screen.getElementById("z_text_field")).parseFloat();
-        Vector3f dimensions = new Vector3f(x, 0.2f, z);
-        Vector3f tempDimensions = dimensions.clone();
-        tempDimensions.multLocal(1, 10, 1);
-        collisionOwner = WallsFactory.createWall(WallType.WALL, location,
-                tempDimensions);
-        collisionOwner.getControl(RigidBodyControl.class).setCollisionGroup(6);
+    public void createDummyWall(Vector3f location, Vector3f dimensions) {
+        dimensions.multLocal(1, 10, 1);
+        collisionOwner = new Node("DummyWall");
+        collisionOwner.attachChild(new Geometry("DummyWall", new Box(dimensions.x, 
+                dimensions.y, dimensions.z)));
+        GameManager.createObjectPhysics(collisionOwner, 0.00001f, false, "DummyWall");
+        RigidBodyControl control = collisionOwner.getControl(RigidBodyControl.class);
+        control.setPhysicsLocation(location);
+        control.setCollisionGroup(6);
         BuildingSimulator.getBuildingSimulator().getBulletAppState()
-                .getPhysicsSpace().addCollisionGroupListener(listener, 6);
+                .getPhysicsSpace().addCollisionGroupListener(this, 6);
+    }
+    
+    /**
+     * Usuwa fizyczną postać sztucznej ściany. 
+     */
+    public void deleteDummyWallControl() {
+        Control control = collisionOwner.getControl(0);
+        collisionOwner.removeControl(control);
+        BuildingSimulator.getBuildingSimulator().getBulletAppState()
+                .getPhysicsSpace().remove(control);
     }
     
     /**

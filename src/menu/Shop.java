@@ -8,17 +8,11 @@ import buildingsimulator.BuildingSimulator;
 import buildingsimulator.Control;
 import buildingsimulator.DummyCollisionListener;
 import buildingsimulator.GameManager;
-import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
-import com.jme3.bullet.collision.PhysicsCollisionObject;
-import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.font.BitmapFont;
 import com.jme3.input.FlyByCamera;
-import com.jme3.input.event.KeyInputEvent;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.Camera;
-import com.jme3.scene.Spatial;
 import cranes.crane.Crane;
 import texts.Translator;
 import tonegod.gui.controls.lists.SelectBox;
@@ -47,33 +41,34 @@ public class Shop extends Menu{
         window.setWindowTitle(Translator.SHOP.getValue());
         window.getDragBar().setTextAlign(BitmapFont.Align.Center);
         Translator.setTexts(new String[]{"buying_button", "cancellation_button",
-            "type_label", "amount_label", "dimensions_label", "cost_label", "change_page_button", 
-            "height_change_label", "actual_height_label", "new_height_label"},
-                new Translator[]{Translator.BUYING, Translator.CANCELLATION, Translator.TYPE,
-                    Translator.AMOUNT, Translator.DIMENSIONS, Translator.COST, Translator.NEXT, 
-                    Translator.HEIGHT_CHANGE, Translator.ACTUAL_HEIGHT, Translator.NEW_HEIGHT}, screen);
+            "type_label", "amount_label", "dimensions_label", "cost_label",
+            "change_page_button", "height_change_label", "actual_height_label",
+            "new_height_label"}, new Translator[]{Translator.BUYING, 
+                Translator.CANCELLATION, Translator.TYPE, Translator.AMOUNT,
+                Translator.DIMENSIONS, Translator.COST, Translator.NEXT, 
+                Translator.HEIGHT_CHANGE, Translator.ACTUAL_HEIGHT, Translator.NEW_HEIGHT}, screen);
         fillTypeSelectBox();
         createTextField("x_text_field", 0.35f, 0.55f);
         createTextField("z_text_field", 0.35f, 0.65f);
         screen.getElementById("vehicles_panel").hide();
         int craneHeight = ((Crane)GameManager.getUnit(1)).getHeightLevel();
         screen.getElementById("actual_height_value").setText(craneHeight + "");
-        ((Spinner)screen.getElementById("crane_height_spinner")).setSelectedIndex(craneHeight);
+        ((Spinner)screen.getElementById("crane_height_spinner"))
+                .setSelectedIndex(craneHeight);
         setCost();
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
         displayedShop = this; 
     }
     
     /**
-     * Kupuje wybrane elementy. 
+     * Kupuje wybrane elementy. Zamyka automatycznie okno sklepu i włącza tryb 
+     * widoku z lotu ptaka. 
      * @param evt
      * @param isToggled 
      */
     public void buy(MouseButtonEvent evt, boolean isToggled) {
         buyCraneHeight();
         view = new BirdsEyeView(this); 
-//        buyWalls();
-//        displayedShop = null; 
         goNextMenu(screen, null);
     }
     
@@ -107,10 +102,20 @@ public class Shop extends Menu{
         }
     }
     
+    /**
+     * Rozpoczyna obliczanie kosztów zakupów. 
+     * @param selectedIndex
+     * @param value 
+     */
     public void beginCalculateCost(int selectedIndex, Object value) {
         setCost(); 
     }
     
+    /**
+     * Ustawia aktualną cenę za zakupy w odpowiedniej etykiecie. Jeśli podano 
+     * błędne dane to wyświetlony jest stosowny komunikat oraz blokowany jest 
+     * przycisk zakupów. 
+     */
     public static void setCost() {
         int cost = calculateCost(); 
         if(cost == -1) {
@@ -121,6 +126,68 @@ public class Shop extends Menu{
             screen.getElementById("buying_button").setIsEnabled(true);
         }
     }
+    
+    /**
+     * Realizuje zamówienie. Układa zakupione elementy w wybranym miejscu a następnie
+     * wyłącza tryb widoku z lotu ptaka. 
+     */
+    public void realizeOrder() {
+        int amount = ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex();
+        WallType type = (WallType)((SelectBox)screen.getElementById("type_select_box"))
+                .getSelectedListItem().getValue();
+        float x = ((TextField)screen.getElementById("x_text_field")).parseFloat(),
+                z = ((TextField)screen.getElementById("z_text_field")).parseFloat();
+        if(x != 0 && z != 0) {
+            Vector3f dimensions = new Vector3f(x, 0.2f, z);
+            Vector3f tempDimensions = dimensions.clone(); 
+            tempDimensions.multLocal(1, amount, 1);
+            for(int i = 0; i < amount; i++) {
+                if(!listener.isCollision()) {
+                    Wall wall = WallsFactory.createWall(type, warehouseLocation,
+                            dimensions);
+                    GameManager.addToGame(wall);
+                    warehouseLocation.y += 0.4f; 
+                }
+            }
+        }
+        Control.removeListener(view);
+        FlyByCamera camera = BuildingSimulator.getBuildingSimulator().getFlyByCamera();
+        camera.setEnabled(true);
+        camera.setDragToRotate(false);
+        displayedShop = null; 
+        BuildingSimulator.getBuildingSimulator().getBulletAppState()
+                .getPhysicsSpace().removeCollisionGroupListener(6);
+    }
+    
+    /**
+     * Ustawia aktualnego słuchacza sprawdzającego kolizje dla układanych elementów.
+     * @param listener słuchacz sprawdzający kolizje dla układanych elementów 
+     */
+    public void setListener(DummyCollisionListener listener) {
+        this.listener = listener; 
+        listener.createDummyWall(this, warehouseLocation);
+    }
+    
+    /**
+     * Zwraca aktualnego słuchacza sprawdzającego kolizje dla układanych elementów.
+     * @return słuchacz sprawdzający kolizje dla układanych elementów 
+     */
+    public DummyCollisionListener getListener() { return listener; }
+    
+    /**
+     * Ustawia miejsce układania elementów (położenie "magazynu").
+     * @param location miejsce układania elementów 
+     */
+    public void setWarehouseLocation(Vector3f location) { 
+        warehouseLocation = location; 
+    }
+    
+    /**
+     * Zwraca ekran sklepu. 
+     * @return ekran 
+     */
+    public Screen getScreen() { return screen; }
+    
     /**
      * Zwraca aktualnie wyświetlany obiekt sklepu. 
      * @return aktualny obiekt sklepu 
@@ -184,45 +251,4 @@ public class Shop extends Menu{
             setCost();
         }
     }
-    
-    public void realizeOrder() {
-        int amount = ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex();
-        WallType type = (WallType)((SelectBox)screen.getElementById("type_select_box"))
-                .getSelectedListItem().getValue();
-        float x = ((TextField)screen.getElementById("x_text_field")).parseFloat(),
-                z = ((TextField)screen.getElementById("z_text_field")).parseFloat();
-        if(x != 0 && z != 0) {
-            Vector3f dimensions = new Vector3f(x, 0.2f, z);
-            Vector3f tempDimensions = dimensions.clone(); 
-            tempDimensions.multLocal(1, amount, 1);
-            for(int i = 0; i < amount; i++) {
-                if(!listener.isCollision()) {
-                    Wall wall = WallsFactory.createWall(type, warehouseLocation,
-                            dimensions);
-                    GameManager.addToGame(wall);
-                    warehouseLocation.y += 0.4f; 
-                }
-            }
-        }
-        Control.removeListener(view);
-        FlyByCamera camera = BuildingSimulator.getBuildingSimulator().getFlyByCamera();
-        camera.setEnabled(true);
-        camera.setDragToRotate(false);
-        displayedShop = null; 
-        BuildingSimulator.getBuildingSimulator().getBulletAppState()
-                .getPhysicsSpace().removeCollisionGroupListener(6);
-    }
-    
-    public void setListener(DummyCollisionListener listener) {
-        this.listener = listener; 
-        listener.createDummyWall(this, warehouseLocation);
-    }
-    
-    public DummyCollisionListener getListener() { return listener; }
-    
-    public void setWarehouseLocation(Vector3f location) { 
-        warehouseLocation = location; 
-    }
-    
-    public Screen getScreen() { return screen; }
 }

@@ -16,9 +16,9 @@ import menu.HUD;
  * @author Aleksander Sklorz
  */
 public class BirdsEyeView implements ActionListener{
-    private VisibleFromAbove viewOwner;
+    private static VisibleFromAbove viewOwner;
     public BirdsEyeView(VisibleFromAbove viewOwner) {
-        this.viewOwner = viewOwner;
+        BirdsEyeView.viewOwner = viewOwner;
         Control.addListener(this);
         changeViewMode();
     }
@@ -62,6 +62,11 @@ public class BirdsEyeView implements ActionListener{
         camera.setDragToRotate(false);
         Control.addListener(Control.getActualListener());
         HUD.changeShopButtonVisibility(true);
+        viewOwner = null;
+    }
+    
+    public static boolean isActive() {
+        return viewOwner != null; 
     }
     
     private void changeViewMode() {

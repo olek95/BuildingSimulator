@@ -46,7 +46,7 @@ public class DummyCollisionListener implements PhysicsCollisionGroupListener {
                 if(!nameA.startsWith("terrain")) collision = true;
             }
         }
-        return true;
+        return false;
     }
     
     /**

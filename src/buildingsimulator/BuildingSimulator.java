@@ -130,8 +130,9 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     break;
                 case MOVE_CRANE:
                     BirdsEyeView view = crane.getView();
-                    if(view == null) crane.startMoving();  
-                    else crane.removeView();
+                    if(view == null) {
+                        if(!BirdsEyeView.isActive()) crane.startMoving();
+                    }else crane.removeView();
                     break;
                 case PHYSICS:
                     if(!debug) bulletAppState.getPhysicsSpace().enableDebug(assetManager);
@@ -139,6 +140,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     debug = !debug;
                     break; 
                 case FIRST:
+                    if(BirdsEyeView.isActive()) break;
                     inputManager.removeListener(crane.getArmControl());
                     crane.setUsing(false);
                     Control.addListener(((MobileCraneArmControl)mobileCrane
@@ -147,6 +149,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     mobileCrane.setUsing(true);
                     break;
                 case SECOND:
+                    if(BirdsEyeView.isActive()) break;
                     if(((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing()){
                         inputManager.removeListener(mobileCrane.getArmControl());
                     }else{
@@ -159,7 +162,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             }
         } else {
             if(name.equals(Control.Actions.SHOW_CURSOR.toString()) 
-                    && Shop.getDisplayedShop() == null){
+                    && Shop.getDisplayedShop() == null && !BirdsEyeView.isActive()){
                 flyCam.setDragToRotate(false);
             }
         }

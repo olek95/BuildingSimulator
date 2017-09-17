@@ -78,9 +78,13 @@ public class GameManager {
      * Kontynuuje grę od stanu z przed zatrzymania. 
      */
     public static void continueGame() {
-        BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(false);
         addHUD();
-        Control.addListener(Control.getActualListener());
+        if(!BirdsEyeView.isActive()) {
+            BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(false);
+            Control.addListener(Control.getActualListener());
+        } else {
+            HUD.changeShopButtonVisibility(false);
+        }
         startedGame = true;
         pausedGame = false; 
     }

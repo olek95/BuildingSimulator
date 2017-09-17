@@ -55,7 +55,6 @@ public class DummyCollisionListener implements PhysicsCollisionGroupListener {
      * @param location położenie sztucznego obiektu 
      */
     public void createDummyWall(Vector3f location, Vector3f dimensions) {
-        dimensions.multLocal(1, 10, 1);
         collisionOwner = new Node("DummyWall");
         collisionOwner.attachChild(new Geometry("DummyWall", new Box(dimensions.x, 
                 dimensions.y, dimensions.z)));

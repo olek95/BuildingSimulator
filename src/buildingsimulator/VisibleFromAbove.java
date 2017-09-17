@@ -19,4 +19,10 @@ public interface VisibleFromAbove {
      * @param listener słuchacz sprawdzający kolizje dla układanych elementów 
      */
     public void setListener(DummyCollisionListener listener);
+    
+    /**
+     * Zwraca aktualnego słuchacza sprawdzającego kolizje dla układanych elementów.
+     * @return słuchacz sprawdzający kolizje dla układanych elementów 
+     */
+    public DummyCollisionListener getListener();
 }

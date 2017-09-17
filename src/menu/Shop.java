@@ -165,13 +165,11 @@ public class Shop extends Menu implements VisibleFromAbove{
         this.listener = listener; 
         listener.createDummyWall(dischargingLocation, new Vector3f(((TextField)screen
                 .getElementById("x_text_field")).parseFloat(), 0.2f, 
-                ((TextField)screen.getElementById("z_text_field")).parseFloat()));
+                ((TextField)screen.getElementById("z_text_field")).parseFloat())
+                .multLocal(1, 10, 1));
     }
     
-    /**
-     * Zwraca aktualnego słuchacza sprawdzającego kolizje dla układanych elementów.
-     * @return słuchacz sprawdzający kolizje dla układanych elementów 
-     */
+    @Override
     public DummyCollisionListener getListener() { return listener; }
     
     @Override

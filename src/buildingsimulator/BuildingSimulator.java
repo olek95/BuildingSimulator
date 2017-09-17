@@ -85,12 +85,18 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     }
                 }
             }
-            Shop shop = Shop.getDisplayedShop(); 
-            if(shop != null) {
-                DummyCollisionListener shopListener = shop.getListener();
-                if(shopListener != null && shopListener.isEnd() 
-                        && !shopListener.isCollision())
-                    Shop.getDisplayedShop().realizeOrder(); 
+//            Shop shop = Shop.getDisplayedShop(); 
+//            if(shop != null) {
+//                DummyCollisionListener shopListener = shop.getListener();
+//                if(shopListener != null && shopListener.isEnd() 
+//                        && !shopListener.isCollision())
+//                    Shop.getDisplayedShop().realizeOrder(); 
+//            }
+            Crane crane = (Crane)GameManager.getUnit(1);
+            DummyCollisionListener craneListener = crane.getListener();
+            if(craneListener != null && craneListener.isEnd() 
+                    && !craneListener.isCollision()) {
+                crane.move(); 
             }
         }
     }

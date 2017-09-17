@@ -57,6 +57,6 @@ public class BirdsEyeView implements ActionListener{
                 .getWorldTranslation();
         cam.setLocation(actualUnitLocation.add(0, 100, 0));
         cam.lookAt(actualUnitLocation, Vector3f.UNIT_Z);
-        game.getFlyByCamera().setEnabled(false);
+//        game.getFlyByCamera().setEnabled(false);
     }
 }

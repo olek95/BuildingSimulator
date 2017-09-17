@@ -116,8 +116,24 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
      public void setListener(DummyCollisionListener listener) {
          this.listener = listener; 
          BoundingBox bounding = (BoundingBox)crane.getChild("prop0").getWorldBound();
-         listener.createDummyWall(newLocation, bounding.getExtent(null).mult(2));
+         listener.createDummyWall(newLocation, bounding.getExtent(null));
      }
+    
+    @Override
+    public DummyCollisionListener getListener() { return listener; }
+    
+    public void move() {
+        System.out.println(123); 
+        craneLocation = newLocation; 
+        crane.setLocalTranslation(craneLocation);
+        List<Spatial> craneElements = crane.getChildren(); 
+        int elementsCount = craneElements.size();
+        for(int i = 0; i < elementsCount; i++) {
+            Spatial element = craneElements.get(i); 
+            if(element.getName().matches("(rack|prop|entrancePlatform).*")) 
+                setProperControlLocation(element, craneLocation);
+        }
+    }
      
     /**
      * Zwraca poziom wysokości żurawia. 

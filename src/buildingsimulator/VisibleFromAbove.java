@@ -25,4 +25,10 @@ public interface VisibleFromAbove {
      * @return słuchacz sprawdzający kolizje dla układanych elementów 
      */
     public DummyCollisionListener getListener();
+    
+    /**
+     * Ustawia dany element w wybranym miejscu. Następnie wyłącza tryb widoku z
+     * lotu ptaka. 
+     */
+    public void unload();
 }

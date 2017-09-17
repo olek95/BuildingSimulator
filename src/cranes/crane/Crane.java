@@ -2,11 +2,13 @@ package cranes.crane;
 
 import buildingsimulator.BirdsEyeView;
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.Control;
 import buildingsimulator.DummyCollisionListener;
 import buildingsimulator.VisibleFromAbove;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.input.FlyByCamera;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -108,6 +110,24 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
     }
     
     @Override
+    public void unload() {
+        listener.deleteDummyWallControl();
+        listener = null;
+        craneLocation = newLocation; 
+        crane.setLocalTranslation(craneLocation);
+        List<Spatial> craneElements = crane.getChildren(); 
+        int elementsCount = craneElements.size();
+        for(int i = 0; i < elementsCount; i++) {
+            Spatial element = craneElements.get(i); 
+            if(element.getName().matches("(rack|prop|entrancePlatform).*")) 
+                setProperControlLocation(element, craneLocation);
+        }
+        view.setOff();
+        BuildingSimulator.getBuildingSimulator().getBulletAppState()
+                .getPhysicsSpace().removeCollisionGroupListener(6);
+    }
+    
+    @Override
      public void setDischargingLocation(Vector3f location) {
          newLocation = location; 
      }
@@ -121,19 +141,6 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
     
     @Override
     public DummyCollisionListener getListener() { return listener; }
-    
-    public void move() {
-        System.out.println(123); 
-        craneLocation = newLocation; 
-        crane.setLocalTranslation(craneLocation);
-        List<Spatial> craneElements = crane.getChildren(); 
-        int elementsCount = craneElements.size();
-        for(int i = 0; i < elementsCount; i++) {
-            Spatial element = craneElements.get(i); 
-            if(element.getName().matches("(rack|prop|entrancePlatform).*")) 
-                setProperControlLocation(element, craneLocation);
-        }
-    }
      
     /**
      * Zwraca poziom wysokości żurawia. 

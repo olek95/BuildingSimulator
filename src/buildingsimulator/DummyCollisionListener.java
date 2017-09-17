@@ -64,12 +64,14 @@ public class DummyCollisionListener implements PhysicsCollisionGroupListener {
         control.setCollisionGroup(6);
         BuildingSimulator.getBuildingSimulator().getBulletAppState()
                 .getPhysicsSpace().addCollisionGroupListener(this, 6);
+        System.out.println(111);
     }
     
     /**
      * Usuwa fizyczną postać sztucznej ściany. 
      */
     public void deleteDummyWallControl() {
+        System.out.println(collisionOwner.getControl(RigidBodyControl.class));
         Control control = collisionOwner.getControl(0);
         collisionOwner.removeControl(control);
         BuildingSimulator.getBuildingSimulator().getBulletAppState()

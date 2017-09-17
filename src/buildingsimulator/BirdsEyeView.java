@@ -2,6 +2,7 @@ package buildingsimulator;
 
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
+import com.jme3.input.FlyByCamera;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
@@ -50,6 +51,13 @@ public class BirdsEyeView implements ActionListener{
         }
     }
     
+    public void setOff() {
+        Control.removeListener(this);
+        FlyByCamera camera = BuildingSimulator.getBuildingSimulator().getFlyByCamera();
+        camera.setEnabled(true);
+        camera.setDragToRotate(false);
+    }
+    
     private void changeViewMode() {
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         Camera cam = game.getCamera();
@@ -57,6 +65,6 @@ public class BirdsEyeView implements ActionListener{
                 .getWorldTranslation();
         cam.setLocation(actualUnitLocation.add(0, 100, 0));
         cam.lookAt(actualUnitLocation, Vector3f.UNIT_Z);
-//        game.getFlyByCamera().setEnabled(false);
+        game.getFlyByCamera().setEnabled(false);
     }
 }

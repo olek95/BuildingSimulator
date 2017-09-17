@@ -128,11 +128,8 @@ public class Shop extends Menu implements VisibleFromAbove{
         }
     }
     
-    /**
-     * Realizuje zamówienie. Układa zakupione elementy w wybranym miejscu a następnie
-     * wyłącza tryb widoku z lotu ptaka. 
-     */
-    public void realizeOrder() {
+    @Override
+    public void unload() {
         listener.deleteDummyWallControl();
         int amount = ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex();
         WallType type = (WallType)((SelectBox)screen.getElementById("type_select_box"))
@@ -150,10 +147,7 @@ public class Shop extends Menu implements VisibleFromAbove{
                 dischargingLocation.y += 0.4f; 
             }
         }
-        Control.removeListener(view);
-        FlyByCamera camera = BuildingSimulator.getBuildingSimulator().getFlyByCamera();
-        camera.setEnabled(true);
-        camera.setDragToRotate(false);
+        view.setOff();
         displayedShop = null; 
         BuildingSimulator.getBuildingSimulator().getBulletAppState()
                 .getPhysicsSpace().removeCollisionGroupListener(6);

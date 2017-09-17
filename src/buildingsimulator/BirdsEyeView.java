@@ -8,6 +8,7 @@ import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import menu.HUD;
 
 /**
  * Obiekt klasy <code>BirdsEyeView</code> reprezentuje widok z lotu ptaka (widok 
@@ -51,11 +52,16 @@ public class BirdsEyeView implements ActionListener{
         }
     }
     
+    /**
+     * Wyłącza tryb widoku z lotu ptaka. 
+     */
     public void setOff() {
         Control.removeListener(this);
         FlyByCamera camera = BuildingSimulator.getBuildingSimulator().getFlyByCamera();
         camera.setEnabled(true);
         camera.setDragToRotate(false);
+        Control.addListener(Control.getActualListener());
+        HUD.changeShopButtonVisibility(true);
     }
     
     private void changeViewMode() {
@@ -66,5 +72,7 @@ public class BirdsEyeView implements ActionListener{
         cam.setLocation(actualUnitLocation.add(0, 100, 0));
         cam.lookAt(actualUnitLocation, Vector3f.UNIT_Z);
         game.getFlyByCamera().setEnabled(false);
+        Control.removeListener(Control.getActualListener());
+        HUD.changeShopButtonVisibility(false);
     }
 }

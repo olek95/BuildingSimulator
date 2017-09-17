@@ -51,6 +51,14 @@ public class HUD extends AbstractAppState{
     }
     
     /**
+     * Zmienia widoczność przycisku sklepu. 
+     * @param visible true jeśli przycisk ma być widoczny, false w przeciwnym przypadku 
+     */
+    public static void changeShopButtonVisibility(boolean visible) {
+        screen.getElementById("shop_button").setIsVisible(visible);
+    }
+    
+    /**
      * Zwraca ekran z HUDem.
      * @return ekran 
      */

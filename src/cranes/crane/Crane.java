@@ -2,19 +2,16 @@ package cranes.crane;
 
 import buildingsimulator.BirdsEyeView;
 import buildingsimulator.BuildingSimulator;
-import buildingsimulator.Control;
 import buildingsimulator.DummyCollisionListener;
 import buildingsimulator.VisibleFromAbove;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.input.FlyByCamera;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import cranes.CraneAbstract;
 import java.util.List;
-import tonegod.gui.controls.text.TextField;
 
 /**
  * Obiekt klasy <code>Crane</code> reprezentuje żuraw. 
@@ -122,7 +119,7 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
             if(element.getName().matches("(rack|prop|entrancePlatform).*")) 
                 setProperControlLocation(element, craneLocation);
         }
-        view.setOff();
+        removeView(); 
         BuildingSimulator.getBuildingSimulator().getBulletAppState()
                 .getPhysicsSpace().removeCollisionGroupListener(6);
     }
@@ -141,6 +138,20 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
     
     @Override
     public DummyCollisionListener getListener() { return listener; }
+    
+    /**
+     * Zwraca widok z lotu ptaka. 
+     * @return widok z lotu ptaka 
+     */
+    public BirdsEyeView getView() { return view; }
+    
+    /**
+     * Usuwa widok z lotu ptaka. 
+     */
+    public void removeView() { 
+        view.setOff();
+        this.view = null; 
+    }
      
     /**
      * Zwraca poziom wysokości żurawia. 

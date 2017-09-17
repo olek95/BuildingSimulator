@@ -116,49 +116,50 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     }
     public void onAction(String name, boolean isPressed, float tpf){
         MobileCrane mobileCrane = (MobileCrane)GameManager.getUnit(0);
-        CraneAbstract crane = GameManager.getUnit(1);
-        if(isPressed){
-            if(name.equals(Control.Actions.PAUSE.toString())){
-                Shop shop = Shop.getDisplayedShop();
-                if(shop != null) shop.cancel(null, true);
-                GameManager.pauseGame();
-                GameManager.removeHUD(); 
-            }else{
-                if(name.equals(Control.Actions.SHOW_CURSOR.toString())){
+        Crane crane = (Crane)GameManager.getUnit(1);
+        if(isPressed) {
+            switch(Control.Actions.valueOf(name)) {
+                case PAUSE:
+                    Shop shop = Shop.getDisplayedShop();
+                    if(shop != null) shop.cancel(null, true);
+                    GameManager.pauseGame();
+                    GameManager.removeHUD();
+                    break;
+                case SHOW_CURSOR:
                     flyCam.setDragToRotate(true);
-                }else{
-                    if(name.equals(Control.Actions.MOVE_CRANE.toString())) {
-                        ((Crane)crane).startMoving();  
-                    }else {
-                        if(name.equals(Control.Actions.PHYSICS.toString())){
-                            if(!debug) bulletAppState.getPhysicsSpace().enableDebug(assetManager);
-                            else bulletAppState.getPhysicsSpace().disableDebug();
-                            debug = !debug;
-                        }else{
-                            if(name.equals(Control.Actions.FIRST.toString())){
-                                inputManager.removeListener(crane.getArmControl());
-                                crane.setUsing(false);
-                                Control.addListener(((MobileCraneArmControl)mobileCrane
-                                        .getArmControl()).isUsing() ? mobileCrane.getArmControl()
-                                        : mobileCrane);
-                                mobileCrane.setUsing(true);
-                            }else{
-                                if(((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing()){
-                                    inputManager.removeListener(mobileCrane.getArmControl());
-                                }else{
-                                    mobileCrane.setSteeringAngle(0f);
-                                    inputManager.removeListener(mobileCrane);
-                                }
-                                mobileCrane.setUsing(false);
-                                Control.addListener(crane.getArmControl());
-                                crane.setUsing(true);
-                            }
-                        }
+                    break;
+                case MOVE_CRANE:
+                    BirdsEyeView view = crane.getView();
+                    if(view == null) crane.startMoving();  
+                    else crane.removeView();
+                    break;
+                case PHYSICS:
+                    if(!debug) bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+                    else bulletAppState.getPhysicsSpace().disableDebug();
+                    debug = !debug;
+                    break; 
+                case FIRST:
+                    inputManager.removeListener(crane.getArmControl());
+                    crane.setUsing(false);
+                    Control.addListener(((MobileCraneArmControl)mobileCrane
+                            .getArmControl()).isUsing() ? mobileCrane.getArmControl()
+                            : mobileCrane);
+                    mobileCrane.setUsing(true);
+                    break;
+                case SECOND:
+                    if(((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing()){
+                        inputManager.removeListener(mobileCrane.getArmControl());
+                    }else{
+                        mobileCrane.setSteeringAngle(0f);
+                        inputManager.removeListener(mobileCrane);
                     }
-                }
+                    mobileCrane.setUsing(false);
+                    Control.addListener(crane.getArmControl());
+                    crane.setUsing(true);
             }
         } else {
-            if(name.equals(Control.Actions.SHOW_CURSOR.toString()) && Shop.getDisplayedShop() == null){
+            if(name.equals(Control.Actions.SHOW_CURSOR.toString()) 
+                    && Shop.getDisplayedShop() == null){
                 flyCam.setDragToRotate(false);
             }
         }

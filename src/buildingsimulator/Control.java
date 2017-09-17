@@ -45,6 +45,7 @@ public class Control {
         SECOND,
         PAUSE,
         SHOW_CURSOR,
+        MOVE_CRANE,
         SELECT_WAREHOUSE(MouseInput.BUTTON_LEFT);
         private String key;
         private Actions(){
@@ -107,7 +108,7 @@ public class Control {
         public static void saveSettings(String[] keys){
             try(PrintWriter output = new PrintWriter(new FileWriter("settings/control.properties"))){
                 Actions[] values = values();
-                for(int i = 0; i < values.length; i++){
+                for(int i = 0; i < values.length - 1; i++){
                     values[i].key = keys[i];
                     String actionName = values[i].toString();
                     output.println(actionName + "=" + keys[i]);
@@ -151,6 +152,7 @@ public class Control {
                     inputManager.addListener(o, Actions.SECOND.toString());
                     inputManager.addListener(o, Actions.PAUSE.toString());
                     inputManager.addListener(o, Actions.SHOW_CURSOR.toString());
+                    inputManager.addListener(o, Actions.MOVE_CRANE.toString());
                 } else {
                     inputManager.addListener(o, Actions.SELECT_WAREHOUSE.toString());
                 }

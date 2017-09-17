@@ -1,7 +1,10 @@
 package cranes.crane;
 
+import buildingsimulator.BirdsEyeView;
 import buildingsimulator.BuildingSimulator;
-import buildingsimulator.GameManager;
+import buildingsimulator.DummyCollisionListener;
+import buildingsimulator.VisibleFromAbove;
+import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
@@ -9,18 +12,20 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import cranes.CraneAbstract;
 import java.util.List;
+import tonegod.gui.controls.text.TextField;
 
 /**
  * Obiekt klasy <code>Crane</code> reprezentuje żuraw. 
  * @author AleksanderSklorz
  */
-public class Crane extends CraneAbstract{
+public class Crane extends CraneAbstract implements VisibleFromAbove{
     private BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
     private Node crane;
-    private Spatial rack, entrancePlatform;
-    private Vector3f craneLocation;
-    public int heightLevel = 0;
-    public Spatial penultimateRack, lastRack; 
+    private Spatial rack, entrancePlatform, penultimateRack, lastRack;
+    private Vector3f craneLocation, newLocation;
+    private int heightLevel = 0;
+    private DummyCollisionListener listener;
+    private BirdsEyeView view; 
     public Crane(){
         initCrane();
     }
@@ -95,6 +100,25 @@ public class Crane extends CraneAbstract{
         rootNode.attachChild(crane);
     }
     
+    /**
+     * Rozpoczyna proces przenoszenia żurawia.
+     */
+    public void startMoving() {
+        view = new BirdsEyeView(this); 
+    }
+    
+    @Override
+     public void setDischargingLocation(Vector3f location) {
+         newLocation = location; 
+     }
+    
+    @Override
+     public void setListener(DummyCollisionListener listener) {
+         this.listener = listener; 
+         BoundingBox bounding = (BoundingBox)crane.getChild("prop0").getWorldBound();
+         listener.createDummyWall(newLocation, bounding.getExtent(null).mult(2));
+     }
+     
     /**
      * Zwraca poziom wysokości żurawia. 
      * @return poziom wysokości 

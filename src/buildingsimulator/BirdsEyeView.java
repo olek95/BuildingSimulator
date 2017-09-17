@@ -7,7 +7,6 @@ import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
-import menu.Shop;
 
 /**
  * Obiekt klasy <code>BirdsEyeView</code> reprezentuje widok z lotu ptaka (widok 
@@ -15,9 +14,9 @@ import menu.Shop;
  * @author Aleksander Sklorz
  */
 public class BirdsEyeView implements ActionListener{
-    private Shop shop;
-    public BirdsEyeView(Shop shop) {
-        this.shop = shop;
+    private VisibleFromAbove viewOwner;
+    public BirdsEyeView(VisibleFromAbove viewOwner) {
+        this.viewOwner = viewOwner;
         Control.addListener(this);
         changeViewMode();
     }
@@ -46,8 +45,8 @@ public class BirdsEyeView implements ActionListener{
                 result = results.getCollision(i++);
             }while(!result.getGeometry().getName().startsWith("terrain"));
             Vector3f location = result.getContactPoint().setY(0.3f);
-            shop.setWarehouseLocation(location);
-            shop.setListener(new DummyCollisionListener());
+            viewOwner.setDischargingLocation(location);
+            viewOwner.setListener(new DummyCollisionListener());
         }
     }
     

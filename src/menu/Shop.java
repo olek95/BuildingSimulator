@@ -8,6 +8,7 @@ import buildingsimulator.BuildingSimulator;
 import buildingsimulator.Control;
 import buildingsimulator.DummyCollisionListener;
 import buildingsimulator.GameManager;
+import buildingsimulator.VisibleFromAbove;
 import com.jme3.font.BitmapFont;
 import com.jme3.input.FlyByCamera;
 import com.jme3.input.event.MouseButtonEvent;
@@ -28,10 +29,10 @@ import tonegod.gui.core.Screen;
  * popjazdów. 
  * @author AleksanderSklorz
  */
-public class Shop extends Menu{
+public class Shop extends Menu implements VisibleFromAbove{
     private static Screen screen;
     private static Shop displayedShop = null; 
-    private Vector3f warehouseLocation = null;
+    private Vector3f dischargingLocation = null;
     private DummyCollisionListener listener; 
     private BirdsEyeView view; 
     public Shop(){
@@ -143,10 +144,10 @@ public class Shop extends Menu{
             Vector3f tempDimensions = dimensions.clone(); 
             tempDimensions.multLocal(1, amount, 1);
             for(int i = 0; i < amount; i++) {
-                Wall wall = WallsFactory.createWall(type, warehouseLocation,
+                Wall wall = WallsFactory.createWall(type, dischargingLocation,
                         dimensions);
                 GameManager.addToGame(wall);
-                warehouseLocation.y += 0.4f; 
+                dischargingLocation.y += 0.4f; 
             }
         }
         Control.removeListener(view);
@@ -158,13 +159,11 @@ public class Shop extends Menu{
                 .getPhysicsSpace().removeCollisionGroupListener(6);
     }
     
-    /**
-     * Ustawia aktualnego słuchacza sprawdzającego kolizje dla układanych elementów.
-     * @param listener słuchacz sprawdzający kolizje dla układanych elementów 
-     */
+    
+    @Override
     public void setListener(DummyCollisionListener listener) {
         this.listener = listener; 
-        listener.createDummyWall(warehouseLocation, new Vector3f(((TextField)screen
+        listener.createDummyWall(dischargingLocation, new Vector3f(((TextField)screen
                 .getElementById("x_text_field")).parseFloat(), 0.2f, 
                 ((TextField)screen.getElementById("z_text_field")).parseFloat()));
     }
@@ -175,12 +174,9 @@ public class Shop extends Menu{
      */
     public DummyCollisionListener getListener() { return listener; }
     
-    /**
-     * Ustawia miejsce układania elementów (położenie "magazynu").
-     * @param location miejsce układania elementów 
-     */
-    public void setWarehouseLocation(Vector3f location) { 
-        warehouseLocation = location; 
+    @Override
+    public void setDischargingLocation(Vector3f location) { 
+        dischargingLocation = location; 
     }
     
     /**

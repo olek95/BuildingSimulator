@@ -19,7 +19,7 @@ import com.jme3.scene.control.Control;
  */
 public class DummyCollisionListener implements PhysicsCollisionGroupListener {
     private Spatial first = null;
-    private Node collisionOwner = null; 
+    private DummyWall collisionOwner = null; 
     private boolean end = false, collision = false; 
     
     /**
@@ -66,7 +66,6 @@ public class DummyCollisionListener implements PhysicsCollisionGroupListener {
      * Usuwa fizyczną postać sztucznej ściany. 
      */
     public void deleteDummyWallControl() {
-        System.out.println(collisionOwner.getControl(RigidBodyControl.class));
         Control control = collisionOwner.getControl(0);
         collisionOwner.removeControl(control);
         BuildingSimulator.getBuildingSimulator().getBulletAppState()

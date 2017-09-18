@@ -126,6 +126,10 @@ public class GameManager {
         BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(HUD.getScreen());
     }
     
+    public static void createMapBorder() {
+        
+    }
+    
     /**
      * Tworzy fizykę dla danego obiektu. Stosuje ona klasę RigidBodyControl, 
      * natomiast do wykrywania kolizji używa CompoundCollisionShape. 

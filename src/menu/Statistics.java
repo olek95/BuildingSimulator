@@ -16,7 +16,7 @@ public class Statistics extends TableMenu{
     public Statistics(){
         super("statistics");
         Screen screen = getScreen(); 
-        window.addChild(createTable(new String[]{"user_column", "points_column"},
+        getWindow().addChild(createTable(new String[]{"user_column", "points_column"},
                 new Translator[]{Translator.USER, Translator.POINTS}));
         createReturnButton(screen.getWidth() * 0.45f);
         Translator.setTexts(new String[]{"return_button"},

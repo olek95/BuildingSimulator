@@ -56,7 +56,7 @@ public class DummyCollisionListener implements PhysicsCollisionGroupListener {
      * @param location położenie sztucznego obiektu 
      */
     public void createDummyWall(Vector3f location, Vector3f dimensions) {
-        collisionOwner = new DummyWall(location, dimensions, 0);
+        collisionOwner = new DummyWall(location, dimensions, 0.00001f);
         collisionOwner.getControl(RigidBodyControl.class).setCollisionGroup(6);
         BuildingSimulator.getBuildingSimulator().getBulletAppState()
                 .getPhysicsSpace().addCollisionGroupListener(this, 6);
@@ -66,10 +66,12 @@ public class DummyCollisionListener implements PhysicsCollisionGroupListener {
      * Usuwa fizyczną postać sztucznej ściany. 
      */
     public void deleteDummyWallControl() {
-        Control control = collisionOwner.getControl(0);
-        collisionOwner.removeControl(control);
-        BuildingSimulator.getBuildingSimulator().getBulletAppState()
-                .getPhysicsSpace().remove(control);
+        Control control = collisionOwner.getControl(RigidBodyControl.class);
+        if(control != null) {
+            collisionOwner.removeControl(control);
+            BuildingSimulator.getBuildingSimulator().getBulletAppState()
+                    .getPhysicsSpace().remove(control);
+        }
     }
     
     /**

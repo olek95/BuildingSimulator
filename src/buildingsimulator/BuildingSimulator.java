@@ -89,9 +89,10 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             VisibleFromAbove object = shop != null ? shop 
                     : (Crane)GameManager.getUnit(1);
             DummyCollisionListener dummyListener = object.getListener();
-            if(dummyListener != null && dummyListener.isEnd() 
-                    && !dummyListener.isCollision()) {
-                object.unload(); 
+            if(dummyListener != null && dummyListener.isEnd()) {
+                dummyListener.deleteDummyWallControl();
+                object.setListener(null);
+                if(!dummyListener.isCollision()) object.unload(); 
             }
         }
     }

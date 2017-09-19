@@ -38,8 +38,9 @@ public class Options extends Menu  {
     public Options(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout("Interface/options.gui.xml", this);
-        window = (Window)screen.getElementById("options");
+        Window window = (Window)screen.getElementById("options");
         window.getDragBar().removeFromParent();
+        setWindow(window); 
         fillResolutionsSelectBox();
         fillSelectBoxSingleValue("refresh_rate_select_box");
         fillSelectBoxSingleValue("color_depth_select_box");
@@ -65,7 +66,7 @@ public class Options extends Menu  {
         game.setSettings(restoreSettings(settings, false));
         saveSettings(settings);
         game.restart();
-        window.hide();
+        getWindow().hide();
         stale = true; 
     }
     

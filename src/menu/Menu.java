@@ -15,13 +15,19 @@ import tonegod.gui.core.Screen;
  * @author AleksanderSklorz
  */
 public abstract class Menu extends AbstractAppState{
-    protected Window window;
+    private Window window;
     
     /**
      * Zwraca okno aktualnie wybranego menu. 
      * @return okno menu 
      */
-    public Window getWindow() { return window; }
+    protected Window getWindow() { return window; }
+    
+    /**
+     * Ustawia okno. 
+     * @param window okno 
+     */
+    protected void setWindow(Window window) { this.window = window; }
     
     /**
      * Tworzy okno alarmowe ostrzegające przed daną czynnością. 
@@ -30,7 +36,7 @@ public abstract class Menu extends AbstractAppState{
      * @param nextMenu menu do którego chcemy wyjść 
      * @return okno alarmowe ostrzegające przed niezapisanymi zmianami 
      */
-    public DialogBox createNotSavedChangesAlert(final Screen ownerScreen, String message,
+    protected DialogBox createNotSavedChangesAlert(final Screen ownerScreen, String message,
             final MenuTypes nextMenu) {
         DialogBox alert = new DialogBox(ownerScreen, "closing_alert", new Vector2f(0f, 0f), 
                     new Vector2f(400, 190)

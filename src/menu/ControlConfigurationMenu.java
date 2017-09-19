@@ -36,7 +36,7 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
         restoredSettings = new HashMap(); 
         Table table = createTable(new String[]{"action_column", "key_column"},
                 new Translator[]{Translator.ACTIVITY, Translator.KEY}); 
-        window.addChild(table);
+        getWindow().addChild(table);
         createAcceptingButton(); 
         createReturnButton(screen.getWidth() * 0.6f);
         BuildingSimulator.getBuildingSimulator().getInputManager().addRawInputListener(this);

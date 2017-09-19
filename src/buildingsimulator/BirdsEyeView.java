@@ -61,7 +61,6 @@ public class BirdsEyeView implements ActionListener{
         camera.setEnabled(true);
         camera.setDragToRotate(false);
         Control.addListener(Control.getActualListener());
-        HUD.changeShopButtonVisibility(true);
         viewOwner = null;
     }
     
@@ -78,6 +77,5 @@ public class BirdsEyeView implements ActionListener{
         cam.lookAt(actualUnitLocation, Vector3f.UNIT_Z);
         game.getFlyByCamera().setEnabled(false);
         Control.removeListener(Control.getActualListener());
-        HUD.changeShopButtonVisibility(false);
     }
 }

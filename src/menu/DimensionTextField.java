@@ -6,13 +6,15 @@ import tonegod.gui.controls.text.TextField;
 import tonegod.gui.core.ElementManager;
 
 public class DimensionTextField extends TextField{
-    public DimensionTextField(ElementManager screen, String id, Vector2f position) {
-        super(screen, id, position); 
+    private Shop shop; 
+    public DimensionTextField(Shop shop, String id, Vector2f position) {
+        super(shop.getScreen(), id, position); 
+        this.shop = shop; 
     }
     
     @Override
     public void onKeyRelease(KeyInputEvent evt) {
         super.onKeyRelease(evt);
-        Shop.setCost();
+        shop.setCost();
     }
 }

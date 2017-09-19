@@ -38,6 +38,8 @@ public class HUD extends AbstractAppState{
      * @param isToggled 
      */
     public void showShop(MouseButtonEvent evt, boolean isToggled) {
+        Shop shop = Shop.getDisplayedShop();
+        if(shop != null) shop.getView().setOff();
         BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(true);
         MenuFactory.showMenu(MenuTypes.SHOP); 
     }

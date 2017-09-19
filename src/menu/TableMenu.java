@@ -19,8 +19,9 @@ public abstract class TableMenu extends Menu{
     private static Table table;
     public TableMenu(String id) {
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
-        window = new Window(screen, id, new Vector2f(0, 0),
+        Window window = new Window(screen, id, new Vector2f(0, 0),
                 new Vector2f(screen.getWidth(), screen.getHeight()));
+        setWindow(window); 
         screen.addElement(window);
         window.centerToParent();
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);

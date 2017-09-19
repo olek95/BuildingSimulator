@@ -100,7 +100,7 @@ public class PauseMenu extends MainMenu{
      * @param isToggled 
      */
     public void returnToStartingMenu(MouseButtonEvent evt, boolean isToggled) {
-        window.hide();
+        getWindow().hide();
         User user = GameManager.getUser(); 
         if(!user.getLogin().equalsIgnoreCase("Anonim")) {
             try {

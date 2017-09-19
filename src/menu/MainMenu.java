@@ -19,8 +19,9 @@ public abstract class MainMenu extends Menu {
     public MainMenu(String layoutName){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout(layoutName, this);
-        window = (Window)screen.getElementById("main_menu");
+        Window window = (Window)screen.getElementById("main_menu");
         window.getDragBar().removeFromParent();
+        setWindow(window); 
         Translator.setTexts(new String[]{"load_game_button", "statistics_button",
             "options_button", "exit_button"},
             new Translator[]{Translator.LOAD_GAME, Translator.STATISTICS,
@@ -35,7 +36,7 @@ public abstract class MainMenu extends Menu {
      * Uruchamia grę 
      */
     protected void start() {
-        window.hide();
+        getWindow().hide();
         screen.setUseCustomCursors(false);
     }
     

@@ -12,6 +12,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import cranes.CraneAbstract;
 import java.util.List;
+import menu.HUD;
 
 /**
  * Obiekt klasy <code>Crane</code> reprezentuje żuraw. 
@@ -103,19 +104,18 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
      * Rozpoczyna proces przenoszenia żurawia.
      */
     public void startMoving() {
+        HUD.changeShopButtonVisibility(false);
         view = new BirdsEyeView(this); 
     }
     
     @Override
     public void unload() {
-        listener.deleteDummyWallControl();
-        listener = null;
         craneLocation = newLocation; 
         crane.setLocalTranslation(craneLocation);
         List<Spatial> craneElements = crane.getChildren(); 
         int elementsCount = craneElements.size();
         for(int i = 0; i < elementsCount; i++) {
-            Spatial element = craneElements.get(i); 
+            Spatial element = craneElements.get(i);
             if(element.getName().matches("(rack|prop|entrancePlatform).*")) 
                 setProperControlLocation(element, craneLocation);
         }
@@ -132,8 +132,10 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
     @Override
      public void setListener(DummyCollisionListener listener) {
          this.listener = listener; 
-         BoundingBox bounding = (BoundingBox)crane.getChild("prop0").getWorldBound();
-         listener.createDummyWall(newLocation, bounding.getExtent(null));
+         if(listener != null) {
+            BoundingBox bounding = (BoundingBox)crane.getChild("prop0").getWorldBound();
+            listener.createDummyWall(newLocation, bounding.getExtent(null));
+         }
      }
     
     @Override
@@ -150,6 +152,7 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
      */
     public void removeView() { 
         view.setOff();
+        HUD.changeShopButtonVisibility(true);
         this.view = null; 
     }
      

@@ -32,15 +32,20 @@ import tonegod.gui.core.Screen;
 public class Shop extends Menu implements VisibleFromAbove{
     private static Screen screen;
     private static Shop displayedShop = null; 
+    private int costForMaterials;
     private Vector3f dischargingLocation = null;
     private DummyCollisionListener listener; 
     private BirdsEyeView view; 
     public Shop(){
+        if(displayedShop != null) {
+            System.out.println(displayedShop.costForMaterials); 
+        }
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout("Interface/shop.gui.xml", this);
-        window = (Window)screen.getElementById("shop");
+        Window window = (Window)screen.getElementById("shop");
         window.setWindowTitle(Translator.SHOP.getValue());
         window.getDragBar().setTextAlign(BitmapFont.Align.Center);
+        setWindow(window); 
         Translator.setTexts(new String[]{"buying_button", "cancellation_button",
             "type_label", "amount_label", "dimensions_label", "cost_label",
             "change_page_button", "height_change_label", "actual_height_label",
@@ -117,7 +122,7 @@ public class Shop extends Menu implements VisibleFromAbove{
      * błędne dane to wyświetlony jest stosowny komunikat oraz blokowany jest 
      * przycisk zakupów. 
      */
-    public static void setCost() {
+    public void setCost() {
         int cost = calculateCost(); 
         if(cost == -1) {
             screen.getElementById("cost_value_label").setText(Translator.BAD_DATA.getValue());
@@ -130,7 +135,6 @@ public class Shop extends Menu implements VisibleFromAbove{
     
     @Override
     public void unload() {
-        listener.deleteDummyWallControl();
         int amount = ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex();
         WallType type = (WallType)((SelectBox)screen.getElementById("type_select_box"))
                 .getSelectedListItem().getValue();
@@ -157,10 +161,12 @@ public class Shop extends Menu implements VisibleFromAbove{
     @Override
     public void setListener(DummyCollisionListener listener) {
         this.listener = listener; 
-        listener.createDummyWall(dischargingLocation, new Vector3f(((TextField)screen
-                .getElementById("x_text_field")).parseFloat(), 0.2f, 
-                ((TextField)screen.getElementById("z_text_field")).parseFloat())
-                .multLocal(1, 10, 1));
+        if(listener != null) {
+            listener.createDummyWall(dischargingLocation, new Vector3f(((TextField)screen
+                    .getElementById("x_text_field")).parseFloat(), 0.2f, 
+                    ((TextField)screen.getElementById("z_text_field")).parseFloat())
+                    .multLocal(1, 10, 1));
+        }
     }
     
     @Override
@@ -183,6 +189,12 @@ public class Shop extends Menu implements VisibleFromAbove{
      */
     public static Shop getDisplayedShop() { return displayedShop; }
     
+    /**
+     * Zwraca widok z lotu ptaka, którego właścicielem jest sklep. 
+     * @return widok z lotu ptaka 
+     */
+    public BirdsEyeView getView() { return view; }
+    
     private void fillTypeSelectBox() {
         WallType[] types = WallType.values(); 
         SelectBox typeSelectBox = (SelectBox)screen.getElementById("type_select_box");
@@ -191,7 +203,7 @@ public class Shop extends Menu implements VisibleFromAbove{
         }
     }
     
-    private static int calculateCost() {
+    private int calculateCost() {
         Element xTextField = screen.getElementById("x_text_field"),
                 zTextField = screen.getElementById("z_text_field");
         int result = -1;
@@ -202,6 +214,7 @@ public class Shop extends Menu implements VisibleFromAbove{
                         * ((int)Float.parseFloat(x) * (int)Float.parseFloat(z)
                         + ((WallType)((SelectBox)screen.getElementById("type_select_box")).getSelectedListItem()
                         .getValue()).getPrice());
+                costForMaterials = result; 
                 int selectedHeight = ((Spinner)screen.getElementById("crane_height_spinner"))
                         .getSelectedIndex(), actualHeight = Integer.parseInt(screen
                         .getElementById("actual_height_value").getText());
@@ -217,7 +230,7 @@ public class Shop extends Menu implements VisibleFromAbove{
     
     private void createTextField(String id, float x, float y) {
         Element panel = screen.getElementById("elements_panel");
-        DimensionTextField textField = new DimensionTextField(screen, id,
+        DimensionTextField textField = new DimensionTextField(this, id,
                 new Vector2f(panel.getWidth() * x, panel.getHeight() * y));
         textField.setType(TextField.Type.NUMERIC);
         textField.setText("0");

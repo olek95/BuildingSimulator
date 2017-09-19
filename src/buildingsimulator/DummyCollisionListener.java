@@ -56,7 +56,7 @@ public class DummyCollisionListener implements PhysicsCollisionGroupListener {
      * @param location położenie sztucznego obiektu 
      */
     public void createDummyWall(Vector3f location, Vector3f dimensions) {
-        collisionOwner = new DummyWall(location, dimensions);
+        collisionOwner = new DummyWall(location, dimensions, 0);
         collisionOwner.getControl(RigidBodyControl.class).setCollisionGroup(6);
         BuildingSimulator.getBuildingSimulator().getBulletAppState()
                 .getPhysicsSpace().addCollisionGroupListener(this, 6);

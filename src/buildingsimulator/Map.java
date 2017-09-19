@@ -54,13 +54,13 @@ public class Map {
         float positiveLocation = calculateBorderLocation(false),
                 negativeLocation = calculateBorderLocation(true);
         new DummyWall(new Vector3f(0, 2.2f, positiveLocation), 
-                new Vector3f(254 * 2.5f, 1, 0.2f)); 
+                new Vector3f(254 * 2.5f, 1, 0.2f), 0); 
         new DummyWall(new Vector3f(0, 2.2f, negativeLocation), 
-                new Vector3f(254 * 2.5f, 1, 0.2f)); 
+                new Vector3f(254 * 2.5f, 1, 0.2f), 0); 
         new DummyWall(new Vector3f(positiveLocation, 2.2f, 0), 
-                new Vector3f(0.2f, 1, 254 * 2.5f)); 
+                new Vector3f(0.2f, 1, 254 * 2.5f), 0); 
         new DummyWall(new Vector3f(negativeLocation, 2.2f, 0), 
-                new Vector3f(0.2f, 1, 254 * 2.5f)); 
+                new Vector3f(0.2f, 1, 254 * 2.5f), 0); 
     }
     
     private float calculateBorderLocation(boolean negative) {

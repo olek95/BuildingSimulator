@@ -49,7 +49,7 @@ public class GameManager {
         game.getFlyByCamera().setDragToRotate(false);
         BulletAppState bas = game.getBulletAppState(); 
         game.getStateManager().attach(bas);
-        createTerrain();
+        addToGame(new Map().getScene());
         MobileCrane crane = new MobileCrane();
         addUnit(crane);
         addUnit(new Crane());
@@ -124,10 +124,6 @@ public class GameManager {
     public static void removeHUD() {
         HUD.hideElements();
         BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(HUD.getScreen());
-    }
-    
-    public static void createMapBorder() {
-        
     }
     
     /**

@@ -10,12 +10,27 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 
+/**
+ * Obiekt klasy <code>DummyWall</code> reprezentuje sztuczną (niewidzialną) ścianę. 
+ * @author AleksanderSklorz
+ */
 public class DummyWall extends Node{
-    public DummyWall(Vector3f location, Vector3f dimensions, float mass) {
+    private DummyWall(Vector3f location, Vector3f dimensions, float mass) {
         setName("DummyWall");
         attachChild(new Geometry("DummyWall", new Box(dimensions.x, 
                 dimensions.y, dimensions.z)));
         GameManager.createObjectPhysics(this, mass, false, "DummyWall");
         getControl(RigidBodyControl.class).setPhysicsLocation(location);
+    }
+    
+    /**
+     * Tworzy sztuczną ścianę. 
+     * @param location położenie ściany 
+     * @param dimensions wymiary ściany 
+     * @param mass masa ściany 
+     * @return sztuczna ściana 
+     */
+    public static DummyWall createDummyWall(Vector3f location, Vector3f dimensions, float mass) {
+        return new DummyWall(location, dimensions, mass);
     }
 }

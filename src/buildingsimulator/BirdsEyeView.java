@@ -77,6 +77,10 @@ public class BirdsEyeView implements ActionListener{
         viewOwner = null;
     }
     
+    /**
+     * Okresla czy aktualnie tryb widoku z lotu ptaka jest włączony. 
+     * @return true jeśli tryb widoku z lotu ptaka jest włączony, false w przeciwnym przypadku 
+     */
     public static boolean isActive() {
         return viewOwner != null; 
     }

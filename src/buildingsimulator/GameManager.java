@@ -49,7 +49,7 @@ public class GameManager {
         game.getFlyByCamera().setDragToRotate(false);
         BulletAppState bas = game.getBulletAppState(); 
         game.getStateManager().attach(bas);
-        addToGame(new Map().getScene());
+        addToGame(new Map(9).getScene());
         MobileCrane crane = new MobileCrane();
         addUnit(crane);
         addUnit(new Crane());
@@ -325,6 +325,9 @@ public class GameManager {
         return units.get(i);
     }
     
+    /**
+     * Usuwa wszystkie jednostki (dźwigi mobilne i zurawie), które występują w grze. 
+     */
     public static void removeAllUnits() { units.clear(); }
     
     /**
@@ -398,6 +401,10 @@ public class GameManager {
     
     public static void setStarted(boolean startedGame) { GameManager.startedGame = startedGame; }
     
+    /**
+     * Okresla czy gra jest zatrzymana. 
+     * @return true jesli gra jest zatrzymana, false w przeciwnym przypadku 
+     */
     public static boolean isPausedGame() { return pausedGame; }
     
     private static void moveDynamicObject(Spatial element, Vector3f displacement){

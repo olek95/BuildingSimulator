@@ -196,6 +196,17 @@ public class Shop extends Menu implements VisibleFromAbove{
     public static Shop getDisplayedShop() { return displayedShop; }
     
     /**
+     * Zwraca aktualny kosz za zakupy. 
+     * @return aktualny koszt za zakupy 
+     */
+    public int  getCostForMaterials() { return costForMaterials; } 
+    
+    /**
+     * Zeruje obiekt przechowujący aktualnie wyświetlony sklep. 
+     */
+    public static void removeDisplayedShop() { displayedShop = null; }
+    
+    /**
      * Zwraca widok z lotu ptaka, którego właścicielem jest sklep. 
      * @return widok z lotu ptaka 
      */

@@ -9,6 +9,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import menu.HUD;
+import menu.Shop;
 
 /**
  * Obiekt klasy <code>BirdsEyeView</code> reprezentuje widok z lotu ptaka (widok 
@@ -33,22 +34,34 @@ public class BirdsEyeView implements ActionListener{
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
         if(isPressed) {
-            Camera cam = BuildingSimulator.getBuildingSimulator().getCamera();
-            CollisionResults results = new CollisionResults();
-            Vector2f click2d = BuildingSimulator.getBuildingSimulator().getInputManager()
-                    .getCursorPosition().clone();
-            Vector3f click3d = cam.getWorldCoordinates(click2d, 0f).clone();
-            BuildingSimulator.getBuildingSimulator().getRootNode().getChild("New Scene")
-                    .collideWith(new Ray(click3d, cam.getWorldCoordinates(click2d, 1f)
-                    .subtractLocal(click3d).normalizeLocal()), results);
-            CollisionResult result;
-            int i = 0; 
-            do {
-                result = results.getCollision(i++);
-            }while(!result.getGeometry().getName().startsWith("terrain"));
-            Vector3f location = result.getContactPoint().setY(0.3f);
-            viewOwner.setDischargingLocation(location);
-            viewOwner.setListener(new DummyCollisionListener());
+            if(name.equals(Control.Actions.SELECT_WAREHOUSE.toString())) {
+                Camera cam = BuildingSimulator.getBuildingSimulator().getCamera();
+                CollisionResults results = new CollisionResults();
+                Vector2f click2d = BuildingSimulator.getBuildingSimulator().getInputManager()
+                        .getCursorPosition().clone();
+                Vector3f click3d = cam.getWorldCoordinates(click2d, 0f).clone();
+                BuildingSimulator.getBuildingSimulator().getRootNode().getChild("New Scene")
+                        .collideWith(new Ray(click3d, cam.getWorldCoordinates(click2d, 1f)
+                        .subtractLocal(click3d).normalizeLocal()), results);
+                CollisionResult result;
+                int i = 0; 
+                do {
+                    result = results.getCollision(i++);
+                }while(!result.getGeometry().getName().startsWith("terrain"));
+                Vector3f location = result.getContactPoint().setY(0.3f);
+                viewOwner.setDischargingLocation(location);
+                viewOwner.setListener(new DummyCollisionListener());
+            } else {
+                Shop shop = Shop.getDisplayedShop();
+                if(shop != null) {
+                    shop.getCostForMaterials(); // tutaj będzie drugie przywracanie pieniędzy
+                    Shop.removeDisplayedShop();
+                    BuildingSimulator.getBuildingSimulator().getBulletAppState()
+                            .getPhysicsSpace().removeCollisionGroupListener(6);
+                }
+                HUD.changeShopButtonVisibility(true);
+                setOff();
+            }
         }
     }
     

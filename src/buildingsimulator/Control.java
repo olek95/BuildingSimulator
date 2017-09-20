@@ -46,7 +46,8 @@ public class Control {
         PAUSE,
         SHOW_CURSOR,
         MOVE_CRANE,
-        SELECT_WAREHOUSE(MouseInput.BUTTON_LEFT);
+        SELECT_WAREHOUSE(MouseInput.BUTTON_LEFT),
+        CANCEL_BIRDS_EYE_VIEW(MouseInput.BUTTON_RIGHT);
         private String key;
         private Actions(){
             key = FilesManager.getValue(toString(), "settings/control.properties");
@@ -108,7 +109,7 @@ public class Control {
         public static void saveSettings(String[] keys){
             try(PrintWriter output = new PrintWriter(new FileWriter("settings/control.properties"))){
                 Actions[] values = values();
-                for(int i = 0; i < values.length - 1; i++){
+                for(int i = 0; i < values.length - 2; i++){
                     values[i].key = keys[i];
                     String actionName = values[i].toString();
                     output.println(actionName + "=" + keys[i]);
@@ -155,6 +156,7 @@ public class Control {
                     inputManager.addListener(o, Actions.MOVE_CRANE.toString());
                 } else {
                     inputManager.addListener(o, Actions.SELECT_WAREHOUSE.toString());
+                    inputManager.addListener(o, Actions.CANCEL_BIRDS_EYE_VIEW.toString());
                 }
         }
     }

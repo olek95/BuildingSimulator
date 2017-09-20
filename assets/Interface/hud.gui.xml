@@ -7,5 +7,8 @@
         <component type="Button" id="shop_button" position="90%,0%" dimensions="32,32">
              <eventMethod name="onButtonMouseLeftUp" stateMethodName="showShop" />
         </component>
+        <component type="Label" id="points_label" position="0,0">
+            <method name="setFontSize" param0="40" />
+        </component>
     </screen>
 </root>

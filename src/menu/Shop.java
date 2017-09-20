@@ -37,8 +37,9 @@ public class Shop extends Menu implements VisibleFromAbove{
     private DummyCollisionListener listener; 
     private BirdsEyeView view; 
     public Shop(){
-        if(displayedShop != null) {
-            System.out.println(displayedShop.costForMaterials); 
+        if(displayedShop != null) { 
+            GameManager.getUser().addPoints(displayedShop.costForMaterials); 
+            HUD.updatePoints();
         }
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout("Interface/shop.gui.xml", this);
@@ -74,6 +75,11 @@ public class Shop extends Menu implements VisibleFromAbove{
      */
     public void buy(MouseButtonEvent evt, boolean isToggled) {
         buyCraneHeight();
+        System.out.println(-Integer.parseInt(screen
+                .getElementById("cost_value_label").getText()));
+        GameManager.getUser().addPoints(-Integer.parseInt(screen
+                .getElementById("cost_value_label").getText()));
+        HUD.updatePoints();
         view = new BirdsEyeView(this); 
         goNextMenu(screen, null);
     }

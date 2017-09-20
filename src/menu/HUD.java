@@ -2,9 +2,12 @@ package menu;
 
 import building.BuildingValidator;
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.GameManager;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.input.event.MouseButtonEvent;
+import com.jme3.math.ColorRGBA;
 import tonegod.gui.controls.buttons.Button;
+import tonegod.gui.core.Element;
 import tonegod.gui.core.Screen;
 import tonegod.gui.effects.Effect;
 
@@ -21,6 +24,9 @@ public class HUD extends AbstractAppState{
         screen.parseLayout("Interface/hud.gui.xml", this);
         improveButtonAppearance("finish_building_button", "Interface/hudIcons/end_building_icon.png"); 
         improveButtonAppearance("shop_button", "Interface/hudIcons/shop_icon.png");
+        Element pointsLabel = screen.getElementById("points_label");
+        pointsLabel.setText(GameManager.getUser().getPoints() + "");
+        pointsLabel.setFontColor(ColorRGBA.Black);
     }
     
     /**
@@ -50,6 +56,7 @@ public class HUD extends AbstractAppState{
     public static void hideElements() {
         screen.getElementById("finish_building_button").hide();
         screen.getElementById("shop_button").hide();
+        screen.getElementById("points_label").hide();
     }
     
     /**
@@ -58,6 +65,11 @@ public class HUD extends AbstractAppState{
      */
     public static void changeShopButtonVisibility(boolean visible) {
         screen.getElementById("shop_button").setIsVisible(visible);
+    }
+    
+    public static void updatePoints() {
+        screen.getElementById("points_label").setText(GameManager.getUser()
+                .getPoints() + "");
     }
     
     /**

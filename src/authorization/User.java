@@ -7,7 +7,7 @@ package authorization;
  */
 public class User {
     private String login;
-    private int points = 0; 
+    private int points = 999; 
     public User(String login){
         this.login = login; 
     }

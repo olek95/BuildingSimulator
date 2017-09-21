@@ -1,13 +1,20 @@
 package building;
 
 import buildingsimulator.BuildingSimulator;
-import buildingsimulator.GameManager;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.List;
 
+/**
+ * Klasa <code>BuildingValidator</code> sprawdza i ocenia zbudowany budynek. 
+ * @author AleksanderSklorz
+ */
 public class BuildingValidator {
-    public static void validate(){
+    /**
+     * Oblicza punkty dla zbudowanych budynków. 
+     * @return suma zebranych punktów
+     */
+    public static int validate(){
         List<Spatial> gameObjects = BuildingSimulator.getBuildingSimulator().getRootNode()
                 .getChildren();
         int objectsAmount = gameObjects.size(), points = 0; 
@@ -16,7 +23,7 @@ public class BuildingValidator {
             if(object.getName().startsWith("Building"))
                 points += calculatePointsForBuilding((Node)object);
         }
-        GameManager.getUser().addPoints(points);
+        return points; 
     }
     
     private static int calculatePoints(Node element) {

@@ -93,6 +93,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                 dummyListener.deleteDummyWallControl();
                 object.setListener(null);
                 if(!dummyListener.isCollision()) object.unload(); 
+                else HUD.setMessage(Translator.MESSAGE_NO_FREE_SPACE.getValue());
             }
             if(HUD.shouldMessageBeDeleted()) HUD.removeMessage();
         }

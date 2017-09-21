@@ -8,7 +8,6 @@ import com.jme3.math.Vector2f;
 import java.util.Timer;
 import java.util.TimerTask;
 import tonegod.gui.controls.text.Label;
-import tonegod.gui.core.Element;
 import tonegod.gui.core.Screen;
 import tonegod.gui.effects.Effect;
 

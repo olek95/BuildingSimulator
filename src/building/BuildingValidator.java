@@ -1,8 +1,11 @@
 package building;
 
 import buildingsimulator.BuildingSimulator;
+import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.control.Control;
 import java.util.List;
 
 /**
@@ -36,7 +39,31 @@ public class BuildingValidator {
                 if(spatialWall.getName().startsWith("Wall")) {
                     Wall wall = (Wall)spatialWall; 
                     points += calculatePoints(wall);
-                    if(!wall.isStale()) points += spatialWall.getWorldTranslation().y;
+                    if(!wall.isStale()) {
+                        points += wall.getWorldTranslation().y;
+                        PhysicsSpace p = BuildingSimulator.getBuildingSimulator().getBulletAppState()
+                        .getPhysicsSpace();
+                        Control c0 = wall.getControl(0);
+                        wall.removeControl(c0);
+                        p.remove(c0);
+                        Control c1 = wall.getControl(0);
+                        wall.removeControl(c1);
+                        p.remove(c1);
+                        Control c2 = wall.getControl(0);
+                        wall.removeControl(c2);
+                        p.remove(c2);
+                        List<Spatial> children = wall.getChildren();
+                        for(int k = 0; k < children.size(); k++) {
+                            Spatial child = children.get(k);
+                            if(child.getName().startsWith("Cylinder")) {
+                                child.removeFromParent();
+                            }
+                        }
+                        RigidBodyControl cn = new RigidBodyControl(0);
+                        wall.addControl(cn);
+                        BuildingSimulator.getBuildingSimulator().getBulletAppState()
+                                .getPhysicsSpace().add(cn);
+                    }
                 }
             }
         }
@@ -49,7 +76,31 @@ public class BuildingValidator {
         for(int i = 0; i < partsAmount; i++) { // sprawdza wszystkie początkowe węzły 
             Wall part = (Wall)parts.get(i); 
             points += calculatePoints(part); 
-            if(!part.isStale()) points += part.getWorldTranslation().y; 
+            if(!part.isStale()) {
+                points += part.getWorldTranslation().y;
+                PhysicsSpace p = BuildingSimulator.getBuildingSimulator().getBulletAppState()
+                        .getPhysicsSpace();
+                Control c0 = part.getControl(0);
+                part.removeControl(c0);
+                p.remove(c0);
+                Control c1 = part.getControl(0);
+                part.removeControl(c1);
+                p.remove(c1);
+                Control c2 = part.getControl(0);
+                part.removeControl(c2);
+                p.remove(c2);
+                List<Spatial> children = part.getChildren();
+                        for(int k = 0; k < children.size(); k++) {
+                            Spatial child = children.get(k);
+                            if(child.getName().startsWith("Cylinder")) {
+                                child.removeFromParent();
+                            }
+                        }
+                RigidBodyControl cn = new RigidBodyControl(0);
+                part.addControl(cn);
+                BuildingSimulator.getBuildingSimulator().getBulletAppState()
+                        .getPhysicsSpace().add(cn);
+            } 
         }
         return points; 
     }

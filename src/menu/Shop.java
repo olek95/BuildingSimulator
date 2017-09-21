@@ -75,12 +75,15 @@ public class Shop extends Menu implements VisibleFromAbove{
      */
     public void buy(MouseButtonEvent evt, boolean isToggled) {
         buyCraneHeight();
-        System.out.println(-Integer.parseInt(screen
-                .getElementById("cost_value_label").getText()));
         GameManager.getUser().addPoints(-Integer.parseInt(screen
                 .getElementById("cost_value_label").getText()));
         HUD.updatePoints();
-        view = new BirdsEyeView(this); 
+        if(isMaterialsBought()) view = new BirdsEyeView(this); 
+        else {
+            displayedShop = null;
+            FlyByCamera camera = BuildingSimulator.getBuildingSimulator().getFlyByCamera();
+            camera.setDragToRotate(false);
+        }
         goNextMenu(screen, null);
     }
     
@@ -265,9 +268,11 @@ public class Shop extends Menu implements VisibleFromAbove{
             if(actualHeight > selectedHeight) 
                 ((Crane)GameManager.getUnit(1)).decreaseHeight(selectedHeight);
         }
-        if(actualHeight != selectedHeight) {
-            actualHeightLabel.setText(selectedHeight + "");
-            setCost();
-        }
+    }
+    
+    private boolean isMaterialsBought() {
+        return ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex() != 0
+                && ((TextField)screen.getElementById("x_text_field")).parseFloat() >= 1
+                && ((TextField)screen.getElementById("z_text_field")).parseFloat() >= 1;
     }
 }

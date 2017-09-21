@@ -20,6 +20,7 @@ import tonegod.gui.effects.Effect;
 public class HUD extends AbstractAppState{
     private static Screen screen;
     private static boolean shouldMessageBeDeleted; 
+    private static Timer messageTimer; 
     public HUD(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         addNewButton("finish_building_button", "Interface/hudIcons/end_building_icon.png",
@@ -33,7 +34,7 @@ public class HUD extends AbstractAppState{
      * Ukrywa wszystkie elementy HUDu. 
      */
     public static void hideElements() {
-        screen.getElementById("message_label").setText("");
+        removeMessage();
         screen.getElementById("finish_building_button").hide();
         screen.getElementById("shop_button").hide();
         screen.getElementById("points_label").hide();
@@ -61,14 +62,19 @@ public class HUD extends AbstractAppState{
      */
     public static void setMessage(String message) {
         screen.getElementById("message_label").setText(message);
-        if(!message.equals(""))
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                   shouldMessageBeDeleted = true;
-                }
-            }, 3000);
-        else shouldMessageBeDeleted = false;
+        messageTimer = new Timer();
+        messageTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+               shouldMessageBeDeleted = true;
+            }
+        }, 3000);
+    }
+    
+    public static void removeMessage() {
+        screen.getElementById("message_label").setText("");
+        shouldMessageBeDeleted = false; 
+        messageTimer.cancel();
     }
     
     /**

@@ -94,7 +94,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                 object.setListener(null);
                 if(!dummyListener.isCollision()) object.unload(); 
             }
-            if(HUD.shouldMessageBeDeleted()) HUD.setMessage("");
+            if(HUD.shouldMessageBeDeleted()) HUD.removeMessage();
         }
     }
 

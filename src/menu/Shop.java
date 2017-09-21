@@ -5,7 +5,6 @@ import building.WallType;
 import building.WallsFactory;
 import buildingsimulator.BirdsEyeView;
 import buildingsimulator.BuildingSimulator;
-import buildingsimulator.Control;
 import buildingsimulator.DummyCollisionListener;
 import buildingsimulator.GameManager;
 import buildingsimulator.VisibleFromAbove;

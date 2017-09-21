@@ -7,6 +7,7 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.Vector2f;
+import texts.Translator;
 import tonegod.gui.controls.buttons.ButtonAdapter;
 import tonegod.gui.core.ElementManager;
 
@@ -36,8 +37,10 @@ public class HUDButton extends ButtonAdapter{
             BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(true);
             MenuFactory.showMenu(MenuTypes.SHOP); 
         } else {
-            GameManager.getUser().addPoints(BuildingValidator.validate());
+            int points = BuildingValidator.validate();
+            GameManager.getUser().addPoints(points);
             HUD.updatePoints();
+            HUD.setMessage(Translator.MESSAGE_POINTS.getValue().replace("x", points + ""));
         }
     }
     

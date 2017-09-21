@@ -231,7 +231,7 @@ public class Shop extends Menu implements VisibleFromAbove{
         int result = -1;
         if(xTextField != null && zTextField != null) {
             String x = xTextField.getText(), z = zTextField.getText();
-            if(x.matches("\\d+(\\.\\d+)*") && z.matches("\\d+(\\.\\d+)*")) { 
+            if(x.matches("[1-9]\\d*(\\.\\d+)?") && z.matches("[1-9]\\d*(\\.\\d+)?")) { 
                 result = ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex()
                         * ((int)Float.parseFloat(x) * (int)Float.parseFloat(z)
                         + ((WallType)((SelectBox)screen.getElementById("type_select_box")).getSelectedListItem()
@@ -255,7 +255,7 @@ public class Shop extends Menu implements VisibleFromAbove{
         DimensionTextField textField = new DimensionTextField(this, id,
                 new Vector2f(panel.getWidth() * x, panel.getHeight() * y));
         textField.setType(TextField.Type.NUMERIC);
-        textField.setText("0");
+        textField.setText("1");
         panel.addChild(textField);
     }
     
@@ -273,8 +273,6 @@ public class Shop extends Menu implements VisibleFromAbove{
     }
     
     private boolean isMaterialsBought() {
-        return ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex() != 0
-                && ((TextField)screen.getElementById("x_text_field")).parseFloat() >= 1
-                && ((TextField)screen.getElementById("z_text_field")).parseFloat() >= 1;
+        return ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex() != 0;
     }
 }

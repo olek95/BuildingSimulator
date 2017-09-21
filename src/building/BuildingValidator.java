@@ -26,16 +26,17 @@ public class BuildingValidator {
         return points; 
     }
     
-    private static int calculatePoints(Node element) {
+    private static int calculatePoints(Wall element) {
         List<Spatial> walls = element.getChildren();
         int points = 0;
         for(int i = 1; i < 14; i++){ // od 1 do 13 bo w tym przedziale są strony 
             Node catchNode = (Node)walls.get(i);
             if(!catchNode.getChildren().isEmpty()){
-                Spatial wall = catchNode.getChild(0);
-                if(wall.getName().startsWith("Wall")) {
-                    points += calculatePoints((Node)wall);
-                    points += wall.getWorldTranslation().y;
+                Spatial spatialWall = catchNode.getChild(0);
+                if(spatialWall.getName().startsWith("Wall")) {
+                    Wall wall = (Wall)spatialWall; 
+                    points += calculatePoints(wall);
+                    if(!wall.isStale()) points += spatialWall.getWorldTranslation().y;
                 }
             }
         }
@@ -46,9 +47,9 @@ public class BuildingValidator {
         List<Spatial> parts = building.getChildren(); 
         int partsAmount = parts.size(), points = 0; 
         for(int i = 0; i < partsAmount; i++) { // sprawdza wszystkie początkowe węzły 
-            Spatial part = parts.get(i); 
-            points += calculatePoints((Node)part); 
-            points += part.getWorldTranslation().y; 
+            Wall part = (Wall)parts.get(i); 
+            points += calculatePoints(part); 
+            if(!part.isStale()) points += part.getWorldTranslation().y; 
         }
         return points; 
     }

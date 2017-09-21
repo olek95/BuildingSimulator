@@ -54,7 +54,8 @@ public class BirdsEyeView implements ActionListener{
             } else {
                 Shop shop = Shop.getDisplayedShop();
                 if(shop != null) {
-                    shop.getCostForMaterials(); // tutaj będzie drugie przywracanie pieniędzy
+                    GameManager.getUser().addPoints(shop.getCostForMaterials()); 
+                    HUD.updatePoints();
                     Shop.removeDisplayedShop();
                     BuildingSimulator.getBuildingSimulator().getBulletAppState()
                             .getPhysicsSpace().removeCollisionGroupListener(6);

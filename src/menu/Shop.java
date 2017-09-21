@@ -74,17 +74,19 @@ public class Shop extends Menu implements VisibleFromAbove{
      * @param isToggled 
      */
     public void buy(MouseButtonEvent evt, boolean isToggled) {
-        buyCraneHeight();
-        GameManager.getUser().addPoints(-Integer.parseInt(screen
-                .getElementById("cost_value_label").getText()));
-        HUD.updatePoints();
-        if(isMaterialsBought()) view = new BirdsEyeView(this); 
-        else {
-            displayedShop = null;
-            FlyByCamera camera = BuildingSimulator.getBuildingSimulator().getFlyByCamera();
-            camera.setDragToRotate(false);
+        int cost = Integer.parseInt(screen.getElementById("cost_value_label").getText());
+        if(cost <= GameManager.getUser().getPoints()) {
+            buyCraneHeight();
+            GameManager.getUser().addPoints(-cost);
+            HUD.updatePoints();
+            if(isMaterialsBought()) view = new BirdsEyeView(this); 
+            else {
+                displayedShop = null;
+                FlyByCamera camera = BuildingSimulator.getBuildingSimulator().getFlyByCamera();
+                camera.setDragToRotate(false);
+            }
+            goNextMenu(screen, null);
         }
-        goNextMenu(screen, null);
     }
     
     /**

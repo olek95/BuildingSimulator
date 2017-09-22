@@ -1,14 +1,11 @@
 package menu;
 
-import building.Wall;
 import buildingsimulator.BuildingSimulator;
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.font.BitmapFont;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.control.Control;
 import java.util.List;
 import texts.Translator;
 import tonegod.gui.controls.windows.Window;
@@ -43,6 +40,7 @@ public class CleaningDialogWindow extends Menu{
                 object.removeFromParent();
             }
         }
+        cancel(null, true);
     }
     
     public void cancel(MouseButtonEvent evt, boolean isToggled) {

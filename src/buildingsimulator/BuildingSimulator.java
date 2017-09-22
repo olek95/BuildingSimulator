@@ -126,6 +126,11 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                 case PAUSE:
                     Shop shop = Shop.getDisplayedShop();
                     if(shop != null) shop.cancel(null, true);
+                    else {
+                        CleaningDialogWindow cleaningWindow = CleaningDialogWindow
+                                .getDisplayedCleaningDialogWindow();
+                        if(cleaningWindow != null) cleaningWindow.cancel(null, true);
+                    }
                     GameManager.pauseGame();
                     GameManager.removeHUD();
                     break;

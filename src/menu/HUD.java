@@ -34,10 +34,11 @@ public class HUD extends AbstractAppState{
      * Ukrywa wszystkie elementy HUDu. 
      */
     public static void hideElements() {
-        removeMessage();
+        if(messageTimer != null) removeMessage();
         screen.getElementById("finish_building_button").hide();
         screen.getElementById("shop_button").hide();
         screen.getElementById("points_label").hide();
+        screen.getElementById("cleaning_button").hide();
     }
     
     /**
@@ -75,6 +76,7 @@ public class HUD extends AbstractAppState{
         screen.getElementById("message_label").setText("");
         shouldMessageBeDeleted = false; 
         messageTimer.cancel();
+        messageTimer = null;
     }
     
     /**

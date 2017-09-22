@@ -307,7 +307,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         controlAttaching.setCollisionGroup(5);
         Vector3f physicsLocation = controlAttaching.getPhysicsLocation();
         for(int i = 0; i < ropes.length; i++){
-            ropes[i] = new Geometry("Cylinder" + i, new Cylinder(4, 8, 0.02f, ropeLenght));
+            ropes[i] = new Geometry("Line" + i, new Cylinder(4, 8, 0.02f, ropeLenght));
             ropesLocations[i] = FastMath.interpolateLinear(0.5f, start, end);
             ropes[i].setMaterial(ropeMaterial); 
             attachChild(ropes[i]);

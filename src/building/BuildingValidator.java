@@ -41,28 +41,7 @@ public class BuildingValidator {
                     points += calculatePoints(wall);
                     if(!wall.isStale()) {
                         points += wall.getWorldTranslation().y;
-                        PhysicsSpace p = BuildingSimulator.getBuildingSimulator().getBulletAppState()
-                        .getPhysicsSpace();
-                        Control c0 = wall.getControl(0);
-                        wall.removeControl(c0);
-                        p.remove(c0);
-                        Control c1 = wall.getControl(0);
-                        wall.removeControl(c1);
-                        p.remove(c1);
-                        Control c2 = wall.getControl(0);
-                        wall.removeControl(c2);
-                        p.remove(c2);
-                        List<Spatial> children = wall.getChildren();
-                        for(int k = 0; k < children.size(); k++) {
-                            Spatial child = children.get(k);
-                            if(child.getName().startsWith("Cylinder")) {
-                                child.removeFromParent();
-                            }
-                        }
-                        RigidBodyControl cn = new RigidBodyControl(0);
-                        wall.addControl(cn);
-                        BuildingSimulator.getBuildingSimulator().getBulletAppState()
-                                .getPhysicsSpace().add(cn);
+                        blockWall(wall);
                     }
                 }
             }
@@ -78,30 +57,30 @@ public class BuildingValidator {
             points += calculatePoints(part); 
             if(!part.isStale()) {
                 points += part.getWorldTranslation().y;
-                PhysicsSpace p = BuildingSimulator.getBuildingSimulator().getBulletAppState()
-                        .getPhysicsSpace();
-                Control c0 = part.getControl(0);
-                part.removeControl(c0);
-                p.remove(c0);
-                Control c1 = part.getControl(0);
-                part.removeControl(c1);
-                p.remove(c1);
-                Control c2 = part.getControl(0);
-                part.removeControl(c2);
-                p.remove(c2);
-                List<Spatial> children = part.getChildren();
-                        for(int k = 0; k < children.size(); k++) {
-                            Spatial child = children.get(k);
-                            if(child.getName().startsWith("Cylinder")) {
-                                child.removeFromParent();
-                            }
-                        }
-                RigidBodyControl cn = new RigidBodyControl(0);
-                part.addControl(cn);
-                BuildingSimulator.getBuildingSimulator().getBulletAppState()
-                        .getPhysicsSpace().add(cn);
+                blockWall(part);
             } 
         }
         return points; 
+    }
+    
+    private static void blockWall(Wall wall) {
+        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator().getBulletAppState()
+                        .getPhysicsSpace();
+        for(int i = 0; i < 3; i++) {
+            Control control = wall.getControl(0);
+            wall.removeControl(control);
+            physics.remove(control);
+        }
+        List<Spatial> children = wall.getChildren();
+        for(int i = 0; i < children.size(); i++) {
+            Spatial child = children.get(i);
+            if(child.getName().startsWith("Line")) {
+                child.removeFromParent();
+                i--;
+            }
+        }
+        RigidBodyControl blockControl = new RigidBodyControl(0f);
+        wall.addControl(blockControl);
+        physics.add(blockControl);
     }
 }

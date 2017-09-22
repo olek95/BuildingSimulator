@@ -99,7 +99,8 @@ public enum Translator {
     CLEANING_MAP,
     CLEANING_MAP_MESSAGE,
     ENTIRE_MAP,
-    INFINITE_BUILDINGS;
+    INFINITE_BUILDINGS,
+    INACCESSIBLE_SPACE;
     
     private String value; 
     

@@ -10,6 +10,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import menu.HUD;
 import menu.Shop;
+import texts.Translator;
 
 /**
  * Obiekt klasy <code>BirdsEyeView</code> reprezentuje widok z lotu ptaka (widok 
@@ -49,8 +50,12 @@ public class BirdsEyeView implements ActionListener{
                     result = results.getCollision(i++);
                 }while(!result.getGeometry().getName().startsWith("terrain"));
                 Vector3f location = result.getContactPoint().setY(0.3f);
-                viewOwner.setDischargingLocation(location);
-                viewOwner.setListener(new DummyCollisionListener());
+                float positiveLocation = Map.calculateBorderLocation(false);
+                if(positiveLocation > Math.abs(location.x) && positiveLocation > 
+                        Math.abs(location.z)) {
+                    viewOwner.setDischargingLocation(location);
+                    viewOwner.setListener(new DummyCollisionListener());
+                } else HUD.setMessage(Translator.INACCESSIBLE_SPACE.getValue());
             } else {
                 Shop shop = Shop.getDisplayedShop();
                 if(shop != null) {

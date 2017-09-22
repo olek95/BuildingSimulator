@@ -76,7 +76,7 @@ public class Map {
         DummyWall.createDummyWall(new Vector3f(negativeLocation, 2.2f, 0), zDimensions, 0); 
     }
     
-    private float calculateBorderLocation(boolean negative) {
+    public static float calculateBorderLocation(boolean negative) {
         return (negative ? -254 : 254) * 2.5f;
     }
 }

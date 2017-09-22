@@ -28,6 +28,7 @@ import cranes.Hook;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import menu.CleaningDialogWindow;
 import menu.HUD;
 import menu.MainMenu;
 import menu.MenuFactory;
@@ -165,7 +166,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             }
         } else {
             if(name.equals(Control.Actions.SHOW_CURSOR.toString()) 
-                    && Shop.getDisplayedShop() == null && !BirdsEyeView.isActive()){
+                    && Shop.getDisplayedShop() == null && !BirdsEyeView.isActive()
+                    && CleaningDialogWindow.getDisplayedCleaningDialogWindow() == null){
                 flyCam.setDragToRotate(false);
             }
         }

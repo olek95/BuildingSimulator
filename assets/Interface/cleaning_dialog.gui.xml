@@ -6,10 +6,12 @@
                 <method name="setTextWrap" param0="Word"/>
             </component>
             <component type="Button" id="entire_map_button" position="5%,75%" dimensions="25%,15%">
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="deleteAllBuildings"/>
             </component>
             <component type="Button" id="infinite_buildings_button" position="32%,75%" dimensions="43%,15%">
             </component>
             <component type="Button" id="cancellation_button" position="77%,75%" dimensions="18%,15%">
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="cancel"/>
             </component>
         </component>
     </screen>

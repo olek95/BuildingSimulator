@@ -22,6 +22,15 @@ public class Map {
     }
     
     /**
+     * Oblicza odległośc od środka mapy, na jakiej znajduje sie granica mapy. 
+     * @param negative true jeśli odległośc ma być ujemna, false w przeciwnym przypadku 
+     * @return odległość od środka mapy na jakiej znajduje się granica 
+     */
+    public static float calculateBorderLocation(boolean negative) {
+        return (negative ? -254 : 254) * 2.5f;
+    }
+    
+    /**
      * Zwraca węzeł przechowujący całą mapę gry (podłoże, granice, niebo). 
      * @return węzeł mapy gry 
      */
@@ -74,9 +83,5 @@ public class Map {
         DummyWall.createDummyWall(new Vector3f(0, 2.2f, negativeLocation), xDimensions, 0); 
         DummyWall.createDummyWall(new Vector3f(positiveLocation, 2.2f, 0), zDimensions, 0); 
         DummyWall.createDummyWall(new Vector3f(negativeLocation, 2.2f, 0), zDimensions, 0); 
-    }
-    
-    public static float calculateBorderLocation(boolean negative) {
-        return (negative ? -254 : 254) * 2.5f;
     }
 }

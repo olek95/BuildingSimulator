@@ -24,7 +24,8 @@ public class HUDButton extends ButtonAdapter{
     }
     
     /**
-     * Wyświetla sklep lub kończy budowlę, w zależności który to jest przycisk. 
+     * Wyświetla sklep, kończy budowlę lub wyświetla okienko umożliwiające oczyszczanie 
+     * mapy, w zależności który przycisk został kliknięty. 
      * @param evt
      * @param isToggled 
      */

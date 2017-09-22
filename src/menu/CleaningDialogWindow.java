@@ -11,6 +11,12 @@ import texts.Translator;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
+/**
+ * Obiekt klasy <code>CleaningDialogWindow</code> reprezentuje okienko umożliwiające 
+ * oczyszczenie mapy ze wszystkich budowli lub tylko z budowli, które nie zostały 
+ * ukończone. 
+ * @author AleksanderSklorz
+ */
 public class CleaningDialogWindow extends Menu{
     private static Screen screen;
     private static CleaningDialogWindow displayedCleaningDialogWindow = null;
@@ -29,6 +35,11 @@ public class CleaningDialogWindow extends Menu{
         displayedCleaningDialogWindow = this; 
     }
     
+    /**
+     * Usuwa wszystkie budowle - zarówno te ukończone, jak i w trakcie budowy. 
+     * @param evt
+     * @param isToggled 
+     */
     public void deleteAllBuildings(MouseButtonEvent evt, boolean isToggled) {
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         List<Spatial> gameObjects = game.getRootNode().getChildren(); 
@@ -43,12 +54,21 @@ public class CleaningDialogWindow extends Menu{
         cancel(null, true);
     }
     
+    /**
+     * Wyłacza okienko oczyszczania mapy. 
+     * @param evt
+     * @param isToggled 
+     */
     public void cancel(MouseButtonEvent evt, boolean isToggled) {
         displayedCleaningDialogWindow = null; 
         BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(false);
         goNextMenu(screen, null);
     }
     
+    /**
+     * Zwraca okienko oczyszczania mapy. 
+     * @return okienko oczyszczania mapy 
+     */
     public static CleaningDialogWindow getDisplayedCleaningDialogWindow() {
         return displayedCleaningDialogWindow; 
     }

@@ -95,7 +95,11 @@ public enum Translator {
     MESSAGE_POINTS,
     MESSAGE_NO_FREE_SPACE,
     LOWERED_PROPS,
-    HEIGHTENED_PROPS;
+    HEIGHTENED_PROPS,
+    CLEANING_MAP,
+    CLEANING_MAP_MESSAGE,
+    ENTIRE_MAP,
+    INFINITE_BUILDINGS;
     
     private String value; 
     

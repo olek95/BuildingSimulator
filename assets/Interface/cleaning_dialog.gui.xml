@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
     <screen>
-        <component type="Window" id="cleaning_window" position="20%,20%" dimensions="60%,60%">
-            <component type="Button" id="change_page_button" position="66%,90%" dimensions="25%,6%">
+        <component type="Window" id="cleaning_window" position="20%,36.5%" dimensions="60%,27%">
+            <component type="Label" id="cleaning_message" position="5%,30%" dimensions="95%,24%">
+                <method name="setTextWrap" param0="Word"/>
+            </component>
+            <component type="Button" id="entire_map_button" position="5%,75%" dimensions="25%,15%">
+            </component>
+            <component type="Button" id="infinite_buildings_button" position="32%,75%" dimensions="43%,15%">
+            </component>
+            <component type="Button" id="cancellation_button" position="77%,75%" dimensions="18%,15%">
             </component>
         </component>
     </screen>

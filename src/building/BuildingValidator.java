@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * Klasa <code>BuildingValidator</code> sprawdza i ocenia zbudowany budynek. 
+ * Po sprawdzeniu budynku blokuje dalszą możliwośc jego modyfikowania. 
  * @author AleksanderSklorz
  */
 public class BuildingValidator {

@@ -93,7 +93,9 @@ public enum Translator {
     NEW_HEIGHT,
     BAD_DATA,
     MESSAGE_POINTS,
-    MESSAGE_NO_FREE_SPACE;
+    MESSAGE_NO_FREE_SPACE,
+    LOWERED_PROPS,
+    HEIGHTENED_PROPS;
     
     private String value; 
     

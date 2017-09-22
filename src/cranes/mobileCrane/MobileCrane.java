@@ -22,6 +22,8 @@ import com.jme3.texture.Texture;
 import com.jme3.water.SimpleWaterProcessor;
 import java.util.Arrays;
 import java.util.List;
+import menu.HUD;
+import texts.Translator;
 /**
  * Obiekt klasy <code>MobileCrane</code> reprezentuje mobilny dźwig. Dźwig
  * ten posiada umiejętność poruszania się w przód i w tył, skręciania oraz 
@@ -230,6 +232,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
             if(Control.Actions.ACTION.toString().equals(GameManager.getLastAction())){
                 Control.addListener(getArmControl());
                 GameManager.setLastAction(null);
+                HUD.setMessage(Translator.LOWERED_PROPS.getValue());
             }
         }
     }
@@ -241,6 +244,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
             if(Control.Actions.ACTION.toString().equals(GameManager.getLastAction())){
                 Control.addListener(this);
                 GameManager.setLastAction(null);
+                HUD.setMessage(Translator.HEIGHTENED_PROPS.getValue());
             }
         }
     }

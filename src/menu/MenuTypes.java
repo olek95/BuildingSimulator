@@ -11,5 +11,6 @@ public enum MenuTypes {
     CONTROL_CONFIGURATION,
     PAUSE_MENU,
     STATISTICS,
-    SHOP;
+    SHOP,
+    CLEANING_DIALOG_WINDOW;
 }

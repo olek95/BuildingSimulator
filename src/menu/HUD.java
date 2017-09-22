@@ -23,8 +23,9 @@ public class HUD extends AbstractAppState{
     public HUD(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         addNewButton("finish_building_button", "Interface/hudIcons/end_building_icon.png",
-                0.95f, 0, false); 
-        addNewButton("shop_button", "Interface/hudIcons/shop_icon.png", 0.9f, 0, true);
+                0.95f); 
+        addNewButton("shop_button", "Interface/hudIcons/shop_icon.png", 0.9f);
+        addNewButton("cleaning_button", "Interface/hudIcons/cleaning_icon.png", 0.85f);
         addLabel("points_label", 0, 0.2f, GameManager.getUser().getPoints() + "");
         addLabel("message_label", 0.3f, 0.4f, "");
     }
@@ -88,9 +89,9 @@ public class HUD extends AbstractAppState{
      */
     public static boolean shouldMessageBeDeleted() { return shouldMessageBeDeleted; }
     
-    private void addNewButton(String id, String path, float x, float y, boolean shopping) {
+    private void addNewButton(String id, String path, float x) {
         HUDButton button = new HUDButton(screen, id, new Vector2f((int)screen.getWidth() * x,
-                (int)screen.getHeight() * y), new  Vector2f(32, 32), shopping);
+                0), new  Vector2f(32, 32));
         button.removeEffect(Effect.EffectEvent.Hover);
         button.removeEffect(Effect.EffectEvent.Press);
         button.setColorMap(path);

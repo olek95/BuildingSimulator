@@ -30,6 +30,9 @@ public class MenuFactory {
                 break;
             case SHOP: 
                 menu = new Shop();
+                break;
+            case CLEANING_DIALOG_WINDOW: 
+                menu = new CleaningDialogWindow(); 
         }
         menu.getWindow().show();
     }

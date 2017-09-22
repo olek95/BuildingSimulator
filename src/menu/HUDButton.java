@@ -17,11 +17,10 @@ import tonegod.gui.core.ElementManager;
  * @author AleksanderSklorz
  */
 public class HUDButton extends ButtonAdapter{
-    private boolean shopping; 
-    public HUDButton(ElementManager screen, String id, Vector2f position, Vector2f dimensions,
-            boolean shopping) {
+    private String buttonId;
+    public HUDButton(ElementManager screen, String id, Vector2f position, Vector2f dimensions) {
         super(screen, id, position, dimensions);
-        this.shopping = shopping; 
+        buttonId = id; 
     }
     
     /**
@@ -31,16 +30,21 @@ public class HUDButton extends ButtonAdapter{
      */
     @Override
     public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean isToggled) {
-        if(shopping) {
+        if(buttonId.equals("shop_button")) {
             Shop shop = Shop.getDisplayedShop();
             if(shop != null) shop.getView().setOff();
             BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(true);
             MenuFactory.showMenu(MenuTypes.SHOP); 
         } else {
-            int points = BuildingValidator.validate();
-            GameManager.getUser().addPoints(points);
-            HUD.updatePoints();
-            HUD.setMessage(Translator.MESSAGE_POINTS.getValue().replace("x", points + ""));
+            if(buttonId.equals("finish_building_button")) {
+                int points = BuildingValidator.validate();
+                GameManager.getUser().addPoints(points);
+                HUD.updatePoints();
+                HUD.setMessage(Translator.MESSAGE_POINTS.getValue().replace("x", points + ""));
+            } else {
+                BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(true);
+                MenuFactory.showMenu(MenuTypes.CLEANING_DIALOG_WINDOW);
+            }
         }
     }
     

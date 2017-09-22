@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <screen>
+        <component type="Window" id="cleaning_window" position="20%,20%" dimensions="60%,60%">
+            <component type="Button" id="change_page_button" position="66%,90%" dimensions="25%,6%">
+            </component>
+        </component>
+    </screen>
+</root>

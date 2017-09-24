@@ -50,6 +50,7 @@ public class Construction extends Node{
                 }
                 if(touchedWall != null){
                     touchedWall.attachChild(wall1);
+                    System.out.println(touchedWall); 
                     lastAddedWall = wall1; 
                     wall1.setMovable(false);
                     wall1.setStale(false);
@@ -297,7 +298,8 @@ public class Construction extends Node{
         String parentName = parent.getName();
         Node node = new Node(parentName + " - child");
         if(parentName.equals(CatchNode.BOTTOM.toString())) {
-            node.setLocalTranslation(new Vector3f(nearestEmptyLocation(wall1, wall2, node),
+            System.out.println("WCHODZI");
+            node.setLocalTranslation(new Vector3f(nearestEmptyLocation(wall1, wall2, parent),
                     wall1.getWidth() + wall2.getHeight(), 
                     wall2.getWidth() - wall2.getHeight()));
         } else {
@@ -327,15 +329,15 @@ public class Construction extends Node{
     }
     
     private float nearestEmptyLocation(Wall wall, Wall wall2, Node catchNode) {
-        Vector3f wallLocation = wall.getWorldTranslation().clone().add(wall.getLength(), 0, 0);
+        Vector3f wallLocation = wall.getWorldTranslation().clone();
         float min = wall.getLength() + 1, coordinate = wallLocation.x - wall2.getWorldTranslation().x;
         List<Spatial> walls = catchNode.getChildren();
         int wallsCount = walls.size();
-        System.out.println(wallsCount + " " + catchNode); 
+        System.out.println(wallsCount + " " + catchNode + " " + catchNode.getParent()); 
         for(int i = 0; i < wallsCount; i++) {
             Wall wallFromCatchNode = (Wall)walls.get(i); 
             Vector3f wallEnd = wallFromCatchNode.getWorldTranslation()
-                    .clone().add(-wallFromCatchNode.getLength(), 0, 0);
+                    .clone().add(wallFromCatchNode.getLength(), 0, 0);
             float distance = wallEnd.distance(wallLocation); 
             System.out.println(min + " " + distance);
             if(distance <= min) {

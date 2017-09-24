@@ -50,7 +50,6 @@ public class Construction extends Node{
                 }
                 if(touchedWall != null){
                     touchedWall.attachChild(wall1);
-                    System.out.println(touchedWall); 
                     lastAddedWall = wall1; 
                     wall1.setMovable(false);
                     wall1.setStale(false);
@@ -298,10 +297,15 @@ public class Construction extends Node{
         String parentName = parent.getName();
         Node node = new Node(parentName + " - child");
         if(parentName.equals(CatchNode.BOTTOM.toString())) {
-            System.out.println("WCHODZI");
-            node.setLocalTranslation(new Vector3f(nearestEmptyLocation(wall1, wall2, parent),
-                    wall1.getWidth() + wall2.getHeight(), 
-                    wall2.getWidth() - wall2.getHeight()));
+            float x, sum = 0;
+            List<Spatial> parentChildren = parent.getChildren(); 
+            int childrenCount = parentChildren.size(); 
+            for(int i = 0; i < childrenCount; i++) {
+                sum -= ((Wall)parentChildren.get(i)).getLength() * 2; 
+            }
+            x = sum + wall2.getLength() - wall1.getLength();
+            node.setLocalTranslation(new Vector3f(x, wall2.getWidth() + wall1.getHeight(), 
+                    wall1.getWidth() - wall2.getHeight()));
         } else {
             if(parentName.equals(CatchNode.UP.toString())) {
                 float x, sum = 0;
@@ -311,41 +315,33 @@ public class Construction extends Node{
                     sum -= ((Wall)parentChildren.get(i)).getLength() * 2; 
                 }
                 x = sum + wall2.getLength() - wall1.getLength();
-                node.setLocalTranslation(new Vector3f(x, wall1.getWidth() + wall2.getHeight(), 
-                        -wall2.getWidth() + wall2.getHeight()));
+                node.setLocalTranslation(new Vector3f(x, wall2.getWidth() + wall1.getHeight(), 
+                        -wall1.getWidth() + wall2.getHeight()));
             } else {
-                float z, sum = 0;
-                List<Spatial> parentChildren = parent.getChildren(); 
-                int childrenCount = parentChildren.size(); 
-                for(int i = 0; i < childrenCount; i++) {
-                    sum -= ((Wall)parentChildren.get(i)).getHeight() * 2; 
+                if(parentName.equals(CatchNode.RIGHT.toString())) {
+                    float z, sum = 0;
+                    List<Spatial> parentChildren = parent.getChildren(); 
+                    int childrenCount = parentChildren.size(); 
+                    for(int i = 0; i < childrenCount; i++) {
+                        sum -= ((Wall)parentChildren.get(i)).getHeight() * 2; 
+                    }
+                    z = sum + wall2.getHeight() - wall1.getHeight();
+                    node.setLocalTranslation(new Vector3f(wall2.getWidth() - wall2.getHeight(),
+                            wall2.getWidth() + wall1.getHeight(), z));
+                } else {
+                    float z, sum = 0;
+                    List<Spatial> parentChildren = parent.getChildren(); 
+                    int childrenCount = parentChildren.size(); 
+                    for(int i = 0; i < childrenCount; i++) {
+                        sum -= ((Wall)parentChildren.get(i)).getHeight() * 2; 
+                    }
+                    z = sum + wall2.getHeight() - wall1.getHeight();
+                    node.setLocalTranslation(new Vector3f(-wall2.getWidth() + wall2.getHeight(),
+                            wall2.getWidth() + wall1.getHeight(), z));
                 }
-                z = sum + wall2.getHeight() - wall1.getHeight();
-                node.setLocalTranslation(new Vector3f(wall2.getWidth() - wall2.getHeight(),
-                        wall1.getWidth() + wall2.getHeight(), z));
             }
         }
         return node;
-    }
-    
-    private float nearestEmptyLocation(Wall wall, Wall wall2, Node catchNode) {
-        Vector3f wallLocation = wall.getWorldTranslation().clone();
-        float min = wall.getLength() + 1, coordinate = wallLocation.x - wall2.getWorldTranslation().x;
-        List<Spatial> walls = catchNode.getChildren();
-        int wallsCount = walls.size();
-        System.out.println(wallsCount + " " + catchNode + " " + catchNode.getParent()); 
-        for(int i = 0; i < wallsCount; i++) {
-            Wall wallFromCatchNode = (Wall)walls.get(i); 
-            Vector3f wallEnd = wallFromCatchNode.getWorldTranslation()
-                    .clone().add(wallFromCatchNode.getLength(), 0, 0);
-            float distance = wallEnd.distance(wallLocation); 
-            System.out.println(min + " " + distance);
-            if(distance <= min) {
-                min = distance; 
-                coordinate = wallEnd.getX() - wall2.getWorldTranslation().x;
-            }
-        }
-        return coordinate; 
     }
     
     private Vector3f calculateProperLocation(Vector3f edgeLocation, Wall wall, int mode){

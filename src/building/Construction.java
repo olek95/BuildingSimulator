@@ -225,7 +225,7 @@ public class Construction extends Node{
                     i = minDistance > 3 ? 0 : minDistance; 
             if(foundations) 
                 catchNodes[i] = (Node)wallChildren.get(minDistance); 
-            if(checkIfCanBeAdded(catchNodes[i], wall1)){
+//            if(checkIfCanBeAdded(catchNodes[i], wall1)){
                 boolean ceiling = mode == 1 && (int)(location.y - 
                         wall2.getWorldTranslation().y) != 0; 
                 if(foundations || ceiling){
@@ -233,13 +233,35 @@ public class Construction extends Node{
                             catchNodes[i], minDistance, perpendicularity, ceiling); 
                     catchNodesLocations[i] = catchNodes[i].getWorldTranslation();
                 }
+                
                 RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
-                control.setPhysicsLocation(calculateProperLocation(
-                        catchNodesLocations[i], wall1, mode));
+                RigidBodyControl control2 = wall2.getControl(RigidBodyControl.class);
+                Quaternion q2 = control2.getPhysicsRotation().clone(); 
+                control2.setPhysicsRotation(new Quaternion(q2.getX(), 0, q2.getZ(),
+                        q2.getW()));
+                
+                Node catchNode = createCatchNode(wall1, wall2, catchNodes[i]);
+                wall2.attachChild(catchNode);
+                control2.setPhysicsRotation(q2);
+                
+                Vector3f edgeLocation = catchNode.getWorldTranslation();
+                control.setPhysicsLocation(edgeLocation);
                 control.setPhysicsRotation(calculateProperRotation(wall2,
                         i, !foundations, perpendicularity, ceiling));
+                wall2.detachChild(catchNode);
                 return catchNodes[i];
-            }else return null; 
+                
+//                wall1.getControl(RigidBodyControl.class)
+//                        .setPhysicsRotation(new Quaternion(q1.getX(),0,0,q1.getW()));
+//                wall1.getControl(RigidBodyControl.class)
+//                        .setPhysicsLocation(new Vector3f(wall2.getWorldTranslation().x,
+//                        wall1.getWidth() + wall2.getHeight(), wall2.getWorldTranslation().z
+//                        - wall2.getHeight() + wall2.getWidth()));
+//                control2.setPhysicsRotation(q2);
+//                wall1.getControl(RigidBodyControl.class).setPhysicsRotation(q1);
+//                control.setPhysicsLocation(calculateProperLocation(
+//                        node.getWorldTranslation(), wall1, mode));
+//            }else return null; 
         }
         return this;
     }
@@ -271,11 +293,53 @@ public class Construction extends Node{
         return min; 
     }
     
-    private Vector3f calculateProperLocation(Vector3f edgeLocation, Wall wall, int mode){
-        return new Vector3f(edgeLocation.x, mode == 1 ?
-                ((RigidBodyControl)wall.getControl(mode)).getPhysicsLocation().y
-                : edgeLocation.y + wall.getHeight(), edgeLocation.z);
+    private Node createCatchNode(Wall wall1, Wall wall2, Node parent) {
+        String parentName = parent.getName();
+        Node node = new Node(parentName + " - child");
+        if(parentName.equals(CatchNode.BOTTOM.toString())) {
+            float x, sum = 0;
+            List<Spatial> parentChildren = parent.getChildren(); 
+            int childrenCount = parentChildren.size(); 
+            for(int i = 0; i < childrenCount; i++) {
+                sum -= ((Wall)parentChildren.get(i)).getLength() * 2; 
+            }
+            x = sum + wall2.getLength() - wall1.getLength();
+            node.setLocalTranslation(new Vector3f(x, wall1.getWidth() + wall2.getHeight(), 
+                    wall2.getWidth() - wall2.getHeight()));
+        } else {
+            if(parentName.equals(CatchNode.UP.toString())) {
+                float x, sum = 0;
+                List<Spatial> parentChildren = parent.getChildren(); 
+                int childrenCount = parentChildren.size(); 
+                for(int i = 0; i < childrenCount; i++) {
+                    sum -= ((Wall)parentChildren.get(i)).getLength() * 2; 
+                }
+                x = sum + wall2.getLength() - wall1.getLength();
+                node.setLocalTranslation(new Vector3f(x, wall1.getWidth() + wall2.getHeight(), 
+                        -wall2.getWidth() + wall2.getHeight()));
+            } else {
+                float z, sum = 0;
+                List<Spatial> parentChildren = parent.getChildren(); 
+                int childrenCount = parentChildren.size(); 
+                for(int i = 0; i < childrenCount; i++) {
+                    sum -= ((Wall)parentChildren.get(i)).getHeight() * 2; 
+                }
+                z = sum + wall2.getHeight() - wall1.getHeight();
+                node.setLocalTranslation(new Vector3f(wall2.getWidth() - wall2.getHeight(),
+                        wall1.getWidth() + wall2.getHeight(), z));
+            }
+        }
+        return node;
     }
+    
+    private Vector3f calculateProperLocation(Vector3f edgeLocation, Wall wall, int mode){
+        return null; 
+    }
+//    private Vector3f calculateProperLocation(Vector3f edgeLocation, Wall wall, int mode){
+//        return new Vector3f(edgeLocation.x, mode == 1 ?
+//                ((RigidBodyControl)wall.getControl(mode)).getPhysicsLocation().y
+//                : edgeLocation.y + wall.getHeight(), edgeLocation.z);
+//    }
     
     private Quaternion calculateProperRotation(Wall ownerRotation, int direction,
             boolean notFoundations, boolean perpendicular, boolean ceiling){

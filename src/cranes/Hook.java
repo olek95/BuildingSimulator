@@ -16,7 +16,6 @@ import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -100,6 +99,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 Spatial wallRecentlyHitObject = attachedObject.getRecentlyHitObject(); 
                 if(wallRecentlyHitObject != null){
                     Wall nearestBuildingWall = null; 
+//                    System.out.println(oldMode + " " + wallRecentlyHitObject); 
                     if(oldMode == 1 && wallRecentlyHitObject.getName().equals("terrain-gameMap"))
                         nearestBuildingWall = Construction.getNearestBuildingWall(attachedObject);
                     Construction construction = Construction
@@ -201,6 +201,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 }
             }
         }
+        System.out.println(results.size() + " " + !hitOtherWall);
         // obniża hak, jeśli w żadnym punkcie z dołu nie dotyka jakiegoś obiektu
         if(results.size() == 0 && !hitOtherWall){
             changeHookPosition(new Vector3f(1f, actualLowering += speed, 1f),

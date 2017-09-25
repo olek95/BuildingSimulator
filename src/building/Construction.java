@@ -84,6 +84,7 @@ public class Construction extends Node{
         int objectsNumber = gameObjects.size(); 
         Spatial minWall = null; 
         Vector3f wallLocation = wall.getWorldTranslation();
+        System.out.println(3); 
         for(int i = 0; i < objectsNumber; i++){
             Spatial object = gameObjects.get(i); 
             if(object.getName().startsWith("Building")){
@@ -92,6 +93,7 @@ public class Construction extends Node{
                     minWall = building.getChild(0);
                     min = wallLocation.distance(minWall.getWorldTranslation());
                 }
+                System.out.println(2);
                 Spatial suspectMinWall = getNearestChildFromWall(wallLocation, building
                         .getChild(0), wall.getWorldTranslation().distance(minWall
                         .getWorldTranslation())); 
@@ -134,46 +136,46 @@ public class Construction extends Node{
      * @return sprawdzany element 
      */
     public Spatial updateState(Node element){
-        List<Spatial> buildingWalls = element.getChildren(); 
-        for(int i = 1; i < 14; i++){ 
-            Node side = (Node)buildingWalls.get(i);
-            if(!side.getChildren().isEmpty()){
-                Spatial nextWall = updateState((Node)side.getChild(0));
-                if(nextWall != null){
-                    Wall wall = (Wall)nextWall;
-                    wall.setMovable(true);
-                    float distance = nextWall.getWorldTranslation()
-                            .distance(side.getWorldTranslation());
-                    if(wall.getHeight() + 0.01f < distance){ // umowna granica dozwolonego przesunięcia ściany
-                        //removeWall(wall);
-                        boolean ceilingStateChanged = false, wallStateChanged = false; 
-                        if(!wall.isStale()){
-                            wallStateChanged = true; 
-                            wall.setStale(true);
-                        }
-                        if(i <= 4){
-                            CatchNode[] ceilingPartsSides = {CatchNode.NORTH_0, 
-                                CatchNode.NORTH_1};
-                            for(int j = 0; j < 2; j++){
-                                List<Spatial> northChildren = ((Node)wall
-                                    .getChild(ceilingPartsSides[j].toString())).getChildren();
-                                int northChildrenAmount = northChildren.size();
-                                for(int k = 0; k < northChildrenAmount; k++){
-                                    Wall ceiling = (Wall)northChildren.get(k);
-                                    //removeWall(ceiling); 
-                                    ceiling.setMovable(true);
-                                    if(!ceiling.isStale()){
-                                        ceiling.setStale(true);
-                                        ceilingStateChanged = true; 
-                                    }
-                                }
-                            }
-                        }
-                        if(wallStateChanged || ceilingStateChanged) resetWalls = true; 
-                    }else  wall.setMovable(false);
-                }
-            }
-        }
+//        List<Spatial> buildingWalls = element.getChildren(); 
+//        for(int i = 1; i < 14; i++){ 
+//            Node side = (Node)buildingWalls.get(i);
+//            if(!side.getChildren().isEmpty()){
+//                Spatial nextWall = updateState((Node)side.getChild(0));
+//                if(nextWall != null){
+//                    Wall wall = (Wall)nextWall;
+//                    wall.setMovable(true);
+//                    float distance = nextWall.getWorldTranslation()
+//                            .distance(side.getWorldTranslation());
+//                    if(wall.getHeight() + 0.01f < distance){ // umowna granica dozwolonego przesunięcia ściany
+//                        //removeWall(wall);
+//                        boolean ceilingStateChanged = false, wallStateChanged = false; 
+//                        if(!wall.isStale()){
+//                            wallStateChanged = true; 
+//                            wall.setStale(true);
+//                        }
+//                        if(i <= 4){
+//                            CatchNode[] ceilingPartsSides = {CatchNode.NORTH_0, 
+//                                CatchNode.NORTH_1};
+//                            for(int j = 0; j < 2; j++){
+//                                List<Spatial> northChildren = ((Node)wall
+//                                    .getChild(ceilingPartsSides[j].toString())).getChildren();
+//                                int northChildrenAmount = northChildren.size();
+//                                for(int k = 0; k < northChildrenAmount; k++){
+//                                    Wall ceiling = (Wall)northChildren.get(k);
+//                                    //removeWall(ceiling); 
+//                                    ceiling.setMovable(true);
+//                                    if(!ceiling.isStale()){
+//                                        ceiling.setStale(true);
+//                                        ceilingStateChanged = true; 
+//                                    }
+//                                }
+//                            }
+//                        }
+//                        if(wallStateChanged || ceilingStateChanged) resetWalls = true; 
+//                    }else  wall.setMovable(false);
+//                }
+//            }
+//        }
         return element;
     }
     
@@ -315,7 +317,7 @@ public class Construction extends Node{
         } else {
             coordinate = sum + wall2.getHeight() - wall1.getHeight();
             node.setLocalTranslation(new Vector3f(right ? wall2.getWidth() 
-                    - wall2.getHeight() : -wall2.getWidth() + wall2.getHeight(), 
+                    - wall2.getLength() : -wall2.getWidth() + wall2.getLength(), 
                     wall2.getWidth() + wall1.getHeight(), coordinate));
         }
         return node;
@@ -368,8 +370,11 @@ public class Construction extends Node{
             Spatial wallFromTree, float min){
         List<Spatial> wallFromTreeChildren = ((Node)wallFromTree).getChildren(); 
         Spatial nearestWall = wallFromTree;
-        for(int i = 6; i < 14; i++){ // przechodzi po wszystkich stronach ściany
+        int end = 6 + CatchNode.values().length - 4; 
+        System.out.println(1);
+        for(int i = 6; i < end; i++){ // przechodzi po wszystkich stronach ściany
             Node side = (Node)wallFromTreeChildren.get(i);
+            System.out.println(side); 
             if(!side.getChildren().isEmpty()){
                 Spatial nextWall = getNearestChildFromWall(wallLocation,
                         (Node)side.getChild(0), min);

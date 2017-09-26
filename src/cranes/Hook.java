@@ -194,16 +194,16 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                             - 0.1f, 0)).collideWith((BoundingBox)hitObjectByAttachedObject
                             .getWorldBound(), results); // -0.1 aby zmniejszyć przerwę
                     List<Spatial> hitObjects = wall.getHitObjects();
-                    int hitObjectsNumber = hitObjects.size(); 
-                    for(int i = 0; i < hitObjectsNumber && !hitOtherWall; i++)
-                        if(hitObjects.get(i).getName().startsWith("Wall"))
-                            hitOtherWall = true; 
+//                    int hitObjectsNumber = hitObjects.size(); 
+//                    for(int i = 0; i < hitObjectsNumber && !hitOtherWall; i++)
+//                        if(hitObjects.get(i).getName().startsWith("Wall"))
+//                            hitOtherWall = true; 
                 }
             }
         }
-        System.out.println(results.size() + " " + !hitOtherWall);
         // obniża hak, jeśli w żadnym punkcie z dołu nie dotyka jakiegoś obiektu
-        if(results.size() == 0 && !hitOtherWall){
+//        if(results.size() == 0 && !hitOtherWall){
+        if(results.size() == 0) {
             changeHookPosition(new Vector3f(1f, actualLowering += speed, 1f),
                     false);
             recentlyHitObject = null;

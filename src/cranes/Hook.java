@@ -99,7 +99,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 Spatial wallRecentlyHitObject = attachedObject.getRecentlyHitObject(); 
                 if(wallRecentlyHitObject != null){
                     Wall nearestBuildingWall = null; 
-//                    System.out.println(oldMode + " " + wallRecentlyHitObject); 
+                    System.out.println(wallRecentlyHitObject + " " + nearestBuildingWall);
                     if(oldMode == 1 && wallRecentlyHitObject.getName().equals("terrain-gameMap"))
                         nearestBuildingWall = Construction.getNearestBuildingWall(attachedObject);
                     Construction construction = Construction
@@ -183,7 +183,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
      * jest kolizja z danym obiektem 
      */
     protected void lower(CollisionResults results){
-        boolean hitOtherWall = false; 
+//        boolean hitOtherWall = false; 
         if(recentlyHitObject == null){
             if(attachedObject != null){
                 Wall wall = (Wall)attachedObject; 
@@ -193,7 +193,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                             -((BoundingBox)attachedObject.getWorldBound()).getYExtent()
                             - 0.1f, 0)).collideWith((BoundingBox)hitObjectByAttachedObject
                             .getWorldBound(), results); // -0.1 aby zmniejszyć przerwę
-                    List<Spatial> hitObjects = wall.getHitObjects();
+//                    List<Spatial> hitObjects = wall.getHitObjects();
 //                    int hitObjectsNumber = hitObjects.size(); 
 //                    for(int i = 0; i < hitObjectsNumber && !hitOtherWall; i++)
 //                        if(hitObjects.get(i).getName().startsWith("Wall"))

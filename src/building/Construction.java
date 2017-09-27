@@ -84,7 +84,6 @@ public class Construction extends Node{
         int objectsNumber = gameObjects.size(); 
         Spatial minWall = null; 
         Vector3f wallLocation = wall.getWorldTranslation();
-        System.out.println(3); 
         for(int i = 0; i < objectsNumber; i++){
             Spatial object = gameObjects.get(i); 
             if(object.getName().startsWith("Building")){
@@ -93,7 +92,6 @@ public class Construction extends Node{
                     minWall = building.getChild(0);
                     min = wallLocation.distance(minWall.getWorldTranslation());
                 }
-                System.out.println(2);
                 Spatial suspectMinWall = getNearestChildFromWall(wallLocation, building
                         .getChild(0), wall.getWorldTranslation().distance(minWall
                         .getWorldTranslation())); 
@@ -225,14 +223,20 @@ public class Construction extends Node{
             boolean perpendicularity = wall1.checkPerpendicularity(wall2); 
             int minDistance = getMin(distances, foundations, location, wall2), 
                     i = minDistance > 3 ? 0 : minDistance; 
-            if(foundations) 
+            if(foundations) {
                 catchNodes[i] = (Node)wallChildren.get(minDistance); 
+            }
+            System.out.println(foundations + " " + catchNodes[i] + " "+ minDistance + " " + i);
 //            if(checkIfCanBeAdded(catchNodes[i], wall1)){
-                boolean ceiling = mode == 1 && (int)(location.y - 
-                        wall2.getWorldTranslation().y) != 0; 
-                if(foundations || ceiling){
-                    catchNodes[i] = wall2.changeCatchNodeLocation(wall1, 
-                            catchNodes[i], minDistance, perpendicularity, ceiling); 
+//                boolean ceiling = mode == 1 && (int)(location.y - 
+//                        wall2.getWorldTranslation().y) != 0; 
+            boolean ceiling = false; 
+//                if(foundations || ceiling){
+//                    catchNodes[i] = wall2.changeCatchNodeLocation(wall1, 
+//                            catchNodes[i], minDistance, perpendicularity, ceiling); 
+//                    catchNodesLocations[i] = catchNodes[i].getWorldTranslation();
+//                }
+                if(foundations) {
                     catchNodesLocations[i] = catchNodes[i].getWorldTranslation();
                 }
                 
@@ -242,7 +246,7 @@ public class Construction extends Node{
                 control2.setPhysicsRotation(new Quaternion(q2.getX(), 0, q2.getZ(),
                         q2.getW()));
                 
-                Node catchNode = createCatchNode(wall1, wall2, catchNodes[i]);
+                Node catchNode = createCatchNode(wall1, wall2, catchNodes[i], foundations);
                 wall2.attachChild(catchNode);
                 control2.setPhysicsRotation(q2);
                 
@@ -286,28 +290,39 @@ public class Construction extends Node{
         int min = 0; 
         for(int i = 1; i < 4; i++)
             if(distances[min] > distances[i]) min = i; 
-        if(foundations){
-            int offset = min * 2, i1 = 6 + offset, i2 = 7 + offset;  
-            return wall.getChild(i1).getWorldTranslation().distance(wallLocation) 
-                    < wall.getChild(i2).getWorldTranslation().distance(wallLocation) ?
-                    i1 : i2; 
+        if(foundations){  
+            return min + 5; 
         }
         return min; 
     }
     
-    private Node createCatchNode(Wall wall1, Wall wall2, Node parent) {
+    private Node createCatchNode(Wall wall1, Wall wall2, Node parent, boolean foundations) {
         String parentName = parent.getName();
         Node node = new Node(parentName + " - child");
-        boolean bottom = false, up = false, right = false;
+        boolean bottom = false, up = false, right = false, left = false, south = false;
         float coordinate, sum = 0; 
         if(parentName.equals(CatchNode.BOTTOM.toString())) bottom = true;
         else if(parentName.equals(CatchNode.UP.toString())) up = true;
         else if(parentName.equals(CatchNode.RIGHT.toString())) right = true;
+        else if(parentName.equals(CatchNode.LEFT.toString())) left = true;
+        else if(parentName.equals(CatchNode.SOUTH.toString())) south = true; 
         List<Spatial> parentChildren = parent.getChildren(); 
         int childrenCount = parentChildren.size(); 
-        for(int i = 0; i < childrenCount; i++) {
-            if(bottom || up) sum -= ((Wall)parentChildren.get(i)).getLength() * 2; 
-            else sum -= ((Wall)parentChildren.get(i)).getHeight() * 2; 
+        if(bottom || up || left || south) {
+            for(int i = 0; i < childrenCount; i++) {
+                if(bottom || up) sum -= ((Wall)parentChildren.get(i)).getLength() * 2; 
+                else sum -= ((Wall)parentChildren.get(i)).getHeight() * 2; 
+            }
+        } else {
+            for(int i = 0; i < childrenCount; i++) {
+                if(bottom || up) sum -= ((Wall)parentChildren.get(i)).getLength() * 2; 
+                else sum -= ((Wall)parentChildren.get(i)).getHeight() * 2; 
+                
+                Wall wall = ((Wall)parentChildren.get(i));
+                if(wall.checkPerpendicularity(wall2)) 
+                    sum -= ((Wall)parentChildren.get(i)).getHeight() * 2;
+                else sum -= ((Wall)parentChildren.get(i)).getLength() * 2;
+            }
         }
         if(bottom || up) {
             coordinate = sum + wall2.getLength() - wall1.getLength();
@@ -315,10 +330,18 @@ public class Construction extends Node{
                     + wall1.getHeight(), bottom ? wall1.getWidth() - wall2.getHeight()
                     : -wall1.getWidth() + wall2.getHeight()));
         } else {
-            coordinate = sum + wall2.getHeight() - wall1.getHeight();
-            node.setLocalTranslation(new Vector3f(right ? wall2.getWidth() 
-                    - wall2.getLength() : -wall2.getWidth() + wall2.getLength(), 
-                    wall2.getWidth() + wall1.getHeight(), coordinate));
+            if(left || right){
+                coordinate = sum + wall2.getHeight() - wall1.getHeight();
+                node.setLocalTranslation(new Vector3f(right ? wall2.getWidth() 
+                        - wall2.getLength() : -wall2.getWidth() + wall2.getLength(), 
+                        wall2.getWidth() + wall1.getHeight(), coordinate));
+            } else {
+                boolean init = false; 
+                coordinate = sum + wall2.getLength() - CatchNode.getProperDimension(wall1,
+                        false, false, init);
+                node.setLocalTranslation(new Vector3f(coordinate, 0, -wall2.getHeight()
+                        - CatchNode.getProperDimension(wall1, false, true, false)));
+            }
         }
         return node;
     }
@@ -370,11 +393,9 @@ public class Construction extends Node{
             Spatial wallFromTree, float min){
         List<Spatial> wallFromTreeChildren = ((Node)wallFromTree).getChildren(); 
         Spatial nearestWall = wallFromTree;
-        int end = 6 + CatchNode.values().length - 4; 
-        System.out.println(1);
-        for(int i = 6; i < end; i++){ // przechodzi po wszystkich stronach ściany
+        int end = 5 + CatchNode.values().length - 4; 
+        for(int i = 5; i < end; i++){ // przechodzi po wszystkich stronach ściany
             Node side = (Node)wallFromTreeChildren.get(i);
-            System.out.println(side); 
             if(!side.getChildren().isEmpty()){
                 Spatial nextWall = getNearestChildFromWall(wallLocation,
                         (Node)side.getChild(0), min);

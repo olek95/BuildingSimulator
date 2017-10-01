@@ -227,9 +227,8 @@ public class Construction extends Node{
                 catchNodes[i] = (Node)wallChildren.get(minDistance); 
             }
 //            if(checkIfCanBeAdded(catchNodes[i], wall1)){
-//                boolean ceiling = mode == 1 && (int)(location.y - 
-//                        wall2.getWorldTranslation().y) != 0; 
-            boolean ceiling = false; 
+                boolean ceiling = mode == 1 && (int)(location.y - 
+                        wall2.getWorldTranslation().y) > 0; 
 //                if(foundations || ceiling){
 //                    catchNodes[i] = wall2.changeCatchNodeLocation(wall1, 
 //                            catchNodes[i], minDistance, perpendicularity, ceiling); 
@@ -245,7 +244,8 @@ public class Construction extends Node{
                 control2.setPhysicsRotation(new Quaternion(q2.getX(), 0, q2.getZ(),
                         q2.getW()));
                 
-                Node catchNode = createCatchNode(wall1, wall2, catchNodes[i], foundations);
+                Node catchNode = createCatchNode(wall1, wall2, catchNodes[i],
+                        perpendicularity, ceiling);
                 wall2.attachChild(catchNode);
                 control2.setPhysicsRotation(q2);
                 
@@ -295,7 +295,8 @@ public class Construction extends Node{
         return min; 
     }
     
-    private Node createCatchNode(Wall wall1, Wall wall2, Node parent, boolean foundations) {
+    private Node createCatchNode(Wall wall1, Wall wall2, Node parent, boolean perpendicularity,
+            boolean ceiling) {
         String parentName = parent.getName();
         Node node = new Node(parentName + " - child");
         boolean bottom = false, up = false, right = false, left = false, south = false,
@@ -339,21 +340,23 @@ public class Construction extends Node{
                 if(south || north) {
                     boolean init = false; 
                     coordinate = sum + wall2.getLength() 
-                            - CatchNode.getProperDimension(wall1, false, false, init);
+                            - CatchNode.getProperFoundationsDimension(wall1, perpendicularity,
+                            false, init);
                     node.setLocalTranslation(new Vector3f(coordinate, 0, south ? 
                             -wall2.getHeight() - CatchNode
-                            .getProperDimension(wall1, false, true, false) : 
+                            .getProperFoundationsDimension(wall1, perpendicularity, true, false) : 
                             wall2.getHeight() + CatchNode
-                            .getProperDimension(wall1, false, true, false)));
+                            .getProperFoundationsDimension(wall1, perpendicularity, true, false)));
                 } else {
                     boolean init = false; 
                     coordinate = sum + wall2.getHeight() - CatchNode
-                            .getProperDimension(wall1, false, false, init);
+                            .getProperFoundationsDimension(wall1, perpendicularity, false, init);
                     node.setLocalTranslation(new Vector3f(east ? 
                             -wall2.getHeight() - CatchNode
-                            .getProperDimension(wall1, false, true, false) : 
+                            .getProperFoundationsDimension(wall1, perpendicularity, true, false) : 
                             wall2.getHeight() + CatchNode
-                            .getProperDimension(wall1, false, true, false), 0, coordinate));
+                            .getProperFoundationsDimension(wall1, perpendicularity,
+                            true, false), 0, coordinate));
                 }
             }
         }

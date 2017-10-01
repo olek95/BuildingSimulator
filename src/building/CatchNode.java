@@ -13,7 +13,10 @@ public enum CatchNode {
     UP, 
     RIGHT, 
     LEFT, 
-    SOUTH;
+    SOUTH,
+    NORTH, 
+    EAST,
+    WEST;
 //    CENTER, // do usuniecia? 
 //    SOUTH_0, 
 //    SOUTH_1,
@@ -58,6 +61,15 @@ public enum CatchNode {
             case SOUTH: 
                 return new Vector3f(0, 0, -wall1.getHeight()
                         - getProperDimension(wall2, perpendicularity, true, false));
+            case NORTH: 
+                return new Vector3f(0, 0, wall1.getHeight() 
+                        + getProperDimension(wall2, perpendicularity, true, false));
+            case EAST: 
+                return new Vector3f(-getProperDimension(wall2, perpendicularity, false, false)
+                        - wall1.getLength(), 0, 0);
+            case WEST: 
+                return new Vector3f(getProperDimension(wall2, perpendicularity, false, false)
+                        + wall1.getLength(), 0, 0);
 //            case SOUTH_0: 
 //                return new Vector3f(-getProperDimension(wall2, perpendicularity, false, init)
 //                        + wall1.getLength(), wall2.getWidth(), -wall1.getHeight()

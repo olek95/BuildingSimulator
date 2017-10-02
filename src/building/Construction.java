@@ -342,11 +342,11 @@ public class Construction extends Node{
                     coordinate = sum + wall2.getLength() 
                             - CatchNode.getProperFoundationsDimension(wall1, perpendicularity,
                             false, init);
-                    node.setLocalTranslation(new Vector3f(coordinate, 0, south ? 
+                    node.setLocalTranslation(new Vector3f(coordinate, 0, ceiling ? wall2.getHeight() : (south ? 
                             -wall2.getHeight() - CatchNode
                             .getProperFoundationsDimension(wall1, perpendicularity, true, false) : 
                             wall2.getHeight() + CatchNode
-                            .getProperFoundationsDimension(wall1, perpendicularity, true, false)));
+                            .getProperFoundationsDimension(wall1, perpendicularity, true, false))));
                 } else {
                     boolean init = false; 
                     coordinate = sum + wall2.getHeight() - CatchNode

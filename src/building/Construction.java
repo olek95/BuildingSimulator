@@ -339,17 +339,33 @@ public class Construction extends Node{
             } else {
                 if(south || north) {
                     boolean init = false; 
-                    coordinate = sum + wall2.getLength() 
-                            - CatchNode.getProperFoundationsDimension(wall1, perpendicularity,
-                            false, init);
-                    node.setLocalTranslation(new Vector3f(coordinate, south ? wall1.getHeight() - wall2.getWidth(): -wall1.getHeight() + wall2.getWidth(), ceiling ? wall2.getHeight() : (south ? 
-                            -wall2.getHeight() - CatchNode
-                            .getProperFoundationsDimension(wall1, perpendicularity, true, false) : 
-                            wall2.getHeight() + CatchNode
-                            .getProperFoundationsDimension(wall1, perpendicularity, true, false))));
-                    // 0 na srodku!!!!!!!!!!!!!!!
+                    String wall2CatchNode = wall2.getParent().getName(); 
+                    if(wall2CatchNode.equals(CatchNode.NORTH.toString()) 
+                            || wall2CatchNode.equals(CatchNode.SOUTH.toString())) { 
+                        coordinate = sum + wall2.getLength() 
+                                - CatchNode.getProperFoundationsDimension(wall1, perpendicularity,
+                                false, init);
+                        node.setLocalTranslation(new Vector3f(coordinate, south ? wall1.getHeight() - wall2.getWidth(): -wall1.getHeight() + wall2.getWidth(), ceiling ? wall2.getHeight() : (south ? 
+                                -wall2.getHeight() - CatchNode
+                                .getProperFoundationsDimension(wall1, perpendicularity, true, false) : 
+                                wall2.getHeight() + CatchNode
+                                .getProperFoundationsDimension(wall1, perpendicularity, true, false))));
+                        // 0 na srodku!!!!!!!!!!!!!!!
+                    } else {
+                        coordinate = sum + wall2.getHeight() - CatchNode
+                            .getProperFoundationsDimension(wall1, perpendicularity, false, init);
+                        node.setLocalTranslation(new Vector3f(ceiling ? wall2.getHeight() : (east ? 
+                                -wall2.getHeight() - CatchNode
+                                .getProperFoundationsDimension(wall1, perpendicularity, true, false) : 
+                                wall2.getHeight() + CatchNode
+                                .getProperFoundationsDimension(wall1, perpendicularity,
+                                true, false)), east ? wall1.getLength() - wall2.getWidth() : (-wall1.getLength()) + wall2.getWidth(), coordinate));
+                       
+                        // aktualnie (niby): wysokosc/x/z // zamiana 1 z 2 nie pomaga
+                    }
                 } else {
                     boolean init = false; 
+                    System.out.println(123); 
                     coordinate = sum + wall2.getHeight() - CatchNode
                             .getProperFoundationsDimension(wall1, perpendicularity, false, init);
                     node.setLocalTranslation(new Vector3f(ceiling ? wall2.getHeight() : (east ? 
@@ -357,7 +373,7 @@ public class Construction extends Node{
                             .getProperFoundationsDimension(wall1, perpendicularity, true, false) : 
                             wall2.getHeight() + CatchNode
                             .getProperFoundationsDimension(wall1, perpendicularity,
-                            true, false)), east ? wall1.getLength() - wall2.getWidth(): -wall1.getLength() + wall2.getWidth(), coordinate));
+                            true, false)), east ? wall1.getLength() - wall2.getWidth() : (-wall1.getLength()) + wall2.getWidth(), coordinate));
                 }
             }
         }

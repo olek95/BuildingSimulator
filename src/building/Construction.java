@@ -351,15 +351,18 @@ public class Construction extends Node{
                                 wall2.getHeight() + CatchNode
                                 .getProperFoundationsDimension(wall1, perpendicularity, true, false))));
                         // 0 na srodku!!!!!!!!!!!!!!!
+                        // x => x, y => z, z => y
                     } else {
                         coordinate = sum + wall2.getHeight() - CatchNode
                             .getProperFoundationsDimension(wall1, perpendicularity, false, init);
-                        node.setLocalTranslation(new Vector3f(ceiling ? wall2.getHeight() : (east ? 
+                        node.setLocalTranslation(new Vector3f(coordinate, east ? wall1.getLength()
+                                - wall2.getWidth() : (-wall1.getLength()) + wall2.getWidth(),
+                                ceiling ? wall2.getHeight() : (east ? 
                                 -wall2.getHeight() - CatchNode
                                 .getProperFoundationsDimension(wall1, perpendicularity, true, false) : 
                                 wall2.getHeight() + CatchNode
                                 .getProperFoundationsDimension(wall1, perpendicularity,
-                                true, false)), east ? wall1.getLength() - wall2.getWidth() : (-wall1.getLength()) + wall2.getWidth(), coordinate));
+                                true, false))));
                        
                         // aktualnie (niby): wysokosc/x/z // zamiana 1 z 2 nie pomaga
                     }

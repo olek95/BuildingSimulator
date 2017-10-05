@@ -38,7 +38,7 @@ public enum CatchNode {
      * @return lokalizacja węzła 
      */
     public static Vector3f calculateTranslation(CatchNode type, Wall wall1, Wall wall2,
-            boolean perpendicularity){
+            boolean perpendicularity, float translate){
         boolean init = false; 
         if(wall2 == null){
             init = true; 
@@ -48,7 +48,8 @@ public enum CatchNode {
         switch(type){
             case BOTTOM: 
                 width1 = wall1.getWidth();
-                return new Vector3f(0, width1, -wall1.getHeight() + width1);
+                return new Vector3f(translate, init ? width1 : width1 + wall2
+                        .getHeight(), -wall1.getHeight() + wall2.getWidth());
             case UP:
                 width1 = wall1.getWidth(); 
                 return new Vector3f(0, width1, wall1.getHeight() - width1); 

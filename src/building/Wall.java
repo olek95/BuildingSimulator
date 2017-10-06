@@ -143,18 +143,18 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      */
     public Node changeCatchNodeLocation(Wall wall, Node catchNode, int i,
             boolean perpendicularity, boolean ceiling){
-        Node wallCopy = clone(false), catchNodeCopy; 
-        RigidBodyControl control = wallCopy.getControl(RigidBodyControl.class);
-        control.setPhysicsRotation(Quaternion.IDENTITY);
-        catchNodeCopy = (Node)wallCopy.getChild(i); 
-        Vector3f catchNodeLocation = CatchNode.calculateTranslation(CatchNode
-                .valueOf(catchNodeCopy.getName()), this, wall, perpendicularity);
-        if(ceiling)
-            CatchNode.correctLocationForCeiling(this, wall, catchNodeLocation);
-        catchNodeCopy.setLocalTranslation(catchNodeLocation);
-        control.setPhysicsRotation(wall.getControl(RigidBodyControl.class)
-                .getPhysicsRotation());
-        catchNode.setLocalTranslation(catchNodeCopy.getLocalTranslation());
+//        Node wallCopy = clone(false), catchNodeCopy; 
+//        RigidBodyControl control = wallCopy.getControl(RigidBodyControl.class);
+//        control.setPhysicsRotation(Quaternion.IDENTITY);
+//        catchNodeCopy = (Node)wallCopy.getChild(i); 
+//        Vector3f catchNodeLocation = CatchNode.calculateTranslation(CatchNode
+//                .valueOf(catchNodeCopy.getName()), this, wall, perpendicularity);
+//        if(ceiling)
+//            CatchNode.correctLocationForCeiling(this, wall, catchNodeLocation);
+//        catchNodeCopy.setLocalTranslation(catchNodeLocation);
+//        control.setPhysicsRotation(wall.getControl(RigidBodyControl.class)
+//                .getPhysicsRotation());
+//        catchNode.setLocalTranslation(catchNodeCopy.getLocalTranslation());
         return catchNode; 
     }
     
@@ -348,7 +348,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private void createWallNodes(){
         CatchNode[] nodes = CatchNode.values();
         for(int i = 0; i < nodes.length; i++)
-            addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null, false), this); 
+            addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null, false, 0), this); 
     }
     
     private Node addNode(CatchNode type, Vector3f location, Node parent){

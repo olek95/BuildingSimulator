@@ -348,7 +348,8 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private void createWallNodes(){
         CatchNode[] nodes = CatchNode.values();
         for(int i = 0; i < nodes.length; i++)
-            addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null, false, 0), this); 
+            addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null,
+                    false, false, 0), this); 
     }
     
     private Node addNode(CatchNode type, Vector3f location, Node parent){

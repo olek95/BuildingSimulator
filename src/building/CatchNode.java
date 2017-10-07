@@ -17,15 +17,6 @@ public enum CatchNode {
     NORTH, 
     EAST,
     WEST;
-//    CENTER, // do usuniecia? 
-//    SOUTH_0, 
-//    SOUTH_1,
-//    NORTH_0, 
-//    NORTH_1,
-//    EAST_0, 
-//    EAST_1, 
-//    WEST_0, 
-//    WEST_1;
     
     /**
      * Oblicza położenie pomocniczych węzłów dla pierwszej ściany. Jeśli podana jest 
@@ -38,7 +29,7 @@ public enum CatchNode {
      * @return lokalizacja węzła 
      */
     public static Vector3f calculateTranslation(CatchNode type, Wall wall1, Wall wall2,
-            boolean perpendicularity, float translate){
+            boolean perpendicularity, boolean ceiling, float translate){
         boolean init = false; 
         if(wall2 == null){
             init = true; 
@@ -67,49 +58,39 @@ public enum CatchNode {
                         .getProperFoundationsDimension(wall2, perpendicularity,
                         true, init));
             case NORTH: 
-                return new Vector3f(translate, 0, wall1.getHeight() + CatchNode
-                        .getProperFoundationsDimension(wall2, perpendicularity,
-                        true, init));
+                float y, z;
+                if(ceiling) {
+                    String catchNodeName = wall1.getParent().getName();
+                    switch(valueOf(catchNodeName)) {
+                        case UP: 
+                            y = wall2.getHeight() - wall1.getWidth();
+                            break; 
+                        case BOTTOM: 
+                            y = -wall2.getHeight() + wall1.getWidth();
+                            break; 
+                        case EAST: 
+                            y = wall2.getLength() - wall1.getWidth();
+                            break; 
+                        default: 
+                            y = -wall2.getLength() + wall1.getWidth();
+                            
+                    }
+                    z = wall1.getHeight();
+                } else {
+                    y = 0;
+                    z = wall1.getHeight() + CatchNode
+                            .getProperFoundationsDimension(wall2, perpendicularity,
+                            true, init);
+                }
+                return new Vector3f(translate, y, z);
             case EAST: 
-                return new Vector3f(-wall1.getHeight() - CatchNode
+                return new Vector3f(-wall1.getLength() - CatchNode
                         .getProperFoundationsDimension(wall2, perpendicularity, true,
                         init), 0, translate); 
             case WEST: 
-                return new Vector3f(wall1.getHeight() + CatchNode
+                return new Vector3f(wall1.getLength() + CatchNode
                         .getProperFoundationsDimension(wall2, perpendicularity, true,
                         init), 0, translate); 
-//            case SOUTH_0: 
-//                return new Vector3f(-getProperFoundationsDimension(wall2, perpendicularity, false, init)
-//                        + wall1.getLength(), wall2.getWidth(), -wall1.getHeight()
-//                        - getProperFoundationsDimension(wall2, perpendicularity, true, false));
-//            case SOUTH_1: 
-//                return new Vector3f(getProperFoundationsDimension(wall2, perpendicularity, false, init)
-//                        - wall1.getLength(), wall2.getWidth(), 
-//                        - wall1.getHeight() - getProperFoundationsDimension(wall2, perpendicularity, true, false));
-//            case NORTH_0:
-//                return new Vector3f(-getProperFoundationsDimension(wall2, perpendicularity, false, init)
-//                        + wall1.getLength(), wall2.getWidth(), wall1.getHeight()
-//                        + getProperFoundationsDimension(wall2, perpendicularity, true, false));
-//            case NORTH_1:
-//                return new Vector3f(getProperFoundationsDimension(wall2, perpendicularity, false, init)
-//                        - wall1.getLength(), wall2.getWidth(), wall1.getHeight()
-//                        + getProperFoundationsDimension(wall2, perpendicularity, true, false));
-//            case EAST_0: 
-//                return new Vector3f(-getProperFoundationsDimension(wall2, perpendicularity, false, false)
-//                        - wall1.getLength(), wall1.getWidth(), wall1.getHeight()
-//                        - getProperFoundationsDimension(wall2, perpendicularity, true, init));
-//            case EAST_1: 
-//                return new Vector3f(-getProperFoundationsDimension(wall2, perpendicularity, false, false)
-//                        - wall1.getLength(), wall1.getWidth(), -wall1.getHeight()
-//                        + getProperFoundationsDimension(wall2, perpendicularity, true, init)); 
-//            case WEST_0: 
-//                return new Vector3f(getProperFoundationsDimension(wall2, perpendicularity, false, false) 
-//                        + wall1.getLength(), wall1.getWidth(), wall1.getHeight()
-//                        - getProperFoundationsDimension(wall2, perpendicularity, true, init));
-//            case WEST_1: 
-//                return new Vector3f(getProperFoundationsDimension(wall2, perpendicularity, false, false) 
-//                        + wall1.getLength(), wall1.getWidth(), -wall1.getHeight()
-//                        + getProperFoundationsDimension(wall2, perpendicularity, true, init));
         }
         return null; 
     }

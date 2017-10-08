@@ -39,29 +39,29 @@ public abstract class Menu extends AbstractAppState{
     protected DialogBox createNotSavedChangesAlert(final Screen ownerScreen, String message,
             final MenuTypes nextMenu) {
         DialogBox alert = new DialogBox(ownerScreen, "closing_alert", new Vector2f(0f, 0f), 
-                    new Vector2f(400, 190)
-            ) {
-                @Override
-                public void onButtonCancelPressed(MouseButtonEvent mbe, boolean bln) {
-                    hide();
-                    ownerScreen.removeElement(this);
-                }
+                new Vector2f(400, 190)) {
+                    @Override
+                    public void onButtonCancelPressed(MouseButtonEvent mbe, boolean bln) {
+                        hide();
+                        ownerScreen.removeElement(this);
+                    }
 
-                @Override
-                public void onButtonOkPressed(MouseButtonEvent mbe, boolean bln) {
-                    hide();
-                    ownerScreen.removeElement(this);
-                    doWhenAcceptedExit(ownerScreen, nextMenu);
-                }
-            };
-            alert.centerToParent();
-            alert.getDragBar().setIsMovable(false);
-            alert.setIsModal(true);
-            alert.showAsModal(true);
-            alert.setMsg(message);
-            alert.setButtonCancelText(Translator.CANCELLATION.getValue());
-            alert.setButtonOkText(Translator.CONFIRMATION.getValue());
-            return alert; 
+                    @Override
+                    public void onButtonOkPressed(MouseButtonEvent mbe, boolean bln) {
+                        hide();
+                        ownerScreen.removeElement(this);
+                        doWhenAcceptedExit(ownerScreen, nextMenu);
+                    }
+                };
+        alert.centerToParent();
+        alert.getDragBar().setIsMovable(false);
+        alert.setIsResizable(false);
+        alert.setIsModal(true);
+        alert.showAsModal(true);
+        alert.setMsg(message);
+        alert.setButtonCancelText(Translator.CANCELLATION.getValue());
+        alert.setButtonOkText(Translator.CONFIRMATION.getValue());
+        return alert; 
     }
     
     /**

@@ -39,6 +39,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private int actualMode;
     private List<Spatial> hitObjects = new ArrayList();
     private boolean stale = false; 
+    private Vector3f catchingLocation; 
     
     public Wall(CSGShape shape, Vector3f location, CSGShape... differenceShapes){
         BoundingBox bounding = (BoundingBox)shape.getWorldBound();
@@ -237,6 +238,20 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      */
     public float getDistanceToHandle(boolean vertical){ 
         return vertical ? distanceToHandleVertical : distanceToHandle;  
+    }
+    
+    /**
+     * Zwraca współrzędne miejsca do którego ściana jest przymocowana. 
+     * @return współrzedne miejsca do którego ściana jest przymocowana
+     */
+    public Vector3f getCatchingLocation() { return catchingLocation; }
+    
+    /**
+     * Ustawia kopię współrzędnych miejsca do którego ściana jest przymocowana. 
+     * @param catchingLocation współrzedne miejsca do którego ściana jest przymocowana
+     */
+    public void setCatchingLocation(Vector3f catchingLocation) {
+        this.catchingLocation = catchingLocation.clone();
     }
     
     @Override

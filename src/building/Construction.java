@@ -53,6 +53,7 @@ public class Construction extends Node{
                     lastAddedWall = wall1; 
                     wall1.setMovable(false);
                     wall1.setStale(false);
+                    wall1.setCatchingLocation(wall1.getWorldTranslation());
                 }
             }
         }
@@ -130,51 +131,49 @@ public class Construction extends Node{
      * Uaktualnia stan budynku. Jeśli jakieś obiekty zostały uderzony lub nie 
      * posiadają elementów trzymających je, zaczynają spadać powodując rozsypywanie 
      * się budynku.
-     * @param element element którego dzieci są sprawdzane 
+     * @param object element którego dzieci są sprawdzane 
      * @return sprawdzany element 
      */
-    public Spatial updateState(Node element){
-//        List<Spatial> buildingWalls = element.getChildren(); 
-//        for(int i = 1; i < 14; i++){ 
-//            Node side = (Node)buildingWalls.get(i);
-//            if(!side.getChildren().isEmpty()){
-//                Spatial nextWall = updateState((Node)side.getChild(0));
-//                if(nextWall != null){
-//                    Wall wall = (Wall)nextWall;
-//                    wall.setMovable(true);
-//                    float distance = nextWall.getWorldTranslation()
-//                            .distance(side.getWorldTranslation());
-//                    if(wall.getHeight() + 0.01f < distance){ // umowna granica dozwolonego przesunięcia ściany
-//                        //removeWall(wall);
-//                        boolean ceilingStateChanged = false, wallStateChanged = false; 
-//                        if(!wall.isStale()){
-//                            wallStateChanged = true; 
-//                            wall.setStale(true);
-//                        }
-//                        if(i <= 4){
-//                            CatchNode[] ceilingPartsSides = {CatchNode.NORTH_0, 
-//                                CatchNode.NORTH_1};
-//                            for(int j = 0; j < 2; j++){
-//                                List<Spatial> northChildren = ((Node)wall
-//                                    .getChild(ceilingPartsSides[j].toString())).getChildren();
-//                                int northChildrenAmount = northChildren.size();
-//                                for(int k = 0; k < northChildrenAmount; k++){
-//                                    Wall ceiling = (Wall)northChildren.get(k);
-//                                    //removeWall(ceiling); 
-//                                    ceiling.setMovable(true);
-//                                    if(!ceiling.isStale()){
-//                                        ceiling.setStale(true);
-//                                        ceilingStateChanged = true; 
-//                                    }
-//                                }
-//                            }
-//                        }
-//                        if(wallStateChanged || ceilingStateChanged) resetWalls = true; 
-//                    }else  wall.setMovable(false);
-//                }
-//            }
-//        }
-        return element;
+    public Spatial updateState(Node object){
+        List<Spatial> objectElements = object.getChildren(); 
+        int end = CatchNode.values().length;
+        for(int i = 1; i <= end; i++){ 
+            List<Spatial> catchNodeChildren = ((Node)objectElements.get(i)).getChildren(); 
+            int childrenCount = catchNodeChildren.size(); 
+            for(int k = 0; k < childrenCount; k++) { 
+                Spatial nextWall = updateState((Node)catchNodeChildren.get(k));
+                if(nextWall != null){
+                    Wall wall = (Wall)nextWall;
+                    wall.setMovable(true);
+                    // umowna granica dozwolonego przesunięcia ściany
+                    if(wall.getHeight() + 0.01f < wall.getWorldTranslation()
+                            .distance(wall.getCatchingLocation())){ 
+                        //removeWall(wall);
+                        boolean ceilingStateChanged = false, wallStateChanged = false; 
+                        if(!wall.isStale()){
+                            wallStateChanged = true; 
+                            wall.setStale(true);
+                        }
+                        if(i <= 4){
+                            List<Spatial> ceilingChildren = ((Node)wall
+                                .getChild(CatchNode.NORTH.toString())).getChildren();
+                            int ceilingChildrenCount = ceilingChildren.size();
+                            for(int j = 0; j < ceilingChildrenCount; j++){
+                                Wall ceiling = (Wall)ceilingChildren.get(j);
+                                //removeWall(ceiling); 
+                                ceiling.setMovable(true);
+                                if(!ceiling.isStale()){
+                                    ceiling.setStale(true);
+                                    ceilingStateChanged = true; 
+                                }
+                            }
+                        }
+                        if(wallStateChanged || ceilingStateChanged) resetWalls = true; 
+                    }else  wall.setMovable(false);
+                }
+            }
+        }
+        return object;
     }
     
     /**

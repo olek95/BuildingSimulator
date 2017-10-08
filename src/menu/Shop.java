@@ -167,12 +167,16 @@ public class Shop extends Menu implements VisibleFromAbove{
     @Override
     public void setListener(DummyCollisionListener listener) {
         this.listener = listener; 
-        if(listener != null) {
-            listener.createDummyWall(dischargingLocation, getWallDimensions()
-                    .multLocal(1, 10, 1));
-        }
+        if(listener != null) 
+            listener.createDummyWall(dischargingLocation, getWallDimensions());
     }
     
+    /**
+     * Zwraca wymiary kupionej ściany przy następujących założeniach: długość x 
+     * jest dłuższą długością od z. Jeśli będzie odwrotnie, to odwraca rozmiar 
+     * podczas tworzenia sciany. 
+     * @return wymiary kupionej ściany
+     */
     public Vector3f getWallDimensions() {
         float x = ((TextField)screen.getElementById("x_text_field")).parseFloat(),
                 z = ((TextField)screen.getElementById("z_text_field")).parseFloat();

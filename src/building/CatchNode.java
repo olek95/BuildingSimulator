@@ -60,8 +60,7 @@ public enum CatchNode {
             case NORTH: 
                 float y, z;
                 if(ceiling) {
-                    String catchNodeName = wall1.getParent().getName();
-                    switch(valueOf(catchNodeName)) {
+                    switch(valueOf(wall1.getParent().getName())) {
                         case UP: 
                             y = wall2.getHeight() - wall1.getWidth();
                             break; 

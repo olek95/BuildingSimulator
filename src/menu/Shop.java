@@ -148,18 +148,14 @@ public class Shop extends Menu implements VisibleFromAbove{
         int amount = ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex();
         WallType type = (WallType)((SelectBox)screen.getElementById("type_select_box"))
                 .getSelectedListItem().getValue();
-        float x = ((TextField)screen.getElementById("x_text_field")).parseFloat(),
-                z = ((TextField)screen.getElementById("z_text_field")).parseFloat();
-        if(x != 0 && z != 0) {
-            Vector3f dimensions = new Vector3f(x, 0.2f, z);
-            Vector3f tempDimensions = dimensions.clone(); 
-            tempDimensions.multLocal(1, amount, 1);
-            for(int i = 0; i < amount; i++) {
-                Wall wall = WallsFactory.createWall(type, dischargingLocation,
-                        dimensions);
-                GameManager.addToGame(wall);
-                dischargingLocation.y += 0.4f; 
-            }
+        Vector3f dimensions = getWallDimensions();
+        Vector3f tempDimensions = dimensions.clone(); 
+        tempDimensions.multLocal(1, amount, 1);
+        for(int i = 0; i < amount; i++) {
+            Wall wall = WallsFactory.createWall(type, dischargingLocation,
+                    dimensions);
+            GameManager.addToGame(wall);
+            dischargingLocation.y += 0.4f; 
         }
         view.setOff();
         displayedShop = null; 
@@ -172,11 +168,15 @@ public class Shop extends Menu implements VisibleFromAbove{
     public void setListener(DummyCollisionListener listener) {
         this.listener = listener; 
         if(listener != null) {
-            listener.createDummyWall(dischargingLocation, new Vector3f(((TextField)screen
-                    .getElementById("x_text_field")).parseFloat(), 0.2f, 
-                    ((TextField)screen.getElementById("z_text_field")).parseFloat())
+            listener.createDummyWall(dischargingLocation, getWallDimensions()
                     .multLocal(1, 10, 1));
         }
+    }
+    
+    public Vector3f getWallDimensions() {
+        float x = ((TextField)screen.getElementById("x_text_field")).parseFloat(),
+                z = ((TextField)screen.getElementById("z_text_field")).parseFloat();
+        return x >= z ? new Vector3f(x, 0.2f, z) : new Vector3f(z, 0.2f, x); 
     }
     
     @Override

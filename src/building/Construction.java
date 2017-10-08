@@ -300,7 +300,7 @@ public class Construction extends Node{
         String parentName = parent.getName();
         Node node = new Node(parentName + " - child");
         boolean bottom = false, up = false, right = false, left = false, south = false,
-                north  = false, east = false;
+                north  = false;
         float coordinate, sum = 0; 
         if(parentName.equals(CatchNode.BOTTOM.toString())) bottom = true;
         else if(parentName.equals(CatchNode.UP.toString())) up = true;
@@ -308,9 +308,7 @@ public class Construction extends Node{
         else if(parentName.equals(CatchNode.LEFT.toString())) left = true;
         else if(parentName.equals(CatchNode.SOUTH.toString())) south = true; 
         else if(parentName.equals(CatchNode.NORTH.toString())) north = true; 
-        else if(parentName.equals(CatchNode.EAST.toString())) east = true; 
         List<Spatial> parentChildren = parent.getChildren(); 
-        System.out.println(parentName);
         int childrenCount = parentChildren.size(); 
         if(bottom || up || left || right) {
             for(int i = 0; i < childrenCount; i++) {
@@ -331,14 +329,9 @@ public class Construction extends Node{
             if(left || right){
                 coordinate = sum + wall2.getHeight() - wall1.getHeight();
             } else {
-                if(south || north) {
-                    coordinate = sum + wall2.getLength() - CatchNode
-                            .getProperFoundationsDimension(wall1, perpendicularity, 
-                            false, false);
-                } else {
-                    coordinate = sum + wall2.getHeight() - CatchNode
-                            .getProperFoundationsDimension(wall1, perpendicularity, false, false);
-                }
+                coordinate = sum - CatchNode.getProperFoundationsDimension(wall1,
+                        perpendicularity, false, false) + (south || north ? 
+                        wall2.getLength() : wall2.getHeight());
             }
         }
         node.setLocalTranslation(CatchNode.calculateTranslation(CatchNode

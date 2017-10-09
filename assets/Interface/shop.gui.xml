@@ -2,8 +2,10 @@
 <root>
     <screen>
         <component type="Window" id="shop" position="20%,20%" dimensions="60%,60%">
+            <method name="setIsResizable" param0="false"/>
             <component type="Panel" id="elements_panel" position="0,0" dimensions="100%,91%">
                 <method name="setIsMovable" param0="false"/>
+                <method name="setIsResizable" param0="false"/>
                 <component type="Label" id="type_label" position="25%,16%" dimensions="10%,12%"/>
                 <component type="SelectBox" id="type_select_box" position="35%,19%" dimensions="40%,7%">
                     <eventMethod name="onChange" stateMethodName="beginCalculateCost"/>
@@ -23,6 +25,7 @@
             </component>
             <component type="Panel" id="vehicles_panel" position="0,0" dimensions="100%,91%">
                 <method name="setIsMovable" param0="false"/>
+                <method name="setIsResizable" param0="false"/>
                 <component type="Label" id="height_change_label" position="25%,16%" dimensions="50%,12%"/>
                 <component type="Label" id="actual_height_label" position="25%,26%" dimensions="30%,12%"/>
                 <component type="Label" id="actual_height_value" position="55%,26%" dimensions="10%,12%"/>

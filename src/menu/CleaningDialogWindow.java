@@ -9,6 +9,7 @@ import com.jme3.scene.Spatial;
 import java.util.List;
 import texts.Translator;
 import tonegod.gui.controls.windows.Window;
+import tonegod.gui.core.Element;
 import tonegod.gui.core.Screen;
 
 /**
@@ -25,7 +26,9 @@ public class CleaningDialogWindow extends Menu{
         screen.parseLayout("Interface/cleaning_dialog.gui.xml", this);
         Window window = (Window)screen.getElementById("cleaning_window");
         window.setWindowTitle(Translator.CLEANING_MAP.getValue());
-        window.getDragBar().setTextAlign(BitmapFont.Align.Center);
+        Element dragBar = window.getDragBar();
+        dragBar.setTextAlign(BitmapFont.Align.Center);
+        dragBar.setIsMovable(false);
         setWindow(window); 
         Translator.setTexts(new String[]{"cleaning_message", "entire_map_button",
             "infinite_buildings_button", "cancellation_button"}, new Translator[]{Translator

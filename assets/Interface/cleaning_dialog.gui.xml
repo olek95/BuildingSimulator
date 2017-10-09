@@ -2,6 +2,7 @@
 <root>
     <screen>
         <component type="Window" id="cleaning_window" position="20%,36.5%" dimensions="60%,27%">
+            <method name="setIsResizable" param0="false"/>
             <component type="Label" id="cleaning_message" position="5%,30%" dimensions="95%,24%">
                 <method name="setTextWrap" param0="Word"/>
             </component>

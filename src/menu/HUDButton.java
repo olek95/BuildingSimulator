@@ -1,6 +1,7 @@
 package menu;
 
 import building.BuildingValidator;
+import buildingsimulator.BirdsEyeView;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import com.jme3.input.KeyInput;
@@ -31,20 +32,38 @@ public class HUDButton extends ButtonAdapter{
      */
     @Override
     public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean isToggled) {
-        if(buttonId.equals("shop_button")) {
-            Shop shop = Shop.getDisplayedShop();
-            if(shop != null) shop.getView().setOff();
-            BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(true);
-            MenuFactory.showMenu(MenuTypes.SHOP); 
-        } else {
-            if(buttonId.equals("finish_building_button")) {
-                int points = BuildingValidator.validate();
-                GameManager.getUser().addPoints(points);
-                HUD.updatePoints();
-                HUD.setMessage(Translator.MESSAGE_POINTS.getValue().replace("x", points + ""));
+        Shop shop = Shop.getDisplayedShop();
+        CleaningDialogWindow cleaningWindow = CleaningDialogWindow
+                .getDisplayedCleaningDialogWindow();
+        if(cleaningWindow == null) {
+            if(buttonId.equals("shop_button")) {
+                if(shop != null) {
+                    BirdsEyeView view = shop.getView(); 
+                    if(view != null) {
+                        view.setOff();
+                        BuildingSimulator.getBuildingSimulator().getFlyByCamera()
+                                .setDragToRotate(true);
+                        MenuFactory.showMenu(MenuTypes.SHOP); 
+                    }
+                } else {
+                    BuildingSimulator.getBuildingSimulator().getFlyByCamera()
+                            .setDragToRotate(true);
+                    MenuFactory.showMenu(MenuTypes.SHOP); 
+                }
             } else {
-                BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(true);
-                MenuFactory.showMenu(MenuTypes.CLEANING_DIALOG_WINDOW);
+                if(shop == null) {
+                    if(buttonId.equals("finish_building_button")) {
+                        int points = BuildingValidator.validate();
+                        GameManager.getUser().addPoints(points);
+                        HUD.updatePoints();
+                        HUD.setMessage(Translator.MESSAGE_POINTS.getValue()
+                                .replace("x", points + ""));
+                    } else {
+                        BuildingSimulator.getBuildingSimulator().getFlyByCamera()
+                                .setDragToRotate(true);
+                        MenuFactory.showMenu(MenuTypes.CLEANING_DIALOG_WINDOW);
+                    }
+                }
             }
         }
     }

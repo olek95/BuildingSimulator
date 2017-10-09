@@ -153,6 +153,7 @@ public class Construction extends Node{
                         if(!wall.isStale()){
                             wallStateChanged = true; 
                             wall.setStale(true);
+                            detachFromBuilding(wall); 
                         }
                         if(i <= 4){
                             List<Spatial> ceilingChildren = ((Node)wall
@@ -164,7 +165,8 @@ public class Construction extends Node{
                                 ceiling.setMovable(true);
                                 if(!ceiling.isStale()){
                                     ceiling.setStale(true);
-                                    ceilingStateChanged = true; 
+                                    ceilingStateChanged = true;
+                                    detachFromBuilding(ceiling);
                                 }
                             }
                         }
@@ -450,6 +452,23 @@ public class Construction extends Node{
                     }
                 }
             }
+        }
+    }
+    
+    private void detachFromBuilding(Wall wall) {
+        Node wallParent = wall.getParent(); 
+        if(!wallParent.getName().startsWith("Building")) { 
+            List<Spatial> wallElements = wall.getChildren(); 
+            int end = CatchNode.values().length;
+            for(int i = 1; i <= end; i++) {
+                List<Spatial> catchNodeChildren = ((Node)wallElements.get(i)).getChildren(); 
+                int childrenCount = catchNodeChildren.size(); 
+                for(int k = 0; k < childrenCount; k++) { 
+                    wallParent.attachChild(catchNodeChildren.get(k));
+                }
+            }
+            wall.removeFromParent();
+            BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(wall);
         }
     }
 }

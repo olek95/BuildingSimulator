@@ -1,5 +1,6 @@
 package menu;
 
+import building.CatchNode;
 import buildingsimulator.BuildingSimulator;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.font.BitmapFont;
@@ -50,7 +51,8 @@ public class CleaningDialogWindow extends Menu{
         for(int i = 0; i < objectsCount; i++) {
             Spatial object = gameObjects.get(i);
             if(object.getName().startsWith("Building")) {
-                deleteMainPartsControls((Node)object);
+//                deleteMainPartsControls((Node)object);
+                deleteWallsControl((Node)((Node)object).getChild(0));
                 object.removeFromParent();
             }
         }
@@ -77,30 +79,30 @@ public class CleaningDialogWindow extends Menu{
     }
     
     private static int deleteWallsControl(Node element) {
-        List<Spatial> walls = element.getChildren();
-        int points = 0;
-        for(int i = 1; i < 14; i++){ // od 1 do 13 bo w tym przedziale są strony 
-            Node catchNode = (Node)walls.get(i);
-            if(!catchNode.getChildren().isEmpty()){
-                Spatial spatialWall = catchNode.getChild(0);
-                if(spatialWall.getName().startsWith("Wall")) {
-                    deleteWallControl((Node)spatialWall);
-                }
+        List<Spatial> wallElements = element.getChildren();
+        int points = 0, end = CatchNode.values().length;
+        for(int i = 1; i <= end; i++){ 
+            System.out.println(((Node)wallElements.get(i)) + " " + i);
+            List<Spatial> sideChildren  = ((Node)wallElements.get(i)).getChildren();
+            int sideChildrenCount = sideChildren.size(); 
+            for(int k = 0; k < sideChildrenCount; k++) {
+                Spatial spatialWall = sideChildren.get(k);
+                deleteWallControl((Node)spatialWall);
             }
         }
         return points;
     }
     
-    private static int deleteMainPartsControls(Node building) {
-        List<Spatial> parts = building.getChildren(); 
-        int partsAmount = parts.size(), points = 0; 
-        for(int i = 0; i < partsAmount; i++) {
-            Node part = (Node)parts.get(i);
-            deleteWallsControl(part);
-            deleteWallControl(part);
-        }
-        return points; 
-    }
+//    private static int deleteMainPartsControls(Node building) {
+//        List<Spatial> parts = building.getChildren(); 
+//        int partsAmount = parts.size(), points = 0; 
+//        for(int i = 0; i < partsAmount; i++) {
+//            Node part = (Node)parts.get(i);
+//            deleteWallsControl(part);
+//            deleteWallControl(part);
+//        }
+//        return points; 
+//    }
     
     private static void deleteWallControl(Node wall) {
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator().getBulletAppState()

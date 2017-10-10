@@ -10,6 +10,7 @@
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="deleteAllBuildings"/>
             </component>
             <component type="Button" id="infinite_buildings_button" position="32%,75%" dimensions="43%,15%">
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="deleteInfiniteBuildings"/>
             </component>
             <component type="Button" id="cancellation_button" position="77%,75%" dimensions="18%,15%">
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="cancel"/>

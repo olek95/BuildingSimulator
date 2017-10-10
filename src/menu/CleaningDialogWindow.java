@@ -3,6 +3,7 @@ package menu;
 import building.CatchNode;
 import buildingsimulator.BuildingSimulator;
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.font.BitmapFont;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.scene.Node;
@@ -45,18 +46,16 @@ public class CleaningDialogWindow extends Menu{
      * @param isToggled 
      */
     public void deleteAllBuildings(MouseButtonEvent evt, boolean isToggled) {
-        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-        List<Spatial> gameObjects = game.getRootNode().getChildren(); 
-        int objectsCount = gameObjects.size();
-        for(int i = 0; i < objectsCount; i++) {
-            Spatial object = gameObjects.get(i);
-            if(object.getName().startsWith("Building")) {
-//                deleteMainPartsControls((Node)object);
-                deleteWallsControl((Node)((Node)object).getChild(0));
-                object.removeFromParent();
-            }
-        }
-        cancel(null, true);
+        deleteBuildings(false);
+    }
+    
+    /**
+     * Usuwa tylko nieukończone budynki. 
+     * @param evt
+     * @param isToggled 
+     */
+    public void deleteInfiniteBuildings(MouseButtonEvent evt, boolean isToggled) {
+        deleteBuildings(true);
     }
     
     /**
@@ -78,18 +77,41 @@ public class CleaningDialogWindow extends Menu{
         return displayedCleaningDialogWindow; 
     }
     
+    private void deleteBuildings(boolean onlyInfiniteBuildings) {
+        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
+        List<Spatial> gameObjects = game.getRootNode().getChildren(); 
+        int objectsCount = gameObjects.size();
+        for(int i = 0; i < objectsCount; i++) {
+            Spatial object = gameObjects.get(i);
+            if(object.getName().startsWith("Building")) {
+                Node firstWall = (Node)((Node)object).getChild(0);
+                if(onlyInfiniteBuildings) {
+                    if(firstWall.getControl(RigidBodyControl.class).getMass() != 0) {
+                        //                deleteMainPartsControls((Node)object);
+                        deleteWallsControl((Node)((Node)object).getChild(0));
+                        object.removeFromParent();
+                    }
+                } else {
+                    //                deleteMainPartsControls((Node)object);
+                    deleteWallsControl((Node)((Node)object).getChild(0));
+                    object.removeFromParent();
+                }
+            }
+        }
+        cancel(null, true);
+    }
+    
     private static int deleteWallsControl(Node element) {
         List<Spatial> wallElements = element.getChildren();
         int points = 0, end = CatchNode.values().length;
         for(int i = 1; i <= end; i++){ 
-            System.out.println(((Node)wallElements.get(i)) + " " + i);
             List<Spatial> sideChildren  = ((Node)wallElements.get(i)).getChildren();
             int sideChildrenCount = sideChildren.size(); 
             for(int k = 0; k < sideChildrenCount; k++) {
-                Spatial spatialWall = sideChildren.get(k);
-                deleteWallControl((Node)spatialWall);
+                deleteWallsControl((Node)sideChildren.get(k));
             }
         }
+        deleteWallControl(element);
         return points;
     }
     

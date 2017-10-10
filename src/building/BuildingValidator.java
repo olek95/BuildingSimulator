@@ -25,44 +25,42 @@ public class BuildingValidator {
         for(int i = 0; i < objectsAmount; i++){
             Spatial object = gameObjects.get(i); 
             if(object.getName().startsWith("Building"))
-                points += calculatePointsForBuilding((Node)object);
+//                points += calculatePointsForBuilding((Node)object);
+                points += calculatePoints((Wall)((Node)object).getChild(0));
         }
         return points; 
     }
     
     private static int calculatePoints(Wall element) {
-        List<Spatial> walls = element.getChildren();
-        int points = 0;
-        for(int i = 1; i < 14; i++){ // od 1 do 13 bo w tym przedziale są strony 
-            Node catchNode = (Node)walls.get(i);
-            if(!catchNode.getChildren().isEmpty()){
-                Spatial spatialWall = catchNode.getChild(0);
-                if(spatialWall.getName().startsWith("Wall")) {
-                    Wall wall = (Wall)spatialWall; 
-                    points += calculatePoints(wall);
-                    if(!wall.isStale()) {
-                        points += wall.getWorldTranslation().y;
-                        blockWall(wall);
-                    }
-                }
+        List<Spatial> wallElements = element.getChildren();
+        int points = 0, end = CatchNode.values().length;
+        for(int i = 1; i <= end; i++){ 
+            List<Spatial> sideChildren  = ((Node)wallElements.get(i)).getChildren();
+            int sideChildrenCount = sideChildren.size();
+            for(int k = 0; k < sideChildrenCount; k++) {
+                points += calculatePoints((Wall)sideChildren.get(k));
             }
+        }
+        if(!element.isStale()) {
+            points += element.getWorldTranslation().y;
+            blockWall(element);
         }
         return points;
     }
     
-    private static int calculatePointsForBuilding(Node building) {
-        List<Spatial> parts = building.getChildren(); 
-        int partsAmount = parts.size(), points = 0; 
-        for(int i = 0; i < partsAmount; i++) { // sprawdza wszystkie początkowe węzły 
-            Wall part = (Wall)parts.get(i); 
-            points += calculatePoints(part); 
-            if(!part.isStale()) {
-                points += part.getWorldTranslation().y;
-                blockWall(part);
-            } 
-        }
-        return points; 
-    }
+//    private static int calculatePointsForBuilding(Node building) {
+//        List<Spatial> parts = building.getChildren(); 
+//        int partsAmount = parts.size(), points = 0; 
+//        for(int i = 0; i < partsAmount; i++) { // sprawdza wszystkie początkowe węzły 
+//            Wall part = (Wall)parts.get(i); 
+//            points += calculatePoints(part); 
+//            if(!part.isStale()) {
+//                points += part.getWorldTranslation().y;
+//                blockWall(part);
+//            } 
+//        }
+//        return points; 
+//    }
     
     private static void blockWall(Wall wall) {
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator().getBulletAppState()

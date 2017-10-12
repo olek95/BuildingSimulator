@@ -172,11 +172,15 @@ public class StartingMenu extends MainMenu{
     }
     
     private String getTextForDataState(String login, String password){
-        if(login.equals("") && password.equals("")) return Translator.EMPTY_LOGIN_PASSWORD.getValue();
-        if(login.equals("")) return Translator.EMPTY_LOGIN.getValue();
+        if(login.equals("")) {
+            if(password.equals("")) return Translator.EMPTY_LOGIN_PASSWORD.getValue();
+            return Translator.EMPTY_LOGIN.getValue(); 
+        }
         if(password.equals("")) return Translator.EMPTY_PASSWORD.getValue();
         if(login.length() > 20 || password.length() > 20) 
             return Translator.TOO_LONG_LOGIN_PASSWORD.getValue();
+        if(login.equalsIgnoreCase("Anonim")) 
+            return Translator.NOT_ALLOWED_USERNAME.getValue();
         return null; 
     }
     

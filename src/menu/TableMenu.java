@@ -41,14 +41,16 @@ public abstract class TableMenu extends Menu{
             public void onChange() {}
         };
         table.center();
-        Table.TableColumn userColumn = new Table.TableColumn(table, screen, ids[0]),
-                pointsColumn = new Table.TableColumn(table, screen, ids[1]); 
-        userColumn.setText(labels[0].getValue());
-        userColumn.setWidth(width / 2 + 100);
-        table.addColumn(userColumn);
-        pointsColumn.setText(labels[1].getValue());
-        pointsColumn.setWidth(width / 2 - 100);
-        table.addColumn(pointsColumn);
+        Table.TableColumn firstColumn = new Table.TableColumn(table, screen, ids[0]),
+                secondColumn = new Table.TableColumn(table, screen, ids[1]); 
+        firstColumn.setText(labels[0].getValue());
+        firstColumn.setWidth(width / 2 + 100);
+        firstColumn.setIgnoreMouseLeftButton(true);
+        table.addColumn(firstColumn);
+        secondColumn.setText(labels[1].getValue());
+        secondColumn.setWidth(width / 2 - 100);
+        secondColumn.setIgnoreMouseLeftButton(true);
+        table.addColumn(secondColumn);
         addRows(); 
         return table; 
     }

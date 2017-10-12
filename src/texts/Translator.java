@@ -68,6 +68,7 @@ public enum Translator {
     EMPTY_LOGIN,
     EMPTY_PASSWORD,
     TOO_LONG_LOGIN_PASSWORD,
+    NOT_ALLOWED_USERNAME,
     NOT_LOGGED_IN_ALERT,
     USER,
     POINTS,

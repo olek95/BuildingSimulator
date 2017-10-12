@@ -108,7 +108,7 @@ public class PauseMenu extends MainMenu{
             }catch(SQLException|ClassNotFoundException ex) {
                 ex.printStackTrace();
             }
-        }
+        } else GameManager.setUser(null);
         Element exitPopup = MainMenu.getScreen().getElementById("exit_popup"); 
         exitPopup.hide();
         Screen screen = MainMenu.getScreen(); 

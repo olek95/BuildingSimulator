@@ -39,6 +39,7 @@ public enum Translator {
     VERTICAL_ATTACH,
     DETACH,
     MERGE,
+    MERGE_PROTRUDING,
     PHYSICS,
     FIRST,
     SECOND,

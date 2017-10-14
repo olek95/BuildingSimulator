@@ -28,7 +28,7 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
     private Actions[] availableActions = { Actions.RIGHT, Actions.LEFT,
         Actions.PULL_OUT, Actions.PULL_IN, Actions.LOWER_HOOK, Actions.HEIGHTEN_HOOK,
         Actions.UP, Actions.DOWN, Actions.ACTION, Actions.ATTACH,
-        Actions.VERTICAL_ATTACH, Actions.DETACH, Actions.MERGE };
+        Actions.VERTICAL_ATTACH, Actions.DETACH, Actions.MERGE, Actions.MERGE_PROTRUDING};
     /**
      * Konstruktor tworzący kabinę. Używany, gdy wartość maksymalnego i 
      * minimalnego przesunięcia uchwytu nie jest znana od początku. Należy 
@@ -102,11 +102,13 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
                     hook.attach(true);
                 break;
             case DETACH: 
-                hook.detach(false);
+                hook.detach(false, false);
                 break; 
             case MERGE: 
-                hook.detach(true); 
+                hook.detach(true, false); 
                 break;
+            case MERGE_PROTRUDING: 
+                hook.detach(true, true);
             case UP:
                 if(!changingHookLocation) changeArmHeight(maxArmHeight, false);
                 break;

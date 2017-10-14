@@ -32,7 +32,7 @@ public class Construction extends Node{
      * Jeśli null, to element jest łaczony z ostatnio dotkniętym elementem. 
      * @param wallMode tryb fizyki dla dodawanego elementu w chwili dodawania 
      */
-    public void add(Wall wall1, Wall wall2, int wallMode){
+    public void add(Wall wall1, Wall wall2, int wallMode, boolean protruding){
         Spatial recentlyHitObject = wall1.getRecentlyHitObject();
         if(recentlyHitObject != null){ 
             String recentlyHitObjectName = recentlyHitObject.getName(); 
@@ -41,7 +41,7 @@ public class Construction extends Node{
                 Node touchedWall; 
                 if(wallMode == 2){ 
                     touchedWall = merge(wall1, collisionWithGround ? null 
-                        : (Wall)recentlyHitObject, false, wallMode);
+                        : (Wall)recentlyHitObject, false, wallMode, protruding);
                 }else{
                     if(wall2 != null) 
                         touchedWall = mergeHorizontal(wall1, wall2, true, wallMode); 
@@ -53,8 +53,11 @@ public class Construction extends Node{
                     lastAddedWall = wall1; 
                     wall1.setMovable(false);
                     wall1.setStale(false);
-                    wall1.setCatchingLocation(wall1.getWorldTranslation());
+                    RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
+                    wall1.setCatchingLocation(control.getPhysicsLocation());
+                    wall1.setCatchingRotation(control.getPhysicsRotation());
                 }
+                renovateBuilding((Wall)getChild(0));
             }
         }
     }
@@ -209,7 +212,8 @@ public class Construction extends Node{
      */
     public void setResetWalls(boolean resetWalls) { this.resetWalls = resetWalls; }
     
-    private Node merge(Wall wall1, Wall wall2, boolean foundations, int mode){
+    private Node merge(Wall wall1, Wall wall2, boolean foundations, int mode,
+            boolean protruding){
         if(wall2 != null){ 
             Vector3f location = ((RigidBodyControl)wall1.getControl(mode)).getPhysicsLocation();
             List<Spatial> wallChildren = wall2.getChildren(); 
@@ -246,7 +250,7 @@ public class Construction extends Node{
                         q2.getW()));
                 
                 Node catchNode = createCatchNode(wall1, wall2, catchNodes[i],
-                        perpendicularity, ceiling);
+                        perpendicularity, ceiling, protruding);
                 wall2.attachChild(catchNode);
                 control2.setPhysicsRotation(q2);
                 
@@ -277,10 +281,10 @@ public class Construction extends Node{
             if(wall2 != null){
                 // sprawdza czy na przeciwko jest druga ściana 
                 return getWallFromOpposite(wall1, wall2) != null ? 
-                        merge(wall1, wall2, true, mode) : null;
+                        merge(wall1, wall2, true, mode, false) : null;
             }
         }else{
-            return merge(wall1, wall2, true, mode); 
+            return merge(wall1, wall2, true, mode, false); 
         }
         return this; 
     }
@@ -297,7 +301,7 @@ public class Construction extends Node{
     }
     
     private Node createCatchNode(Wall wall1, Wall wall2, Node parent, boolean perpendicularity,
-            boolean ceiling) {
+            boolean ceiling, boolean protruding) {
         String parentName = parent.getName();
         Node node = new Node(parentName + " - child");
         boolean bottom = false, up = false, right = false, left = false, south = false,
@@ -336,7 +340,8 @@ public class Construction extends Node{
             }
         }
         node.setLocalTranslation(CatchNode.calculateTranslation(CatchNode
-                .valueOf(parentName), wall2, wall1, perpendicularity, ceiling, coordinate));
+                .valueOf(parentName), wall2, wall1, perpendicularity, ceiling,
+                coordinate, protruding));
         return node;
     }
     
@@ -417,6 +422,21 @@ public class Construction extends Node{
                 return (Node)hitObject; 
         }
         return null; 
+    }
+    
+    private void renovateBuilding(Wall wall) {
+        List<Spatial> wallElements = wall.getChildren(); 
+        int end = CatchNode.values().length;
+        for(int i = 1; i <= end; i++) {
+            List<Spatial> catchNodeChildren = ((Node)wallElements.get(i)).getChildren(); 
+            int childrenCount = catchNodeChildren.size(); 
+            for(int k = 0; k < childrenCount; k++) { 
+                renovateBuilding((Wall)catchNodeChildren.get(k));
+            }
+        }
+        RigidBodyControl control = wall.getControl(RigidBodyControl.class); 
+        control.setPhysicsRotation(wall.getCatchingRotation());
+        control.setPhysicsLocation(wall.getCatchingLocation());
     }
     
     private boolean checkIfCanBeAdded(Node catchNode, Wall newWall){

@@ -29,7 +29,7 @@ public enum CatchNode {
      * @return lokalizacja węzła 
      */
     public static Vector3f calculateTranslation(CatchNode type, Wall wall1, Wall wall2,
-            boolean perpendicularity, boolean ceiling, float translate){
+            boolean perpendicularity, boolean ceiling, float translate, boolean protruding){
         boolean init = false; 
         if(wall2 == null){
             init = true; 
@@ -40,18 +40,20 @@ public enum CatchNode {
             case BOTTOM: 
                 width1 = wall1.getWidth();
                 return new Vector3f(translate, init ? width1 : width1 + wall2
-                        .getHeight(), -wall1.getHeight() + wall2.getWidth());
+                        .getHeight(), -wall1.getHeight() + (protruding ? 0 :
+                        wall2.getWidth()));
             case UP:
                 width1 = wall1.getWidth(); 
                 return new Vector3f(translate, init ? width1 : width1 + wall2
-                        .getHeight(), wall1.getHeight() - wall2.getWidth()); 
+                        .getHeight(), wall1.getHeight() - (protruding ? 0 :
+                        wall2.getWidth()));
             case RIGHT: 
                 width1 = wall1.getWidth(); 
-                return new Vector3f(wall2.getWidth() - wall1.getLength(), init ? width1 :
+                return new Vector3f((protruding ? 0 : wall2.getWidth()) - wall1.getLength(), init ? width1 :
                         width1 + wall2.getHeight(), translate);
             case LEFT: 
                 width1 = wall1.getWidth(); 
-                return new Vector3f(-wall2.getWidth() + wall1.getLength(), init ? width1 :
+                return new Vector3f(-(protruding ? 0 : wall2.getWidth()) + wall1.getLength(), init ? width1 :
                         width1 + wall2.getHeight(), translate);
             case SOUTH: 
                 return new Vector3f(translate, 0, -wall1.getHeight() - CatchNode
@@ -59,19 +61,26 @@ public enum CatchNode {
                         true, init));
             case NORTH: 
                 float y, z;
+                width1 = wall1.getWidth();
                 if(ceiling) {
                     switch(valueOf(wall1.getParent().getName())) {
                         case UP: 
-                            y = wall2.getHeight() - wall1.getWidth();
+                            y = wall2.getHeight();
+                            if(!isNearlyMatchedSize(wall1, wall2)) {
+                                y -= width1; 
+                            }
                             break; 
                         case BOTTOM: 
-                            y = -wall2.getHeight() + wall1.getWidth();
+                            y = -wall2.getHeight();
+                            if(!isNearlyMatchedSize(wall1, wall2)) {
+                                y += width1; 
+                            } 
                             break; 
                         case EAST: 
-                            y = wall2.getLength() - wall1.getWidth();
+                            y = wall2.getLength() - width1;
                             break; 
                         default: 
-                            y = -wall2.getLength() + wall1.getWidth();
+                            y = -wall2.getLength() + width1;
                             
                     }
                     z = wall1.getHeight();
@@ -131,5 +140,11 @@ public enum CatchNode {
         if(init) return 0;
         if(z) return perpendicularity ? wall.getLength() : wall.getHeight();
         return perpendicularity ? wall.getHeight() : wall.getLength();
+    }
+    
+    private static boolean isNearlyMatchedSize(Wall wall1, Wall wall2) {
+        float difference = ((Wall)wall1.getParent().getParent()).getHeight()
+                - wall2.getHeight(), width = wall1.getWidth(); 
+        return difference > width - 0.1f && difference < width + 0.1f;
     }
 }

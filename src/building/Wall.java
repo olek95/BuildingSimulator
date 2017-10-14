@@ -40,6 +40,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private List<Spatial> hitObjects = new ArrayList();
     private boolean stale = false; 
     private Vector3f catchingLocation; 
+    private Quaternion catchingRotation; 
     
     public Wall(CSGShape shape, Vector3f location, CSGShape... differenceShapes){
         BoundingBox bounding = (BoundingBox)shape.getWorldBound();
@@ -254,6 +255,12 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         this.catchingLocation = catchingLocation.clone();
     }
     
+    public Quaternion getCatchingRotation() { return this.catchingRotation; }
+    
+    public void setCatchingRotation(Quaternion catchingRotation) {
+        this.catchingRotation = catchingRotation.clone(); 
+    }
+    
     @Override
     public void setCollision(Spatial b){
         if(recentlyHitObject != null && !hitObjects.contains(b)) hitObjects.add(b);
@@ -364,7 +371,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         CatchNode[] nodes = CatchNode.values();
         for(int i = 0; i < nodes.length; i++)
             addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null,
-                    false, false, 0), this); 
+                    false, false, 0, false), this); 
     }
     
     private Node addNode(CatchNode type, Vector3f location, Node parent){

@@ -40,7 +40,7 @@ import org.lwjgl.opengl.Display;
 import texts.Translator;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
-
+        
 public class BuildingSimulator extends SimpleApplication implements ActionListener{
     private static BuildingSimulator game;
     private BulletAppState bulletAppState = new BulletAppState();
@@ -76,18 +76,18 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             unit.updateState();
             List<Spatial> gameObjects = rootNode.getChildren();
             int gameObjectsNumber = gameObjects.size();
-            for(int i = 0; i < gameObjectsNumber; i++){
-                Spatial gameObject = gameObjects.get(i); 
-                if(gameObject.getName().startsWith("Building")){
-                    Construction building = (Construction)gameObject; 
-                    if(building.isHit()){
-                        building.setResetWalls(false);
-                        building.updateState((Node)building.getChild(0)); 
-                        if(!building.isResetWalls()) building.setHit(false);
-                        //building.setHit(false);
-                    }
-                }
-            }
+//            for(int i = 0; i < gameObjectsNumber; i++){
+//                Spatial gameObject = gameObjects.get(i); 
+//                if(gameObject.getName().startsWith("Building")){
+//                    Construction building = (Construction)gameObject; 
+//                    if(building.isHit()){
+//                        building.setResetWalls(false);
+//                        building.updateState((Node)building.getChild(0)); 
+//                        if(!building.isResetWalls()) building.setHit(false);
+//                        //building.setHit(false); // nieodkomentowac
+//                    }
+//                }
+//            }
             Shop shop = Shop.getDisplayedShop();
             VisibleFromAbove object = shop != null ? shop 
                     : (Crane)GameManager.getUnit(1);

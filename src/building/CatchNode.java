@@ -61,26 +61,19 @@ public enum CatchNode {
                         true, init));
             case NORTH: 
                 float y, z;
-                width1 = wall1.getWidth();
                 if(ceiling) {
                     switch(valueOf(wall1.getParent().getName())) {
                         case UP: 
-                            y = wall2.getHeight();
-                            if(!isNearlyMatchedSize(wall1, wall2)) {
-                                y -= width1; 
-                            }
+                            y = wall2.getHeight() - wall1.getWidth();
                             break; 
                         case BOTTOM: 
-                            y = -wall2.getHeight();
-                            if(!isNearlyMatchedSize(wall1, wall2)) {
-                                y += width1; 
-                            } 
+                            y = -wall2.getHeight() + wall1.getWidth();
                             break; 
                         case EAST: 
-                            y = wall2.getLength() - width1;
+                            y = wall2.getLength() - wall1.getWidth();
                             break; 
                         default: 
-                            y = -wall2.getLength() + width1;
+                            y = -wall2.getLength() + wall1.getWidth();
                             
                     }
                     z = wall1.getHeight();

@@ -1,14 +1,18 @@
 package building;
 
 import buildingsimulator.BuildingSimulator;
+import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.collision.CollisionResults;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import menu.HUD;
 
 /**
  * Obiekt klasy <code>Construction</code> reprezentuje budowaną konstrukcję. 
@@ -242,7 +246,17 @@ public class Construction extends Node{
                 if(foundations) {
                     catchNodesLocations[i] = catchNodes[i].getWorldTranslation();
                 }
-                
+//                if(ceiling) {
+//                    CollisionResults results = new CollisionResults();
+//                    Ray ray = new Ray(wall1.getWorldTranslation(),
+//                            new Vector3f(0,-2 * wall2.getHeight(),0));
+//                     ray.collideWith((BoundingBox)getWorldBound(), results);
+//                     if(results.getClosestCollision().getGeometry() != null) {
+//                     System.out.println(results.getClosestCollision().getGeometry());
+//                     System.out.println(results.getClosestCollision().getGeometry().getParent());
+//                     }
+//                     System.out.println(results.size());
+//                }
                 RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
                 RigidBodyControl control2 = wall2.getControl(RigidBodyControl.class);
                 Quaternion q2 = control2.getPhysicsRotation().clone(); 

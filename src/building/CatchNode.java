@@ -64,10 +64,10 @@ public enum CatchNode {
                 if(ceiling) {
                     switch(valueOf(wall1.getParent().getName())) {
                         case UP: 
-                            y = wall2.getHeight() - wall1.getWidth();
+                            y = wall2.getHeight() + wall1.getWidth();
                             break; 
                         case BOTTOM: 
-                            y = -wall2.getHeight() + wall1.getWidth();
+                            y = -wall2.getHeight() - wall1.getWidth();
                             break; 
                         case EAST: 
                             y = wall2.getLength() - wall1.getWidth();
@@ -76,6 +76,7 @@ public enum CatchNode {
                             y = -wall2.getLength() + wall1.getWidth();
                             
                     }
+                    if(isOnTheOtherSide(wall1, wall2)) y = -y;
                     z = wall1.getHeight();
                 } else {
                     y = 0;
@@ -139,5 +140,13 @@ public enum CatchNode {
         float difference = ((Wall)wall1.getParent().getParent()).getHeight()
                 - wall2.getHeight(), width = wall1.getWidth(); 
         return difference > width - 0.1f && difference < width + 0.1f;
+    }
+    
+    private static boolean isOnTheOtherSide(Wall wall1, Wall wall2) {
+        Vector3f wall2Location = wall2.getWorldTranslation();
+        return wall2Location.distance(wall1.getWorldTranslation().subtract(0, 
+                wall1.getHeight() + wall2.getWidth(), 0)) < 
+                wall2Location.distance(wall1.getParent().getParent()
+                .getWorldTranslation());
     }
 }

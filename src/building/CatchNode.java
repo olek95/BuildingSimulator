@@ -64,16 +64,16 @@ public enum CatchNode {
                 if(ceiling) {
                     switch(valueOf(wall1.getParent().getName())) {
                         case UP: 
-                            y = wall2.getHeight() + wall1.getWidth();
+                            y = wall2.getHeight() - wall1.getWidth() / 2;
                             break; 
                         case BOTTOM: 
-                            y = -wall2.getHeight() - wall1.getWidth();
+                            y = -wall2.getHeight() + wall1.getWidth() / 2;
                             break; 
                         case EAST: 
-                            y = wall2.getLength() - wall1.getWidth();
+                            y = wall2.getLength() - wall1.getWidth() / 2;
                             break; 
                         default: 
-                            y = -wall2.getLength() + wall1.getWidth();
+                            y = -wall2.getLength() + wall1.getWidth() / 2;
                             
                     }
                     if(isOnTheOtherSide(wall1, wall2)) y = -y;

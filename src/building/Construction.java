@@ -45,7 +45,7 @@ public class Construction extends Node{
                 Node touchedWall; 
                 if(wallMode == 2){ 
                     touchedWall = merge(wall1, collisionWithGround ? null 
-                        : (Wall)recentlyHitObject, false, wallMode, protruding);
+                        : (Wall)recentlyHitObject, false, wallMode, protruding, 0, 4);
                 }else{
                     if(wall2 != null) 
                         touchedWall = mergeHorizontal(wall1, wall2, true, wallMode); 
@@ -62,6 +62,7 @@ public class Construction extends Node{
                     wall1.setCatchingRotation(control.getPhysicsRotation());
                 }
                 renovateBuilding((Wall)getChild(0));
+                System.out.println("----------");
             }
         }
     }
@@ -217,75 +218,27 @@ public class Construction extends Node{
     public void setResetWalls(boolean resetWalls) { this.resetWalls = resetWalls; }
     
     private Node merge(Wall wall1, Wall wall2, boolean foundations, int mode,
-            boolean protruding){
+            boolean protruding, int start, int end){
         if(wall2 != null){ 
             Vector3f location = ((RigidBodyControl)wall1.getControl(mode)).getPhysicsLocation();
             List<Spatial> wallChildren = wall2.getChildren(); 
             Node[] catchNodes = new Node[4];
             Vector3f[] catchNodesLocations = new Vector3f[4];
             float[] distances = new float[4];
-            for(int i = 0; i < 4; i++){
-                catchNodes[i] = (Node)wallChildren.get(i + 1);
-                catchNodesLocations[i] = catchNodes[i].getWorldTranslation(); 
-                distances[i] = location.distance(catchNodesLocations[i]); 
+            for(int i = start; i < end; i++){ 
+                int index = i % 4;
+                catchNodes[index] = (Node)wallChildren.get(i + 1);
+                System.out.println(catchNodes[index]);
+                catchNodesLocations[index] = catchNodes[index].getWorldTranslation(); 
+                distances[index] = location.distance(catchNodesLocations[index]); 
             }
             boolean perpendicularity = wall1.checkPerpendicularity(wall2); 
-            int minDistance = getMin(distances, foundations, location, wall2), 
-                    i = minDistance > 3 ? 0 : minDistance; 
-            if(foundations) {
-                catchNodes[i] = (Node)wallChildren.get(minDistance); 
-            }
-//            if(checkIfCanBeAdded(catchNodes[i], wall1)){
-                boolean ceiling = mode == 1 && (int)(location.y - 
-                        wall2.getWorldTranslation().y) > 0; 
-//                if(foundations || ceiling){
-//                    catchNodes[i] = wall2.changeCatchNodeLocation(wall1, 
-//                            catchNodes[i], minDistance, perpendicularity, ceiling); 
-//                    catchNodesLocations[i] = catchNodes[i].getWorldTranslation();
-//                }
-                if(foundations) {
-                    catchNodesLocations[i] = catchNodes[i].getWorldTranslation();
-                }
-//                if(ceiling) {
-//                    CollisionResults results = new CollisionResults();
-//                    Ray ray = new Ray(wall1.getWorldTranslation(),
-//                            new Vector3f(0,-2 * wall2.getHeight(),0));
-//                     ray.collideWith((BoundingBox)getWorldBound(), results);
-//                     if(results.getClosestCollision().getGeometry() != null) {
-//                     System.out.println(results.getClosestCollision().getGeometry());
-//                     System.out.println(results.getClosestCollision().getGeometry().getParent());
-//                     }
-//                     System.out.println(results.size());
-//                }
-                RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
-                RigidBodyControl control2 = wall2.getControl(RigidBodyControl.class);
-                Quaternion q2 = control2.getPhysicsRotation().clone(); 
-                control2.setPhysicsRotation(new Quaternion(q2.getX(), 0, q2.getZ(),
-                        q2.getW()));
-                
-                Node catchNode = createCatchNode(wall1, wall2, catchNodes[i],
-                        perpendicularity, ceiling, protruding);
-                wall2.attachChild(catchNode);
-                control2.setPhysicsRotation(q2);
-                
-                Vector3f edgeLocation = catchNode.getWorldTranslation();
-                control.setPhysicsLocation(edgeLocation);
-                control.setPhysicsRotation(calculateProperRotation(wall2,
-                        i, !foundations, perpendicularity, ceiling));
-                wall2.detachChild(catchNode);
-                return catchNodes[i];
-                
-//                wall1.getControl(RigidBodyControl.class)
-//                        .setPhysicsRotation(new Quaternion(q1.getX(),0,0,q1.getW()));
-//                wall1.getControl(RigidBodyControl.class)
-//                        .setPhysicsLocation(new Vector3f(wall2.getWorldTranslation().x,
-//                        wall1.getWidth() + wall2.getHeight(), wall2.getWorldTranslation().z
-//                        - wall2.getHeight() + wall2.getWidth()));
-//                control2.setPhysicsRotation(q2);
-//                wall1.getControl(RigidBodyControl.class).setPhysicsRotation(q1);
-//                control.setPhysicsLocation(calculateProperLocation(
-//                        node.getWorldTranslation(), wall1, mode));
-//            }else return null; 
+            int minDistance = getMin(distances); 
+            boolean ceiling = mode == 1 && (int)(location.y - 
+                    wall2.getWorldTranslation().y) > 0; 
+            setWallInProperPosition(wall1, wall2, catchNodes[minDistance], perpendicularity, 
+                    ceiling, foundations, protruding, minDistance);
+            return catchNodes[minDistance];
         }
         return this;
     }
@@ -295,22 +248,39 @@ public class Construction extends Node{
             if(wall2 != null){
                 // sprawdza czy na przeciwko jest druga ściana 
                 return getWallFromOpposite(wall1, wall2) != null ? 
-                        merge(wall1, wall2, true, mode, false) : null;
+                        merge(wall1, wall2, true, mode, false, 4, 8) : null;
             }
         }else{
-            return merge(wall1, wall2, true, mode, false); 
+            return merge(wall1, wall2, true, mode, false, 4, 8); 
         }
         return this; 
     }
     
-    private int getMin(float[] distances, boolean foundations, Vector3f wallLocation,
-            Wall wall){
+    private void setWallInProperPosition(Wall wall1, Wall wall2, Node catchNode,
+            boolean perpendicularity, boolean ceiling, boolean foundations, 
+            boolean protruding, int i) {
+        RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
+        RigidBodyControl control2 = wall2.getControl(RigidBodyControl.class);
+        Quaternion q2 = control2.getPhysicsRotation().clone(); 
+        control2.setPhysicsRotation(new Quaternion(q2.getX(), 0, q2.getZ(),
+                q2.getW()));
+        System.out.println("ELO");
+        System.out.println(catchNode);
+        Node newCatchNode = createCatchNode(wall1, wall2, catchNode,
+                perpendicularity, ceiling, protruding);
+        wall2.attachChild(newCatchNode);
+        control2.setPhysicsRotation(q2);
+        Vector3f edgeLocation = newCatchNode.getWorldTranslation();
+        control.setPhysicsLocation(edgeLocation);
+        control.setPhysicsRotation(calculateProperRotation(wall2,
+                i, !foundations, perpendicularity, ceiling));
+        wall2.detachChild(newCatchNode);
+    }
+    
+    private int getMin(float[] distances){
         int min = 0; 
         for(int i = 1; i < 4; i++)
             if(distances[min] > distances[i]) min = i; 
-        if(foundations){  
-            return min + 5; 
-        }
         return min; 
     }
     
@@ -448,9 +418,10 @@ public class Construction extends Node{
                 renovateBuilding((Wall)catchNodeChildren.get(k));
             }
         }
+        System.out.println(wall.getName());
         RigidBodyControl control = wall.getControl(RigidBodyControl.class); 
-        control.setPhysicsRotation(wall.getCatchingRotation());
-        control.setPhysicsLocation(wall.getCatchingLocation());
+        control.setPhysicsRotation(wall.getCatchingRotation().clone());
+        control.setPhysicsLocation(wall.getCatchingLocation().clone());
     }
     
     private boolean checkIfCanBeAdded(Node catchNode, Wall newWall){

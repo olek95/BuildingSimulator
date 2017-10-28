@@ -75,8 +75,10 @@ public class HUD extends AbstractAppState{
     public static void removeMessage() {
         screen.getElementById("message_label").setText("");
         shouldMessageBeDeleted = false; 
-        messageTimer.cancel();
-        messageTimer = null;
+        if(messageTimer != null) {
+            messageTimer.cancel();
+            messageTimer = null;
+        }
     }
     
     /**

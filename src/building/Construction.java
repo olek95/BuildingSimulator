@@ -305,11 +305,12 @@ public class Construction extends Node{
                 else sum -= ((Wall)parentChildren.get(i)).getHeight() * 2; 
             }
         } else {
+            boolean southOrNorth = south || north;
             for(int i = 0; i < childrenCount; i++) {
                 Wall wall = ((Wall)parentChildren.get(i));
                 if(wall.checkPerpendicularity(wall2)) 
-                    sum -= wall.getHeight() * 2;
-                else sum -= wall.getLength() * 2;
+                    sum -= (southOrNorth ? wall.getHeight() : wall.getLength()) * 2;
+                else sum -= (southOrNorth ? wall.getLength() : wall.getHeight()) * 2;
             }
         }
         if(bottom || up) {
@@ -318,9 +319,11 @@ public class Construction extends Node{
             if(left || right){
                 coordinate = sum + wall2.getHeight() - wall1.getHeight();
             } else {
-                coordinate = sum - CatchNode.getProperFoundationsDimension(wall1,
-                        perpendicularity, false, false) + (south || north ? 
-                        wall2.getLength() : wall2.getHeight());
+                System.out.println("SUM: " + sum); 
+                boolean southOrNorth = south || north; 
+                coordinate = sum - CatchNode.getProperFoundationsDimension(wall1, 
+                        perpendicularity, !southOrNorth, false) + (southOrNorth 
+                        ? wall2.getLength() : wall2.getHeight());
             }
         }
         node.setLocalTranslation(CatchNode.calculateTranslation(CatchNode

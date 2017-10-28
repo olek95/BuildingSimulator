@@ -87,11 +87,11 @@ public enum CatchNode {
                 return new Vector3f(translate, y, z);
             case EAST: 
                 return new Vector3f(-wall1.getLength() - CatchNode
-                        .getProperFoundationsDimension(wall2, perpendicularity, true,
+                        .getProperFoundationsDimension(wall2, perpendicularity, false,
                         init), 0, translate); 
             case WEST: 
                 return new Vector3f(wall1.getLength() + CatchNode
-                        .getProperFoundationsDimension(wall2, perpendicularity, true,
+                        .getProperFoundationsDimension(wall2, perpendicularity, false,
                         init), 0, translate); 
         }
         return null; 

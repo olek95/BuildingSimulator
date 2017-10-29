@@ -52,17 +52,16 @@ public class Construction extends Node{
                     else touchedWall = mergeHorizontal(wall1, collisionWithGround ? null :
                             (Wall)recentlyHitObject, false, wallMode);
                 }
+                if(!getChildren().isEmpty()) renovateBuilding((Wall)getChild(0));
                 if(touchedWall != null){
+                    wall1.setMovable(false);
                     touchedWall.attachChild(wall1);
                     lastAddedWall = wall1; 
-                    wall1.setMovable(false);
                     wall1.setStale(false);
                     RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
                     wall1.setCatchingLocation(control.getPhysicsLocation());
                     wall1.setCatchingRotation(control.getPhysicsRotation());
                 }
-                renovateBuilding((Wall)getChild(0));
-                System.out.println("----------");
             }
         }
     }
@@ -228,7 +227,6 @@ public class Construction extends Node{
             for(int i = start; i < end; i++){ 
                 int index = i % 4;
                 catchNodes[index] = (Node)wallChildren.get(i + 1);
-                System.out.println(catchNodes[index]);
                 catchNodesLocations[index] = catchNodes[index].getWorldTranslation(); 
                 distances[index] = location.distance(catchNodesLocations[index]); 
             }
@@ -264,8 +262,6 @@ public class Construction extends Node{
         Quaternion q2 = control2.getPhysicsRotation().clone(); 
         control2.setPhysicsRotation(new Quaternion(q2.getX(), 0, q2.getZ(),
                 q2.getW()));
-        System.out.println("ELO");
-        System.out.println(catchNode);
         Node newCatchNode = createCatchNode(wall1, wall2, catchNode,
                 perpendicularity, ceiling, protruding);
         wall2.attachChild(newCatchNode);
@@ -319,7 +315,6 @@ public class Construction extends Node{
             if(left || right){
                 coordinate = sum + wall2.getHeight() - wall1.getHeight();
             } else {
-                System.out.println("SUM: " + sum); 
                 boolean southOrNorth = south || north; 
                 coordinate = sum - CatchNode.getProperFoundationsDimension(wall1, 
                         perpendicularity, !southOrNorth, false) + (southOrNorth 
@@ -421,7 +416,6 @@ public class Construction extends Node{
                 renovateBuilding((Wall)catchNodeChildren.get(k));
             }
         }
-        System.out.println(wall.getName());
         RigidBodyControl control = wall.getControl(RigidBodyControl.class); 
         control.setPhysicsRotation(wall.getCatchingRotation().clone());
         control.setPhysicsLocation(wall.getCatchingLocation().clone());

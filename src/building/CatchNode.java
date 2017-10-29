@@ -1,6 +1,9 @@
 package building;
 
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
+import java.util.List;
 
 /**
  * Typ wyliczeniowy <code>CatchNode</code> zawiera nazwy wszystkich możliwych 
@@ -64,16 +67,16 @@ public enum CatchNode {
                 if(ceiling) {
                     switch(valueOf(wall1.getParent().getName())) {
                         case UP: 
-                            y = wall2.getHeight() - wall1.getWidth() / 2;
+                            y = wall2.getHeight() - getProperOffsetForCeiling(wall1);
                             break; 
-                        case BOTTOM: 
-                            y = -wall2.getHeight() + wall1.getWidth() / 2;
+                        case BOTTOM:
+                            y = -wall2.getHeight() + getProperOffsetForCeiling(wall1);
                             break; 
                         case EAST: 
-                            y = wall2.getLength() - wall1.getWidth() / 2;
+                            y = wall2.getLength() - getProperOffsetForCeiling(wall1);
                             break; 
                         default: 
-                            y = -wall2.getLength() + wall1.getWidth() / 2;
+                            y = -wall2.getLength() + getProperOffsetForCeiling(wall1);
                             
                     }
                     if(isOnTheOtherSide(wall1, wall2)) y = -y;
@@ -149,4 +152,15 @@ public enum CatchNode {
                 wall2Location.distance(wall1.getParent().getParent()
                 .getWorldTranslation());
     }
+    
+    private static float getProperOffsetForCeiling(Wall wall) {
+        Vector3f wallLocation = wall.getWorldTranslation();
+        Node catchNode = wall.getParent();
+        List<Spatial> floorChildren = catchNode.getParent().getChildren();
+        Vector3f outerCatchNodeLocation = floorChildren.get(floorChildren
+                .indexOf(catchNode) + 4).getWorldTranslation();
+        return wallLocation.distance(catchNode.getWorldTranslation().clone()
+                .setY(outerCatchNodeLocation.y)) < wallLocation.
+                distance(outerCatchNodeLocation) ? wall.getWidth() : 0; 
+    } 
 }

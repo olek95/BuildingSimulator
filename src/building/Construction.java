@@ -1,6 +1,7 @@
 package building;
 
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.GameManager;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.collision.CollisionResults;
@@ -216,7 +217,7 @@ public class Construction extends Node{
      */
     public void setResetWalls(boolean resetWalls) { this.resetWalls = resetWalls; }
     
-    private Node merge(Wall wall1, Wall wall2, boolean foundations, int mode,
+    private Node merge(Wall wall1, Wall wall2, boolean ceiling, int mode,
             boolean protruding, int start, int end){
         if(wall2 != null){ 
             Vector3f location = ((RigidBodyControl)wall1.getControl(mode)).getPhysicsLocation();
@@ -232,10 +233,8 @@ public class Construction extends Node{
             }
             boolean perpendicularity = wall1.checkPerpendicularity(wall2); 
             int minDistance = getMin(distances); 
-            boolean ceiling = mode == 1 && (int)(location.y - 
-                    wall2.getWorldTranslation().y) > 0; 
             setWallInProperPosition(wall1, wall2, catchNodes[minDistance], perpendicularity, 
-                    ceiling, foundations, protruding, minDistance);
+                    ceiling, mode == 1, protruding, minDistance);
             return catchNodes[minDistance];
         }
         return this;
@@ -245,17 +244,28 @@ public class Construction extends Node{
         if(!foundations){
             if(wall2 != null){
                 // sprawdza czy na przeciwko jest druga ściana 
-                return getWallFromOpposite(wall1, wall2) != null ? 
-                        merge(wall1, wall2, true, mode, false, 4, 8) : null;
+                boolean oppositeWall = getWallFromOpposite(wall1, wall2) != null;
+                if(oppositeWall) {
+                    boolean ceiling = (int)(wall1.getWorldTranslation().y 
+                            - wall2.getWorldTranslation().y) > 0;
+                    Node catchNode = merge(wall1, wall2, ceiling, mode, false,
+                            4, 8);
+                    if(ceiling) GameManager.findActualUnit().getHook().heighten();
+                    return catchNode;
+                }
+                return oppositeWall ? 
+                        merge(wall1, wall2, (int)(wall1.getWorldTranslation()
+                        .y - wall2.getWorldTranslation().y) > 0, mode, false, 4, 8)
+                        : null;
             }
         }else{
-            return merge(wall1, wall2, true, mode, false, 4, 8); 
+            return merge(wall1, wall2, false, mode, false, 4, 8); 
         }
         return this; 
     }
     
     private void setWallInProperPosition(Wall wall1, Wall wall2, Node catchNode,
-            boolean perpendicularity, boolean ceiling, boolean foundations, 
+            boolean perpendicularity, boolean ceiling, boolean horizontal, 
             boolean protruding, int i) {
         RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
         RigidBodyControl control2 = wall2.getControl(RigidBodyControl.class);
@@ -269,7 +279,14 @@ public class Construction extends Node{
         Vector3f edgeLocation = newCatchNode.getWorldTranslation();
         control.setPhysicsLocation(edgeLocation);
         control.setPhysicsRotation(calculateProperRotation(wall2,
-                i, !foundations, perpendicularity, ceiling));
+                i, !horizontal, perpendicularity, ceiling));
+//        if(ceiling) {
+//            for(int m = 0; m < 2; m++)
+//            GameManager.getUnit(0).getHook().heighten();
+//        }
+//        if(ceiling) {
+//            control.setPhysicsLocation(this.getChild(0).getWorldTranslation().setY(5));
+//        }
         wall2.detachChild(newCatchNode);
     }
     
@@ -337,11 +354,11 @@ public class Construction extends Node{
 //    }
     
     private Quaternion calculateProperRotation(Wall ownerRotation, int direction,
-            boolean notFoundations, boolean perpendicular, boolean ceiling){
+            boolean vertical, boolean perpendicular, boolean ceiling){
         if(ceiling) return ownerRotation.getParent().getParent().getWorldRotation();
         Quaternion newRotation = ownerRotation.getControl(RigidBodyControl.class)
                 .getPhysicsRotation();
-        if(notFoundations){
+        if(vertical){
             newRotation = newRotation.clone().multLocal(-1.570796f, 0, 0, 1.570796f);
             if(direction > 1) newRotation.multLocal(0, 0, -1.570796f, 1.570796f);
         }else{

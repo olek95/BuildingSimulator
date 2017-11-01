@@ -10,6 +10,7 @@ import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import cranes.Hook;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -250,7 +251,11 @@ public class Construction extends Node{
                             - wall2.getWorldTranslation().y) > 0;
                     Node catchNode = merge(wall1, wall2, ceiling, mode, false,
                             4, 8);
-                    if(ceiling) GameManager.findActualUnit().getHook().heighten();
+                    if(ceiling) {
+                        Hook hook = GameManager.findActualUnit().getHook(); 
+                        hook.heighten();
+                        hook.heighten(); 
+                    }
                     return catchNode;
                 }
                 return oppositeWall ? 

@@ -234,6 +234,7 @@ public class Construction extends Node{
             }
             boolean perpendicularity = wall1.checkPerpendicularity(wall2); 
             int minDistance = getMin(distances); 
+            System.out.println(this.isEdgeEmpty(wall1, wall2, wall2, CatchNode.UP));
             setWallInProperPosition(wall1, wall2, catchNodes[minDistance], perpendicularity, 
                     ceiling, mode == 1, protruding, minDistance);
             return catchNodes[minDistance];
@@ -494,5 +495,20 @@ public class Construction extends Node{
             wall.removeFromParent();
             BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(wall);
         }
+    }
+    
+    private boolean isEdgeEmpty(Wall wall1, Wall wall2, Wall floor, CatchNode edge) {
+        if(wall2.isFloor() && floor.getWorldTranslation().distance(wall2
+                .getWorldTranslation()) <= floor.getHeight() + wall2.getHeight() + 0.1f) {
+            float sum = 0;
+            List<Spatial> edgeChildren = ((Node)wall2.getChild(edge.toString()))
+                    .getChildren();
+            int edgeChildrenCount = edgeChildren.size();
+            for(int i = 0; i < edgeChildrenCount; i++) {
+                sum += ((Wall)edgeChildren.get(i)).getLength() * 2;
+            }
+            if(sum < floor.getLength() * 2) return true; 
+        }
+        return false;
     }
 }

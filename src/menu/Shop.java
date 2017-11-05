@@ -234,7 +234,7 @@ public class Shop extends Menu implements VisibleFromAbove{
         int result = -1;
         if(xTextField != null && zTextField != null) {
             String x = xTextField.getText(), z = zTextField.getText();
-            if(x.matches("[1-9]\\d*(\\.\\d+)?") && z.matches("[1-9]\\d*(\\.\\d+)?")) { 
+            if(isProperDimension(x) && isProperDimension(z)) { 
                 result = ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex()
                         * ((int)Float.parseFloat(x) * (int)Float.parseFloat(z)
                         + ((WallType)((SelectBox)screen.getElementById("type_select_box")).getSelectedListItem()
@@ -277,5 +277,9 @@ public class Shop extends Menu implements VisibleFromAbove{
     
     private boolean isMaterialsBought() {
         return ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex() != 0;
+    }
+    
+    private boolean isProperDimension(String x) {
+        return x.matches("([1-5](\\.\\d+)?)|[6]");
     }
 }

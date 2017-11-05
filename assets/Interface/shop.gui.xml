@@ -12,7 +12,7 @@
                 </component>
                 <component type="Label" id="amount_label" position="25%,29%" dimensions="10%,12%"/>
                 <component type="Spinner" id="amount_spinner" position="35%,32%" dimensions="20%,7%" orientation="VERTICAL">
-                    <method name="setStepIntegerRange" param0="0" param1="100" param2="1"/>
+                    <method name="setStepIntegerRange" param0="0" param1="5" param2="1"/>
                     <eventMethod name="onChange" stateMethodName="beginCalculateCost"/>
                 </component>
                 <component type="Label" id="dimensions_label" position="25%,42%" dimensions="20%,12%"/>

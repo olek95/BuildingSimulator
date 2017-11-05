@@ -67,11 +67,9 @@ public enum CatchNode {
                 if(ceiling) {
                     switch(valueOf(wall1.getParent().getName())) {
                         case UP: 
-                            System.out.println(1);
                             y = wall2.getHeight() - getProperOffsetForCeiling(wall1);
                             break; 
                         case BOTTOM:
-                            System.out.println(2);
                             y = -wall2.getHeight() + getProperOffsetForCeiling(wall1);
                             break; 
                         case EAST: 

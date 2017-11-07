@@ -174,18 +174,6 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         control.setLinearDamping(value);
     }
     
-    public boolean isFloor() {
-        CatchNode[] outsideNodes = {CatchNode.NORTH, CatchNode.EAST, CatchNode.WEST,
-            CatchNode.SOUTH};
-        String catchNodeName = getParent().getName();
-        System.out.println(catchNodeName);
-        for(int i = 0; i < outsideNodes.length; i++) {
-            System.out.println(outsideNodes[i].toString());
-            if(catchNodeName.startsWith(outsideNodes[i].toString())) return true;
-        }
-        return catchNodeName.startsWith("Building");
-    }
-    
     /**
      * Przełącza stan ściany pomiędzy ścianą połączoną z budynkiem (bez koloru) 
      * i ścianą po odłączeniu z budynku (czerwoną).

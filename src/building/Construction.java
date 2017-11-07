@@ -234,7 +234,7 @@ public class Construction extends Node{
             }
             boolean perpendicularity = wall1.checkPerpendicularity(wall2); 
             int minDistance = getMin(distances); 
-            System.out.println(this.isEdgeEmpty(wall1, wall2, wall2, CatchNode.UP));
+            System.out.println(this.isEdgeEmpty(wall1, (Wall)getChildren().get(0), wall2, CatchNode.BOTTOM));
             setWallInProperPosition(wall1, wall2, catchNodes[minDistance], perpendicularity, 
                     ceiling, mode == 1, protruding, minDistance);
             return catchNodes[minDistance];
@@ -498,8 +498,24 @@ public class Construction extends Node{
     }
     
     private boolean isEdgeEmpty(Wall wall1, Wall wall2, Wall floor, CatchNode edge) {
-        if(wall2.isFloor() && floor.getWorldTranslation().distance(wall2
-                .getWorldTranslation()) <= floor.getHeight() + wall2.getHeight() + 0.1f) {
+        
+        List<Spatial> wallElements = wall2.getChildren(); 
+        int end = CatchNode.values().length;
+        for(int i = 1; i <= end; i++) {
+            List<Spatial> catchNodeChildren = ((Node)wallElements.get(i)).getChildren(); 
+            int childrenCount = catchNodeChildren.size(); 
+            for(int k = 0; k < childrenCount; k++) { 
+                if(!isEdgeEmpty(wall1, (Wall)catchNodeChildren.get(k), floor, edge))
+                    return false;
+            }
+        }
+        Vector3f floorLocation = floor.getWorldTranslation(), 
+                wall2Location = wall2.getWorldTranslation();
+        float width = floor.getWidth();
+        boolean soughtFloor = wall2Location.y < floorLocation.y + width &&
+                wall2Location.y > floorLocation.y - width && floorLocation
+                .distance(wall2Location) <= floor.getHeight() + wall2.getHeight() + 0.1f;
+        if(soughtFloor) {
             float sum = 0;
             List<Spatial> edgeChildren = ((Node)wall2.getChild(edge.toString()))
                     .getChildren();

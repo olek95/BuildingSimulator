@@ -11,6 +11,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import cranes.Hook;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -234,7 +235,8 @@ public class Construction extends Node{
             }
             boolean perpendicularity = wall1.checkPerpendicularity(wall2); 
             int minDistance = getMin(distances); 
-            System.out.println(this.isEdgeEmpty(wall1, (Wall)getChildren().get(0), wall2, CatchNode.BOTTOM));
+            System.out.println(this.getEdgesForCheckingEmpty(wall1, wall2, CatchNode.UP));
+//            System.out.println(this.isEdgeEmpty(wall1, (Wall)getChildren().get(0), wall2, CatchNode.BOTTOM));
             setWallInProperPosition(wall1, wall2, catchNodes[minDistance], perpendicularity, 
                     ceiling, mode == 1, protruding, minDistance);
             return catchNodes[minDistance];
@@ -498,7 +500,6 @@ public class Construction extends Node{
     }
     
     private boolean isEdgeEmpty(Wall wall1, Wall wall2, Wall floor, CatchNode edge) {
-        
         List<Spatial> wallElements = wall2.getChildren(); 
         int end = CatchNode.values().length;
         for(int i = 1; i <= end; i++) {
@@ -526,5 +527,30 @@ public class Construction extends Node{
             if(sum < floor.getLength() * 2) return true; 
         }
         return false;
+    }
+    
+    private List<CatchNode> getEdgesForCheckingEmpty(Wall wall, Wall floor,
+            CatchNode touchedCatchNode) {
+        List<Spatial> catchNodeChildren = ((Node)floor.getChild(touchedCatchNode.toString()))
+                .getChildren();
+        List<CatchNode> edges = new ArrayList(); 
+        int catchNodeChildrenSize = catchNodeChildren.size();
+        boolean leftRight = touchedCatchNode.equals(CatchNode.RIGHT) || touchedCatchNode
+                .equals(CatchNode.LEFT);
+        if(catchNodeChildrenSize == 0) {
+            edges.add(leftRight ? CatchNode.UP : CatchNode.LEFT);
+        }
+        float sum = wall.getLength() * 2;
+        for(int i = 0; i < catchNodeChildrenSize; i++) {
+            sum += ((Wall)catchNodeChildren.get(i)).getLength() * 2;
+        }
+        if(leftRight) {
+            if(sum > (floor.getHeight() - wall.getWidth() * 2) * 2)
+                edges.add(CatchNode.BOTTOM);
+        }else{
+            if(sum > (floor.getLength() - wall.getWidth() * 2) * 2)
+                edges.add(CatchNode.RIGHT);
+        }
+        return edges;
     }
 }

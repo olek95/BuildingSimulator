@@ -36,7 +36,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private Geometry[] ropesHorizontal = new Geometry[4], ropesVertical = new Geometry[2];
     private float width, height, length, distanceToHandle, distanceToHandleVertical; 
     private static int counter = 0; 
-    private int actualMode;
+    private WallMode actualMode;
     private List<Spatial> hitObjects = new ArrayList();
     private boolean stale = false; 
     private Vector3f catchingLocation; 
@@ -54,7 +54,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         createLooseControl(location); 
         createAttachingControl(location, false); 
         createAttachingControl(location, true); 
-        swapControl(0);
+        swapControl(WallMode.LOOSE);
         counter++;
     }
     
@@ -70,27 +70,28 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     /**
-     * Zamienia aktualną fizykę. Jeśli 0, to obiekt otrzymuje fizykę dla 
-     * obiektu nieprzyczepionego (luźnego), jeśtli 1, to obiekt otrzymuje 
-     * fizykę dla obiektu przyczepionego do haka poziomo, natomiast jeśli 2 to 
+     * Zamienia aktualną fizykę. Jeśli LOOSE, to obiekt otrzymuje fizykę dla 
+     * obiektu nieprzyczepionego (luźnego), jeśtli HORIZONTAL, to obiekt otrzymuje 
+     * fizykę dla obiektu przyczepionego do haka poziomo, natomiast jeśli VERTICAL to 
      * obiekt otrzymuje fizykę dla obiektu przyczepionego do haka pionowo. 
-     * @param mode typ fizyki: 0 - nieprzyczepiony, 1 - przyczepiony poziomo,
-     * 2 - przyczepiony pionowo
+     * @param mode typ fizyki: LOOSE - nieprzyczepiony, HORIZONTAL - przyczepiony
+     * poziomo, VERTICAL - przyczepiony pionowo
      * @return fizyka dla aktualnego stanu obiektu (obiekt luźny, przyczepiony 
      * pionowo lub poziomo)
      */
-    public RigidBodyControl swapControl(int mode){
+    public RigidBodyControl swapControl(WallMode mode){
         RigidBodyControl selectedControl = null;
         actualMode = mode; 
-        for(int i = 0; i < 3; i++){
-            if(i == mode){
+        WallMode[] modes = WallMode.values();
+        for(int i = 0; i < modes.length; i++){
+            if(modes[i].equals(mode)){
                 selectedControl = ((RigidBodyControl)getControl(i));
                 selectedControl.setEnabled(true);
             }else ((RigidBodyControl)getControl(i)).setEnabled(false);
         }
-        if(mode == 0) setRopesVisibility(ropesHorizontal[0].getCullHint()
+        if(mode.equals(WallMode.LOOSE)) setRopesVisibility(ropesHorizontal[0].getCullHint()
                 .equals(CullHint.Never) ? ropesHorizontal : ropesVertical ,false); 
-        else if(mode == 1) setRopesVisibility(ropesHorizontal, true); 
+        else if(mode.equals(WallMode.HORIZONTAL)) setRopesVisibility(ropesHorizontal, true); 
         else setRopesVisibility(ropesVertical, true);  
         return selectedControl; 
     }
@@ -219,11 +220,11 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     public float getLength() { return length; }
     
     /**
-     * Zwraca aktualny tryb obiektu (0 - nieprzyczepiony, 1 - przyczepiony poziomo,
-     * 2 - przyczepiony pionowo)
+     * Zwraca aktualny tryb obiektu (LOOSE - nieprzyczepiony, HORIZONTAL -
+     * przyczepiony poziomo, VERTICAL - przyczepiony pionowo)
      * @return tryb obiektu 
      */
-    public int getActualMode(){ return actualMode; }
+    public WallMode getActualMode(){ return actualMode; }
     
     /**
      * Zwraca listę dotkniętych obiektów. 

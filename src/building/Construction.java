@@ -39,14 +39,14 @@ public class Construction extends Node{
      * Jeśli null, to element jest łaczony z ostatnio dotkniętym elementem. 
      * @param wallMode tryb fizyki dla dodawanego elementu w chwili dodawania 
      */
-    public void add(Wall wall1, Wall wall2, int wallMode, boolean protruding){
+    public void add(Wall wall1, Wall wall2, WallMode wallMode, boolean protruding){
         Spatial recentlyHitObject = wall1.getRecentlyHitObject();
         if(recentlyHitObject != null){ 
             String recentlyHitObjectName = recentlyHitObject.getName(); 
             boolean collisionWithGround = recentlyHitObjectName.startsWith("terrain-gameMap");
             if(collisionWithGround || recentlyHitObjectName.startsWith("Wall")){
                 Node touchedWall; 
-                if(wallMode == 2){ 
+                if(wallMode.equals(WallMode.VERTICAL)){ 
                     touchedWall = merge(wall1, collisionWithGround ? null 
                         : (Wall)recentlyHitObject, false, wallMode, protruding, 0, 4);
                 }else{
@@ -219,10 +219,10 @@ public class Construction extends Node{
      */
     public void setResetWalls(boolean resetWalls) { this.resetWalls = resetWalls; }
     
-    private Node merge(Wall wall1, Wall wall2, boolean ceiling, int mode,
+    private Node merge(Wall wall1, Wall wall2, boolean ceiling, WallMode mode,
             boolean protruding, int start, int end){
         if(wall2 != null){ 
-            Vector3f location = ((RigidBodyControl)wall1.getControl(mode)).getPhysicsLocation();
+            Vector3f location = ((RigidBodyControl)wall1.getControl(mode.ordinal())).getPhysicsLocation();
             List<Spatial> wallChildren = wall2.getChildren(); 
             Node[] catchNodes = new Node[4];
             Vector3f[] catchNodesLocations = new Vector3f[4];
@@ -235,16 +235,19 @@ public class Construction extends Node{
             }
             boolean perpendicularity = wall1.checkPerpendicularity(wall2); 
             int minDistance = getMin(distances); 
-            System.out.println(this.getEdgesForCheckingEmpty(wall1, wall2, CatchNode.UP));
+            if(mode.equals(WallMode.VERTICAL))
+            System.out.println(this.getEdgesForCheckingEmpty(wall1, wall2, 
+                    CatchNode.valueOf(catchNodes[minDistance].getName())));
 //            System.out.println(this.isEdgeEmpty(wall1, (Wall)getChildren().get(0), wall2, CatchNode.BOTTOM));
             setWallInProperPosition(wall1, wall2, catchNodes[minDistance], perpendicularity, 
-                    ceiling, mode == 1, protruding, minDistance);
+                    ceiling, mode.equals(WallMode.HORIZONTAL), protruding, minDistance);
             return catchNodes[minDistance];
         }
         return this;
     }
     
-    private Node mergeHorizontal(Wall wall1, Wall wall2, boolean foundations, int mode){
+    private Node mergeHorizontal(Wall wall1, Wall wall2, boolean foundations,
+            WallMode mode){
         if(!foundations){
             if(wall2 != null){
                 // sprawdza czy na przeciwko jest druga ściana 

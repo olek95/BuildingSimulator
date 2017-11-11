@@ -4,6 +4,7 @@ import building.Wall;
 import buildingsimulator.BottomCollisionListener;
 import buildingsimulator.BuildingSimulator;
 import building.Construction;
+import building.WallMode;
 import buildingsimulator.GameManager;
 import static buildingsimulator.GameManager.*;
 import buildingsimulator.RememberingRecentlyHitObject;
@@ -79,8 +80,9 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 }
             }
             if(wallStale || lastAddedWall){
-                if(!vertical) joinObject(false, 1, attachedObject.getWidth());
-                else joinObject(true, 2, attachedObject.getHeight());
+                if(!vertical) 
+                    joinObject(false, WallMode.HORIZONTAL, attachedObject.getWidth());
+                else joinObject(true, WallMode.VERTICAL, attachedObject.getHeight());
             }else attachedObject = null; 
         }
     }
@@ -92,14 +94,15 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         if(attachedObject != null){
             BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
                     .remove(buildingMaterialJoint);
-            int oldMode = attachedObject.getActualMode(); 
-            attachedObject.swapControl(0);
+            WallMode oldMode = attachedObject.getActualMode(); 
+            attachedObject.swapControl(WallMode.LOOSE);
             attachedObject.activateIfInactive();
             if(merging){
                 Spatial wallRecentlyHitObject = attachedObject.getRecentlyHitObject(); 
                 if(wallRecentlyHitObject != null){
                     Wall nearestBuildingWall = null; 
-                    if(oldMode == 1 && wallRecentlyHitObject.getName().equals("terrain-gameMap"))
+                    if(oldMode.equals(WallMode.HORIZONTAL) && wallRecentlyHitObject
+                            .getName().equals("terrain-gameMap"))
                     nearestBuildingWall = Construction.getNearestBuildingWall(attachedObject);
                     Construction construction = Construction
                             .getWholeConstruction(nearestBuildingWall == null ? 
@@ -265,7 +268,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
      */
     protected abstract Node[] getRopes();
     
-    private void joinObject(boolean vertical, int mode, float y){
+    private void joinObject(boolean vertical, WallMode mode, float y){
         Wall wall = (Wall)attachedObject; 
         float distanceBetweenHookAndObject = calculateDistanceBetweenHookAndObject(vertical);
         RigidBodyControl selectedControl = wall.swapControl(mode);

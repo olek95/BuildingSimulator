@@ -235,9 +235,15 @@ public class Construction extends Node{
             }
             boolean perpendicularity = wall1.checkPerpendicularity(wall2); 
             int minDistance = getMin(distances); 
-            if(mode.equals(WallMode.VERTICAL))
-            System.out.println(this.getEdgesForCheckingEmpty(wall1, wall2, 
-                    CatchNode.valueOf(catchNodes[minDistance].getName())));
+            if(mode.equals(WallMode.VERTICAL)) {
+                List<CatchNode> edges = getEdgesForCheckingEmpty(wall1, wall2,
+                        CatchNode.valueOf(catchNodes[minDistance].getName()));
+                int edgesCount = edges.size();
+                System.out.println(edges);
+                for(int i = 0; i < edgesCount; i++)
+                    System.out.println(hasEdgeEnoughSpace((Wall)getChildren().get(0),
+                            wall2, edges.get(i), -1));
+            }
 //            System.out.println(this.isEdgeEmpty(wall1, (Wall)getChildren().get(0), wall2, CatchNode.BOTTOM));
             setWallInProperPosition(wall1, wall2, catchNodes[minDistance], perpendicularity, 
                     ceiling, mode.equals(WallMode.HORIZONTAL), protruding, minDistance);
@@ -291,13 +297,6 @@ public class Construction extends Node{
         control.setPhysicsLocation(edgeLocation);
         control.setPhysicsRotation(calculateProperRotation(wall2,
                 i, !horizontal, perpendicularity, ceiling));
-//        if(ceiling) {
-//            for(int m = 0; m < 2; m++)
-//            GameManager.getUnit(0).getHook().heighten();
-//        }
-//        if(ceiling) {
-//            control.setPhysicsLocation(this.getChild(0).getWorldTranslation().setY(5));
-//        }
         wall2.detachChild(newCatchNode);
     }
     
@@ -502,34 +501,51 @@ public class Construction extends Node{
         }
     }
     
-    private boolean isEdgeEmpty(Wall wall1, Wall wall2, Wall floor, CatchNode edge) {
+    private boolean hasEdgeEnoughSpace(Wall wall2, Wall floor, CatchNode edge,
+            float innerSum) {
+        boolean firstWall = innerSum == -1;
+        if(firstWall) {
+            List<Spatial> floorEdgeChildren = ((Node)floor.getChild(edge.toString()))
+                    .getChildren();
+            int floorEdgeChildrenCount = floorEdgeChildren.size();
+            innerSum = 0;
+            for(int i = 0; i < floorEdgeChildrenCount; i++) {
+                innerSum += ((Wall)floorEdgeChildren.get(i)).getLength() * 2;
+            }
+            if(innerSum > (floor.getLength() - floor.getWidth()) * 2) return false; 
+            edge = getEdgeFromOpposite(edge);
+            System.out.println("RETURN: " + edge);
+        }
+        System.out.println(edge);
         List<Spatial> wallElements = wall2.getChildren(); 
         int end = CatchNode.values().length;
         for(int i = 1; i <= end; i++) {
             List<Spatial> catchNodeChildren = ((Node)wallElements.get(i)).getChildren(); 
             int childrenCount = catchNodeChildren.size(); 
             for(int k = 0; k < childrenCount; k++) { 
-                if(!isEdgeEmpty(wall1, (Wall)catchNodeChildren.get(k), floor, edge))
+                if(!hasEdgeEnoughSpace((Wall)catchNodeChildren.get(k), floor, edge,
+                        innerSum))
                     return false;
             }
         }
         Vector3f floorLocation = floor.getWorldTranslation(), 
                 wall2Location = wall2.getWorldTranslation();
         float width = floor.getWidth();
-        boolean soughtFloor = wall2Location.y < floorLocation.y + width &&
-                wall2Location.y > floorLocation.y - width && floorLocation
-                .distance(wall2Location) <= floor.getHeight() + wall2.getHeight() + 0.1f;
+        if(wall2.equals(floor)) return true;
+        boolean soughtFloor = wall2Location.y < floorLocation.y + width && wall2Location.y >
+                floorLocation.y - width && floorLocation.distance(wall2Location)
+                <= floor.getHeight() + wall2.getHeight() + 0.1f; 
         if(soughtFloor) {
-            float sum = 0;
+            float sum = innerSum;
             List<Spatial> edgeChildren = ((Node)wall2.getChild(edge.toString()))
                     .getChildren();
             int edgeChildrenCount = edgeChildren.size();
             for(int i = 0; i < edgeChildrenCount; i++) {
                 sum += ((Wall)edgeChildren.get(i)).getLength() * 2;
             }
-            if(sum < floor.getLength() * 2) return true; 
+            if(sum <= (floor.getLength() - floor.getWidth()) * 2) return true; 
         }
-        return false;
+        return !soughtFloor;
     }
     
     private List<CatchNode> getEdgesForCheckingEmpty(Wall wall, Wall floor,
@@ -555,5 +571,13 @@ public class Construction extends Node{
                 edges.add(CatchNode.RIGHT);
         }
         return edges;
+    }
+    
+    private CatchNode getEdgeFromOpposite(CatchNode edge) {
+        CatchNode[] edges = {CatchNode.BOTTOM, CatchNode.UP, CatchNode.RIGHT, 
+            CatchNode.LEFT};
+        for(int i = 0; i < edges.length; i++)
+            if(edges[i].equals(edge)) return edges[i + (i % 2 == 0 ? 1 : -1)];
+        return null;
     }
 }

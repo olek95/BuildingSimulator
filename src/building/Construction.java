@@ -300,19 +300,21 @@ public class Construction extends Node{
     private Node createCatchNode(Wall wall1, Wall wall2, Node parent, boolean perpendicularity,
             boolean ceiling, boolean protruding, boolean horizontal) {
         float additionalTranslation = 0, sum = 0;
-        if(!horizontal) {
-            List<CatchNode> edges = getEdgesForCheckingEmpty(wall1, wall2, CatchNode
-                    .valueOf(parent.getName()));
-            int edgesCount = edges.size();
-            float width = wall1.getWidth() * 2;
-            for(int i = 0; i < edgesCount; i++) {
-                if(!hasEdgeEnoughSpace((Wall)getChildren().get(0), wall2,
-                        edges.get(i), -1)) {
-                    additionalTranslation += width;
-                }
-            }
-            sum -= additionalTranslation;
-        }
+//        if(!horizontal) {
+//            List<CatchNode> edges = getEdgesForCheckingEmpty(wall1, wall2, CatchNode
+//                    .valueOf(parent.getName()));
+//            int edgesCount = edges.size();
+//            float width = wall1.getWidth() * 2;
+//            for(int i = 0; i < edgesCount; i++) {
+////                if(!hasEdgeEnoughSpace((Wall)getChildren().get(0), wall2,
+////                        edges.get(i), -1)) {
+////                    additionalTranslation += width;
+////                }
+//                System.out.println(getBusyPlace((Wall)getChildren().get(0), wall2,
+//                        edges.get(i), true));
+//            }
+////            sum -= additionalTranslation;
+//        }
         String parentName = parent.getName();
         Node node = new Node(parentName + " - child");
         boolean bottom = false, up = false, right = false, left = false, south = false,
@@ -327,9 +329,16 @@ public class Construction extends Node{
         List<Spatial> parentChildren = parent.getChildren(); 
         int childrenCount = parentChildren.size(); 
         if(bottom || up || left || right) {
-            for(int i = 0; i < childrenCount; i++) {
-                sum -= ((Wall)parentChildren.get(i)).getLength() * 2; 
+            List<CatchNode> edges = getEdgesForCheckingEmpty(wall1, wall2, CatchNode
+                    .valueOf(parent.getName()));
+            int edgesCount = edges.size();
+            for(int i = 0; i < edgesCount; i++) {
+                sum -= getBusyPlace((Wall)getChildren().get(0), wall2,
+                            edges.get(i), true);
             }
+//            for(int i = 0; i < childrenCount; i++) {
+//                sum -= ((Wall)parentChildren.get(i)).getLength() * 2; 
+//            }
         } else {
             boolean southOrNorth = south || north;
             for(int i = 0; i < childrenCount; i++) {
@@ -504,18 +513,16 @@ public class Construction extends Node{
         }
     }
     
-    private boolean hasEdgeEnoughSpace(Wall wall2, Wall floor, CatchNode edge,
-            float innerSum) {
-        boolean firstWall = innerSum == -1;
+    private float getBusyPlace(Wall wall2, Wall floor, CatchNode edge,
+            boolean firstWall) {
+        float innerSum = 0;
         if(firstWall) {
             List<Spatial> floorEdgeChildren = ((Node)floor.getChild(edge.toString()))
                     .getChildren();
             int floorEdgeChildrenCount = floorEdgeChildren.size();
-            innerSum = 0;
             for(int i = 0; i < floorEdgeChildrenCount; i++) {
                 innerSum += ((Wall)floorEdgeChildren.get(i)).getLength() * 2;
-            }
-            if(innerSum > (floor.getLength() - floor.getWidth()) * 2) return false; 
+            } 
             edge = getEdgeFromOpposite(edge);
         }
         List<Spatial> wallElements = wall2.getChildren(); 
@@ -524,15 +531,15 @@ public class Construction extends Node{
             List<Spatial> catchNodeChildren = ((Node)wallElements.get(i)).getChildren(); 
             int childrenCount = catchNodeChildren.size(); 
             for(int k = 0; k < childrenCount; k++) { 
-                if(!hasEdgeEnoughSpace((Wall)catchNodeChildren.get(k), floor, edge,
-                        innerSum))
-                    return false;
+                float busyPlace = getBusyPlace((Wall)catchNodeChildren.get(k), floor,
+                        edge, false);
+                if(busyPlace != -1) return innerSum + busyPlace;
             }
         }
         Vector3f floorLocation = floor.getWorldTranslation(), 
                 wall2Location = wall2.getWorldTranslation();
         float width = floor.getWidth();
-        if(wall2.equals(floor)) return true;
+        if(wall2.equals(floor)) return innerSum;
         boolean soughtFloor = wall2Location.y < floorLocation.y + width && wall2Location.y >
                 floorLocation.y - width && floorLocation.distance(wall2Location)
                 <= floor.getHeight() + wall2.getHeight() + 0.1f; 
@@ -544,16 +551,17 @@ public class Construction extends Node{
             for(int i = 0; i < edgeChildrenCount; i++) {
                 sum += ((Wall)edgeChildren.get(i)).getLength() * 2;
             }
-            if(sum <= (floor.getLength() - floor.getWidth()) * 2) return true; 
+            return sum; 
         }
-        return !soughtFloor;
+        return -1;
     }
     
     private List<CatchNode> getEdgesForCheckingEmpty(Wall wall, Wall floor,
             CatchNode touchedCatchNode) {
         List<Spatial> catchNodeChildren = ((Node)floor.getChild(touchedCatchNode.toString()))
                 .getChildren();
-        List<CatchNode> edges = new ArrayList(); 
+        List<CatchNode> edges = new ArrayList();
+        edges.add(touchedCatchNode);
         int catchNodeChildrenSize = catchNodeChildren.size();
         boolean leftRight = touchedCatchNode.equals(CatchNode.RIGHT) || touchedCatchNode
                 .equals(CatchNode.LEFT);

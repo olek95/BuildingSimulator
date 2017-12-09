@@ -1,6 +1,7 @@
 package buildingsimulator;
 
 import authorization.User;
+import billboard.Billboard;
 import building.WallType;
 import building.WallsFactory;
 import cranes.Hook;
@@ -13,6 +14,7 @@ import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.joints.HingeJoint;
 import com.jme3.bullet.util.CollisionShapeFactory;
+import com.jme3.cinematic.Cinematic;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
@@ -54,6 +56,8 @@ public class GameManager {
         addUnit(crane);
         addUnit(new Crane());
         crane.setUsing(true);
+        Billboard billboard = new Billboard(0, 20);
+        addToGame(billboard.getBillboard());
         Control.addListener(crane);
         Control.addListener(game);
         bas.getPhysicsSpace().addCollisionListener(BuildingCollisionListener
@@ -278,6 +282,19 @@ public class GameManager {
     }
     
     /**
+     * Uruchamia animację. 
+     * @param animation animacja 
+     */
+    public static void startAnimation(Cinematic animation) {
+        BuildingSimulator.getBuildingSimulator().getStateManager().attach(animation);
+        animation.play();
+    }
+    
+    public static Spatial loadModel(String path) {
+        return BuildingSimulator.getBuildingSimulator().getAssetManager().loadModel(path);
+    }
+    
+    /**
      * Zwraca ostatnio wykonaną akcję. 
      * @return ostatnio wykonana akcja
      */
@@ -346,7 +363,7 @@ public class GameManager {
      * Dodaje obiekt do gry. 
      * @param object dodawany obiekt 
      */
-    public static void addToGame(Node object){
+    public static void addToGame(Spatial object){
         BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(object);
     }
     

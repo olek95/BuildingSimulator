@@ -22,10 +22,13 @@ import com.jme3.texture.Texture;
  */
 public class Billboard {
     private Node billboard;
+    private Cinematic advertisementAnimation;
+    private float pauseTime; 
     public Billboard(float x, float z) {
         billboard = (Node)GameManager.loadModel("Models/billboard/billboard.j3o");
         billboard.setLocalTranslation(x, 0f, z);
-        createAnimation();
+        advertisementAnimation = createAnimation();
+        
     }
     
     /**
@@ -40,18 +43,27 @@ public class Billboard {
         billboard.getChild("board1").setMaterial(material);
     }
     
+    public void pauseAdvertisement() {
+        advertisementAnimation.pause();
+    }
+    
+    public void resumeAdvertisement() {
+        advertisementAnimation.play();
+    }
+    
     /**
      * Zwraca obiekt billboardu. 
      * @return billboard 
      */
     public Spatial getBillboard() { return billboard; }
     
-    private void createAnimation() {
+    private Cinematic createAnimation() {
         Cinematic cinematic = new Cinematic(BuildingSimulator.getBuildingSimulator()
                 .getRootNode(), 30, LoopMode.Loop);
         cinematic.addCinematicEvent(0, new AdvertisementEvent(this, "Textures/advertisements/advertisement1.jpeg"));
         cinematic.addCinematicEvent(10, new AdvertisementEvent(this, "Textures/advertisements/advertisement2.jpeg"));
         cinematic.addCinematicEvent(20, new AdvertisementEvent(this, "Textures/advertisements/advertisement3.jpeg"));
         GameManager.startAnimation(cinematic);
+        return cinematic;
     }
 }

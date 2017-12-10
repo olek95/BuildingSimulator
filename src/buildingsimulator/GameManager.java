@@ -41,6 +41,7 @@ public class GameManager {
     private static User user; 
     private static boolean startedGame = false;
     private static boolean pausedGame = false; 
+    private static Billboard billboard; 
     
     /**
      * Uruchamia grę. 
@@ -56,25 +57,12 @@ public class GameManager {
         addUnit(crane);
         addUnit(new Crane());
         crane.setUsing(true);
-        Billboard billboard = new Billboard(0, 20);
+        billboard = new Billboard(-720, 20);
         addToGame(billboard.getBillboard());
         Control.addListener(crane);
         Control.addListener(game);
         bas.getPhysicsSpace().addCollisionListener(BuildingCollisionListener
                 .createBuildingCollisionListener());
-        // KOD DLA TESTU!!
-//        GameManager.addToGame(WallsFactory.createWall(WallType.ONE_BIGGER_WINDOW,
-//                new Vector3f(0f, 0.3f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
-//        GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
-//                new Vector3f(0f, 0.7f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
-//        GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
-//                new Vector3f(0f, 1.1f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
-//        GameManager.addToGame(WallsFactory.createWall(WallType.DOOR, 
-//                new Vector3f(0f, 1.5f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
-//        GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
-//                new Vector3f(0, 1.9f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
-//        GameManager.addToGame(WallsFactory.createWall(WallType.WALL,
-//                new Vector3f(0, 2.3f, 20f), new Vector3f(5.4f, 0.2f, 2.7f)));
         startedGame = true; 
     }
     
@@ -89,6 +77,7 @@ public class GameManager {
         } else {
             HUD.changeShopButtonVisibility(false);
         }
+        billboard.resumeAdvertisement();
         startedGame = true;
         pausedGame = false; 
     }
@@ -101,6 +90,7 @@ public class GameManager {
         Control.removeListener(Control.getActualListener());
         startedGame = false;
         pausedGame = true; 
+        billboard.pauseAdvertisement();
         MenuFactory.showMenu(MenuTypes.PAUSE_MENU);
     }
     

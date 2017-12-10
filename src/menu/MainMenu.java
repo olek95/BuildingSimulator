@@ -1,10 +1,8 @@
 package menu;
 
 import buildingsimulator.BuildingSimulator;
-import com.jme3.input.event.MouseButtonEvent;
-import com.jme3.math.Vector2f;
+import com.jme3.audio.AudioNode;
 import texts.Translator;
-import tonegod.gui.controls.windows.Panel;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
@@ -16,6 +14,7 @@ import tonegod.gui.core.Screen;
  */
 public abstract class MainMenu extends Menu {
     private static Screen screen;
+    private static AudioNode sound;
     public MainMenu(String layoutName){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout(layoutName, this);
@@ -28,6 +27,7 @@ public abstract class MainMenu extends Menu {
             Translator.SETTINGS, Translator.QUIT_GAME}, screen);
         screen.setUseCustomCursors(true);
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
+        startBackgroundSound();
     }
     
     public static Screen getScreen() { return screen; }
@@ -36,6 +36,7 @@ public abstract class MainMenu extends Menu {
      * Uruchamia grę 
      */
     protected void start() {
+        sound.stop();
         getWindow().hide();
         screen.setUseCustomCursors(false);
     }
@@ -45,5 +46,17 @@ public abstract class MainMenu extends Menu {
      */
     protected void exit(){
         System.exit(0);
+    }
+    
+    private void startBackgroundSound() {
+        if(sound == null) {
+            BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
+            sound = new AudioNode(game.getAssetManager(), "Sounds/constructions.wav",
+                    false, true);
+            sound.setVolume(0.4f);
+            sound.setLooping(true);
+            game.getRootNode().attachChild(sound);
+        }
+        sound.play();
     }
 }

@@ -3,6 +3,7 @@ package cranes.crane;
 import buildingsimulator.BirdsEyeView;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.DummyCollisionListener;
+import buildingsimulator.GameManager;
 import buildingsimulator.VisibleFromAbove;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.PhysicsSpace;
@@ -162,10 +163,15 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
      */
     public int getHeightLevel() { return heightLevel; }
     
+    /**
+     * Zwraca dźwig. 
+     * @return dźwig
+     */
+    public Node getCrane() { return crane; }
+    
     private void initCrane(){
         craneLocation = new Vector3f(10f, 0f, 0f);
-        initCraneElements((Node)game.getAssetManager().loadModel("Models/zuraw/zuraw.j3o"));
-        game.getRootNode().attachChild(crane);
+        initCraneElements(GameManager.loadModel("Models/zuraw/zuraw.j3o"));
     }
     
     private RigidBodyControl setProperControlLocation(Spatial object, Vector3f displacement){

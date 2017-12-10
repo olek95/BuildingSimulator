@@ -31,8 +31,7 @@ import texts.Translator;
  * @author AleksanderSklorz
  */
 public class MobileCrane extends CraneAbstract implements ActionListener, Controllable{
-    private BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-    private Node crane = (Node)game.getAssetManager().loadModel("Models/dzwig/dzwig.j3o");
+    private Node crane = GameManager.loadModel("Models/dzwig/dzwig.j3o");
     private VehicleControl craneControl = crane.getControl(VehicleControl.class);
     private static final float ACCELERATION_FORCE = 100.0f, BRAKE_FORCE = 20.0f,
             FRICTION_FORCE = 10.0f, PROP_LOWERING_SPEED = 0.05f;
@@ -46,8 +45,8 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         createMobileCranePhysics();
         scaleTiresTexture();
 //        createMirrors();
-        game.getRootNode().attachChild(crane);
-        PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
+        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
+                .getBulletAppState().getPhysicsSpace();
         physics.add(craneControl);
         setArmControl(new MobileCraneArmControl(crane));
         propDisplacement =  calculateDisplacementAfterScaling((Node)crane
@@ -145,6 +144,12 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
      */
     public void setSteeringAngle(float angle){ craneControl.steer(angle); }
     
+    /**
+     * Zwraca model dźwigu mobilnego. 
+     * @return model dźwigu mobilnego 
+     */
+    public Node getCrane() { return crane; }
+    
     private void stop(){
         key = "";
         craneControl.accelerate(0f);
@@ -166,24 +171,6 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                     tire.getMesh().scaleTextureCoordinates(new Vector2f(1,6f));
                 }else tireMaterial.setTexture("DiffuseMap", tireTexture);
             }
-    }
-    
-    private void createMirrors(){
-        Geometry mirror;
-        float x = 0.2f;
-        for(int i = 0; i < 2; i++){
-            if(i == 0) mirror = (Geometry)crane.getChild("leftMirror");
-            else mirror = (Geometry)crane.getChild("rightMirror");
-            SimpleWaterProcessor mirrorProcessor = new SimpleWaterProcessor(game.getAssetManager());
-            mirrorProcessor.setReflectionScene(game.getRootNode());
-            mirrorProcessor.setDistortionScale(0.0f);
-            mirrorProcessor.setWaveSpeed(0.0f);
-            mirrorProcessor.setWaterDepth(0f);
-            if(i == 1) x = -x;
-            mirrorProcessor.setPlane(new Vector3f(0f, 0f, 0f),new Vector3f(x, 0f, 1f));
-            game.getViewPort().addProcessor(mirrorProcessor);
-            mirror.setMaterial(mirrorProcessor.getMaterial());
-        }
     }
     
     private void createMobileCranePhysics(){

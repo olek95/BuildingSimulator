@@ -53,13 +53,16 @@ public class GameManager {
         BulletAppState bas = game.getBulletAppState(); 
         game.getStateManager().attach(bas);
         addToGame(new Map(9).getScene());
-        MobileCrane crane = new MobileCrane();
+        MobileCrane mobileCrane = new MobileCrane();
+        addUnit(mobileCrane);
+        addToGame(mobileCrane.getCrane());
+        Crane crane = new Crane(); 
         addUnit(crane);
-        addUnit(new Crane());
-        crane.setUsing(true);
+        addToGame(crane.getCrane());
+        mobileCrane.setUsing(true);
         billboard = new Billboard(-720, 20);
         addToGame(billboard.getBillboard());
-        Control.addListener(crane);
+        Control.addListener(mobileCrane);
         Control.addListener(game);
         bas.getPhysicsSpace().addCollisionListener(BuildingCollisionListener
                 .createBuildingCollisionListener());
@@ -280,8 +283,8 @@ public class GameManager {
         animation.play();
     }
     
-    public static Spatial loadModel(String path) {
-        return BuildingSimulator.getBuildingSimulator().getAssetManager().loadModel(path);
+    public static Node loadModel(String path) {
+        return (Node)BuildingSimulator.getBuildingSimulator().getAssetManager().loadModel(path);
     }
     
     /**

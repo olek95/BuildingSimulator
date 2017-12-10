@@ -5,13 +5,7 @@ import buildingsimulator.GameManager;
 import com.jme3.animation.LoopMode;
 import com.jme3.asset.AssetManager;
 import com.jme3.cinematic.Cinematic;
-import com.jme3.cinematic.events.AbstractCinematicEvent;
-import com.jme3.cinematic.events.CinematicEvent;
-import com.jme3.cinematic.events.CinematicEventListener;
 import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
-import com.jme3.math.Vector2f;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
@@ -23,9 +17,8 @@ import com.jme3.texture.Texture;
 public class Billboard {
     private Node billboard;
     private Cinematic advertisementAnimation;
-    private float pauseTime; 
     public Billboard(float x, float z) {
-        billboard = (Node)GameManager.loadModel("Models/billboard/billboard.j3o");
+        billboard = GameManager.loadModel("Models/billboard/billboard.j3o");
         billboard.setLocalTranslation(x, 0f, z);
         advertisementAnimation = createAnimation();
         
@@ -43,10 +36,16 @@ public class Billboard {
         billboard.getChild("board1").setMaterial(material);
     }
     
+    /**
+     * Zatrzymuje animację reklam. 
+     */
     public void pauseAdvertisement() {
         advertisementAnimation.pause();
     }
     
+    /**
+     * Wznawia zatrzymaną animację reklam. 
+     */
     public void resumeAdvertisement() {
         advertisementAnimation.play();
     }

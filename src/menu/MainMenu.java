@@ -37,6 +37,7 @@ public abstract class MainMenu extends Menu {
      */
     protected void start() {
         sound.stop();
+        sound = null;
         getWindow().hide();
         screen.setUseCustomCursors(false);
     }

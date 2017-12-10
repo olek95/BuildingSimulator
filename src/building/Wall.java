@@ -134,34 +134,6 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     /**
-     * Zmienia połozenie pomocniczego węzła podanego węzła pomocniczego dla tej 
-     * ściany, w oparciu o wymiary ściany dodawanej. 
-     * @param wall dodawana ściana 
-     * @param catchNode wezeł, którego pozycję zmieniamy 
-     * @param i indeks węzła pomocniczego 
-     * @param perpendicularity true jeśli ta ściana jest prostopadła do dodawanej 
-     * ściany 
-     * @param ceiling true jeśli ustawiamy lokalizację dla sufitu, false w przeciwnym razie 
-     * @return węzeł o zmienionej pozycji  
-     */
-    public Node changeCatchNodeLocation(Wall wall, Node catchNode, int i,
-            boolean perpendicularity, boolean ceiling){
-//        Node wallCopy = clone(false), catchNodeCopy; 
-//        RigidBodyControl control = wallCopy.getControl(RigidBodyControl.class);
-//        control.setPhysicsRotation(Quaternion.IDENTITY);
-//        catchNodeCopy = (Node)wallCopy.getChild(i); 
-//        Vector3f catchNodeLocation = CatchNode.calculateTranslation(CatchNode
-//                .valueOf(catchNodeCopy.getName()), this, wall, perpendicularity);
-//        if(ceiling)
-//            CatchNode.correctLocationForCeiling(this, wall, catchNodeLocation);
-//        catchNodeCopy.setLocalTranslation(catchNodeLocation);
-//        control.setPhysicsRotation(wall.getControl(RigidBodyControl.class)
-//                .getPhysicsRotation());
-//        catchNode.setLocalTranslation(catchNodeCopy.getLocalTranslation());
-        return catchNode; 
-    }
-    
-    /**
      * Określa czy ściana jest ruchoma. Jeśli true to porusza się zawsze np. gdy 
      * spada po odczepieniu od haka, natomiast gdy jest false to porusza się tylko 
      * po uderzeniu, w każdym innym przypadku stoi nieruchomo np. w trakcie budowania 
@@ -268,8 +240,21 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         /* zabezpiecza przypadek gdy hak dotyka jednocześnie elementu pionowego
         i poziomego */
         if(recentlyHitObject == null || recentlyHitObject.getWorldTranslation().y
-                > b.getWorldTranslation().y)
-            recentlyHitObject = b;
+                > b.getWorldTranslation().y) {
+                float y1 = getWorldTranslation().y, 
+                y2 = b.getWorldTranslation().y;
+                if(b.getName().startsWith("Wall") ) {
+                    if(b.getName().endsWith("1") && y2 + ((Wall)b).getHeight() < y1) {
+                        recentlyHitObject = b;
+                    }else {
+                        if(b.getName().endsWith("2") && y2 + ((Wall)b).getWidth() < y1) {
+                            recentlyHitObject = b;  
+                        }
+                    }
+                } else {
+                    recentlyHitObject = b; 
+                }
+        }
     }
     
     @Override

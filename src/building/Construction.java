@@ -235,9 +235,10 @@ public class Construction extends Node{
             }
             boolean perpendicularity = wall1.checkPerpendicularity(wall2); 
             int minDistance = getMin(distances); 
-            setWallInProperPosition(wall1, wall2, catchNodes[minDistance], perpendicularity, 
-                    ceiling, mode.equals(WallMode.HORIZONTAL), protruding, minDistance);
-            return catchNodes[minDistance];
+            if(setWallInProperPosition(wall1, wall2, catchNodes[minDistance], perpendicularity, 
+                    ceiling, mode.equals(WallMode.HORIZONTAL), protruding, minDistance))
+                return catchNodes[minDistance];
+            return null;
         }
         return this;
     }
@@ -271,23 +272,28 @@ public class Construction extends Node{
         return this; 
     }
     
-    private void setWallInProperPosition(Wall wall1, Wall wall2, Node catchNode,
+    private boolean setWallInProperPosition(Wall wall1, Wall wall2, Node catchNode,
             boolean perpendicularity, boolean ceiling, boolean horizontal, 
             boolean protruding, int i) {
         RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
         RigidBodyControl control2 = wall2.getControl(RigidBodyControl.class);
-        Quaternion q2 = control2.getPhysicsRotation().clone(); 
-        control2.setPhysicsRotation(new Quaternion(q2.getX(), 0, q2.getZ(),
-                q2.getW()));
         Node newCatchNode = createCatchNode(wall1, wall2, catchNode,
-                perpendicularity, ceiling, protruding, horizontal);
-        wall2.attachChild(newCatchNode);
-        control2.setPhysicsRotation(q2);
-        Vector3f edgeLocation = newCatchNode.getWorldTranslation();
-        control.setPhysicsLocation(edgeLocation);
-        control.setPhysicsRotation(calculateProperRotation(wall2,
-                i, !horizontal, perpendicularity, ceiling));
-        wall2.detachChild(newCatchNode);
+                perpendicularity, ceiling, protruding);
+        if(newCatchNode != null) {
+            Quaternion q2 = control2.getPhysicsRotation().clone(); 
+            control2.setPhysicsRotation(new Quaternion(q2.getX(), 0, q2.getZ(),
+                    q2.getW()));
+            wall2.attachChild(newCatchNode);
+            control2.setPhysicsRotation(q2);
+            Vector3f edgeLocation = newCatchNode.getWorldTranslation();
+            control.setPhysicsLocation(edgeLocation);
+            control.setPhysicsRotation(calculateProperRotation(wall2,
+                    i, !horizontal, perpendicularity, ceiling));
+            wall2.detachChild(newCatchNode);
+            return true;
+        }
+        HUD.setMessage("Za mało miejsca");
+        return false;
     }
     
     private int getMin(float[] distances){
@@ -298,23 +304,7 @@ public class Construction extends Node{
     }
     
     private Node createCatchNode(Wall wall1, Wall wall2, Node parent, boolean perpendicularity,
-            boolean ceiling, boolean protruding, boolean horizontal) {
-        float additionalTranslation = 0, sum = 0;
-//        if(!horizontal) {
-//            List<CatchNode> edges = getEdgesForCheckingEmpty(wall1, wall2, CatchNode
-//                    .valueOf(parent.getName()));
-//            int edgesCount = edges.size();
-//            float width = wall1.getWidth() * 2;
-//            for(int i = 0; i < edgesCount; i++) {
-////                if(!hasEdgeEnoughSpace((Wall)getChildren().get(0), wall2,
-////                        edges.get(i), -1)) {
-////                    additionalTranslation += width;
-////                }
-//                System.out.println(getBusyPlace((Wall)getChildren().get(0), wall2,
-//                        edges.get(i), true));
-//            }
-////            sum -= additionalTranslation;
-//        }
+            boolean ceiling, boolean protruding) {
         String parentName = parent.getName();
         Node node = new Node(parentName + " - child");
         boolean bottom = false, up = false, right = false, left = false, south = false,
@@ -328,7 +318,9 @@ public class Construction extends Node{
         else if(parentName.equals(CatchNode.NORTH.toString())) north = true; 
         List<Spatial> parentChildren = parent.getChildren(); 
         int childrenCount = parentChildren.size(); 
-        if(bottom || up || left || right) {
+        float sum = 0;
+        boolean bottomUp = bottom || up; 
+        if(bottomUp || left || right) {
             List<CatchNode> edges = getEdgesForCheckingEmpty(wall1, wall2, CatchNode
                     .valueOf(parent.getName()));
             int edgesCount = edges.size();
@@ -336,9 +328,9 @@ public class Construction extends Node{
                 sum -= getBusyPlace((Wall)getChildren().get(0), wall2,
                             edges.get(i), true);
             }
-//            for(int i = 0; i < childrenCount; i++) {
-//                sum -= ((Wall)parentChildren.get(i)).getLength() * 2; 
-//            }
+            if(sum + wall1.getLength() > (bottomUp ? wall2.getLength() 
+                    : wall2.getHeight()))
+                return null;
         } else {
             boolean southOrNorth = south || north;
             for(int i = 0; i < childrenCount; i++) {

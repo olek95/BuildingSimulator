@@ -1,5 +1,6 @@
 package cranes;
 
+import building.CatchNode;
 import building.Wall;
 import buildingsimulator.BottomCollisionListener;
 import buildingsimulator.BuildingSimulator;

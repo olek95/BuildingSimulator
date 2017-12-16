@@ -240,21 +240,8 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         /* zabezpiecza przypadek gdy hak dotyka jednocześnie elementu pionowego
         i poziomego */
         if(recentlyHitObject == null || recentlyHitObject.getWorldTranslation().y
-                > b.getWorldTranslation().y) {
-                float y1 = getWorldTranslation().y, 
-                y2 = b.getWorldTranslation().y;
-                if(b.getName().startsWith("Wall") ) {
-                    if(b.getName().endsWith("1") && y2 + ((Wall)b).getHeight() < y1) {
-                        recentlyHitObject = b;
-                    }else {
-                        if(b.getName().endsWith("2") && y2 + ((Wall)b).getWidth() < y1) {
-                            recentlyHitObject = b;  
-                        }
-                    }
-                } else {
-                    recentlyHitObject = b; 
-                }
-        }
+                > b.getWorldTranslation().y)
+            recentlyHitObject = b;
     }
     
     @Override

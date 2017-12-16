@@ -93,8 +93,6 @@ public abstract class Hook implements RememberingRecentlyHitObject{
      */
     public void detach(boolean merging, boolean protruding){
         if(attachedObject != null){
-            BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
-                    .remove(buildingMaterialJoint);
             WallMode oldMode = attachedObject.getActualMode(); 
             attachedObject.swapControl(WallMode.LOOSE);
             attachedObject.activateIfInactive();
@@ -112,11 +110,11 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                         construction = new Construction();
                         GameManager.addToGame(construction);
                     } 
-                    construction.add(attachedObject, nearestBuildingWall, oldMode, protruding);
-                }
+                    if(construction.add(attachedObject, nearestBuildingWall, oldMode, protruding)) {
+                        confirmDetaching();
+                    } else attachedObject.swapControl(oldMode);
+                } else confirmDetaching();
             }
-            attachedObject = null;
-            buildingMaterialJoint = null; 
         }
     }
     
@@ -186,7 +184,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
      * jest kolizja z danym obiektem 
      */
     protected void lower(CollisionResults results){
-//        boolean hitOtherWall = false; 
+//        boolean hitOtherWall = false;
         if(recentlyHitObject == null){
             if(attachedObject != null){
                 Wall wall = (Wall)attachedObject; 
@@ -312,5 +310,12 @@ public abstract class Hook implements RememberingRecentlyHitObject{
             parent = parent.getParent();
         }while(parent != null);
         return distanceBetweenHookAndObject; 
+    }
+    
+    private void confirmDetaching() {
+        BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
+                .remove(buildingMaterialJoint);
+        attachedObject = null;
+        buildingMaterialJoint = null;
     }
 }

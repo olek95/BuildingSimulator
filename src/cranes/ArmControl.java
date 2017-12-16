@@ -66,7 +66,6 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
      */
     @Override
     public void onAnalog(String name, float value, float tpf) {
-        Spatial recentlyHitObject;
         switch(Actions.valueOf(name)){
             case RIGHT:
                 if(!changingHookLocation) rotate(-tpf / 5);
@@ -89,26 +88,6 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
                 if(hook.getActualLowering() > 1f && !changingArmLocation)
                     hook.heighten();
                 break;
-            case ATTACH: 
-                recentlyHitObject = hook.getRecentlyHitObject();
-                if(recentlyHitObject != null && recentlyHitObject.getName()
-                        .startsWith("Wall"))
-                    hook.attach(false);
-                break; 
-            case VERTICAL_ATTACH: 
-                recentlyHitObject = hook.getRecentlyHitObject();
-                if(recentlyHitObject != null && recentlyHitObject.getName()
-                        .startsWith("Wall"))
-                    hook.attach(true);
-                break;
-            case DETACH: 
-                hook.detach(false, false);
-                break; 
-            case MERGE: 
-                hook.detach(true, false); 
-                break;
-            case MERGE_PROTRUDING: 
-                hook.detach(true, true);
             case UP:
                 if(!changingHookLocation) changeArmHeight(maxArmHeight, false);
                 break;
@@ -140,15 +119,39 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
         }else usedNotUsingKey = false;
     }
     
+    @Override
     public void onAction(String name, boolean isPressed, float tpf){
-        if(isPressed){
+        Spatial recentlyHitObject;
+        if(isPressed) {
+            switch(Actions.valueOf(name)) {
+                case ATTACH: 
+                    recentlyHitObject = hook.getRecentlyHitObject();
+                    if(recentlyHitObject != null && recentlyHitObject.getName()
+                            .startsWith("Wall"))
+                        hook.attach(false);
+                    break; 
+                case VERTICAL_ATTACH: 
+                    recentlyHitObject = hook.getRecentlyHitObject();
+                    if(recentlyHitObject != null && recentlyHitObject.getName()
+                            .startsWith("Wall"))
+                        hook.attach(true);
+                    break;
+                case DETACH: 
+                    hook.detach(false, false);
+                    break; 
+                case MERGE: 
+                    hook.detach(true, false); 
+                    break;
+                case MERGE_PROTRUDING: 
+                    hook.detach(true, true);
+            }
             for(int i = 0; i < 8; i++){
                 if(name.equals(availableActions[i].toString())){
                     if(i == 4 || i == 5) changingHookLocation = true; 
                     else changingArmLocation = true; 
                 }
             }
-        }else{
+        } else {
             changingHookLocation = false; 
             changingArmLocation = false; 
         }

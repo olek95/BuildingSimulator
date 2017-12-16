@@ -39,7 +39,7 @@ public class Construction extends Node{
      * Jeśli null, to element jest łaczony z ostatnio dotkniętym elementem. 
      * @param wallMode tryb fizyki dla dodawanego elementu w chwili dodawania 
      */
-    public void add(Wall wall1, Wall wall2, WallMode wallMode, boolean protruding){
+    public boolean add(Wall wall1, Wall wall2, WallMode wallMode, boolean protruding){
         Spatial recentlyHitObject = wall1.getRecentlyHitObject();
         if(recentlyHitObject != null){ 
             String recentlyHitObjectName = recentlyHitObject.getName(); 
@@ -64,9 +64,11 @@ public class Construction extends Node{
                     RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
                     wall1.setCatchingLocation(control.getPhysicsLocation());
                     wall1.setCatchingRotation(control.getPhysicsRotation());
+                    return true;
                 }
             }
         }
+        return false;
     }
     
     /**
@@ -292,7 +294,7 @@ public class Construction extends Node{
             wall2.detachChild(newCatchNode);
             return true;
         }
-        HUD.setMessage("Za mało miejsca");
+        HUD.setMessage("Za malo miejsca");
         return false;
     }
     
@@ -328,7 +330,7 @@ public class Construction extends Node{
                 sum -= getBusyPlace((Wall)getChildren().get(0), wall2,
                             edges.get(i), true);
             }
-            if(sum + wall1.getLength() > (bottomUp ? wall2.getLength() 
+            if(-sum + wall1.getLength() > (bottomUp ? wall2.getLength() 
                     : wall2.getHeight()))
                 return null;
         } else {

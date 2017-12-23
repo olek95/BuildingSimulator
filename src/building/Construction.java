@@ -323,15 +323,17 @@ public class Construction extends Node{
         float sum = 0;
         boolean bottomUp = bottom || up; 
         if(bottomUp || left || right) {
-            List<CatchNode> edges = getEdgesForCheckingEmpty(wall1, wall2, CatchNode
-                    .valueOf(parent.getName()));
-            int edgesCount = edges.size();
-            for(int i = 0; i < edgesCount; i++) {
-                sum -= getBusyPlace((Wall)getChildren().get(0), wall2,
-                            edges.get(i), true);
-            }
-            if(-sum + wall1.getLength() > (bottomUp ? wall2.getLength() 
-                    : wall2.getHeight()))
+            sum -= getBusyPlace((Wall)getChildren().get(0), wall2, 
+                    CatchNode.valueOf(parentName), true);
+            if(sum == 0 && !isEmptyPerpendicularEdge(parentName, wall2, true)) 
+                sum -= wall1.getWidth() * 2;
+            float busyPlaceAfterMerged = -sum + wall1.getLength() * 2;
+            if(busyPlaceAfterMerged > (bottomUp ? wall2.getLength() 
+                    : wall2.getHeight()) * 2)
+                return null;
+            if(busyPlaceAfterMerged > ((bottomUp ? wall2.getLength() 
+                    : wall2.getHeight()) - wall1.getWidth()) * 2 && 
+                    !isEmptyPerpendicularEdge(parentName, wall2, false))
                 return null;
         } else {
             boolean southOrNorth = south || north;
@@ -382,25 +384,6 @@ public class Construction extends Node{
             if(perpendicular) newRotation.multLocal(0, -1.570796f, 0, 1.570796f);
         } 
         return newRotation;
-    }
-    
-    private void correctLocations(String edgeName){
-        Node floor = (Node)getChild(0); 
-        Quaternion rotation = floor.getWorldRotation(); 
-        for(int i = 1; i <= 4; i++){
-            Node edge = (Node)floor.getChild(i); 
-            // dodatkowo sprawdza czy nie jest równy ostatnio ustawionemu obiektowi 
-            if(!edge.getChildren().isEmpty() && !edge.getName().equals(edgeName)){
-                Spatial wall = edge.getChild(0); 
-                RigidBodyControl control = wall.getControl(RigidBodyControl.class); 
-                int direction = i - 1; 
-                //control.setPhysicsLocation(calculateProperLocation(((RigidBodyControl)wall
-                //        .getControl(2)).getPhysicsLocation(),
-                 //       edge.getWorldTranslation()));
-                //control.setPhysicsRotation(calculateProperRotation(rotation,
-                //        direction, true, ((Wall)wall).checkPerpendicularity(null)));
-            }
-        }
     }
     
     private static Spatial getNearestChildFromWall(Vector3f wallLocation,
@@ -454,42 +437,6 @@ public class Construction extends Node{
         control.setPhysicsLocation(wall.getCatchingLocation().clone());
     }
     
-    private boolean checkIfCanBeAdded(Node catchNode, Wall newWall){
-        if(!newWall.isStale()) return catchNode.getChildren().isEmpty();
-        else{
-            List<Spatial> catchNodeChildren = catchNode.getChildren(); 
-            if(catchNodeChildren.isEmpty()) return true; 
-            else {
-                Wall wall = (Wall)catchNodeChildren.get(0); 
-                if(wall.equals(newWall)){
-                    removeWall(wall); 
-                    return true;
-                }else{
-                    float distance = wall.getWorldTranslation().distance(catchNode
-                            .getWorldTranslation());
-                    CatchNode[] catchNodes = CatchNode.values();
-                    CatchNode node = CatchNode.valueOf(catchNode.getName());
-                    int index = -1; 
-                    for(int i = 0; i < catchNodes.length; i++)
-                        if(node.equals(catchNodes[i])) index = i; 
-                    if(index <= 3) {
-                        if(distance > wall.getHeight()){
-                            removeWall(wall); 
-                            return true; 
-                        }
-                        return false; 
-                    }else{
-                        if(distance > wall.getWidth()){
-                            removeWall(wall); 
-                            return true; 
-                        }
-                        return false;
-                    }
-                }
-            }
-        }
-    }
-    
     private void detachFromBuilding(Wall wall) {
         Node wallParent = wall.getParent(); 
         if(!wallParent.getName().startsWith("Building")) { 
@@ -510,6 +457,7 @@ public class Construction extends Node{
     private float getBusyPlace(Wall wall2, Wall floor, CatchNode edge,
             boolean firstWall) {
         float innerSum = 0;
+        // sprawdzanie dla dotknietego catch node 
         if(firstWall) {
             List<Spatial> floorEdgeChildren = ((Node)floor.getChild(edge.toString()))
                     .getChildren();
@@ -521,6 +469,7 @@ public class Construction extends Node{
         }
         List<Spatial> wallElements = wall2.getChildren(); 
         int end = CatchNode.values().length;
+        // poruszanie się po wszystkich ścianach 
         for(int i = 1; i <= end; i++) {
             List<Spatial> catchNodeChildren = ((Node)wallElements.get(i)).getChildren(); 
             int childrenCount = catchNodeChildren.size(); 
@@ -537,6 +486,8 @@ public class Construction extends Node{
         boolean soughtFloor = wall2Location.y < floorLocation.y + width && wall2Location.y >
                 floorLocation.y - width && floorLocation.distance(wall2Location)
                 <= floor.getHeight() + wall2.getHeight() + 0.1f; 
+        /* znalezienie podłogi sąsiadującej z dotkniętą krawędzią i sprawdzenie 
+        zajętego miejsca po przeciwnej stronie */
         if(soughtFloor) {
             float sum = innerSum;
             List<Spatial> edgeChildren = ((Node)wall2.getChild(edge.toString()))
@@ -545,35 +496,10 @@ public class Construction extends Node{
             for(int i = 0; i < edgeChildrenCount; i++) {
                 sum += ((Wall)edgeChildren.get(i)).getLength() * 2;
             }
+            System.out.println(sum);
             return sum; 
         }
         return -1;
-    }
-    
-    private List<CatchNode> getEdgesForCheckingEmpty(Wall wall, Wall floor,
-            CatchNode touchedCatchNode) {
-        List<Spatial> catchNodeChildren = ((Node)floor.getChild(touchedCatchNode.toString()))
-                .getChildren();
-        List<CatchNode> edges = new ArrayList();
-        edges.add(touchedCatchNode);
-        int catchNodeChildrenSize = catchNodeChildren.size();
-        boolean leftRight = touchedCatchNode.equals(CatchNode.RIGHT) || touchedCatchNode
-                .equals(CatchNode.LEFT);
-        if(catchNodeChildrenSize == 0) {
-            edges.add(leftRight ? CatchNode.UP : CatchNode.LEFT);
-        }
-        float sum = wall.getLength() * 2;
-        for(int i = 0; i < catchNodeChildrenSize; i++) {
-            sum += ((Wall)catchNodeChildren.get(i)).getLength() * 2;
-        }
-        if(leftRight) {
-            if(sum > (floor.getHeight() - wall.getWidth() * 2) * 2)
-                edges.add(CatchNode.BOTTOM);
-        }else{
-            if(sum > (floor.getLength() - wall.getWidth() * 2) * 2)
-                edges.add(CatchNode.RIGHT);
-        }
-        return edges;
     }
     
     private CatchNode getEdgeFromOpposite(CatchNode edge) {
@@ -582,5 +508,27 @@ public class Construction extends Node{
         for(int i = 0; i < edges.length; i++)
             if(edges[i].equals(edge)) return edges[i + (i % 2 == 0 ? 1 : -1)];
         return null;
+    }
+    
+    private boolean isEmptyPerpendicularEdge(String catchNodeName, Wall floor, boolean start) {
+        CatchNode catchNodePerpendicular;
+        float maxBusy = 0;
+        if(catchNodeName.equals(CatchNode.UP.toString())) {
+            catchNodePerpendicular = start ? CatchNode.LEFT : CatchNode.RIGHT;
+        } else {
+            if(catchNodeName.equals(CatchNode.RIGHT.toString())) {
+                catchNodePerpendicular =  start ? CatchNode.UP : CatchNode.BOTTOM;
+                maxBusy = (floor.getLength() - floor.getWidth()) * 2;
+            } else {
+                if(catchNodeName.equals(CatchNode.BOTTOM.toString())) {
+                    catchNodePerpendicular = start ? CatchNode.LEFT : CatchNode.RIGHT;
+                    maxBusy = (floor.getHeight() - floor.getWidth()) * 2;
+                } else {
+                    catchNodePerpendicular = start ? CatchNode.UP : CatchNode.BOTTOM;
+                }
+            }
+        }
+        return getBusyPlace((Wall)getChildren().get(0), floor, 
+                catchNodePerpendicular, true) <= maxBusy;
     }
 }

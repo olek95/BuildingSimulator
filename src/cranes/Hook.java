@@ -114,7 +114,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                         confirmDetaching();
                     } else attachedObject.swapControl(oldMode);
                 } else confirmDetaching();
-            }
+            } else confirmDetaching();
         }
     }
     

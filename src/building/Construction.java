@@ -61,9 +61,8 @@ public class Construction extends Node{
                     touchedWall.attachChild(wall1);
                     lastAddedWall = wall1; 
                     wall1.setStale(false);
-                    RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
-                    wall1.setCatchingLocation(control.getPhysicsLocation());
-                    wall1.setCatchingRotation(control.getPhysicsRotation());
+                    wall1.setCatchingLocation(wall1.getLocalTranslation());
+                    wall1.setCatchingRotation(wall1.getLocalRotation());
                     return true;
                 }
             }
@@ -362,15 +361,6 @@ public class Construction extends Node{
         return node;
     }
     
-    private Vector3f calculateProperLocation(Vector3f edgeLocation, Wall wall, int mode){
-        return null; 
-    }
-//    private Vector3f calculateProperLocation(Vector3f edgeLocation, Wall wall, int mode){
-//        return new Vector3f(edgeLocation.x, mode == 1 ?
-//                ((RigidBodyControl)wall.getControl(mode)).getPhysicsLocation().y
-//                : edgeLocation.y + wall.getHeight(), edgeLocation.z);
-//    }
-    
     private Quaternion calculateProperRotation(Wall ownerRotation, int direction,
             boolean vertical, boolean perpendicular, boolean ceiling){
         if(ceiling) return ownerRotation.getParent().getParent().getWorldRotation();
@@ -432,9 +422,8 @@ public class Construction extends Node{
                 renovateBuilding((Wall)catchNodeChildren.get(k));
             }
         }
-        RigidBodyControl control = wall.getControl(RigidBodyControl.class); 
-        control.setPhysicsRotation(wall.getCatchingRotation().clone());
-        control.setPhysicsLocation(wall.getCatchingLocation().clone());
+        wall.setLocalRotation(wall.getCatchingRotation().clone());
+        wall.setLocalTranslation(wall.getCatchingLocation().clone());
     }
     
     private void detachFromBuilding(Wall wall) {

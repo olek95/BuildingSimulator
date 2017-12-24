@@ -73,6 +73,16 @@ public class Control {
                     keysProperties.load(new BufferedReader(new FileReader("settings/control.properties")));
                 } catch (IOException ex) {
                     Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
+                    keysProperties = CreatorMockSettings
+                            .createDefaultProperties(new String[]{"HEIGHTEN_HOOK",
+                                "MOVE_CRANE", "MERGE_PROTRUDING", "UP", "SECOND",
+                                "VERTICAL_ATTACH", "RIGHT", "PULL_OUT", "LEFT", 
+                                "PULL_IN", "SHOW_CURSOR", "PHYSICS", "ACTION", 
+                                "DOWN", "PAUSE", "MERGE", "ATTACH", "LOWER_HOOK",
+                                "FIRST", "DETACH"}, new String[]{"T", "O", "L", "U",
+                                    "2", "V", "K", "E", "H", "SPACE", "LSHIFT", "P",
+                                    "F", "J", "ESC", "N", "Y", "R", "1", "B"}, 
+                                "settings/control.properties"); 
                 }
             }
         }

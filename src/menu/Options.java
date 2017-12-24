@@ -1,6 +1,7 @@
 package menu;
 
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.CreatorMockSettings;
 import buildingsimulator.GameManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.input.event.MouseButtonEvent;
@@ -149,10 +150,14 @@ public class Options extends Menu  {
         Properties loadedProperties = new Properties();
         try {
             loadedProperties.load(new BufferedReader(new FileReader("settings/settings.properties")));
+            return loadedProperties; 
         } catch (IOException ex) {
             Logger.getLogger(Options.class.getName()).log(Level.SEVERE, null, ex);
+            return CreatorMockSettings.createDefaultProperties(new String[]{"BITS_PER_PIXEL",
+                "SAMPLES", "VOLUME", "LANGUAGE", "FREQUENCY", "RESOLUTION", "FULLSCREEN"},
+                    new String[]{"32", "6", "0.4", "pl", "60", "800x600", "false"},
+                    "settings/settings.properties");
         }
-        return loadedProperties;
     }
     
     public void changeVolume(int selectedIndex, Object value) { 

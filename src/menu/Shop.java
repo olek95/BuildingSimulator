@@ -193,7 +193,7 @@ public class Shop extends Menu implements VisibleFromAbove{
      * Odłącza dźwięk spadającego obiektu. 
      */
     public static void detachDropSound() {
-        GameManager.stopSound(dropSound, true);
+        if(dropSound != null) GameManager.stopSound(dropSound, true);
     }
     
     @Override

@@ -52,7 +52,7 @@ public abstract class MainMenu extends Menu {
     
     private void startBackgroundSound() {
         if(backgroundSound == null) {
-            backgroundSound = GameManager.startSound("Sounds/constructions.wav",
+            backgroundSound = GameManager.createSound("Sounds/constructions.wav",
                     0.4f, true, null);
         }
         backgroundSound.play();

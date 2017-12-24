@@ -5,6 +5,7 @@ import buildingsimulator.BuildingSimulator;
 import buildingsimulator.DummyCollisionListener;
 import buildingsimulator.GameManager;
 import buildingsimulator.VisibleFromAbove;
+import com.jme3.audio.AudioNode;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -27,8 +28,10 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
     private int heightLevel = 0;
     private DummyCollisionListener listener;
     private BirdsEyeView view; 
+    private AudioNode dropSound;
     public Crane(){
         initCrane();
+        dropSound = GameManager.createSound("Sounds/drop.wav", 0.4f, false, crane);
     }
     
 //    public Crane(int heightLevel){
@@ -117,9 +120,11 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
         int elementsCount = craneElements.size();
         for(int i = 0; i < elementsCount; i++) {
             Spatial element = craneElements.get(i);
-            if(element.getName().matches("(rack|prop|entrancePlatform).*")) 
+            String elementName = element.getName();
+            if(elementName != null && elementName.matches("(rack|prop|entrancePlatform).*")) 
                 setProperControlLocation(element, craneLocation);
         }
+        dropSound.play();
         removeView(); 
         BuildingSimulator.getBuildingSimulator().getBulletAppState()
                 .getPhysicsSpace().removeCollisionGroupListener(6);

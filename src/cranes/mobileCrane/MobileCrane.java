@@ -9,8 +9,6 @@ import buildingsimulator.Control.Actions;
 import buildingsimulator.Controllable;
 import buildingsimulator.GameManager;
 import com.jme3.audio.AudioNode;
-import com.jme3.audio.AudioNode.Status;
-import com.jme3.audio.AudioSource;
 import com.jme3.scene.Spatial;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
@@ -44,7 +42,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     private Vector3f propDisplacement;
     private Actions[] availableActions = {Actions.UP, Actions.DOWN, Actions.LEFT,
         Actions.RIGHT, Actions.ACTION};
-    private AudioNode craneStartEngineSound, craneDrivingSound;
+    private AudioNode craneStartEngineSound, craneDrivingSound, craneDrivingBackwardsSound;
     public MobileCrane(){
         createMobileCranePhysics();
         scaleTiresTexture();
@@ -56,9 +54,11 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         propDisplacement =  calculateDisplacementAfterScaling((Node)crane
                 .getChild("protractileProp1"), new Vector3f(1f, propsLowering + PROP_LOWERING_SPEED,
                 1f), false, true, false);
-        craneStartEngineSound = GameManager.startSound("Sounds/crane_engine_start.wav", 
+        craneStartEngineSound = GameManager.createSound("Sounds/crane_engine_start.wav", 
                 0.4f, false, crane);
-        craneDrivingSound = GameManager.startSound("Sounds/crane_engine_driving.wav",
+        craneDrivingSound = GameManager.createSound("Sounds/crane_engine_driving.wav",
+                0.4f, true, crane);
+        craneDrivingBackwardsSound = GameManager.createSound("Sounds/crane_driving_backwards.wav",
                 0.4f, true, crane);
     }
     
@@ -75,6 +75,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
             case UP:
                 if(isPressed){
                     if(key != null && key.equals("")) craneStartEngineSound.play();
+                    GameManager.stopSound(craneDrivingBackwardsSound, false);
                     key = name;
                     craneControl.accelerate(0f);
                     craneControl.brake(BRAKE_FORCE);
@@ -87,6 +88,8 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                 break;
             case DOWN:
                 if(isPressed){
+                    if(key != null && key.equals("")) craneStartEngineSound.play();
+                    GameManager.stopSound(craneDrivingSound, false);
                     key = name;
                     craneControl.accelerate(0f);
                     craneControl.brake(BRAKE_FORCE);
@@ -120,13 +123,16 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                 stop();
         }else{ 
             if(!key.equals("")){
-                if(key.equals(Actions.DOWN.toString()) && craneControl
-                        .getCurrentVehicleSpeedKmHour() < 0){
-                    craneControl.brake(0f);
-                    craneControl.accelerate(-ACCELERATION_FORCE * 0.5f); // prędkość w tył jest mniejsza 
+                if(key.equals(Actions.DOWN.toString())) {
+                    if(GameManager.isSoundStopped(craneStartEngineSound))
+                        craneDrivingBackwardsSound.play();
+                    if(craneControl.getCurrentVehicleSpeedKmHour() < 0) {
+                        craneControl.brake(0f);
+                        craneControl.accelerate(-ACCELERATION_FORCE * 0.5f); // prędkość w tył jest mniejsza
+                    }
                 }else{
                     if(key.equals(Actions.UP.toString())) {
-                        if(craneStartEngineSound.getStatus().equals(AudioSource.Status.Stopped))
+                        if(GameManager.isSoundStopped(craneStartEngineSound))
                             craneDrivingSound.play();
                         if(Math.ceil(craneControl.getCurrentVehicleSpeedKmHour()) >= 0) {
                             craneControl.brake(0f);

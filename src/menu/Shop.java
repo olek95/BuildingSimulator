@@ -8,6 +8,7 @@ import buildingsimulator.BuildingSimulator;
 import buildingsimulator.DummyCollisionListener;
 import buildingsimulator.GameManager;
 import buildingsimulator.VisibleFromAbove;
+import com.jme3.audio.AudioNode;
 import com.jme3.font.BitmapFont;
 import com.jme3.input.FlyByCamera;
 import com.jme3.input.event.MouseButtonEvent;
@@ -35,6 +36,7 @@ public class Shop extends Menu implements VisibleFromAbove{
     private Vector3f dischargingLocation = null;
     private DummyCollisionListener listener; 
     private BirdsEyeView view; 
+    private static AudioNode dropSound;
     public Shop(){
         if(displayedShop != null) { 
             GameManager.getUser().addPoints(displayedShop.costForMaterials); 
@@ -61,6 +63,7 @@ public class Shop extends Menu implements VisibleFromAbove{
         screen.getElementById("actual_height_value").setText(craneHeight + "");
         ((Spinner)screen.getElementById("crane_height_spinner"))
                 .setSelectedIndex(craneHeight);
+        dropSound = GameManager.createSound("Sounds/drop.wav", 0.4f, false, null);
         setCost();
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
         displayedShop = this; 
@@ -96,6 +99,7 @@ public class Shop extends Menu implements VisibleFromAbove{
     public void cancel(MouseButtonEvent evt, boolean isToggled) {
         displayedShop = null; 
         BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(false);
+        detachDropSound();
         goNextMenu(screen, null);
     }
     
@@ -157,6 +161,7 @@ public class Shop extends Menu implements VisibleFromAbove{
             GameManager.addToGame(wall);
             dischargingLocation.y += 0.4f; 
         }
+        dropSound.play();
         view.setOff();
         displayedShop = null; 
         BuildingSimulator.getBuildingSimulator().getBulletAppState()
@@ -181,6 +186,13 @@ public class Shop extends Menu implements VisibleFromAbove{
         float x = ((TextField)screen.getElementById("x_text_field")).parseFloat(),
                 z = ((TextField)screen.getElementById("z_text_field")).parseFloat();
         return x >= z ? new Vector3f(x, 0.2f, z) : new Vector3f(z, 0.2f, x); 
+    }
+    
+    /**
+     * Odłącza dźwięk spadającego obiektu. 
+     */
+    public static void detachDropSound() {
+        GameManager.stopSound(dropSound, true);
     }
     
     @Override

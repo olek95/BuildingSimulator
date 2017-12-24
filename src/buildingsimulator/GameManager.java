@@ -5,6 +5,7 @@ import billboard.Billboard;
 import building.WallType;
 import building.WallsFactory;
 import com.jme3.audio.AudioNode;
+import com.jme3.audio.AudioSource;
 import cranes.Hook;
 import cranes.CraneAbstract;
 import com.jme3.bounding.BoundingBox;
@@ -392,7 +393,15 @@ public class GameManager {
         game.getRootNode().attachChild(scene);
     }
     
-    public static AudioNode startSound(String path, float volume, boolean looping, Node owner) {
+    /**
+     * Tworzy dźwięk. 
+     * @param path ścieżka
+     * @param volume głośność
+     * @param looping true jeśli ma się powtarzać, false w przeciwnym przypadku 
+     * @param owner właściciel dźwięku 
+     * @return węzeł reprezentujący dźwięk 
+     */
+    public static AudioNode createSound(String path, float volume, boolean looping, Node owner) {
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         AudioNode sound = new AudioNode(game.getAssetManager(),
                 path, false, true);
@@ -403,10 +412,25 @@ public class GameManager {
         return sound;
     }
     
+    /**
+     * Zatrzymuje dźwięk. 
+     * @param sound węzeł reprezentujący dźwięk 
+     * @param autoDetaching true jeśli ma się odłączyć od właściciela, false 
+     * jeśli ma pozostać w drzewie 
+     */
     public static void stopSound(AudioNode sound, boolean autoDetaching) {
         sound.stop();
         if(autoDetaching)
             BuildingSimulator.getBuildingSimulator().getRootNode().detachChild(sound);
+    }
+    
+    /**
+     * Określa czy dźwięk jest zatrzymany lub skończony. 
+     * @param sound węzeł reprezentujący dźwięk 
+     * @return true jeśli dźwięk jest zatrzymany lub skończony, false w przeciwnym przypadku
+     */
+    public static boolean isSoundStopped(AudioNode sound) {
+        return sound.getStatus().equals(AudioSource.Status.Stopped);
     }
     
     /**

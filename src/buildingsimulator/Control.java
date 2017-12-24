@@ -7,9 +7,14 @@ import com.jme3.input.awt.AwtKeyInput;
 import com.jme3.input.controls.InputListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import texts.Translator;
 
 /**
@@ -50,13 +55,30 @@ public class Control {
         SELECT_WAREHOUSE(MouseInput.BUTTON_LEFT),
         CANCEL_BIRDS_EYE_VIEW(MouseInput.BUTTON_RIGHT);
         private String key;
+        private static Properties keysProperties;
         private Actions(){
-            key = FilesManager.getValue(toString(), "settings/control.properties");
+            createProperties();
+            key = getKeyFromPropertiesFile();
             inputManager.addMapping(toString(), new KeyTrigger(getJmeKeyCode(key)));
         }
         
         private Actions(int mouseKey) {
             inputManager.addMapping(toString(), new MouseButtonTrigger(mouseKey));
+        }
+        
+        private void createProperties() {
+            if(keysProperties == null) {
+                try {
+                    keysProperties = new Properties();
+                    keysProperties.load(new BufferedReader(new FileReader("settings/control.properties")));
+                } catch (IOException ex) {
+                    Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        
+        private String getKeyFromPropertiesFile() {
+            return keysProperties.getProperty(toString());
         }
         
         /**
@@ -113,10 +135,11 @@ public class Control {
                 for(int i = 0; i < values.length - 2; i++){
                     values[i].key = keys[i];
                     String actionName = values[i].toString();
-                    output.println(actionName + "=" + keys[i]);
+                    keysProperties.setProperty(actionName, keys[i]);
                     inputManager.deleteMapping(actionName);
                     inputManager.addMapping(actionName, new KeyTrigger(getJmeKeyCode(keys[i])));
                 }
+                keysProperties.store(output, null);
             }catch(IOException ex){
                 ex.printStackTrace();
             }

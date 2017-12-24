@@ -1,13 +1,15 @@
 package menu;
 
 import buildingsimulator.BuildingSimulator;
-import buildingsimulator.FilesManager;
 import buildingsimulator.GameManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.system.AppSettings;
 import java.awt.DisplayMode;
 import java.awt.GraphicsEnvironment;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,6 +17,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import texts.Translator;
 import tonegod.gui.controls.buttons.Button;
 import tonegod.gui.controls.buttons.CheckBox;
@@ -35,7 +40,7 @@ public class Options extends Menu  {
     private static boolean stale = false;
     private static int newHeight = 0, newWidth = 0; 
     private int counter = 0; 
-    private static Map<String, String> restoredSettings = new HashMap(), 
+    private static Properties restoredSettings = new Properties(), 
             storedSettings; 
     public Options(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
@@ -60,7 +65,7 @@ public class Options extends Menu  {
      * @param isToggled 
      */
     public void accept(MouseButtonEvent evt, boolean isToggled) {
-        Map<String, String> settings = getSelectedSettings(); 
+        Properties settings = getSelectedSettings(); 
         Translator.translate((Locale)((SelectBox)screen.getElementById("language_select_box"))
                 .getSelectedListItem().getValue());
         setTexts();
@@ -114,9 +119,9 @@ public class Options extends Menu  {
      * w przeciwnym przypadku 
      * @return wcześniej zapisane ustawienia dla aplikacji 
      */
-    public static AppSettings restoreSettings(Map<String, String> settings, boolean startingGame){
+    public static AppSettings restoreSettings(Properties settings, boolean startingGame){
         AppSettings appSettings = new AppSettings(true);
-        String[] selectedResolution = settings.get("RESOLUTION").split("x");
+        String[] selectedResolution = settings.getProperty("RESOLUTION").split("x");
         int width = Integer.parseInt(selectedResolution[0]), 
                 height = Integer.parseInt(selectedResolution[1]);
         appSettings.setResolution(width, height);
@@ -124,12 +129,12 @@ public class Options extends Menu  {
             newWidth = width; 
             newHeight = height; 
         }
-        appSettings.setFrequency(Integer.valueOf(settings.get("FREQUENCY")));
-        appSettings.setSamples(Integer.valueOf(settings.get("SAMPLES")));
-        appSettings.setBitsPerPixel(Integer.valueOf(settings.get("BITS_PER_PIXEL")));
-        appSettings.setFullscreen(Boolean.valueOf(settings.get("FULLSCREEN")));
-        Translator.translate(new Locale(settings.get("LANGUAGE")));
-        float volume = Float.valueOf(settings.get("VOLUME"));
+        appSettings.setFrequency(Integer.valueOf(settings.getProperty("FREQUENCY")));
+        appSettings.setSamples(Integer.valueOf(settings.getProperty("SAMPLES")));
+        appSettings.setBitsPerPixel(Integer.valueOf(settings.getProperty("BITS_PER_PIXEL")));
+        appSettings.setFullscreen(Boolean.valueOf(settings.getProperty("FULLSCREEN")));
+        Translator.translate(new Locale(settings.getProperty("LANGUAGE")));
+        float volume = Float.valueOf(settings.getProperty("VOLUME"));
         GameManager.setGameSoundVolume(volume);
         AudioNode backgroundSound = getBackgroundSound(); 
         if(backgroundSound != null) backgroundSound.setVolume(volume);
@@ -140,14 +145,22 @@ public class Options extends Menu  {
      * Wczytuje plik z zapisanymi wcześniej właściwościami. 
      * @return mapa z zapisanymi właściwościami 
      */
-    public static Map<String, String> loadProperties(){
-        return FilesManager.loadAllProperties("settings/settings.properties");
+    public static Properties loadProperties(){
+        Properties loadedProperties = new Properties();
+        try {
+            loadedProperties.load(new BufferedReader(new FileReader("settings/settings.properties")));
+        } catch (IOException ex) {
+            Logger.getLogger(Options.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return loadedProperties;
     }
     
     public void changeVolume(int selectedIndex, Object value) { 
         Slider volumeSlider = (Slider)screen.getElementById("sound_volume_slider");
-        volumeSlider.setText((Math.round((float)volumeSlider.getSelectedValue() * 10) / 10.0)
-                + "");
+        if(volumeSlider != null) {
+            volumeSlider.setText((Math.round((float)volumeSlider.getSelectedValue() * 10) / 10.0)
+                    + "");
+        }
         setStale(); 
     }
     
@@ -260,76 +273,79 @@ public class Options extends Menu  {
             Translator.CONTROL_CONFIGURATION, Translator.SOUND_VOLUME}, screen);
     }
     
-    private Map<String, String> getSelectedSettings() {
-        Map<String, String> settings = new HashMap();
-        settings.put("RESOLUTION", (String)((SelectBox)screen
+    private Properties getSelectedSettings() {
+        Properties settings = new Properties();
+        settings.setProperty("RESOLUTION", (String)((SelectBox)screen
                 .getElementById("screen_resolution_select_box")).getSelectedListItem().getValue());
         int frequency = (int)((SelectBox)screen.getElementById("refresh_rate_select_box"))
                 .getSelectedListItem().getValue();
-        settings.put("FREQUENCY", frequency + "");
+        settings.setProperty("FREQUENCY", frequency + "");
         int samples = (int)((SelectBox)screen.getElementById("antialiasing_select_box"))
                 .getSelectedListItem().getValue();
-        settings.put("SAMPLES", samples + "");
+        settings.setProperty("SAMPLES", samples + "");
         int bitsPerPixel = (int)((SelectBox)screen.getElementById("color_depth_select_box"))
                 .getSelectedListItem().getValue();
-        settings.put("BITS_PER_PIXEL", bitsPerPixel + "");
+        settings.setProperty("BITS_PER_PIXEL", bitsPerPixel + "");
         boolean fullscreen = ((CheckBox)screen.getElementById("fullscreen_checkbox"))
                 .getIsChecked();
-        settings.put("FULLSCREEN", fullscreen + "");
+        settings.setProperty("FULLSCREEN", fullscreen + "");
         Locale locale = (Locale)((SelectBox)screen.getElementById("language_select_box"))
                 .getSelectedListItem().getValue();
-        settings.put("LANGUAGE", locale.getLanguage());
+        settings.setProperty("LANGUAGE", locale.getLanguage());
         float volume = (float)((Slider)screen.getElementById("sound_volume_slider"))
                 .getSelectedValue();
-        settings.put("VOLUME", (Math.round(volume * 10) / 10.0) + "");
+        settings.setProperty("VOLUME", (Math.round(volume * 10) / 10.0) + "");
         return settings; 
     }
     
-    private static void saveSettings(Map<String, String> settings){
+    private static void saveSettings(Properties settings){
         try(PrintWriter output = new PrintWriter(new FileWriter("settings/settings.properties"))){
-            for(Map.Entry<String, String> entry : settings.entrySet()){
-                output.println(entry.getKey() + "=" + entry.getValue());
-            }
+            settings.store(output, null);
         }catch(IOException ex){
             ex.printStackTrace();
         }
     }
     
     private static void loadSettings() {
-        Map<String, String> temp = null; 
-        if(storedSettings == null){
-            restoredSettings = FilesManager.loadAllProperties("settings/settings.properties");
-        }else{
-            temp = restoredSettings; 
-            restoredSettings = storedSettings;
+        Properties temp = null; 
+        try {
+            if(storedSettings == null){
+                restoredSettings.load(new BufferedReader(
+                        new FileReader("settings/settings.properties")));
+            }else{
+                temp = restoredSettings; 
+                restoredSettings = storedSettings;
+            }
+            ((SelectBox)screen.getElementById("screen_resolution_select_box"))
+                    .setSelectedByValue(restoredSettings.getProperty("RESOLUTION"), false);
+            ((SelectBox)screen.getElementById("refresh_rate_select_box"))
+                    .setSelectedByValue(Integer.valueOf(restoredSettings.getProperty("FREQUENCY")),
+                    false);
+            ((SelectBox)screen.getElementById("antialiasing_select_box"))
+                    .setSelectedByValue(Integer.valueOf(restoredSettings.getProperty("SAMPLES")),
+                    false);
+            ((SelectBox)screen.getElementById("color_depth_select_box"))
+                    .setSelectedByValue(Integer.valueOf(restoredSettings.getProperty("BITS_PER_PIXEL")),
+                    false);
+            ((CheckBox)screen.getElementById("fullscreen_checkbox"))
+                    .setIsChecked(Boolean.parseBoolean(restoredSettings.getProperty("FULLSCREEN")));
+            ((SelectBox)screen.getElementById("language_select_box"))
+                    .setSelectedByValue(new Locale(restoredSettings.getProperty("LANGUAGE")), false);
+            String volume = restoredSettings.getProperty("VOLUME");
+            Slider volumeSlider = (Slider)screen.getElementById("sound_volume_slider");
+            volumeSlider.setSelectedByValue(volume);
+            volumeSlider.setText(volume);
+            storedSettings = null; 
+            if(temp != null) restoredSettings = temp;
+        } catch (IOException ex) {
+            Logger.getLogger(Options.class.getName()).log(Level.SEVERE, null, ex);
         }
-        ((SelectBox)screen.getElementById("screen_resolution_select_box"))
-                .setSelectedByValue(restoredSettings.get("RESOLUTION"), false);
-        ((SelectBox)screen.getElementById("refresh_rate_select_box"))
-                .setSelectedByValue(Integer.valueOf(restoredSettings.get("FREQUENCY")),
-                false);
-        ((SelectBox)screen.getElementById("antialiasing_select_box"))
-                .setSelectedByValue(Integer.valueOf(restoredSettings.get("SAMPLES")),
-                false);
-        ((SelectBox)screen.getElementById("color_depth_select_box"))
-                .setSelectedByValue(Integer.valueOf(restoredSettings.get("BITS_PER_PIXEL")),
-                false);
-        ((CheckBox)screen.getElementById("fullscreen_checkbox"))
-                .setIsChecked(Boolean.parseBoolean(restoredSettings.get("FULLSCREEN")));
-        ((SelectBox)screen.getElementById("language_select_box"))
-                .setSelectedByValue(new Locale(restoredSettings.get("LANGUAGE")), false);
-        String volume = restoredSettings.get("VOLUME");
-        Slider volumeSlider = (Slider)screen.getElementById("sound_volume_slider");
-        volumeSlider.setSelectedByValue(volume);
-        volumeSlider.setText(volume);
-        storedSettings = null; 
-        if(temp != null) restoredSettings = temp;
     }
     
     private boolean isChanged() {
-        Map<String, String> settings = getSelectedSettings(); 
-        for(Map.Entry<String, String> entry : restoredSettings.entrySet()) {
-            if(!settings.get(entry.getKey()).equals(entry.getValue()))
+        Properties settings = getSelectedSettings();
+        for(Map.Entry<Object, Object> entry : restoredSettings.entrySet()) {
+            if(!settings.getProperty((String)entry.getKey()).equals(entry.getValue()))
                 return true; 
         }
         return false; 

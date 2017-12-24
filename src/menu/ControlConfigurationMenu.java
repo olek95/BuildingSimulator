@@ -14,6 +14,7 @@ import com.jme3.math.Vector2f;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import texts.Translator;
 import tonegod.gui.controls.buttons.Button;
 import tonegod.gui.controls.buttons.ButtonAdapter;
@@ -29,11 +30,11 @@ import tonegod.gui.core.Screen;
  */
 public class ControlConfigurationMenu extends TableMenu implements RawInputListener{
     private static boolean stale; 
-    private static Map<String, String> restoredSettings;
+    private static Properties restoredSettings;
     public ControlConfigurationMenu(){
         super("controlConfiguration");
         Screen screen = getScreen();
-        restoredSettings = new HashMap(); 
+        restoredSettings = new Properties(); 
         Table table = createTable(new String[]{"action_column", "key_column"},
                 new Translator[]{Translator.ACTIVITY, Translator.KEY}); 
         getWindow().addChild(table);
@@ -88,7 +89,7 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
         for(int i = 0; i < actions.length - 2; i++){ 
             String key = actions[i].getKey(), actionName = actions[i].getValue();
             addRow(actionName, actions[i], key); 
-            restoredSettings.put(actionName, key);
+            restoredSettings.setProperty(actionName, key);
         }
     }
     
@@ -133,22 +134,22 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
         table.addChild(button);
     }
     
-    private Map<String, String> getSelectedSettings() {
-        Map<String, String> settings = new HashMap(); 
+    private Properties getSelectedSettings() {
+        Properties settings = new Properties(); 
         List<TableRow> rows = getTable().getRows();
         int rowsCount = rows.size(); 
         for(int i = 0; i < rowsCount; i++){
             TableRow row = rows.get(i);
-            settings.put(((Table.TableCell)row.getChild(1)).getText(), ((Table.TableCell)row
+            settings.setProperty(((Table.TableCell)row.getChild(1)).getText(), ((Table.TableCell)row
                     .getChild(2)).getText());
         }
         return settings; 
     }
     
     private boolean isChanged() {
-        Map<String, String> settings = getSelectedSettings(); 
-        for(Map.Entry<String, String> entry : restoredSettings.entrySet()) {
-            if(!settings.get(entry.getKey()).equals(entry.getValue()))
+        Properties settings = getSelectedSettings(); 
+        for(Map.Entry<Object, Object> entry : restoredSettings.entrySet()) {
+            if(!settings.getProperty((String)entry.getKey()).equals(entry.getValue()))
                 return true; 
         }
         return false; 

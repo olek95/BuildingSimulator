@@ -4,6 +4,7 @@ import authorization.User;
 import billboard.Billboard;
 import building.WallType;
 import building.WallsFactory;
+import com.jme3.audio.AudioNode;
 import cranes.Hook;
 import cranes.CraneAbstract;
 import com.jme3.bounding.BoundingBox;
@@ -60,8 +61,8 @@ public class GameManager {
         addUnit(crane);
         addToGame(crane.getCrane());
         mobileCrane.setUsing(true);
-        billboard = new Billboard(-720, 20);
-        addToGame(billboard.getBillboard());
+//        billboard = new Billboard(-720, 20);
+//        addToGame(billboard.getBillboard());
         Control.addListener(mobileCrane);
         Control.addListener(game);
         bas.getPhysicsSpace().addCollisionListener(BuildingCollisionListener
@@ -80,7 +81,7 @@ public class GameManager {
         } else {
             HUD.changeShopButtonVisibility(false);
         }
-        billboard.resumeAdvertisement();
+        // billboard.resumeAdvertisement();
         startedGame = true;
         pausedGame = false; 
     }
@@ -93,7 +94,7 @@ public class GameManager {
         Control.removeListener(Control.getActualListener());
         startedGame = false;
         pausedGame = true; 
-        billboard.pauseAdvertisement();
+        // billboard.pauseAdvertisement();
         MenuFactory.showMenu(MenuTypes.PAUSE_MENU);
     }
     
@@ -389,6 +390,23 @@ public class GameManager {
         physics.add(firstPartControl); 
         firstPartControl.setPhysicsLocation(new Vector3f(offset, 0, offset));
         game.getRootNode().attachChild(scene);
+    }
+    
+    public static AudioNode startSound(String path, float volume, boolean looping, Node owner) {
+        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
+        AudioNode sound = new AudioNode(game.getAssetManager(),
+                path, false, true);
+        sound.setVolume(volume);
+        sound.setLooping(looping);
+        if(owner == null) game.getRootNode().attachChild(sound);
+        else owner.attachChild(sound);
+        return sound;
+    }
+    
+    public static void stopSound(AudioNode sound, boolean autoDetaching) {
+        sound.stop();
+        if(autoDetaching)
+            BuildingSimulator.getBuildingSimulator().getRootNode().detachChild(sound);
     }
     
     /**

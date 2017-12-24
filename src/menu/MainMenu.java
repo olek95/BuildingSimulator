@@ -1,6 +1,7 @@
 package menu;
 
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.GameManager;
 import com.jme3.audio.AudioNode;
 import texts.Translator;
 import tonegod.gui.controls.windows.Window;
@@ -14,7 +15,7 @@ import tonegod.gui.core.Screen;
  */
 public abstract class MainMenu extends Menu {
     private static Screen screen;
-    private static AudioNode sound;
+    private static AudioNode backgroundSound;
     public MainMenu(String layoutName){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout(layoutName, this);
@@ -36,9 +37,8 @@ public abstract class MainMenu extends Menu {
      * Uruchamia grę 
      */
     protected void start() {
-        sound.stop();
-        BuildingSimulator.getBuildingSimulator().getRootNode().detachChild(sound);
-        sound = null;
+        GameManager.stopSound(backgroundSound, true);
+        backgroundSound = null;
         getWindow().hide();
         screen.setUseCustomCursors(false);
     }
@@ -51,14 +51,10 @@ public abstract class MainMenu extends Menu {
     }
     
     private void startBackgroundSound() {
-        if(sound == null) {
-            BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-            sound = new AudioNode(game.getAssetManager(), "Sounds/constructions.wav",
-                    false, true);
-            sound.setVolume(0.4f);
-            sound.setLooping(true);
-            game.getRootNode().attachChild(sound);
+        if(backgroundSound == null) {
+            backgroundSound = GameManager.startSound("Sounds/constructions.wav",
+                    0.4f, true, null);
         }
-        sound.play();
+        backgroundSound.play();
     }
 }

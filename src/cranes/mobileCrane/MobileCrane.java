@@ -8,6 +8,9 @@ import static buildingsimulator.GameManager.moveWithScallingObject;
 import buildingsimulator.Control.Actions;
 import buildingsimulator.Controllable;
 import buildingsimulator.GameManager;
+import com.jme3.audio.AudioNode;
+import com.jme3.audio.AudioNode.Status;
+import com.jme3.audio.AudioSource;
 import com.jme3.scene.Spatial;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
@@ -41,6 +44,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     private Vector3f propDisplacement;
     private Actions[] availableActions = {Actions.UP, Actions.DOWN, Actions.LEFT,
         Actions.RIGHT, Actions.ACTION};
+    private AudioNode craneStartEngineSound, craneDrivingSound;
     public MobileCrane(){
         createMobileCranePhysics();
         scaleTiresTexture();
@@ -52,6 +56,10 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         propDisplacement =  calculateDisplacementAfterScaling((Node)crane
                 .getChild("protractileProp1"), new Vector3f(1f, propsLowering + PROP_LOWERING_SPEED,
                 1f), false, true, false);
+        craneStartEngineSound = GameManager.startSound("Sounds/crane_engine_start.wav", 
+                0.4f, false, crane);
+        craneDrivingSound = GameManager.startSound("Sounds/crane_engine_driving.wav",
+                0.4f, true, crane);
     }
     
     /**
@@ -66,6 +74,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         switch(Actions.valueOf(name)){
             case UP:
                 if(isPressed){
+                    if(key != null && key.equals("")) craneStartEngineSound.play();
                     key = name;
                     craneControl.accelerate(0f);
                     craneControl.brake(BRAKE_FORCE);
@@ -73,6 +82,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                     key = null;
                     craneControl.accelerate(craneControl.getCurrentVehicleSpeedKmHour() > 0 ?
                             -FRICTION_FORCE : FRICTION_FORCE);
+                    GameManager.stopSound(craneDrivingSound, false);
                 }
                 break;
             case DOWN:
@@ -115,10 +125,13 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                     craneControl.brake(0f);
                     craneControl.accelerate(-ACCELERATION_FORCE * 0.5f); // prędkość w tył jest mniejsza 
                 }else{
-                    if(key.equals(Actions.UP.toString()) && Math.ceil(craneControl
-                            .getCurrentVehicleSpeedKmHour()) >= 0){
-                        craneControl.brake(0f);
-                        craneControl.accelerate(ACCELERATION_FORCE);
+                    if(key.equals(Actions.UP.toString())) {
+                        if(craneStartEngineSound.getStatus().equals(AudioSource.Status.Stopped))
+                            craneDrivingSound.play();
+                        if(Math.ceil(craneControl.getCurrentVehicleSpeedKmHour()) >= 0) {
+                            craneControl.brake(0f);
+                            craneControl.accelerate(ACCELERATION_FORCE);
+                        }
                     }
                 }
             }else{

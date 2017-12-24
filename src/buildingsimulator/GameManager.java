@@ -43,6 +43,7 @@ public class GameManager {
     private static User user; 
     private static boolean startedGame = false;
     private static boolean pausedGame = false; 
+    private static float gameSoundVolume;
     private static Billboard billboard; 
     
     /**
@@ -458,6 +459,18 @@ public class GameManager {
      * @return true jesli gra jest zatrzymana, false w przeciwnym przypadku 
      */
     public static boolean isPausedGame() { return pausedGame; }
+    
+    /**
+     * Ustawia głośność dźwięków w grze.
+     * @param volume głośność dźwięków 
+     */
+    public static void setGameSoundVolume(float volume) { gameSoundVolume = volume; }
+    
+    /**
+     * Zwraca głośność dźwięków w grze. 
+     * @return głosność dźwięków
+     */
+    public static float getGameSoundVolume() { return gameSoundVolume; }
     
     private static void moveDynamicObject(Spatial element, Vector3f displacement){
         RigidBodyControl elementControl = element.getControl(RigidBodyControl.class);

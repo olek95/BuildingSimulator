@@ -63,7 +63,8 @@ public class Shop extends Menu implements VisibleFromAbove{
         screen.getElementById("actual_height_value").setText(craneHeight + "");
         ((Spinner)screen.getElementById("crane_height_spinner"))
                 .setSelectedIndex(craneHeight);
-        dropSound = GameManager.createSound("Sounds/drop.wav", 0.4f, false, null);
+        dropSound = GameManager.createSound("Sounds/drop.wav", GameManager.getGameSoundVolume(),
+                false, null);
         setCost();
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
         displayedShop = this; 

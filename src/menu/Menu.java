@@ -2,6 +2,7 @@ package menu;
 
 import buildingsimulator.BuildingSimulator;
 import com.jme3.app.state.AbstractAppState;
+import com.jme3.audio.AudioNode;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.Vector2f;
 import texts.Translator;
@@ -16,6 +17,7 @@ import tonegod.gui.core.Screen;
  */
 public abstract class Menu extends AbstractAppState{
     private Window window;
+    private static AudioNode backgroundSound;
     
     /**
      * Zwraca okno aktualnie wybranego menu. 
@@ -28,6 +30,20 @@ public abstract class Menu extends AbstractAppState{
      * @param window okno 
      */
     protected void setWindow(Window window) { this.window = window; }
+    
+    /**
+     * Zwraca dźwięk tła. 
+     * @return dźwiek tła
+     */
+    protected static AudioNode getBackgroundSound() { return Menu.backgroundSound; }
+    
+    /**
+     * Ustawia dźwięk tła. 
+     * @param sound dźwięk tła
+     */
+    protected static void setBackgroundSound(AudioNode backgroundSound) { 
+        Menu.backgroundSound = backgroundSound;
+    }
     
     /**
      * Tworzy okno alarmowe ostrzegające przed daną czynnością. 

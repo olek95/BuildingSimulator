@@ -31,7 +31,8 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
     private AudioNode dropSound;
     public Crane(){
         initCrane();
-        dropSound = GameManager.createSound("Sounds/drop.wav", 0.4f, false, crane);
+        dropSound = GameManager.createSound("Sounds/drop.wav", GameManager.getGameSoundVolume(),
+                false, crane);
     }
     
 //    public Crane(int heightLevel){

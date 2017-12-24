@@ -3,6 +3,7 @@ package menu;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.FilesManager;
 import buildingsimulator.GameManager;
+import com.jme3.audio.AudioNode;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.system.AppSettings;
 import java.awt.DisplayMode;
@@ -18,6 +19,7 @@ import texts.Translator;
 import tonegod.gui.controls.buttons.Button;
 import tonegod.gui.controls.buttons.CheckBox;
 import tonegod.gui.controls.lists.SelectBox;
+import tonegod.gui.controls.lists.Slider;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
@@ -127,6 +129,10 @@ public class Options extends Menu  {
         appSettings.setBitsPerPixel(Integer.valueOf(settings.get("BITS_PER_PIXEL")));
         appSettings.setFullscreen(Boolean.valueOf(settings.get("FULLSCREEN")));
         Translator.translate(new Locale(settings.get("LANGUAGE")));
+        float volume = Float.valueOf(settings.get("VOLUME"));
+        GameManager.setGameSoundVolume(volume);
+        AudioNode backgroundSound = getBackgroundSound(); 
+        if(backgroundSound != null) backgroundSound.setVolume(volume);
         return appSettings; 
     }
     
@@ -136,6 +142,13 @@ public class Options extends Menu  {
      */
     public static Map<String, String> loadProperties(){
         return FilesManager.loadAllProperties("settings/settings.properties");
+    }
+    
+    public void changeVolume(int selectedIndex, Object value) { 
+        Slider volumeSlider = (Slider)screen.getElementById("sound_volume_slider");
+        volumeSlider.setText((Math.round((float)volumeSlider.getSelectedValue() * 10) / 10.0)
+                + "");
+        setStale(); 
     }
     
     /**
@@ -240,11 +253,11 @@ public class Options extends Menu  {
         Translator.setTexts(new String[]{"settings_label", "language_label", "graphics_label",
             "screen_resolution_label", "color_depth_label", "antialiasing_label",
             "fullscreen_label", "refresh_rate_label", "accepting_button", 
-            "return_button", "control_configuration_button"},
+            "return_button", "control_configuration_button", "sound_volume_label"},
             new Translator[]{Translator.GAME_SETTINGS, Translator.LANGUAGE, Translator.GRAPHICS,
             Translator.SCREEN_RESOLUTION, Translator.COLOR_DEPTH, Translator.ANTIALIASING, 
             Translator.FULLSCREEN, Translator.REFRESH_RATE, Translator.ACCEPTING, Translator.RETURN,
-            Translator.CONTROL_CONFIGURATION}, screen);
+            Translator.CONTROL_CONFIGURATION, Translator.SOUND_VOLUME}, screen);
     }
     
     private Map<String, String> getSelectedSettings() {
@@ -266,6 +279,9 @@ public class Options extends Menu  {
         Locale locale = (Locale)((SelectBox)screen.getElementById("language_select_box"))
                 .getSelectedListItem().getValue();
         settings.put("LANGUAGE", locale.getLanguage());
+        float volume = (float)((Slider)screen.getElementById("sound_volume_slider"))
+                .getSelectedValue();
+        settings.put("VOLUME", (Math.round(volume * 10) / 10.0) + "");
         return settings; 
     }
     
@@ -302,6 +318,10 @@ public class Options extends Menu  {
                 .setIsChecked(Boolean.parseBoolean(restoredSettings.get("FULLSCREEN")));
         ((SelectBox)screen.getElementById("language_select_box"))
                 .setSelectedByValue(new Locale(restoredSettings.get("LANGUAGE")), false);
+        String volume = restoredSettings.get("VOLUME");
+        Slider volumeSlider = (Slider)screen.getElementById("sound_volume_slider");
+        volumeSlider.setSelectedByValue(volume);
+        volumeSlider.setText(volume);
         storedSettings = null; 
         if(temp != null) restoredSettings = temp;
     }

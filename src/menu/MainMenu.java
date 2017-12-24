@@ -15,7 +15,6 @@ import tonegod.gui.core.Screen;
  */
 public abstract class MainMenu extends Menu {
     private static Screen screen;
-    private static AudioNode backgroundSound;
     public MainMenu(String layoutName){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         screen.parseLayout(layoutName, this);
@@ -37,8 +36,9 @@ public abstract class MainMenu extends Menu {
      * Uruchamia grę 
      */
     protected void start() {
+        AudioNode backgroundSound = getBackgroundSound();
         GameManager.stopSound(backgroundSound, true);
-        backgroundSound = null;
+        setBackgroundSound(null);
         getWindow().hide();
         screen.setUseCustomCursors(false);
     }
@@ -51,9 +51,11 @@ public abstract class MainMenu extends Menu {
     }
     
     private void startBackgroundSound() {
+        AudioNode backgroundSound = getBackgroundSound();
         if(backgroundSound == null) {
             backgroundSound = GameManager.createSound("Sounds/constructions.wav",
-                    0.4f, true, null);
+                    GameManager.getGameSoundVolume(), true, null);
+            setBackgroundSound(backgroundSound);
         }
         backgroundSound.play();
     }

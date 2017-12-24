@@ -26,6 +26,7 @@ public enum Translator {
     NOT_SAVED_CHANGES,
     CONFIRMATION,
     CONTROL_CONFIGURATION,
+    SOUND_VOLUME,
     LEFT,
     RIGHT,
     UP,

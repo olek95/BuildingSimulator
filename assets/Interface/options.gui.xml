@@ -36,7 +36,13 @@
             <component type="SelectBox" id="refresh_rate_select_box" position="40%,64%" dimensions="115,24">
                 <eventMethod name="onChange" stateMethodName="checkIfChanged"/>
             </component>
-            <component type="Button" id="control_configuration_button" position="16%,75%" dimensions="25%,6%">
+            <component type="Label" id="sound_volume_label" position="16%,67%" dimensions="25%,12%">
+            </component>
+            <component type="Slider" id="sound_volume_slider" position="40%,71%" dimentions="115,24" orientation="HORIZONTAL">
+                <method name="setStepFloatRange" param0="0" param1="1.1" param2="0.1"/>
+                <eventMethod name="onChange" stateMethodName="changeVolume"/>
+            </component>
+            <component type="Button" id="control_configuration_button" position="16%,80%" dimensions="25%,6%">
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="showControlConfiguration"/>
             </component>
             <component type="Button" id="accepting_button" position="40%,90%">

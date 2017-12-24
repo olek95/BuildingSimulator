@@ -55,11 +55,11 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                 .getChild("protractileProp1"), new Vector3f(1f, propsLowering + PROP_LOWERING_SPEED,
                 1f), false, true, false);
         craneStartEngineSound = GameManager.createSound("Sounds/crane_engine_start.wav", 
-                0.4f, false, crane);
+                GameManager.getGameSoundVolume(), false, crane);
         craneDrivingSound = GameManager.createSound("Sounds/crane_engine_driving.wav",
-                0.4f, true, crane);
+                GameManager.getGameSoundVolume(), true, crane);
         craneDrivingBackwardsSound = GameManager.createSound("Sounds/crane_driving_backwards.wav",
-                0.4f, true, crane);
+                GameManager.getGameSoundVolume(), true, crane);
     }
     
     /**

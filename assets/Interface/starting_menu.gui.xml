@@ -23,7 +23,7 @@
             <component type="Button" id="authorization_button" position="3%,4%" dimensions="15%,8%" >
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="authorize" />
             </component>
-            <component type="Label" id="login_label" position="16%,1%" dimensions="25%,12%"/>
+            <component type="Label" id="login_label" position="18%,1%" dimensions="25%,12%"/>
         </component>    
         <component type="Window" id="authorization_popup" position="0,0" dimensions="70%,25%">
             <method name="setWindowTitle" param0="Autoryzacja" />

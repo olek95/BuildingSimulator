@@ -2,6 +2,7 @@ package building;
 
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
+import buildingsimulator.PhysicsManager;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -19,7 +20,7 @@ public class DummyWall extends Node{
         setName("DummyWall");
         attachChild(new Geometry("DummyWall", new Box(dimensions.x, 
                 dimensions.y, dimensions.z)));
-        GameManager.createObjectPhysics(this, mass, false, "DummyWall");
+        PhysicsManager.createObjectPhysics(this, mass, false, "DummyWall");
         getControl(RigidBodyControl.class).setPhysicsLocation(location);
     }
     

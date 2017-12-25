@@ -13,6 +13,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import static buildingsimulator.GameManager.*;
+import buildingsimulator.PhysicsManager;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
 
@@ -33,7 +34,7 @@ public class MobileCraneArmControl extends ArmControl{
     private boolean obstacleLeft = false, obstacleRight = false, using = false;
     public MobileCraneArmControl(Node crane){
         super(crane, 9.5f, 1f, 0.6f, 0f);
-        hookHandleDisplacement = calculateDisplacementAfterScaling(rectractableCranePart, 
+        hookHandleDisplacement = PhysicsManager.calculateDisplacementAfterScaling(rectractableCranePart, 
                 new Vector3f(1f, 1f, stretchingOut + STRETCHING_OUT_SPEED), false,
                 true, true);
     }
@@ -142,8 +143,8 @@ public class MobileCraneArmControl extends ArmControl{
                 .getBulletAppState().getPhysicsSpace();
         physics.add(getHookHandle().getControl(0));
         Node craneControlNode = getCraneControl();
-        createObjectPhysics(craneControlNode, 1f, true, "outsideCabin", "turntable");
-        createObjectPhysics(rectractableCranePart, 1f, true, rectractableCranePart
+        PhysicsManager.createObjectPhysics(craneControlNode, 1f, true, "outsideCabin", "turntable");
+        PhysicsManager.createObjectPhysics(rectractableCranePart, 1f, true, rectractableCranePart
                 .getChild(0).getName());
         rectractableCranePart.getControl(RigidBodyControl.class).setCollisionGroup(3);
         HingeJoint cabinAndMobilecraneJoin = new HingeJoint(getCrane()
@@ -175,9 +176,9 @@ public class MobileCraneArmControl extends ArmControl{
     private void changeHandleHookPosition(Node scallingGeometryParent, 
             Vector3f scallingVector, boolean pullingOut){
         Geometry rectractableCranePartGeometry = (Geometry)scallingGeometryParent.getChild(0);
-        moveWithScallingObject(pullingOut, hookHandleDisplacement, scallingVector,
+        PhysicsManager.moveWithScallingObject(pullingOut, hookHandleDisplacement, scallingVector,
                 new Node[] { scallingGeometryParent }, getHook().getHookHandle());
-        createObjectPhysics(rectractableCranePart, 1f, true, rectractableCranePartGeometry
+        PhysicsManager.createObjectPhysics(rectractableCranePart, 1f, true, rectractableCranePartGeometry
                 .getName());
         rectractableCranePart.getControl(RigidBodyControl.class).setCollisionGroup(3);
     }

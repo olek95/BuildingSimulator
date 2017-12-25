@@ -20,6 +20,7 @@ import java.util.List;
 import net.wcomohundro.jme3.csg.CSGGeometry;
 import net.wcomohundro.jme3.csg.CSGShape;
 import building.CatchNode.*;
+import buildingsimulator.PhysicsManager;
 import com.jme3.asset.AssetManager;
 import java.util.ArrayList;
 
@@ -293,7 +294,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         float ropeLenght = start.distance(end);
         if(!vertical) distanceToHandle = end.y - getWorldTranslation().y; 
         else distanceToHandleVertical = end.z - getWorldTranslation().z;
-        CompoundCollisionShape wallRopesShape = GameManager.createCompound(this, "Box");
+        CompoundCollisionShape wallRopesShape = PhysicsManager.createCompound(this, "Box");
         RigidBodyControl controlAttaching = new RigidBodyControl(wallRopesShape, 0.00001f);
         addControl(controlAttaching); 
         BuildingSimulator.getBuildingSimulator().getBulletAppState()
@@ -336,7 +337,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     private void createLooseControl(Vector3f location){
-        GameManager.createObjectPhysics(this, 0.00001f, false, "Box");
+        PhysicsManager.createObjectPhysics(this, 0.00001f, false, "Box");
         getControl(RigidBodyControl.class).setPhysicsLocation(location);
     }
     

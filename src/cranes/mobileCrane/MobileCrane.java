@@ -3,11 +3,12 @@ package cranes.mobileCrane;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.Control;
 import cranes.CraneAbstract;
-import static buildingsimulator.GameManager.calculateDisplacementAfterScaling;
-import static buildingsimulator.GameManager.moveWithScallingObject;
+import static buildingsimulator.PhysicsManager.calculateDisplacementAfterScaling;
+import static buildingsimulator.PhysicsManager.moveWithScallingObject;
 import buildingsimulator.Control.Actions;
 import buildingsimulator.Controllable;
 import buildingsimulator.GameManager;
+import buildingsimulator.PhysicsManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.scene.Spatial;
 import com.jme3.bullet.PhysicsSpace;
@@ -51,7 +52,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                 .getBulletAppState().getPhysicsSpace();
         physics.add(craneControl);
         setArmControl(new MobileCraneArmControl(crane));
-        propDisplacement =  calculateDisplacementAfterScaling((Node)crane
+        propDisplacement =  PhysicsManager.calculateDisplacementAfterScaling((Node)crane
                 .getChild("protractileProp1"), new Vector3f(1f, propsLowering + PROP_LOWERING_SPEED,
                 1f), false, true, false);
         craneStartEngineSound = GameManager.createSound("Sounds/crane_engine_start.wav", 
@@ -193,9 +194,9 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     }
     
     private void createMobileCranePhysics(){
-        GameManager.addNewCollisionShapeToCompound((CompoundCollisionShape)craneControl
+        PhysicsManager.addNewCollisionShapeToCompound((CompoundCollisionShape)craneControl
                 .getCollisionShape(),crane, "outsideMobileCraneCabin", Vector3f.ZERO, null);
-        GameManager.addNewCollisionShapeToCompound((CompoundCollisionShape)craneControl
+        PhysicsManager.addNewCollisionShapeToCompound((CompoundCollisionShape)craneControl
                 .getCollisionShape(),crane, "bollardsShape", Vector3f.ZERO, null);
     }
     
@@ -210,7 +211,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
             Node prop = (Node)mobileCraneChildren.get(i);
             if(Arrays.binarySearch(props, prop.getName()) >= 0){
                     changed++;
-                    moveWithScallingObject(!lowering, propDisplacement, scallingVector,
+                    PhysicsManager.moveWithScallingObject(!lowering, propDisplacement, scallingVector,
                             new Node[] { (Node)prop.getChild(0) }, prop.getChild(1));
             }
             i++;

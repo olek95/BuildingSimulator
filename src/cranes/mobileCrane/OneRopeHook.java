@@ -2,6 +2,7 @@ package cranes.mobileCrane;
 
 import cranes.Hook;
 import static buildingsimulator.GameManager.*;
+import buildingsimulator.PhysicsManager;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.collision.CollisionResults;
@@ -21,7 +22,7 @@ public class OneRopeHook extends Hook{
         super(ropeHook, hookHandle, speed);
         rope = (Node)ropeHook.getChild("rope");
         hookHandle.getControl(RigidBodyControl.class).addCollideWithGroup(1);
-       setHookDisplacement(calculateDisplacementAfterScaling(rope, 
+       setHookDisplacement(PhysicsManager.calculateDisplacementAfterScaling(rope, 
                 new Vector3f(1f, getActualLowering() + speed, 1f), false, true, false));
         getHookDisplacement().y *= 2; // wyrównuje poruszanie się haka wraz z liną 
         createRopeHookPhysics();
@@ -45,7 +46,7 @@ public class OneRopeHook extends Hook{
     
     @Override
     protected void createRopeHookPhysics(){
-        super.addHookPhysics(createCompound(rope, rope.getChild(0).getName()),
+        super.addHookPhysics(PhysicsManager.createCompound(rope, rope.getChild(0).getName()),
                 new Vector3f(0, 0.06f,0));
     }
     

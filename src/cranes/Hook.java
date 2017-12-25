@@ -8,6 +8,7 @@ import building.Construction;
 import building.WallMode;
 import buildingsimulator.GameManager;
 import static buildingsimulator.GameManager.*;
+import buildingsimulator.PhysicsManager;
 import buildingsimulator.RememberingRecentlyHitObject;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
@@ -223,14 +224,14 @@ public abstract class Hook implements RememberingRecentlyHitObject{
      */
     protected  void addHookPhysics(CompoundCollisionShape ropeHookCompound,
             Vector3f distanceHookHandleAndRopeHook){
-        addNewCollisionShapeToCompound(ropeHookCompound, (Node)hook, ((Node)hook).getChild(0).getName(),
+        PhysicsManager.addNewCollisionShapeToCompound(ropeHookCompound, (Node)hook, ((Node)hook).getChild(0).getName(),
                 hook.getLocalTranslation(), hook.getLocalRotation());
-        createPhysics(ropeHookCompound, ropeHook, 4f, false);
+        PhysicsManager.createPhysics(ropeHookCompound, ropeHook, 4f, false);
         RigidBodyControl ropeHookControl = ropeHook.getControl(RigidBodyControl.class);
         ropeHookControl.setCollisionGroup(2); 
         ropeHookControl.addCollideWithGroup(1); // tylko mobilny???
         ropeHookControl.setCollideWithGroups(3); // tylko mobilny???
-        lineAndHookHandleJoint = joinsElementToOtherElement(lineAndHookHandleJoint,
+        lineAndHookHandleJoint = PhysicsManager.joinsElementToOtherElement(lineAndHookHandleJoint,
                 hookHandle, ropeHook, Vector3f.ZERO, distanceHookHandleAndRopeHook);
     }
     
@@ -241,10 +242,10 @@ public abstract class Hook implements RememberingRecentlyHitObject{
      */
     protected void changeHookPosition(Vector3f scallingVector, boolean heightening){
         if(attachedObject != null){
-            moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
+            PhysicsManager.moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
                     getRopes(), hook, attachedObject);
         }else{
-            moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
+            PhysicsManager.moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
                     getRopes(), hook);
         }
         createRopeHookPhysics();

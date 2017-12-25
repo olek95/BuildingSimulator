@@ -2,6 +2,7 @@ package cranes.crane;
 
 import cranes.Hook;
 import static buildingsimulator.GameManager.*;
+import buildingsimulator.PhysicsManager;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.collision.CollisionResults;
@@ -32,7 +33,7 @@ public class FourRopesHook extends Hook{
             }
         }
         littleHookHandle = (Node)ropeHook.getChild("littleHookHandle");
-        setHookDisplacement(calculateDisplacementAfterScaling(ropes[0], 
+        setHookDisplacement(PhysicsManager.calculateDisplacementAfterScaling(ropes[0], 
                 new Vector3f(1f, getActualLowering() + speed, 1f), false, true, false));
         getHookDisplacement().y *= 2;
         createRopeHookPhysics();
@@ -77,13 +78,13 @@ public class FourRopesHook extends Hook{
     
     @Override
     protected void createRopeHookPhysics(){
-        CompoundCollisionShape ropeHookCompound = createCompound(getRopeHook(), ropes[0].getChild(0)
+        CompoundCollisionShape ropeHookCompound = PhysicsManager.createCompound(getRopeHook(), ropes[0].getChild(0)
                 .getName());
         ropeHookCompound.getChildren().get(0).location = ropes[0].getLocalTranslation();
         for(int i = 1; i < ropes.length; i++)
-            addNewCollisionShapeToCompound(ropeHookCompound, ropes[i], ropes[i]
+            PhysicsManager.addNewCollisionShapeToCompound(ropeHookCompound, ropes[i], ropes[i]
                     .getChild(0).getName(), ropes[i].getLocalTranslation(), null);
-        addNewCollisionShapeToCompound(ropeHookCompound, littleHookHandle, littleHookHandle
+        PhysicsManager.addNewCollisionShapeToCompound(ropeHookCompound, littleHookHandle, littleHookHandle
                 .getChild(0).getName(), littleHookHandle.getLocalTranslation(), null);
         super.addHookPhysics(ropeHookCompound, new Vector3f(0, 0.6f,0));
     }

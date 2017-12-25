@@ -1,7 +1,7 @@
 package menu;
 
 import buildingsimulator.BuildingSimulator;
-import buildingsimulator.CreatorMockSettings;
+import settings.CreatorMockSettings;
 import buildingsimulator.GameManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.input.event.MouseButtonEvent;

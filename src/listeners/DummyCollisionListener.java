@@ -1,6 +1,7 @@
-package buildingsimulator;
+package listeners;
 
 import building.DummyWall;
+import buildingsimulator.BuildingSimulator;
 import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.control.RigidBodyControl;

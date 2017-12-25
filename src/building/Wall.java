@@ -1,6 +1,6 @@
 package building;
 
-import buildingsimulator.BottomCollisionListener;
+import listeners.BottomCollisionListener;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import buildingsimulator.RememberingRecentlyHitObject;

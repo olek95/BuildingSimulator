@@ -2,7 +2,7 @@ package cranes;
 
 import building.CatchNode;
 import building.Wall;
-import buildingsimulator.BottomCollisionListener;
+import listeners.BottomCollisionListener;
 import buildingsimulator.BuildingSimulator;
 import building.Construction;
 import building.WallMode;

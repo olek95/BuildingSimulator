@@ -1,5 +1,10 @@
-package buildingsimulator;
+package eyeview;
 
+import buildingsimulator.BuildingSimulator;
+import settings.Control;
+import buildingsimulator.GameManager;
+import buildingsimulator.Map;
+import listeners.DummyCollisionListener;
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.FlyByCamera;

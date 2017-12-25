@@ -1,5 +1,7 @@
-package buildingsimulator;
+package settings;
 
+import buildingsimulator.BuildingSimulator;
+import buildingsimulator.Controllable;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;

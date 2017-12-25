@@ -1,7 +1,7 @@
 package cranes.mobileCrane;
 
 import buildingsimulator.BuildingSimulator;
-import buildingsimulator.Control;
+import settings.Control;
 import buildingsimulator.GameManager;
 import cranes.ArmControl;
 import com.jme3.bullet.PhysicsSpace;

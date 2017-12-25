@@ -1,4 +1,4 @@
-package buildingsimulator;
+package settings;
 
 import java.io.FileWriter;
 import java.io.IOException;

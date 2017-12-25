@@ -1,8 +1,8 @@
 package menu;
 
 import buildingsimulator.BuildingSimulator;
-import buildingsimulator.Control;
-import buildingsimulator.Control.Actions;
+import settings.Control;
+import settings.Control.Actions;
 import com.jme3.input.RawInputListener;
 import com.jme3.input.event.JoyAxisEvent;
 import com.jme3.input.event.JoyButtonEvent;

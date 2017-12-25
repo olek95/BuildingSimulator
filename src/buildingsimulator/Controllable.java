@@ -1,5 +1,6 @@
 package buildingsimulator;
 
+import settings.Control;
 import com.jme3.input.controls.InputListener;
 
 /**

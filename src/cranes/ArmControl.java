@@ -1,12 +1,12 @@
 package cranes;
 
 import building.Wall;
-import buildingsimulator.BottomCollisionListener;
-import buildingsimulator.Control;
+import listeners.BottomCollisionListener;
+import settings.Control;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import buildingsimulator.Control.Actions;
+import settings.Control.Actions;
 import buildingsimulator.Controllable;
 import buildingsimulator.GameManager;
 import com.jme3.bullet.control.RigidBodyControl;

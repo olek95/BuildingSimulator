@@ -1,11 +1,11 @@
 package cranes.mobileCrane;
 
 import buildingsimulator.BuildingSimulator;
-import buildingsimulator.Control;
+import settings.Control;
 import cranes.CraneAbstract;
 import static buildingsimulator.PhysicsManager.calculateDisplacementAfterScaling;
 import static buildingsimulator.PhysicsManager.moveWithScallingObject;
-import buildingsimulator.Control.Actions;
+import settings.Control.Actions;
 import buildingsimulator.Controllable;
 import buildingsimulator.GameManager;
 import buildingsimulator.PhysicsManager;

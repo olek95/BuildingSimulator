@@ -1,5 +1,9 @@
 package buildingsimulator;
 
+import settings.Control;
+import eyeview.VisibleFromAbove;
+import eyeview.BirdsEyeView;
+import listeners.DummyCollisionListener;
 import building.BuildingValidator;
 import building.Construction;
 import building.Wall;

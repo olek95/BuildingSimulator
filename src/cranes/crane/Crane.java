@@ -1,10 +1,10 @@
 package cranes.crane;
 
-import buildingsimulator.BirdsEyeView;
+import eyeview.BirdsEyeView;
 import buildingsimulator.BuildingSimulator;
-import buildingsimulator.DummyCollisionListener;
+import listeners.DummyCollisionListener;
 import buildingsimulator.GameManager;
-import buildingsimulator.VisibleFromAbove;
+import eyeview.VisibleFromAbove;
 import com.jme3.audio.AudioNode;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.PhysicsSpace;

@@ -1,5 +1,6 @@
-package buildingsimulator;
+package eyeview;
 
+import listeners.DummyCollisionListener;
 import com.jme3.math.Vector3f;
 
 /**

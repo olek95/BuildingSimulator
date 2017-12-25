@@ -1,7 +1,7 @@
 package menu;
 
 import building.BuildingValidator;
-import buildingsimulator.BirdsEyeView;
+import eyeview.BirdsEyeView;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import com.jme3.input.KeyInput;

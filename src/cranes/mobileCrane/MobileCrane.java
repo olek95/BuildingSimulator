@@ -188,7 +188,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                 if(tireTexture == null){
                     tireTexture = (Texture)tireMaterial.getTextureParam("DiffuseMap").getValue();
                     tireTexture.setWrap(Texture.WrapMode.Repeat);
-                    tire.getMesh().scaleTextureCoordinates(new Vector2f(1,6f));
+                    tire.getMesh().scaleTextureCoordinates(new Vector2f(1,1f));
                 }else tireMaterial.setTexture("DiffuseMap", tireTexture);
             }
     }

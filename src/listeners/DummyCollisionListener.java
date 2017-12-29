@@ -39,6 +39,9 @@ public class DummyCollisionListener implements PhysicsCollisionGroupListener {
         } else {
             if(first.equals(a) || first.equals(b)) {
                 end = true; 
+                if(!collision) {
+                    collisionOwner.startDropSound();
+                }
             }
         }
         if(!collision) {

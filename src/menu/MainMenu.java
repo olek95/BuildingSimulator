@@ -21,10 +21,10 @@ public abstract class MainMenu extends Menu {
         Window window = (Window)screen.getElementById("main_menu");
         window.getDragBar().removeFromParent();
         setWindow(window); 
-        Translator.setTexts(new String[]{"load_game_button", "statistics_button",
+        Translator.setTexts(new String[]{"statistics_button", 
             "options_button", "exit_button"},
-            new Translator[]{Translator.LOAD_GAME, Translator.STATISTICS,
-            Translator.SETTINGS, Translator.QUIT_GAME}, screen);
+            new Translator[]{Translator.STATISTICS, 
+                Translator.SETTINGS, Translator.QUIT_GAME}, screen);
         screen.setUseCustomCursors(true);
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
         startBackgroundSound();

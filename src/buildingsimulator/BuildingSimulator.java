@@ -133,7 +133,6 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     Shop shop = Shop.getDisplayedShop();
                     if(shop != null) shop.cancel(null, true);
                     else {
-                        Shop.detachDropSound();
                         CleaningDialogWindow cleaningWindow = CleaningDialogWindow
                                 .getDisplayedCleaningDialogWindow();
                         if(cleaningWindow != null) cleaningWindow.cancel(null, true);

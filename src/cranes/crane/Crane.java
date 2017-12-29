@@ -28,11 +28,8 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
     private int heightLevel = 0;
     private DummyCollisionListener listener;
     private BirdsEyeView view; 
-    private AudioNode dropSound;
     public Crane(){
         initCrane();
-        dropSound = GameManager.createSound("Sounds/drop.wav", GameManager.getGameSoundVolume(),
-                false, crane);
     }
     
 //    public Crane(int heightLevel){
@@ -125,7 +122,6 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
             if(elementName != null && elementName.matches("(rack|prop|entrancePlatform).*")) 
                 setProperControlLocation(element, craneLocation);
         }
-        dropSound.play();
         removeView(); 
         BuildingSimulator.getBuildingSimulator().getBulletAppState()
                 .getPhysicsSpace().removeCollisionGroupListener(6);

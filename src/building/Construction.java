@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import menu.HUD;
+import texts.Translator;
 
 /**
  * Obiekt klasy <code>Construction</code> reprezentuje budowaną konstrukcję. 
@@ -97,7 +98,7 @@ public class Construction extends Node{
         Spatial minWall = null; 
         Vector3f wallLocation = wall.getWorldTranslation();
         for(int i = 0; i < objectsNumber; i++){
-            Spatial object = gameObjects.get(i); 
+            Spatial object = gameObjects.get(i);
             if(object.getName().startsWith("Building")){
                 Node building = (Node)object; 
                 if(minWall == null){
@@ -293,7 +294,7 @@ public class Construction extends Node{
             wall2.detachChild(newCatchNode);
             return true;
         }
-        HUD.setMessage("Za malo miejsca");
+        HUD.setMessage(Translator.NO_ENOUGH_PLACE.getValue());
         return false;
     }
     
@@ -485,7 +486,6 @@ public class Construction extends Node{
             for(int i = 0; i < edgeChildrenCount; i++) {
                 sum += ((Wall)edgeChildren.get(i)).getLength() * 2;
             }
-            System.out.println(sum);
             return sum; 
         }
         return -1;

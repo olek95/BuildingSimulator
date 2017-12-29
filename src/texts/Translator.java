@@ -50,7 +50,6 @@ public enum Translator {
     ACTIVITY,
     KEY,
     NEW_GAME, 
-    LOAD_GAME,
     STATISTICS,
     SETTINGS,
     QUIT_GAME,
@@ -103,7 +102,8 @@ public enum Translator {
     CLEANING_MAP_MESSAGE,
     ENTIRE_MAP,
     INFINITE_BUILDINGS,
-    INACCESSIBLE_SPACE;
+    INACCESSIBLE_SPACE,
+    NO_ENOUGH_PLACE;
     
     private String value; 
     

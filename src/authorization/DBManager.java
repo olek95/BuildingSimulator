@@ -60,7 +60,7 @@ public class DBManager extends AbstractAppState{
                    .prepareStatement("INSERT INTO Users(login, password, points) VALUES(?, ?, 0)");
            statement.setString(1, login);
            statement.setString(2, password);
-           statement.execute();
+           statement.executeUpdate();
         }
     }
     
@@ -95,7 +95,7 @@ public class DBManager extends AbstractAppState{
                     .prepareStatement("UPDATE Users SET points = ? WHERE login=?");
             statement.setInt(1, user.getPoints());
             statement.setString(2, login);
-            statement.execute(); 
+            statement.executeUpdate(); 
         }
     }
     

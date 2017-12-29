@@ -1,11 +1,9 @@
 package building;
 
-import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import buildingsimulator.PhysicsManager;
+import com.jme3.audio.AudioNode;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -16,12 +14,15 @@ import com.jme3.scene.shape.Box;
  * @author AleksanderSklorz
  */
 public class DummyWall extends Node{
+    private AudioNode dropSound; 
     private DummyWall(Vector3f location, Vector3f dimensions, float mass) {
         setName("DummyWall");
         attachChild(new Geometry("DummyWall", new Box(dimensions.x, 
                 dimensions.y, dimensions.z)));
         PhysicsManager.createObjectPhysics(this, mass, false, "DummyWall");
         getControl(RigidBodyControl.class).setPhysicsLocation(location);
+        dropSound = GameManager.createSound("Sounds/drop.wav", GameManager.getGameSoundVolume(),
+                false, this);
     }
     
     /**
@@ -33,5 +34,12 @@ public class DummyWall extends Node{
      */
     public static DummyWall createDummyWall(Vector3f location, Vector3f dimensions, float mass) {
         return new DummyWall(location, dimensions, mass);
+    }
+    
+    /**
+     * Uruchamia dźwięk uderzenia spadającego obiektu. 
+     */
+    public void startDropSound() {
+        dropSound.play();
     }
 }

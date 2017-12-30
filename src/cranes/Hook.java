@@ -1,25 +1,20 @@
 package cranes;
 
-import building.CatchNode;
 import building.Wall;
 import listeners.BottomCollisionListener;
 import buildingsimulator.BuildingSimulator;
 import building.Construction;
 import building.WallMode;
 import buildingsimulator.GameManager;
-import static buildingsimulator.GameManager.*;
 import buildingsimulator.PhysicsManager;
 import buildingsimulator.RememberingRecentlyHitObject;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.joints.HingeJoint;
-import com.jme3.collision.CollisionResults;
-import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import java.util.List;
 
 /**
  * Klasa <code>Hook</code> jest klasą abstrakcji dla wszystkich haków w grze. 
@@ -179,40 +174,6 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     public Vector3f getWorldTranslation(){ return hook.getWorldTranslation(); }
     
     /**
-     * Opuszcza hak, jeśli nic nie znajduje się pod nim. W przeciwnym razie 
-     * hak nie zmienia pozycji. 
-     * @param results wyniki kolizji, dzięki którym sprawdza się w ilu punktach 
-     * jest kolizja z danym obiektem 
-     */
-    protected void lower(CollisionResults results){
-//        boolean hitOtherWall = false;
-        if(recentlyHitObject == null){
-            if(attachedObject != null){
-                Wall wall = (Wall)attachedObject; 
-                Spatial hitObjectByAttachedObject = wall.getRecentlyHitObject(); 
-                if(hitObjectByAttachedObject != null){
-                    new Ray(attachedObject.getWorldTranslation(), new Vector3f(0, 
-                            -((BoundingBox)attachedObject.getWorldBound()).getYExtent()
-                            - 0.1f, 0)).collideWith((BoundingBox)hitObjectByAttachedObject
-                            .getWorldBound(), results); // -0.1 aby zmniejszyć przerwę
-//                    List<Spatial> hitObjects = wall.getHitObjects();
-//                    int hitObjectsNumber = hitObjects.size(); 
-//                    for(int i = 0; i < hitObjectsNumber && !hitOtherWall; i++)
-//                        if(hitObjects.get(i).getName().startsWith("Wall"))
-//                            hitOtherWall = true; 
-                }
-            }
-        }
-        // obniża hak, jeśli w żadnym punkcie z dołu nie dotyka jakiegoś obiektu
-//        if(results.size() == 0 && !hitOtherWall){
-        if(results.size() == 0) {
-            changeHookPosition(new Vector3f(1f, actualLowering += speed, 1f),
-                    false);
-            recentlyHitObject = null;
-        }
-    }
-    
-    /**
      * Dołącza do podanego złożonego kształtu kolizji kształty kolizji innych 
      * elementów haka, wspólnych dla wszystkich haków. Ponadto dołącza fizykę 
      * dla tego obiektu do gry, ustawia odpowiednie grupy kolizji, a także 
@@ -252,10 +213,24 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     }
     
     /**
-     * Metoda abstrakcyjna którą musi nadpisać każda klasa haka, aby określić 
-     * dodatkowe zasady sprawdzania kolizji podczas opuszczania haka. 
+     * Opuszcza hak do momentu wykrycia przeszkody. 
      */
-    protected abstract void lower();
+    public void lower(){
+        boolean hookNoCollision = collisionListener.isNothingBelow(null);
+        boolean attachedObjectNoCollision = true;
+        if(recentlyHitObject == null){
+            if(attachedObject != null){
+                attachedObjectNoCollision = ((Wall)attachedObject).getCollisionListener()
+                        .isNothingBelow(new Vector3f(0, -((BoundingBox)attachedObject
+                        .getWorldBound()).getYExtent() - 0.1f, 0));
+            }
+        }
+        if(hookNoCollision && attachedObjectNoCollision) {
+            changeHookPosition(new Vector3f(1f, actualLowering += speed, 1f),
+                    false);
+            recentlyHitObject = null;
+        }
+    }
     
     /**
      * Tworzy fizykę dla całego haka wraz z linami go trzymającymi. 

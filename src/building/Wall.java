@@ -252,6 +252,14 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     public void setRecentlyHitObject(Spatial object){ recentlyHitObject = object; }
     
     /**
+     * Zwraca słuchacza sprawdzającego kolizję od dołu. 
+     * @return słuchacz sprawdzający kolizję od dołu 
+     */
+    public BottomCollisionListener getCollisionListener() {
+        return Wall.collisionListener; 
+    }
+    
+    /**
      * Zwraca współrzędną wybranego rogu tego obiektu. Możliwe punkty do pobrania, 
      * to tylko te tworzące górną podstawę. Numeracja: 0 - lewy dolny róg (lub 
      * lewy brzeg pionowo), 1 - lewy górny róg (lub prawy brzeg pionowo),

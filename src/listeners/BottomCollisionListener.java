@@ -17,12 +17,12 @@ import com.jme3.scene.Spatial;
  */
 public class BottomCollisionListener implements PhysicsCollisionGroupListener{
     private RememberingRecentlyHitObject hittingObject; 
-    private String hittingObjectName, hitObjectName; 
+    private String hittingObjectName, handleName; 
     public BottomCollisionListener(RememberingRecentlyHitObject hittingObject,
-            String hittingObjectName, String hitObjectName){
+            String hittingObjectName, String handleName){
         this.hittingObject = hittingObject;
         this.hittingObjectName = hittingObjectName; 
-        this.hitObjectName = hitObjectName; 
+        this.handleName = handleName; 
     }
     /**
      * Metoda sprawdzająca kolizję między dwoma obiektami. Kolizja następuje, jeśli 
@@ -42,10 +42,10 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
         String aName = aSpatial.getName(), bName = bSpatial.getName();
         //if((aName.startsWith("Wall") || aName.startsWith("New Scene"))
           //      && (bName.startsWith("Wall") || bName.startsWith("New Scene")))
-        if(aName.equals(hittingObjectName) && !bName.equals(hitObjectName)){
+        if(aName.equals(hittingObjectName) && !bName.equals(handleName)){
            // if(!isProperCollisionGroup(bSpatial)) return false;
             hittingObject.setCollision(bSpatial);
-        }else if(bName.equals(hittingObjectName) && !aName.equals(hitObjectName)){
+        }else if(bName.equals(hittingObjectName) && !aName.equals(handleName)){
             //if(!isProperCollisionGroup(aSpatial)) return false;
             hittingObject.setCollision(aSpatial);
         }
@@ -69,25 +69,27 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
     
     /**
      * Sprawdza czy ostatnio uderzony obiekt znajduje się dokładnie poniżej 
-     * obiektu podanego jako argument czy np. obiekt podany jako argument uderzył 
-     * w tamten obiekt od boku. 
-     * @param object obiekt uderzający 
+     * danego obiekt czy np. dany obiekt uderzył w tamten obiekt od boku. 
+     * @param rayDirection kierunek niewidzialnego promiania, sprawdzającego kolizję
      * @return false jeśli uderzony obiekt został uderzony dolną częścią obiektu 
      * podanego jako argument, true w przeciwnym przypadku 
      */
-    public static boolean isNothingBelow(RememberingRecentlyHitObject object){
+    public boolean isNothingBelow(Vector3f rayDirection){
+        if(rayDirection == null) rayDirection = new Vector3f(0, -0.5f, 0);
         CollisionResults results = new CollisionResults();
-        Spatial recentlyHitObject = object.getRecentlyHitObject();
+        Spatial recentlyHitObject = hittingObject.getRecentlyHitObject();
         /* jeśli nie dotknęło żadnego obiektu, to zbędne jest sprawdzanie 
         kolizji w dół*/
-       // if(recentlyHitObject != null)
-            // tworzy pomocniczy promień sprawdzający kolizję w dół
-           // new Ray(recentlyHitObject.getWorldTranslation(), new Vector3f(0,-0.5f,0))
-              //      .collideWith((BoundingBox)recentlyHitObject.getWorldBound(), results);
-        if(recentlyHitObject != null)
-            // tworzy pomocniczy promień sprawdzający kolizję w dół
-            new Ray(object.getWorldTranslation(), new Vector3f(0,-0.5f,0))
-                    .collideWith((BoundingBox)recentlyHitObject.getWorldBound(), results);
+        if(recentlyHitObject != null){
+            Ray ray = new Ray(hittingObject.getWorldTranslation(), rayDirection);
+            if(recentlyHitObject.getName().startsWith("prop")){
+                Node crane = recentlyHitObject.getParent();
+                ((Node)crane.getChild("prop0")).getChild(0).collideWith(ray, results);
+                ((Node)crane.getChild("prop1")).getChild(0).collideWith(ray, results);
+            }else{
+                ray.collideWith((BoundingBox)recentlyHitObject.getWorldBound(), results);
+            }
+        }
         return results.size() == 0; 
     }
     

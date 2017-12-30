@@ -92,10 +92,11 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
                 if(!changingHookLocation) changeArmHeight(maxArmHeight, false);
                 break;
             case DOWN:
-                Spatial attachedObject = hook.getAttachedObject();
-                if((BottomCollisionListener.isNothingBelow(hook) && attachedObject == null)
-                        || (attachedObject != null && BottomCollisionListener
-                            .isNothingBelow((Wall)attachedObject)) && !changingHookLocation){
+                Wall attachedObject = (Wall)hook.getAttachedObject();
+                if((attachedObject == null && hook.getCollisionListener().isNothingBelow(null))
+                        || (attachedObject != null && attachedObject
+                        .getCollisionListener().isNothingBelow(null)) 
+                        && !changingHookLocation){
                     changeArmHeight(minArmHeight, true); 
                     hook.setRecentlyHitObject(null);
                 }

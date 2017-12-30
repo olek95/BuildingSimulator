@@ -1,12 +1,8 @@
 package cranes.crane;
 
 import cranes.Hook;
-import static buildingsimulator.GameManager.*;
 import buildingsimulator.PhysicsManager;
-import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
-import com.jme3.collision.CollisionResults;
-import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -37,31 +33,6 @@ public class FourRopesHook extends Hook{
                 new Vector3f(1f, getActualLowering() + speed, 1f), false, true, false));
         getHookDisplacement().y *= 2;
         createRopeHookPhysics();
-    }
-    
-    /**
-     * Opuszcza hak. Aby zwiększyć dokładność sprawdzania kolizji, kolizja z 
-     * podstawą żurawia jest sprawdzania nie z obiektem BoundingBox podstawy, ale 
-     * z jej geometrią. 
-     */
-    @Override
-    public void lower(){
-        CollisionResults results = new CollisionResults();
-        Spatial recentlyHitObject = getRecentlyHitObject();
-        /* jeśli nie dotknęło żadnego obiektu, to zbędne jest sprawdzanie 
-        kolizji w dół*/
-        if(recentlyHitObject != null){
-            Ray ray = new Ray(getHook().getWorldTranslation(), new Vector3f(0,-0.5f,0));
-            if(recentlyHitObject.getName().startsWith("prop")){
-                // new Ray tworzy pomocniczy promień sprawdzający kolizję w dół
-                Node crane = recentlyHitObject.getParent();
-                ((Node)crane.getChild("prop0")).getChild(0).collideWith(ray, results);
-                ((Node)crane.getChild("prop1")).getChild(0).collideWith(ray, results);
-            }else{
-                ray.collideWith((BoundingBox)recentlyHitObject.getWorldBound(), results);
-            }
-        }
-        super.lower(results);
     }
     
     /**

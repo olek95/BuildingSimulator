@@ -15,6 +15,8 @@ import com.jme3.bullet.joints.HingeJoint;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import menu.HUD;
+import texts.Translator;
 
 /**
  * Klasa <code>Hook</code> jest klasą abstrakcji dla wszystkich haków w grze. 
@@ -96,9 +98,18 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 Spatial wallRecentlyHitObject = attachedObject.getRecentlyHitObject(); 
                 if(wallRecentlyHitObject != null){
                     Wall nearestBuildingWall = null; 
-                    if(oldMode.equals(WallMode.HORIZONTAL) && wallRecentlyHitObject
-                            .getName().equals("terrain-gameMap"))
-                    nearestBuildingWall = Construction.getNearestBuildingWall(attachedObject);
+                    if(oldMode.equals(WallMode.VERTICAL)) {
+                        if(!wallRecentlyHitObject.getName().startsWith("Wall")) { 
+                            HUD.setMessage(Translator.NO_FOUNDATIONS.getValue());
+                            confirmDetaching();
+                            return;
+                        }
+                    } else {
+                        if(wallRecentlyHitObject.getName().equals("terrain-gameMap")) {
+                            nearestBuildingWall = Construction
+                                    .getNearestBuildingWall(attachedObject);
+                        }
+                    }
                     Construction construction = Construction
                             .getWholeConstruction(nearestBuildingWall == null ? 
                             wallRecentlyHitObject : nearestBuildingWall); 

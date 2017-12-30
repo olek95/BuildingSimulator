@@ -104,7 +104,8 @@ public enum Translator {
     INFINITE_BUILDINGS,
     INACCESSIBLE_SPACE,
     NO_ENOUGH_PLACE,
-    REQUIREMENT_DETACHING_WALL;
+    REQUIREMENT_DETACHING_WALL,
+    NO_FOUNDATIONS;
     
     private String value; 
     

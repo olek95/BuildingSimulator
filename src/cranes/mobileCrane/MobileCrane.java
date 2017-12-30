@@ -99,6 +99,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                     craneControl.brake(0f);
                     craneControl.accelerate(craneControl.getCurrentVehicleSpeedKmHour() < 0 ?
                             FRICTION_FORCE : -FRICTION_FORCE);
+                     GameManager.stopSound(craneDrivingBackwardsSound, false);
                 }
                 break;
             case LEFT:

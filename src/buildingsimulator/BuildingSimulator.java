@@ -146,7 +146,15 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                 case MOVE_CRANE:
                     BirdsEyeView view = crane.getView();
                     if(view == null) {
-                        if(!BirdsEyeView.isActive()) crane.startMoving();
+                        if(!BirdsEyeView.isActive()) {
+                            if(crane.getArmControl().getHook()
+                                    .getAttachedObject() == null) {
+                                crane.startMoving();
+                            } else {
+                                HUD.setMessage(Translator.REQUIREMENT_DETACHING_WALL
+                                        .getValue());
+                            }
+                        }
                     }else crane.removeView();
                     break;
                 case PHYSICS:

@@ -103,7 +103,8 @@ public enum Translator {
     ENTIRE_MAP,
     INFINITE_BUILDINGS,
     INACCESSIBLE_SPACE,
-    NO_ENOUGH_PLACE;
+    NO_ENOUGH_PLACE,
+    REQUIREMENT_DETACHING_WALL;
     
     private String value; 
     

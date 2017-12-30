@@ -16,6 +16,8 @@ import static buildingsimulator.GameManager.*;
 import buildingsimulator.PhysicsManager;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
+import menu.HUD;
+import texts.Translator;
 
 /**
  * Obiekt klasy <code>MobileCraneArmControl</code> reprezentuje kabinę operatora ramienia 
@@ -94,9 +96,13 @@ public class MobileCraneArmControl extends ArmControl{
      */
     @Override
     protected void getOff(String actionName){
-        Control.removeListener(GameManager.getUnit(0).getArmControl());
-        using = !using;
-        GameManager.setLastAction(actionName);
+        if(getHook().getAttachedObject() == null) {
+            Control.removeListener(GameManager.getUnit(0).getArmControl());
+            using = !using;
+            GameManager.setLastAction(actionName);
+        } else {
+            HUD.setMessage(Translator.REQUIREMENT_DETACHING_WALL.getValue());
+        }
     }
     
     /**

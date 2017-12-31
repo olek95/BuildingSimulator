@@ -100,7 +100,6 @@ public class MobileCraneArmControl extends ArmControl{
         if(getHook().getAttachedObject() == null) {
             Control.removeListener(this);
             using = !using;
-            GameManager.setLastAction(actionName);
         } else {
             HUD.setMessage(Translator.REQUIREMENT_DETACHING_WALL.getValue());
         }

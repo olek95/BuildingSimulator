@@ -39,11 +39,11 @@ public class Map {
     }
     
     private void createTerrain(int size) {
-        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-        scene = (Node)game.getAssetManager().loadModel("Scenes/gameMap.j3o");
+        scene = GameManager.loadModel("Scenes/gameMap.j3o");
         // -z * 4 to przesunięcie planszy 
         int z = TERRAIN_PART_SIZE, end = size - 1, offset = -z * 4, x = offset; 
-        PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
+        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
+                .getBulletAppState().getPhysicsSpace();
         Spatial firstPart = scene.getChild(ElementName.MAP_FIELD_PART_NAME);
         float positiveBorder = calculateBorderLocation(false),
                 negativeBorder = calculateBorderLocation(true);  

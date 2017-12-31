@@ -227,7 +227,6 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
             Control.removeListener(this);
             MobileCraneArmControl control = (MobileCraneArmControl)getArmControl();
             control.setUsing(!control.isUsing());
-            GameManager.setLastAction(name);
             setSteeringAngle(0f); 
         }
     }
@@ -239,9 +238,8 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
             /* metoda wywołana na łańcuchu "Action", gdyż ostatnia akcja może być nullem.
             Może być bez tego ifa, ale dodany w celu optymalizacji aby nie powtarzać
             dodawania listenerów klawiszy*/
-            if(Control.Actions.ACTION.toString().equals(GameManager.getLastAction())){
+            if(Control.getActualListener().equals(this)){
                 Control.addListener(getArmControl());
-                GameManager.setLastAction(null);
                 HUD.setMessage(Translator.LOWERED_PROPS.getValue());
             }
         }
@@ -251,9 +249,8 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         if(propsLowering > MIN_PROP_PROTRUSION)
             controlProps(false);
         else{
-            if(Control.Actions.ACTION.toString().equals(GameManager.getLastAction())){
+            if(Control.getActualListener().equals(getArmControl())){
                 Control.addListener(this);
-                GameManager.setLastAction(null);
                 HUD.setMessage(Translator.HEIGHTENED_PROPS.getValue());
             }
         }

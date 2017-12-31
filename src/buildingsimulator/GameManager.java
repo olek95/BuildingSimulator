@@ -9,15 +9,11 @@ import com.jme3.audio.AudioNode;
 import com.jme3.audio.AudioSource;
 import cranes.CraneAbstract;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.cinematic.Cinematic;
-import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import cranes.crane.Crane;
 import cranes.mobileCrane.MobileCrane;
-import java.util.ArrayList;
 import menu.HUD;
 import menu.MenuFactory;
 import menu.MenuTypes;
@@ -131,22 +127,6 @@ public class GameManager {
     }
     
     /**
-     * Zwraca ostatnio wykonaną akcję. 
-     * @return ostatnio wykonana akcja
-     */
-    public static String getLastAction(){
-        return lastAction;
-    }
-    
-    /**
-     * Ustawia ostatnio wykonaną akcję. 
-     * @param action ostatnio wykonana akcja
-     */
-    public static void setLastAction(String action){
-        lastAction = action;
-    }
-    
-    /**
      * Zwraca aktualną liczbę klatek na sekundę w postaci liczby. 
      * @return FPS w postaci liczby 
      */
@@ -194,37 +174,6 @@ public class GameManager {
      */
     public static void addToGame(Spatial object){
         BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(object);
-    }
-    
-    /**
-     * Tworzy podłoże po którym gracz się porusza. 
-     */
-    public static void createTerrain(){
-        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-        Node scene = (Node)game.getAssetManager().loadModel("Scenes/gameMap.j3o");
-        int x = 0, z = 254, end = 4;
-        PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
-        Spatial firstPart = scene.getChild(ElementName.MAP_FIELD_PART_NAME);
-        float offset = -z * 2; // przesunięcie planszy o połowę 
-        for(int i = 0; i < 5; i++){
-            for(int k = 0; k < end; k++){
-                Spatial scenePart = firstPart.clone(true);
-                scene.attachChild(scenePart);
-                RigidBodyControl rgc = new RigidBodyControl(0.0f);
-                scenePart.addControl(rgc);
-                physics.add(rgc);
-                rgc.setPhysicsLocation(new Vector3f(x + offset, 0, z + offset));
-                z += 254;
-            }
-            x += 254;
-            z = 0;
-            end = 5;
-        }
-        RigidBodyControl firstPartControl = new RigidBodyControl(0.0f); 
-        firstPart.addControl(firstPartControl);
-        physics.add(firstPartControl); 
-        firstPartControl.setPhysicsLocation(new Vector3f(offset, 0, offset));
-        game.getRootNode().attachChild(scene);
     }
     
     /**

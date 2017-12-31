@@ -44,7 +44,7 @@ public class Map {
         // -z * 4 to przesunięcie planszy 
         int z = TERRAIN_PART_SIZE, end = size - 1, offset = -z * 4, x = offset; 
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
-        Spatial firstPart = scene.getChild("terrain-gameMap");
+        Spatial firstPart = scene.getChild(ElementName.MAP_FIELD_PART_NAME);
         float positiveBorder = calculateBorderLocation(false),
                 negativeBorder = calculateBorderLocation(true);  
         z += offset; 

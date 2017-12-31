@@ -7,6 +7,7 @@ import static buildingsimulator.PhysicsManager.calculateDisplacementAfterScaling
 import static buildingsimulator.PhysicsManager.moveWithScallingObject;
 import settings.Control.Actions;
 import buildingsimulator.Controllable;
+import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
 import buildingsimulator.PhysicsManager;
 import com.jme3.audio.AudioNode;
@@ -183,7 +184,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         List<Spatial> craneElements = crane.getChildren();
         Texture tireTexture = null;
         for(Spatial element : craneElements)
-            if(element.getName().startsWith("wheel")){
+            if(element.getName().startsWith(ElementName.WHEEL)){
                 Geometry tire = ((Geometry)((Node)((Node)element).getChild(0)).getChild(0));
                 Material tireMaterial = tire.getMaterial();
                 if(tireTexture == null){
@@ -196,16 +197,17 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     
     private void createMobileCranePhysics(){
         PhysicsManager.addNewCollisionShapeToCompound((CompoundCollisionShape)craneControl
-                .getCollisionShape(),crane, "outsideMobileCraneCabin", Vector3f.ZERO, null);
+                .getCollisionShape(),crane, ElementName.OUTSIDE_MOBILE_CRANE_CABIN,
+                Vector3f.ZERO, null);
         PhysicsManager.addNewCollisionShapeToCompound((CompoundCollisionShape)craneControl
-                .getCollisionShape(),crane, "bollardsShape", Vector3f.ZERO, null);
+                .getCollisionShape(),crane, ElementName.BOLLARDS, Vector3f.ZERO, null);
     }
     
     private void controlProps(boolean lowering){
         List<Spatial> mobileCraneChildren = crane.getChildren();
         int i = 0, changed = 0;
-        String[] props = {"propParts1", "propParts2", "propParts3",
-            "propParts4"};
+        String[] props = {ElementName.PROP_PARTS1, ElementName.PROP_PARTS2,
+            ElementName.PROP_PARTS3, ElementName.PROP_PARTS4};
         Vector3f scallingVector = new Vector3f(1f, propsLowering += lowering ? 
                 PROP_LOWERING_SPEED : -PROP_LOWERING_SPEED, 1f);
         do{

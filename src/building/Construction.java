@@ -1,7 +1,9 @@
 package building;
 
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
+import buildingsimulator.Map;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.collision.CollisionResults;
@@ -30,7 +32,7 @@ public class Construction extends Node{
     private Wall lastAddedWall; 
     private boolean hit = false, resetWalls = false; 
     public Construction(){
-        setName("Building" + (++counter));
+        setName(ElementName.BUILDING_BASE_NAME + (++counter));
     }
     
     /**
@@ -44,8 +46,8 @@ public class Construction extends Node{
         Spatial recentlyHitObject = wall1.getRecentlyHitObject();
         if(recentlyHitObject != null){ 
             String recentlyHitObjectName = recentlyHitObject.getName(); 
-            boolean collisionWithGround = recentlyHitObjectName.startsWith("terrain-gameMap");
-            if(collisionWithGround || recentlyHitObjectName.startsWith("Wall")){
+            boolean collisionWithGround = recentlyHitObjectName.equals(ElementName.MAP_FIELD_PART_NAME);
+            if(collisionWithGround || recentlyHitObjectName.startsWith(ElementName.WALL_BASE_NAME)){
                 Node touchedWall; 
                 if(wallMode.equals(WallMode.VERTICAL)){ 
                     touchedWall = merge(wall1, collisionWithGround ? null 
@@ -79,7 +81,8 @@ public class Construction extends Node{
     public static Construction getWholeConstruction(Spatial wall){
         Node wallParent = wall.getParent(); 
         while(wallParent != null){  
-            if(wallParent.getName().startsWith("Building")) return (Construction)wallParent; 
+            if(wallParent.getName().startsWith(ElementName.BUILDING_BASE_NAME))
+                return (Construction)wallParent; 
             wallParent = wallParent.getParent();
         }
         return null; 
@@ -99,7 +102,7 @@ public class Construction extends Node{
         Vector3f wallLocation = wall.getWorldTranslation();
         for(int i = 0; i < objectsNumber; i++){
             Spatial object = gameObjects.get(i);
-            if(object.getName().startsWith("Building")){
+            if(object.getName().startsWith(ElementName.BUILDING_BASE_NAME)){
                 Node building = (Node)object; 
                 if(minWall == null){
                     minWall = building.getChild(0);
@@ -405,7 +408,7 @@ public class Construction extends Node{
         int numberHitObjects = hitObjects.size(); 
         for(int i = 0; i < numberHitObjects; i++){
             Spatial hitObject = hitObjects.get(i); 
-            if(hitObject.getName().startsWith("Wall") && !recentlyHitWall
+            if(hitObject.getName().startsWith(ElementName.WALL_BASE_NAME) && !recentlyHitWall
                     .checkPerpendicularity((Wall)hitObject) && (int)(recentlyHitWall
                     .getWorldTranslation().y - hitObject.getWorldTranslation().y) == 0)
                 return (Node)hitObject; 
@@ -429,7 +432,7 @@ public class Construction extends Node{
     
     private void detachFromBuilding(Wall wall) {
         Node wallParent = wall.getParent(); 
-        if(!wallParent.getName().startsWith("Building")) { 
+        if(!wallParent.getName().startsWith(ElementName.BUILDING_BASE_NAME)) { 
             List<Spatial> wallElements = wall.getChildren(); 
             int end = CatchNode.values().length;
             for(int i = 1; i <= end; i++) {

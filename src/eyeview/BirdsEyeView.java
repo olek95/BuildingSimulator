@@ -1,6 +1,7 @@
 package eyeview;
 
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.ElementName;
 import settings.Control;
 import buildingsimulator.GameManager;
 import buildingsimulator.Map;
@@ -46,14 +47,15 @@ public class BirdsEyeView implements ActionListener{
                 Vector2f click2d = BuildingSimulator.getBuildingSimulator().getInputManager()
                         .getCursorPosition().clone();
                 Vector3f click3d = cam.getWorldCoordinates(click2d, 0f).clone();
-                BuildingSimulator.getBuildingSimulator().getRootNode().getChild("New Scene")
-                        .collideWith(new Ray(click3d, cam.getWorldCoordinates(click2d, 1f)
-                        .subtractLocal(click3d).normalizeLocal()), results);
+                BuildingSimulator.getBuildingSimulator().getRootNode()
+                        .getChild(ElementName.SCENE).collideWith(new Ray(click3d,
+                        cam.getWorldCoordinates(click2d, 1f).subtractLocal(click3d)
+                        .normalizeLocal()), results);
                 CollisionResult result;
                 int i = 0; 
                 do {
                     result = results.getCollision(i++);
-                }while(!result.getGeometry().getName().startsWith("terrain"));
+                }while(!result.getGeometry().getName().startsWith(ElementName.TERRAIN));
                 Vector3f location = result.getContactPoint().setY(0.3f);
                 float positiveLocation = Map.calculateBorderLocation(false);
                 if(positiveLocation > Math.abs(location.x) && positiveLocation > 

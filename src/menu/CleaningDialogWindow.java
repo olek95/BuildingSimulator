@@ -2,6 +2,7 @@ package menu;
 
 import building.CatchNode;
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.ElementName;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.font.BitmapFont;
@@ -83,7 +84,7 @@ public class CleaningDialogWindow extends Menu{
         int objectsCount = gameObjects.size();
         for(int i = 0; i < objectsCount; i++) {
             Spatial object = gameObjects.get(i);
-            if(object.getName().startsWith("Building")) {
+            if(object.getName().startsWith(ElementName.BUILDING_BASE_NAME)) {
                 Node firstWall = (Node)((Node)object).getChild(0);
                 if(onlyInfiniteBuildings) {
                     if(firstWall.getControl(RigidBodyControl.class).getMass() != 0) {

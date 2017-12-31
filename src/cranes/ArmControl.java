@@ -8,6 +8,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import settings.Control.Actions;
 import buildingsimulator.Controllable;
+import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.input.controls.ActionListener;
@@ -128,13 +129,13 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
                 case ATTACH: 
                     recentlyHitObject = hook.getRecentlyHitObject();
                     if(recentlyHitObject != null && recentlyHitObject.getName()
-                            .startsWith("Wall"))
+                            .startsWith(ElementName.WALL_BASE_NAME))
                         hook.attach(false);
                     break; 
                 case VERTICAL_ATTACH: 
                     recentlyHitObject = hook.getRecentlyHitObject();
                     if(recentlyHitObject != null && recentlyHitObject.getName()
-                            .startsWith("Wall"))
+                            .startsWith(ElementName.WALL_BASE_NAME))
                         hook.attach(true);
                     break;
                 case DETACH: 
@@ -288,7 +289,7 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
      * ramię dźwigu. 
      */
     protected void initCraneArmElements(){
-        craneControl = (Node)crane.getChild("craneControl");
+        craneControl = (Node)crane.getChild(ElementName.ARM_CONTROL);
     }
     
     /**

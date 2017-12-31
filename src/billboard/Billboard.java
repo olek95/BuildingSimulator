@@ -1,6 +1,7 @@
 package billboard;
 
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
 import com.jme3.animation.LoopMode;
 import com.jme3.asset.AssetManager;
@@ -33,7 +34,7 @@ public class Billboard {
         Material material = new Material(manager, "Common/MatDefs/Misc/Unshaded.j3md");
         Texture advertisement = manager.loadTexture(path);
         material.setTexture("ColorMap", advertisement);
-        billboard.getChild("board1").setMaterial(material);
+        billboard.getChild(ElementName.BOARD).setMaterial(material);
     }
     
     /**

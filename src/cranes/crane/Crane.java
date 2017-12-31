@@ -2,6 +2,7 @@ package cranes.crane;
 
 import eyeview.BirdsEyeView;
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.ElementName;
 import listeners.DummyCollisionListener;
 import buildingsimulator.GameManager;
 import eyeview.VisibleFromAbove;
@@ -48,7 +49,7 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
             initial = true; 
             rootNode.detachChild(crane);
         }
-        Spatial copyingLadder = crane.getChild("ladder2");
+        Spatial copyingLadder = crane.getChild(ElementName.LADDER);
         float y = lastRack.getLocalTranslation().y, distanceBetweenRacks = y 
                 - penultimateRack.getLocalTranslation().y,
                 distanceBetweenLadders = copyingLadder.getLocalTranslation().y - y;
@@ -119,7 +120,9 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
         for(int i = 0; i < elementsCount; i++) {
             Spatial element = craneElements.get(i);
             String elementName = element.getName();
-            if(elementName != null && elementName.matches("(rack|prop|entrancePlatform).*")) 
+            if(elementName != null && elementName.matches("(" + ElementName.RACK
+                    + "|" + ElementName.PROP + "|" + ElementName.ENTRANCE_PLATFORM
+                    + ").*")) 
                 setProperControlLocation(element, craneLocation);
         }
         removeView(); 
@@ -136,7 +139,8 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
      public void setListener(DummyCollisionListener listener) {
          this.listener = listener; 
          if(listener != null) {
-            BoundingBox bounding = (BoundingBox)crane.getChild("prop0").getWorldBound();
+            BoundingBox bounding = (BoundingBox)crane.getChild(ElementName.PROP0)
+                    .getWorldBound();
             listener.createDummyWall(newLocation, bounding.getExtent(null));
          }
      }
@@ -186,13 +190,15 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
         crane = parent;
         crane.setLocalTranslation(craneLocation);
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
-        physics.add(setProperControlLocation(crane.getChild("prop0"), craneLocation));
-        physics.add(setProperControlLocation(crane.getChild("prop1"), craneLocation));
-        physics.add(setProperControlLocation(rack = crane.getChild("rack0"), craneLocation));
-        Spatial rack1 = crane.getChild("rack1"), rack2 = crane.getChild("rack2");
+        physics.add(setProperControlLocation(crane.getChild(ElementName.PROP0), craneLocation));
+        physics.add(setProperControlLocation(crane.getChild(ElementName.PROP1), craneLocation));
+        physics.add(setProperControlLocation(rack = crane.getChild(ElementName.RACK0),
+                craneLocation));
+        Spatial rack1 = crane.getChild(ElementName.RACK1), 
+                rack2 = crane.getChild(ElementName.RACK2);
         physics.add(setProperControlLocation(rack1, craneLocation));
         physics.add(setProperControlLocation(rack2, craneLocation));
-        entrancePlatform = crane.getChild("entrancePlatform");
+        entrancePlatform = crane.getChild(ElementName.ENTRANCE_PLATFORM);
         physics.add(setProperControlLocation(entrancePlatform, craneLocation));
         setArmControl(new CraneArmControl(crane));
         penultimateRack = rack1;

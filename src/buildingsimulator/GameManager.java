@@ -210,7 +210,7 @@ public class GameManager {
         Node scene = (Node)game.getAssetManager().loadModel("Scenes/gameMap.j3o");
         int x = 0, z = 254, end = 4;
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
-        Spatial firstPart = scene.getChild("terrain-gameMap");
+        Spatial firstPart = scene.getChild(ElementName.MAP_FIELD_PART_NAME);
         float offset = -z * 2; // przesunięcie planszy o połowę 
         for(int i = 0; i < 5; i++){
             for(int k = 0; k < end; k++){

@@ -2,6 +2,7 @@ package listeners;
 
 import building.DummyWall;
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.ElementName;
 import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -45,10 +46,12 @@ public class DummyCollisionListener implements PhysicsCollisionGroupListener {
             }
         }
         if(!collision) {
-            if(nameA.equals("DummyWall")) {
-                if(!b.getName().startsWith("terrain")) collision = true;
+            if(nameA.equals(ElementName.DUMMY_WALL)) {
+                if(!b.getName().startsWith(ElementName.TERRAIN))
+                    collision = true;
             } else {
-                if(!nameA.startsWith("terrain")) collision = true;
+                if(!nameA.startsWith(ElementName.TERRAIN))
+                    collision = true;
             }
         }
         return false;

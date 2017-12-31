@@ -82,7 +82,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             int gameObjectsNumber = gameObjects.size();
 //            for(int i = 0; i < gameObjectsNumber; i++){
 //                Spatial gameObject = gameObjects.get(i); 
-//                if(gameObject.getName().startsWith("Building")){
+//                if(gameObject.getName().startsWith(ElementName.BUILDING_BASE_NAME)){
 //                    Construction building = (Construction)gameObject; 
 //                    if(building.isHit()){
 //                        building.setResetWalls(false);

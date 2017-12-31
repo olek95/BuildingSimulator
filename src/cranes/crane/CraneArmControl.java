@@ -2,6 +2,7 @@ package cranes.crane;
 
 import building.Wall;
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.ElementName;
 import cranes.ArmControl;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -63,19 +64,20 @@ public class CraneArmControl extends ArmControl{
                 .getBulletAppState().getPhysicsSpace();
         Node craneControlNode = getCraneControl(), craneNode = getCrane();
         Vector3f craneLocation = craneNode.getLocalTranslation();
-        physics.add(setProperControlLocation(craneControlNode.getChild("turntable"),
+        physics.add(setProperControlLocation(craneControlNode
+                .getChild(ElementName.TURNTABLE),  craneLocation));
+        physics.add(setProperControlLocation(craneControlNode
+                .getChild(ElementName.MOBILE_CRANE_MAIN_ELEMENT), craneLocation));
+        physics.add(setProperControlLocation(craneControlNode.getChild(ElementName.CRANE_ARM),
                 craneLocation));
-        physics.add(setProperControlLocation(craneControlNode.getChild("mainElement"),
+        physics.add(setProperControlLocation(craneControlNode.getChild(ElementName.CABIN),
                 craneLocation));
-        physics.add(setProperControlLocation(craneControlNode.getChild("craneArm"),
-                craneLocation));
-        physics.add(setProperControlLocation(craneControlNode.getChild("cabin"), craneLocation));
-        hookHandleControl = (Node)craneControlNode.getChild("hookHandleControl");
-        Spatial hookHandle = hookHandleControl.getChild("hookHandle");
+        hookHandleControl = (Node)craneControlNode.getChild(ElementName.HOOK_HANDLE_CONTROL);
+        Spatial hookHandle = hookHandleControl.getChild(ElementName.HOOK_HANDLE);
         setHookHandle(hookHandle);
         physics.add(setProperControlLocation(hookHandle, craneLocation));
-        setHook(new FourRopesHook((Node)craneNode.getChild("ropeHook"), hookHandle,
-                0.1f));
+        setHook(new FourRopesHook((Node)craneNode.getChild(ElementName.ROPE_HOOK),
+                hookHandle, 0.1f));
     }
     
     private RigidBodyControl setProperControlLocation(Spatial object, Vector3f displacement){

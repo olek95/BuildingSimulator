@@ -2,6 +2,7 @@ package listeners;
 
 import building.Construction;
 import building.Wall;
+import buildingsimulator.ElementName;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.scene.Spatial;
@@ -40,9 +41,9 @@ public class BuildingCollisionListener implements PhysicsCollisionListener{
     private boolean checkIfHitWall(Spatial a, Spatial b){
         String bName = b.getName();
         boolean hit = false;
-        if(a.getName().startsWith("Wall") && !bName.startsWith("terrain-gameMap") 
-                && !((Wall)a).isStale()){
-            if(bName.startsWith("Wall")){
+        if(a.getName().startsWith(ElementName.WALL_BASE_NAME) &&
+                !bName.equals(ElementName.MAP_FIELD_PART_NAME) && !((Wall)a).isStale()){
+            if(bName.startsWith(ElementName.WALL_BASE_NAME)){
                 if(((Wall)b).isStale() || Construction.getWholeConstruction(b) == null)
                     hit = true;
             }else hit = true; 

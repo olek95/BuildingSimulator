@@ -1,6 +1,7 @@
 package building;
 
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.ElementName;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.scene.Node;
@@ -24,7 +25,7 @@ public class BuildingValidator {
         int objectsAmount = gameObjects.size(), points = 0; 
         for(int i = 0; i < objectsAmount; i++){
             Spatial object = gameObjects.get(i); 
-            if(object.getName().startsWith("Building"))
+            if(object.getName().startsWith(ElementName.BUILDING_BASE_NAME))
 //                points += calculatePointsForBuilding((Node)object);
                 points += calculatePoints((Wall)((Node)object).getChild(0));
         }
@@ -73,7 +74,7 @@ public class BuildingValidator {
         List<Spatial> children = wall.getChildren();
         for(int i = 0; i < children.size(); i++) {
             Spatial child = children.get(i);
-            if(child.getName().startsWith("Line")) {
+            if(child.getName().startsWith(ElementName.LINE)) {
                 child.removeFromParent();
                 i--;
             }

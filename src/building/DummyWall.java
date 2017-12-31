@@ -1,5 +1,6 @@
 package building;
 
+import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
 import buildingsimulator.PhysicsManager;
 import com.jme3.audio.AudioNode;
@@ -16,10 +17,10 @@ import com.jme3.scene.shape.Box;
 public class DummyWall extends Node{
     private AudioNode dropSound; 
     private DummyWall(Vector3f location, Vector3f dimensions, float mass) {
-        setName("DummyWall");
-        attachChild(new Geometry("DummyWall", new Box(dimensions.x, 
+        setName(ElementName.DUMMY_WALL);
+        attachChild(new Geometry(ElementName.DUMMY_WALL, new Box(dimensions.x, 
                 dimensions.y, dimensions.z)));
-        PhysicsManager.createObjectPhysics(this, mass, false, "DummyWall");
+        PhysicsManager.createObjectPhysics(this, mass, false, ElementName.DUMMY_WALL);
         getControl(RigidBodyControl.class).setPhysicsLocation(location);
         dropSound = GameManager.createSound("Sounds/drop.wav", GameManager.getGameSoundVolume(),
                 false, this);

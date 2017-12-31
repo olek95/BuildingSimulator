@@ -1,5 +1,6 @@
 package listeners;
 
+import buildingsimulator.ElementName;
 import buildingsimulator.RememberingRecentlyHitObject;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
@@ -40,8 +41,8 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
         Object a = nodeA.getUserObject(), b = nodeB.getUserObject();
         Spatial aSpatial = (Spatial)a, bSpatial = (Spatial)b;
         String aName = aSpatial.getName(), bName = bSpatial.getName();
-        //if((aName.startsWith("Wall") || aName.startsWith("New Scene"))
-          //      && (bName.startsWith("Wall") || bName.startsWith("New Scene")))
+        //if((aName.startsWith(Wall.BASE_NAME) || aName.startsWith(ElementName.SCENE))
+          //      && (bName.startsWith(Wall.BASE_NAME) || bName.startsWith(ElementName.SCENE)))
         if(aName.equals(hittingObjectName) && !bName.equals(handleName)){
            // if(!isProperCollisionGroup(bSpatial)) return false;
             hittingObject.setCollision(bSpatial);
@@ -82,10 +83,11 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
         kolizji w dół*/
         if(recentlyHitObject != null){
             Ray ray = new Ray(hittingObject.getWorldTranslation(), rayDirection);
-            if(recentlyHitObject.getName().startsWith("prop")){
+            if(recentlyHitObject.getName().startsWith(ElementName.PROP)){
                 Node crane = recentlyHitObject.getParent();
-                ((Node)crane.getChild("prop0")).getChild(0).collideWith(ray, results);
-                ((Node)crane.getChild("prop1")).getChild(0).collideWith(ray, results);
+                ((Node)crane.getChild(ElementName.PROP0)).getChild(0)
+                        .collideWith(ray, results);
+                ((Node)crane.getChild(ElementName.PROP1)).getChild(0).collideWith(ray, results);
             }else{
                 ray.collideWith((BoundingBox)recentlyHitObject.getWorldBound(), results);
             }
@@ -98,7 +100,7 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
         int collisionGroup = ((PhysicsCollisionObject)b.getControl(0)).getCollisionGroup();
         Node parent = b.getParent();
         do{
-            if(parent.getName().contains("dzwig"))
+            if(parent.getName().contains(ElementName.CRANE))
                 return collisionGroup != 4; 
             parent = parent.getParent();
         }while(parent != null);

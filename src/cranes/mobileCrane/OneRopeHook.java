@@ -1,5 +1,6 @@
 package cranes.mobileCrane;
 
+import buildingsimulator.ElementName;
 import cranes.Hook;
 import buildingsimulator.PhysicsManager;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -16,7 +17,7 @@ public class OneRopeHook extends Hook{
     private Node rope;
     public OneRopeHook(Node ropeHook, Spatial hookHandle, float speed){
         super(ropeHook, hookHandle, speed);
-        rope = (Node)ropeHook.getChild("rope");
+        rope = (Node)ropeHook.getChild(ElementName.ROPE);
         hookHandle.getControl(RigidBodyControl.class).addCollideWithGroup(1);
        setHookDisplacement(PhysicsManager.calculateDisplacementAfterScaling(rope, 
                 new Vector3f(1f, getActualLowering() + speed, 1f), false, true, false));

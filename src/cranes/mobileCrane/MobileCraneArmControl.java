@@ -1,6 +1,7 @@
 package cranes.mobileCrane;
 
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.ElementName;
 import settings.Control;
 import buildingsimulator.GameManager;
 import cranes.ArmControl;
@@ -113,18 +114,18 @@ public class MobileCraneArmControl extends ArmControl{
     protected void initCraneArmElements(){
         super.initCraneArmElements();
         Node craneControlNode = getCraneControl();
-        lift = (Node)craneControlNode.getChild("lift");
-        rectractableCranePart = (Node)lift.getChild("retractableCranePart");
-        craneProps = (Node)craneControlNode.getChild("craneProps");
+        lift = (Node)craneControlNode.getChild(ElementName.LIFT);
+        rectractableCranePart = (Node)lift.getChild(ElementName.RETRACTABLE_CRANE_PART);
+        craneProps = (Node)craneControlNode.getChild(ElementName.MOBILE_CRANE_ARM_PROPS);
         leftProtractilePropGeometry = (Geometry)((Node)craneProps
-                .getChild("leftProtractileProp")).getChild(0);
+                .getChild(ElementName.LEFT_PROTRACTILE_PROP)).getChild(0);
         rightProtractilePropGeometry = (Geometry)((Node)craneProps
-                .getChild("rightProtractileProp")).getChild(0);
+                .getChild(ElementName.RIGHT_PROTRACTILE_PROP)).getChild(0);
         // do aktualnej kolizji dołącza kolizję z grupą 1
-        Spatial hookHandle = lift.getChild("hookHandle");
+        Spatial hookHandle = lift.getChild(ElementName.HOOK_HANDLE);
         setHookHandle(hookHandle);
-        setHook(new OneRopeHook((Node)getCrane().getChild("ropeHook"), hookHandle,
-                0.05f));
+        setHook(new OneRopeHook((Node)getCrane().getChild(ElementName.ROPE_HOOK),
+                hookHandle, 0.05f));
         createCranePhysics();
     }
     
@@ -149,7 +150,8 @@ public class MobileCraneArmControl extends ArmControl{
                 .getBulletAppState().getPhysicsSpace();
         physics.add(getHookHandle().getControl(0));
         Node craneControlNode = getCraneControl();
-        PhysicsManager.createObjectPhysics(craneControlNode, 1f, true, "outsideCabin", "turntable");
+        PhysicsManager.createObjectPhysics(craneControlNode, 1f, true, 
+                ElementName.MOBILE_CRANE_ARM_OUTSIDE_CABIN, ElementName.TURNTABLE);
         PhysicsManager.createObjectPhysics(rectractableCranePart, 1f, true, rectractableCranePart
                 .getChild(0).getName());
         rectractableCranePart.getControl(RigidBodyControl.class).setCollisionGroup(3);
@@ -158,7 +160,7 @@ public class MobileCraneArmControl extends ArmControl{
                 .getControl(RigidBodyControl.class), craneControlNode.getLocalTranslation(),
                 Vector3f.ZERO,Vector3f.ZERO, Vector3f.ZERO);
         physics.add(cabinAndMobilecraneJoin);
-        physics.add(lift.getChild("longCraneElement").getControl(0));
+        physics.add(lift.getChild(ElementName.LONG_CRANE_ELEMENT).getControl(0));
         /* Dodaje listener sprawdzający kolizję haka z obiektami otoczenia.
          Dla optymalizacji sprawdzam kolizję tylko dla grupy 2, czyli tej w 
          której znajduje sie hak.*/
@@ -168,10 +170,12 @@ public class MobileCraneArmControl extends ArmControl{
                 Spatial a = event.getNodeA(), b = event.getNodeB();
                 if(a != null && b != null){
                     if(a.equals(rectractableCranePart) || a.equals(getHook().getHookHandle())){
-                        if(b.getName().startsWith("rack")) rotateAfterImpact(a);
+                        if(b.getName().startsWith(ElementName.RACK))
+                            rotateAfterImpact(a);
                     }else{
                         if(b.equals(rectractableCranePart) || b.equals(getHook().getHookHandle())){
-                            if(a.getName().startsWith("rack")) rotateAfterImpact(b);
+                            if(a.getName().startsWith(ElementName.RACK))
+                                rotateAfterImpact(b);
                         }
                     }
                 }

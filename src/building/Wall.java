@@ -20,6 +20,7 @@ import java.util.List;
 import net.wcomohundro.jme3.csg.CSGGeometry;
 import net.wcomohundro.jme3.csg.CSGShape;
 import building.CatchNode.*;
+import buildingsimulator.ElementName;
 import buildingsimulator.PhysicsManager;
 import com.jme3.asset.AssetManager;
 import java.util.ArrayList;
@@ -155,7 +156,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      * w przeciwnym przypadku 
      */
     public void setStale(boolean stale){
-        ((CSGGeometry)getChild("Box")).getMaterial().setColor("Color", stale ?
+        ((CSGGeometry)getChild(ElementName.WALL_GEOMETRY)).getMaterial().setColor("Color", stale ?
                 ColorRGBA.Red : ColorRGBA.White);
         this.stale = stale; 
     }
@@ -299,7 +300,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         Material ropeMaterial = new Material(BuildingSimulator.getBuildingSimulator()
                 .getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         ropeMaterial.setColor("Color", ColorRGBA.Black); 
-        float ropeLenght = start.distance(end);
+        float ropeLength = start.distance(end);
         if(!vertical) distanceToHandle = end.y - getWorldTranslation().y; 
         else distanceToHandleVertical = end.z - getWorldTranslation().z;
         CompoundCollisionShape wallRopesShape = PhysicsManager.createCompound(this, "Box");
@@ -311,7 +312,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         controlAttaching.setCollisionGroup(5);
         Vector3f physicsLocation = controlAttaching.getPhysicsLocation();
         for(int i = 0; i < ropes.length; i++){
-            ropes[i] = new Geometry("Line" + i, new Cylinder(4, 8, 0.02f, ropeLenght));
+            ropes[i] = new Geometry(ElementName.LINE + i, new Cylinder(4, 8, 0.02f, ropeLength));
             ropesLocations[i] = FastMath.interpolateLinear(0.5f, start, end);
             ropes[i].setMaterial(ropeMaterial); 
             attachChild(ropes[i]);
@@ -324,7 +325,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     private void initShape(CSGShape shape, CSGShape... differenceShapes){
-        CSGGeometry wall = new CSGGeometry("Box"); 
+        CSGGeometry wall = new CSGGeometry(ElementName.WALL_GEOMETRY); 
         wall.addShape(shape);
         AssetManager assetManager = BuildingSimulator.getBuildingSimulator().getAssetManager(); 
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -332,20 +333,21 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         wall.setMaterial(mat);     
         for(int i = 0; i < differenceShapes.length; i++)
             wall.subtractShape(differenceShapes[i]);
-        setName("Wall" + counter);
+        setName(ElementName.WALL_BASE_NAME + counter);
         attachChild(wall);
     }
     
     private void initCollisionListener(){
         if(collisionListener == null){
-            collisionListener = new BottomCollisionListener(this, name, "ropeHook");
+            collisionListener = new BottomCollisionListener(this, name, 
+                    ElementName.ROPE_HOOK);
             BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
                     .addCollisionGroupListener(collisionListener, 5);
         }
     }
     
     private void createLooseControl(Vector3f location){
-        PhysicsManager.createObjectPhysics(this, 0.00001f, false, "Box");
+        PhysicsManager.createObjectPhysics(this, 0.00001f, false, ElementName.WALL_GEOMETRY);
         getControl(RigidBodyControl.class).setPhysicsLocation(location);
     }
     

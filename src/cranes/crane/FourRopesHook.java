@@ -1,5 +1,6 @@
 package cranes.crane;
 
+import buildingsimulator.ElementName;
 import cranes.Hook;
 import buildingsimulator.PhysicsManager;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
@@ -23,12 +24,12 @@ public class FourRopesHook extends Hook{
         int index = 0;
         for(int i = 0; i < ropeHookChildren.size(); i++){
             Spatial children = ropeHookChildren.get(i);
-            if(children.getName().startsWith("rope")){
+            if(children.getName().startsWith(ElementName.ROPE)){
                 ropes[index] = (Node)children;
                 index++;
             }
         }
-        littleHookHandle = (Node)ropeHook.getChild("littleHookHandle");
+        littleHookHandle = (Node)ropeHook.getChild(ElementName.LITTLE_HOOK_HANDLE);
         setHookDisplacement(PhysicsManager.calculateDisplacementAfterScaling(ropes[0], 
                 new Vector3f(1f, getActualLowering() + speed, 1f), false, true, false));
         getHookDisplacement().y *= 2;

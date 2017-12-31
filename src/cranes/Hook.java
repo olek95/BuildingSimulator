@@ -5,6 +5,7 @@ import listeners.BottomCollisionListener;
 import buildingsimulator.BuildingSimulator;
 import building.Construction;
 import building.WallMode;
+import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
 import buildingsimulator.PhysicsManager;
 import buildingsimulator.RememberingRecentlyHitObject;
@@ -32,11 +33,12 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     private static BottomCollisionListener collisionListener = null; 
     public Hook(Node ropeHook, Spatial hookHandle, float speed){
         this.ropeHook = ropeHook;
-        hook = ropeHook.getChild("hook");
+        hook = ropeHook.getChild(ElementName.HOOK);
         this.hookHandle = hookHandle;
         this.speed = speed;
         if(collisionListener == null){
-            collisionListener = new BottomCollisionListener(this, "ropeHook", "hookHandle");
+            collisionListener = new BottomCollisionListener(this, ElementName.ROPE_HOOK,
+                    ElementName.HOOK_HANDLE);
             BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
                     .addCollisionGroupListener(collisionListener, 2);
         }
@@ -50,7 +52,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 .getWorldBound()).getMax(null).y > ((BoundingBox)b.getWorldBound())
                 .getMax(null).y) && attachedObject == null)
             recentlyHitObject = b;
-        //if(b.getName().startsWith("Wall")) ((Wall)b).setMovable(false);
+        //if(b.getName().startsWith(Wall.BASE_NAME)) ((Wall)b).setMovable(false);
     }
     
     /**
@@ -99,13 +101,13 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 if(wallRecentlyHitObject != null){
                     Wall nearestBuildingWall = null; 
                     if(oldMode.equals(WallMode.VERTICAL)) {
-                        if(!wallRecentlyHitObject.getName().startsWith("Wall")) { 
+                        if(!wallRecentlyHitObject.getName().startsWith(ElementName.WALL_BASE_NAME)) { 
                             HUD.setMessage(Translator.NO_FOUNDATIONS.getValue());
                             confirmDetaching();
                             return;
                         }
                     } else {
-                        if(wallRecentlyHitObject.getName().equals("terrain-gameMap")) {
+                        if(wallRecentlyHitObject.getName().equals(ElementName.MAP_FIELD_PART_NAME)) {
                             nearestBuildingWall = Construction
                                     .getNearestBuildingWall(attachedObject);
                         }
@@ -291,7 +293,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         float distanceBetweenHookAndObject = wall.getDistanceToHandle(vertical);
         Node parent = hook.getParent();
         do{
-            if(parent.getName().contains("dzwig"))
+            if(parent.getName().contains(ElementName.CRANE))
                 distanceBetweenHookAndObject += ((BoundingBox)hook.getWorldBound())
                         .getYExtent(); 
             parent = parent.getParent();

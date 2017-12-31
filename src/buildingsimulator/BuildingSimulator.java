@@ -49,6 +49,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     private static BuildingSimulator game;
     private BulletAppState bulletAppState = new BulletAppState();
     private boolean debug = false;
+    private int updateLoopCounter = 0; 
     public static void main(String[] args) {
         game = new BuildingSimulator();
         game.setShowSettings(false);
@@ -93,16 +94,27 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
 //                }
 //            }
             Shop shop = Shop.getDisplayedShop();
-            VisibleFromAbove object = shop != null ? shop 
-                    : (Crane)GameManager.getUnit(1);
+            VisibleFromAbove object;
+            if(shop == null) {
+                Crane crane = (Crane)GameManager.getUnit(1);
+                object = crane;
+                if(updateLoopCounter == 50) {
+                    crane.getArmControl().rotateHook();
+                    updateLoopCounter = 0;
+                }
+            } else object = shop;
             DummyCollisionListener dummyListener = object.getListener();
             if(dummyListener != null && dummyListener.isEnd()) {
                 dummyListener.deleteDummyWallControl();
                 object.setListener(null);
-                if(!dummyListener.isCollision()) object.unload(); 
+                if(!dummyListener.isCollision()) {
+                    object.unload();
+                    updateLoopCounter = 1;
+                } 
                 else HUD.setMessage(Translator.MESSAGE_NO_FREE_SPACE.getValue());
             }
             if(HUD.shouldMessageBeDeleted()) HUD.removeMessage();
+            if(updateLoopCounter >= 1) updateLoopCounter++;
         }
     }
 

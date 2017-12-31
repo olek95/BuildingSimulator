@@ -295,7 +295,7 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
     /**
      * Obraca hak wraz z przyczepionym do niego obiektem. 
      */
-    protected void rotateHook(){
+    public void rotateHook(){
         hook.getRopeHook().getControl(RigidBodyControl.class).setPhysicsRotation(
                 getCraneControl().getWorldRotation());
         Spatial attachedObject = hook.getAttachedObject(); 

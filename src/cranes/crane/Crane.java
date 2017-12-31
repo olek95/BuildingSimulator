@@ -120,9 +120,7 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
         for(int i = 0; i < elementsCount; i++) {
             Spatial element = craneElements.get(i);
             String elementName = element.getName();
-            if(elementName != null && elementName.matches("(" + ElementName.RACK
-                    + "|" + ElementName.PROP + "|" + ElementName.ENTRANCE_PLATFORM
-                    + ").*")) 
+            if(elementName != null && elementName.matches(createRegexCraneTower())) 
                 setProperControlLocation(element, craneLocation);
         }
         removeView(); 
@@ -211,5 +209,10 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
                 .getLocalTranslation().y + yDistance);
         if(movingElement.getControl(RigidBodyControl.class) != null) 
             setProperControlLocation(movingElement, craneLocation);
+    }
+    
+    private String createRegexCraneTower() {
+        return "(" + ElementName.RACK + "|" + ElementName.PROP + "|" +
+                ElementName.ENTRANCE_PLATFORM + ").*";
     }
 }

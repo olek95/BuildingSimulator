@@ -245,6 +245,7 @@ public class GameManager {
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         AudioNode sound = new AudioNode(game.getAssetManager(),
                 path, false, true);
+        sound.setPositional(false);
         sound.setVolume(volume);
         sound.setLooping(looping);
         if(owner == null) game.getRootNode().attachChild(sound);

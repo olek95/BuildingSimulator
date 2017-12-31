@@ -260,7 +260,7 @@ public class Construction extends Node{
                     Node catchNode = merge(wall1, wall2, ceiling, mode, false,
                             4, 8);
                     if(ceiling) {
-                        Hook hook = GameManager.findActualUnit().getHook(); 
+                        Hook hook = GameManager.getActualUnit().getHook(); 
                         hook.heighten();
                         hook.heighten(); 
                     }

@@ -58,7 +58,7 @@ public class Shop extends Menu implements VisibleFromAbove{
         createTextField("x_text_field", 0.35f, 0.55f);
         createTextField("z_text_field", 0.35f, 0.65f);
         screen.getElementById("vehicles_panel").hide();
-        int craneHeight = ((Crane)GameManager.getUnit(1)).getHeightLevel();
+        int craneHeight = GameManager.getCrane().getHeightLevel();
         screen.getElementById("actual_height_value").setText(craneHeight + "");
         ((Spinner)screen.getElementById("crane_height_spinner"))
                 .setSelectedIndex(craneHeight);
@@ -269,10 +269,10 @@ public class Shop extends Menu implements VisibleFromAbove{
                 .getSelectedIndex(), actualHeight = Integer
                 .parseInt(actualHeightLabel.getText());
         if(actualHeight < selectedHeight) {
-            ((Crane)GameManager.getUnit(1)).raiseHeight(selectedHeight);
+            GameManager.getCrane().raiseHeight(selectedHeight);
         } else {
             if(actualHeight > selectedHeight) 
-                ((Crane)GameManager.getUnit(1)).decreaseHeight(selectedHeight);
+                GameManager.getCrane().decreaseHeight(selectedHeight);
         }
     }
     

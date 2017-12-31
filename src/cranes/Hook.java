@@ -203,8 +203,6 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         PhysicsManager.createPhysics(ropeHookCompound, ropeHook, 4f, false);
         RigidBodyControl ropeHookControl = ropeHook.getControl(RigidBodyControl.class);
         ropeHookControl.setCollisionGroup(2); 
-        ropeHookControl.addCollideWithGroup(1); // tylko mobilny???
-        ropeHookControl.setCollideWithGroups(3); // tylko mobilny???
         lineAndHookHandleJoint = PhysicsManager.joinsElementToOtherElement(lineAndHookHandleJoint,
                 hookHandle, ropeHook, Vector3f.ZERO, distanceHookHandleAndRopeHook);
     }

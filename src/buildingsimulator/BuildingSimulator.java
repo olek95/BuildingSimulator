@@ -77,7 +77,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             Options.refresh(); 
         }
         if(GameManager.isStartedGame()){
-            MobileCrane unit = (MobileCrane)GameManager.getUnit(0);
+            MobileCrane unit = GameManager.getMobileCrane();
             unit.updateState();
             List<Spatial> gameObjects = rootNode.getChildren();
             int gameObjectsNumber = gameObjects.size();
@@ -96,7 +96,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             Shop shop = Shop.getDisplayedShop();
             VisibleFromAbove object;
             if(shop == null) {
-                Crane crane = (Crane)GameManager.getUnit(1);
+                Crane crane = GameManager.getCrane();
                 object = crane;
                 if(updateLoopCounter == 50) {
                     crane.getArmControl().rotateHook();
@@ -137,8 +137,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         return bulletAppState;
     }
     public void onAction(String name, boolean isPressed, float tpf){
-        MobileCrane mobileCrane = (MobileCrane)GameManager.getUnit(0);
-        Crane crane = (Crane)GameManager.getUnit(1);
+        MobileCrane mobileCrane = GameManager.getMobileCrane();
+        Crane crane = GameManager.getCrane();
         if(isPressed) {
             switch(Control.Actions.valueOf(name)) {
                 case PAUSE:

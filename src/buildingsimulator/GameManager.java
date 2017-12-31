@@ -29,12 +29,14 @@ import menu.MenuTypes;
  */
 public class GameManager {
     private static String lastAction;
-    private static ArrayList<CraneAbstract> units = new ArrayList();
+    private static Crane crane; 
+    private static MobileCrane mobileCrane;
     private static User user; 
     private static boolean startedGame = false;
     private static boolean pausedGame = false; 
     private static float gameSoundVolume;
     private static Billboard billboard; 
+    private static CraneAbstract actualUnit;
     
     /**
      * Uruchamia grę. 
@@ -46,11 +48,10 @@ public class GameManager {
         BulletAppState bas = game.getBulletAppState(); 
         game.getStateManager().attach(bas);
         addToGame(new Map(9).getScene());
-        MobileCrane mobileCrane = new MobileCrane();
-        addUnit(mobileCrane);
+        mobileCrane = new MobileCrane();
         addToGame(mobileCrane.getCrane());
-        Crane crane = new Crane(); 
-        addUnit(crane);
+        actualUnit = mobileCrane;
+        crane = new Crane(); 
         addToGame(crane.getCrane());
         mobileCrane.setUsing(true);
 //        billboard = new Billboard(-720, 20);
@@ -161,38 +162,31 @@ public class GameManager {
     }
     
     /**
-     * Doaje nową jednostkę do listy wszystkich jednostek w grze. 
-     * @param unit dodawana jednostka 
+     * Zwraca dźwig mobilny. 
+     * @return dźwig mobilny 
      */
-    public static void addUnit(CraneAbstract unit){
-        units.add(unit);
-    }
+    public static MobileCrane getMobileCrane() { return mobileCrane; }
     
     /**
-     * Zwraca jednostkę z listy wszystkich jednostek w grze, o podanym indeksie. 
-     * @param i indeks zwracanej jednostki 
-     * @return jednostka 
+     * Zwraca żuraw. 
+     * @return żuraw 
      */
-    public static CraneAbstract getUnit(int i){
-        return units.get(i);
-    }
+    public static Crane getCrane() { return crane; }
+    
+    /**
+     * Zwraca aktualnie sterowaną jednostkę. 
+     * @return aktualnie sterowana jednostka 
+     */
+    public static CraneAbstract getActualUnit() { return actualUnit; }
     
     /**
      * Usuwa wszystkie jednostki (dźwigi mobilne i zurawie), które występują w grze. 
      */
-    public static void removeAllUnits() { units.clear(); }
-    
-    /**
-     * Zwraca jednostkę, która jest aktualnie używana przez gracza. 
-     * @return aktualnie używana jednostka 
-     */
-    public static CraneAbstract findActualUnit(){
-        for(int i = 0; i < units.size(); i++){
-            CraneAbstract unit = units.get(i);
-            if(unit.isUsing()) return unit;
-        }
-        return null;
+    public static void removeAllUnits() { 
+        mobileCrane = null; 
+        crane = null;
     }
+    
     
     /**
      * Dodaje obiekt do gry. 

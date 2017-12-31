@@ -98,7 +98,7 @@ public class MobileCraneArmControl extends ArmControl{
     @Override
     protected void getOff(String actionName){
         if(getHook().getAttachedObject() == null) {
-            Control.removeListener(GameManager.getUnit(0).getArmControl());
+            Control.removeListener(this);
             using = !using;
             GameManager.setLastAction(actionName);
         } else {

@@ -107,7 +107,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         do{
             control = (RigidBodyControl)getControl(++i); 
         }while(!control.isEnabled());
-        Quaternion turnToCrane = GameManager.findActualUnit().getArmControl()
+        Quaternion turnToCrane = GameManager.getActualUnit().getArmControl()
                         .getCraneControl().getWorldRotation().clone();
         if(i == 2) turnToCrane.multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f));
         control.setPhysicsRotation(turnToCrane);

@@ -224,7 +224,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     private void getOff(String name){
         // zezwala na opuszczenie podpór tylko gdy dźwig nie porusza się
         if("".equals(key)){
-            Control.removeListener((MobileCrane)GameManager.getUnit(0));
+            Control.removeListener(this);
             MobileCraneArmControl control = (MobileCraneArmControl)getArmControl();
             control.setUsing(!control.isUsing());
             GameManager.setLastAction(name);

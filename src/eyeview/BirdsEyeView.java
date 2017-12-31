@@ -101,8 +101,8 @@ public class BirdsEyeView implements ActionListener{
     private void changeViewMode() {
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         Camera cam = game.getCamera();
-        Vector3f actualUnitLocation = GameManager.findActualUnit().getArmControl().getCrane()
-                .getWorldTranslation();
+        Vector3f actualUnitLocation = GameManager.getActualUnit().getArmControl()
+                .getCrane().getWorldTranslation();
         cam.setLocation(actualUnitLocation.add(0, 100, 0));
         cam.lookAt(actualUnitLocation, Vector3f.UNIT_Z);
         game.getFlyByCamera().setEnabled(false);

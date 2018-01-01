@@ -235,9 +235,6 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         if(propsLowering <= MAX_PROP_PROTRUSION){
             controlProps(true);
         }else{
-            /* metoda wywołana na łańcuchu "Action", gdyż ostatnia akcja może być nullem.
-            Może być bez tego ifa, ale dodany w celu optymalizacji aby nie powtarzać
-            dodawania listenerów klawiszy*/
             if(Control.getActualListener().equals(this)){
                 Control.addListener(getArmControl());
                 HUD.setMessage(Translator.LOWERED_PROPS.getValue());

@@ -1,7 +1,10 @@
 package building;
 
+import buildingsimulator.GameManager;
+import buildingsimulator.PhysicsManager;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.shape.Box;
+import java.util.List;
 import net.wcomohundro.jme3.csg.CSGShape;
 
 /**
@@ -48,5 +51,19 @@ public class WallsFactory {
                     door, window);
         }
         return null; 
+    }
+    
+    public static void restoreWalls(List<Wall> walls) {
+        int wallsCount = walls.size();
+        int wallModeCount =  WallMode.values().length;
+        for(int i = 0; i < wallsCount; i++) {
+            Wall wall = walls.get(i);
+            GameManager.addToGame(wall);
+            wall.initCollisionListener();
+            for(int j = 0; j < wallModeCount; j++) {
+                PhysicsManager.addPhysicsToGame(wall, j);
+            }
+            wall.swapControl(WallMode.LOOSE);
+        }
     }
 }

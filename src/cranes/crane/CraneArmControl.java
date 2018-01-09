@@ -3,6 +3,7 @@ package cranes.crane;
 import building.Wall;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
+import buildingsimulator.PhysicsManager;
 import cranes.ArmControl;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -60,24 +61,28 @@ public class CraneArmControl extends ArmControl{
     @Override
     protected void initCraneArmElements(){
         super.initCraneArmElements();
-        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
-                .getBulletAppState().getPhysicsSpace();
         Node craneControlNode = getCraneControl(), craneNode = getCrane();
-        Vector3f craneLocation = craneNode.getLocalTranslation();
-        physics.add(setProperControlLocation(craneControlNode
-                .getChild(ElementName.TURNTABLE),  craneLocation));
-        physics.add(setProperControlLocation(craneControlNode
-                .getChild(ElementName.MOBILE_CRANE_MAIN_ELEMENT), craneLocation));
-        physics.add(setProperControlLocation(craneControlNode.getChild(ElementName.CRANE_ARM),
-                craneLocation));
-        physics.add(setProperControlLocation(craneControlNode.getChild(ElementName.CABIN),
-                craneLocation));
-        hookHandleControl = (Node)craneControlNode.getChild(ElementName.HOOK_HANDLE_CONTROL);
-        Spatial hookHandle = hookHandleControl.getChild(ElementName.HOOK_HANDLE);
-        setHookHandle(hookHandle);
-        physics.add(setProperControlLocation(hookHandle, craneLocation));
-        setHook(new FourRopesHook((Node)craneNode.getChild(ElementName.ROPE_HOOK),
-                hookHandle, 0.1f));
+        Spatial turntable = craneControlNode.getChild(ElementName.TURNTABLE);
+        if(turntable.getControl(RigidBodyControl.class) == null) {
+            PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
+                    .getBulletAppState().getPhysicsSpace();
+            Vector3f craneLocation = craneNode.getLocalTranslation();
+            physics.add(setProperControlLocation(turntable,  craneLocation));
+            physics.add(setProperControlLocation(craneControlNode
+                    .getChild(ElementName.MOBILE_CRANE_MAIN_ELEMENT), craneLocation));
+            physics.add(setProperControlLocation(craneControlNode.getChild(ElementName.CRANE_ARM),
+                    craneLocation));
+            physics.add(setProperControlLocation(craneControlNode.getChild(ElementName.CABIN),
+                    craneLocation));
+            createHookAndHandle(craneControlNode, craneNode);
+            physics.add(setProperControlLocation(getHookHandle(), craneLocation));
+        } else {
+            createHookAndHandle(craneControlNode, craneNode);
+            PhysicsManager.addPhysicsToGame(turntable, craneControlNode
+                    .getChild(ElementName.MOBILE_CRANE_MAIN_ELEMENT),
+                    craneControlNode.getChild(ElementName.CRANE_ARM),
+                    craneControlNode.getChild(ElementName.CABIN), getHookHandle());
+        }
     }
     
     private RigidBodyControl setProperControlLocation(Spatial object, Vector3f displacement){
@@ -86,5 +91,11 @@ public class CraneArmControl extends ArmControl{
         return control;
     }
     
-    
+    private void createHookAndHandle(Node craneControlNode, Node craneNode) {
+        hookHandleControl = (Node)craneControlNode.getChild(ElementName.HOOK_HANDLE_CONTROL);
+            Spatial hookHandle = hookHandleControl.getChild(ElementName.HOOK_HANDLE);
+            setHookHandle(hookHandle);
+        setHook(new FourRopesHook((Node)craneNode.getChild(ElementName.ROPE_HOOK),
+                hookHandle, 0.1f));
+    }
 }

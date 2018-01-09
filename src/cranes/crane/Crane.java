@@ -5,6 +5,7 @@ import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
 import listeners.DummyCollisionListener;
 import buildingsimulator.GameManager;
+import buildingsimulator.PhysicsManager;
 import eyeview.VisibleFromAbove;
 import com.jme3.audio.AudioNode;
 import com.jme3.bounding.BoundingBox;
@@ -30,7 +31,20 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
     private DummyCollisionListener listener;
     private BirdsEyeView view; 
     public Crane(){
-        initCrane();
+        crane = GameManager.loadModel("Models/zuraw/zuraw.j3o");
+        craneLocation = new Vector3f(10f, 0f, 0f);
+        initCraneElements();
+        initCranePhysics();
+    }
+    
+    public Crane(Node loadedCrane) {
+        crane = loadedCrane;
+        craneLocation = crane.getLocalTranslation();
+        initCraneElements();
+        PhysicsManager.addPhysicsToGame(crane.getChild(ElementName.PROP0), 
+                crane.getChild(ElementName.PROP1), rack, penultimateRack,
+                lastRack, entrancePlatform);
+        raiseHeight(0);
     }
     
 //    public Crane(int heightLevel){
@@ -173,34 +187,29 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
      */
     public Node getCrane() { return crane; }
     
-    private void initCrane(){
-        craneLocation = new Vector3f(10f, 0f, 0f);
-        initCraneElements(GameManager.loadModel("Models/zuraw/zuraw.j3o"));
-    }
-    
     private RigidBodyControl setProperControlLocation(Spatial object, Vector3f displacement){
         RigidBodyControl control = object.getControl(RigidBodyControl.class);
         control.setPhysicsLocation(object.getLocalTranslation().add(displacement));
         return control;
     }
     
-    private void initCraneElements(Node parent){
-        crane = parent;
+    private void initCraneElements() {
+        rack = crane.getChild(ElementName.RACK0);
+        entrancePlatform = crane.getChild(ElementName.ENTRANCE_PLATFORM);
+        penultimateRack = crane.getChild(ElementName.RACK1); 
+        lastRack = crane.getChild(ElementName.RACK2);
+        setArmControl(new CraneArmControl(crane));
+    }
+    
+    private void initCranePhysics(){
         crane.setLocalTranslation(craneLocation);
         PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
         physics.add(setProperControlLocation(crane.getChild(ElementName.PROP0), craneLocation));
         physics.add(setProperControlLocation(crane.getChild(ElementName.PROP1), craneLocation));
-        physics.add(setProperControlLocation(rack = crane.getChild(ElementName.RACK0),
-                craneLocation));
-        Spatial rack1 = crane.getChild(ElementName.RACK1), 
-                rack2 = crane.getChild(ElementName.RACK2);
-        physics.add(setProperControlLocation(rack1, craneLocation));
-        physics.add(setProperControlLocation(rack2, craneLocation));
-        entrancePlatform = crane.getChild(ElementName.ENTRANCE_PLATFORM);
+        physics.add(setProperControlLocation(rack, craneLocation));
+        physics.add(setProperControlLocation(penultimateRack, craneLocation));
+        physics.add(setProperControlLocation(lastRack, craneLocation));
         physics.add(setProperControlLocation(entrancePlatform, craneLocation));
-        setArmControl(new CraneArmControl(crane));
-        penultimateRack = rack1;
-        lastRack = rack2;
         raiseHeight(0);
     }
     

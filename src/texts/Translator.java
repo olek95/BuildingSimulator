@@ -50,6 +50,8 @@ public enum Translator {
     ACTIVITY,
     KEY,
     NEW_GAME, 
+    LOAD_GAME,
+    SAVE_GAME,
     STATISTICS,
     SETTINGS,
     QUIT_GAME,

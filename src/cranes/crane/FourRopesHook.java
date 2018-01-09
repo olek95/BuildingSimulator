@@ -4,6 +4,7 @@ import buildingsimulator.ElementName;
 import cranes.Hook;
 import buildingsimulator.PhysicsManager;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
+import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -33,7 +34,9 @@ public class FourRopesHook extends Hook{
         setHookDisplacement(PhysicsManager.calculateDisplacementAfterScaling(ropes[0], 
                 new Vector3f(1f, getActualLowering() + speed, 1f), false, true, false));
         getHookDisplacement().y *= 2;
-        createRopeHookPhysics();
+        if(getRopeHook().getControl(RigidBodyControl.class) == null)
+            createRopeHookPhysics();
+        else restoreHookPhysics(new Vector3f(0, 0.6f,0));
     }
     
     /**

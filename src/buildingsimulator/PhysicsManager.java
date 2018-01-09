@@ -169,6 +169,18 @@ public class PhysicsManager {
         return joint;
     }
     
+    public static void addPhysicsToGame(Spatial... objects) {
+        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
+                .getBulletAppState().getPhysicsSpace();
+        for(int i = 0; i < objects.length; i++)
+            physics.add(objects[i].getControl(RigidBodyControl.class));
+    }
+    
+    public static void addPhysicsToGame(Spatial object, int i) {
+        BuildingSimulator.getBuildingSimulator().getBulletAppState()
+                .getPhysicsSpace().add(object.getControl(i));
+    }
+    
     private static void moveDynamicObject(Spatial element, Vector3f displacement){
         RigidBodyControl elementControl = element.getControl(RigidBodyControl.class);
         elementControl.setPhysicsLocation(elementControl.getPhysicsLocation()

@@ -22,12 +22,14 @@ public class OneRopeHook extends Hook{
        setHookDisplacement(PhysicsManager.calculateDisplacementAfterScaling(rope, 
                 new Vector3f(1f, getActualLowering() + speed, 1f), false, true, false));
         getHookDisplacement().y *= 2; // wyrównuje poruszanie się haka wraz z liną 
-        createRopeHookPhysics();
+        if(getRopeHook().getControl(RigidBodyControl.class) == null)
+            createRopeHookPhysics();
+        else restoreHookPhysics( new Vector3f(0, 0.06f,0));
     }
     
     @Override
     protected void createRopeHookPhysics(){
-        super.addHookPhysics(PhysicsManager.createCompound(rope, rope.getChild(0).getName()),
+        addHookPhysics(PhysicsManager.createCompound(rope, rope.getChild(0).getName()),
                 new Vector3f(0, 0.06f,0));
     }
     

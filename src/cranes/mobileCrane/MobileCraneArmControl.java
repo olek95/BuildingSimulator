@@ -125,7 +125,13 @@ public class MobileCraneArmControl extends ArmControl{
         setHookHandle(hookHandle);
         setHook(new OneRopeHook((Node)getCrane().getChild(ElementName.ROPE_HOOK),
                 hookHandle, 0.05f));
-        createCranePhysics();
+        if(rectractableCranePart.getControl(RigidBodyControl.class) == null)
+            createCranePhysics();
+        else {
+            PhysicsManager.addPhysicsToGame(getHookHandle(), craneControlNode,
+                    rectractableCranePart, lift.getChild(ElementName.LONG_CRANE_ELEMENT));
+            createRotateAfterImpactListener();
+        }
     }
     
     /**
@@ -160,10 +166,15 @@ public class MobileCraneArmControl extends ArmControl{
                 Vector3f.ZERO,Vector3f.ZERO, Vector3f.ZERO);
         physics.add(cabinAndMobilecraneJoin);
         physics.add(lift.getChild(ElementName.LONG_CRANE_ELEMENT).getControl(0));
+        createRotateAfterImpactListener();
+    }
+    
+    private void createRotateAfterImpactListener() {
         /* Dodaje listener sprawdzający kolizję haka z obiektami otoczenia.
          Dla optymalizacji sprawdzam kolizję tylko dla grupy 2, czyli tej w 
          której znajduje sie hak.*/
-        physics.addCollisionListener(new PhysicsCollisionListener(){
+        BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
+                .addCollisionListener(new PhysicsCollisionListener(){
             @Override
             public void collision(PhysicsCollisionEvent event) {
                 Spatial a = event.getNodeA(), b = event.getNodeB();

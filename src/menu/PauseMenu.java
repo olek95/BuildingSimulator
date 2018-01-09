@@ -4,8 +4,14 @@ import authorization.DBManager;
 import authorization.User;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
+import buildingsimulator.SavedData;
+import com.jme3.export.binary.BinaryExporter;
 import com.jme3.input.event.MouseButtonEvent;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import texts.Translator;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Element;
@@ -19,11 +25,13 @@ public class PauseMenu extends MainMenu{
     public PauseMenu() {
         super("Interface/pause_menu.gui.xml");
         Screen screen = MainMenu.getScreen(); 
-        Translator.setTexts(new String[]{"start_game_button", "exit_label", 
-            "exit_game_button", "cancel_button", "return_starting_menu_button"},
-                new Translator[]{Translator.GAME_CONTINUATION, Translator.EXIT_WARNING,
-                    Translator.EXIT_DESKTOP, Translator.CANCELLATION,
-                    Translator.RETURN_TO_STARTING_MENU}, screen);
+        Translator.setTexts(new String[]{"start_game_button", "save_game_button",
+            "exit_label", "exit_game_button", "cancel_button",
+            "return_starting_menu_button"},
+                new Translator[]{Translator.GAME_CONTINUATION, Translator.SAVE_GAME,
+                    Translator.EXIT_WARNING, Translator.EXIT_DESKTOP,
+                    Translator.CANCELLATION, Translator.RETURN_TO_STARTING_MENU},
+                screen);
         MainMenu.getScreen().getElementById("exit_popup").hide();
         User user = GameManager.getUser();
         screen.getElementById("login_label").setText(user.getLogin());
@@ -38,6 +46,16 @@ public class PauseMenu extends MainMenu{
     public void start(MouseButtonEvent evt, boolean isToggled) {
         super.start(); 
         GameManager.continueGame();
+    }
+    
+    public void save(MouseButtonEvent evt, boolean isToggled) {
+        BinaryExporter exporter = BinaryExporter.getInstance();
+        File file = new File("./game saves/save.j3o");
+        try {
+            exporter.save(new SavedData(), file);
+        } catch (IOException ex) {
+            Logger.getLogger(PauseMenu.class.getName()).log(Level.SEVERE, null, ex);
+        } 
     }
     
     /**

@@ -34,8 +34,8 @@ import texts.Translator;
  * @author AleksanderSklorz
  */
 public class MobileCrane extends CraneAbstract implements ActionListener, Controllable{
-    private Node crane = GameManager.loadModel("Models/dzwig/dzwig.j3o");
-    private VehicleControl craneControl = crane.getControl(VehicleControl.class);
+    private Node crane;
+    private VehicleControl craneControl;
     private static final float ACCELERATION_FORCE = 100.0f, BRAKE_FORCE = 20.0f,
             FRICTION_FORCE = 10.0f, PROP_LOWERING_SPEED = 0.05f;
     public static final float MAX_PROP_PROTRUSION = 6.35f, MIN_PROP_PROTRUSION = 1f;
@@ -46,9 +46,29 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         Actions.RIGHT, Actions.ACTION};
     private AudioNode craneStartEngineSound, craneDrivingSound, craneDrivingBackwardsSound;
     public MobileCrane(){
+        crane = GameManager.loadModel("Models/dzwig/dzwig.j3o");
+        craneControl = crane.getControl(VehicleControl.class);
         createMobileCranePhysics();
         scaleTiresTexture();
 //        createMirrors();
+        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
+                .getBulletAppState().getPhysicsSpace();
+        physics.add(craneControl);
+        setArmControl(new MobileCraneArmControl(crane));
+        propDisplacement =  PhysicsManager.calculateDisplacementAfterScaling((Node)crane
+                .getChild("protractileProp1"), new Vector3f(1f, propsLowering + PROP_LOWERING_SPEED,
+                1f), false, true, false);
+        craneStartEngineSound = GameManager.createSound("Sounds/crane_engine_start.wav", 
+                GameManager.getGameSoundVolume(), false, crane);
+        craneDrivingSound = GameManager.createSound("Sounds/crane_engine_driving.wav",
+                GameManager.getGameSoundVolume(), true, crane);
+        craneDrivingBackwardsSound = GameManager.createSound("Sounds/crane_driving_backwards.wav",
+                GameManager.getGameSoundVolume(), true, crane);
+    }
+    
+    public MobileCrane(Node loadedCrane) {
+        crane = loadedCrane;
+        craneControl = crane.getControl(VehicleControl.class);
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
                 .getBulletAppState().getPhysicsSpace();
         physics.add(craneControl);

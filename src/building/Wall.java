@@ -23,6 +23,12 @@ import building.CatchNode.*;
 import buildingsimulator.ElementName;
 import buildingsimulator.PhysicsManager;
 import com.jme3.asset.AssetManager;
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -43,6 +49,12 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private boolean stale = false; 
     private Vector3f catchingLocation; 
     private Quaternion catchingRotation; 
+    
+    /*
+     * Konstruktor bezparametrowy jest potrzebny podczas wczytywania ściany z
+     * pliku zapisu gry. 
+     */
+    public Wall(){}
     
     public Wall(CSGShape shape, Vector3f location, CSGShape... differenceShapes){
         BoundingBox bounding = (BoundingBox)shape.getWorldBound();
@@ -287,7 +299,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     private void setRopesVisibility(Geometry[] ropes, boolean visibility){
-        for(int i = 0; i < ropes.length; i++)
+        for(int i = 0; i < ropes.length; i++) 
             ropes[i].setCullHint(visibility ? CullHint.Never : CullHint.Always);
     }
     
@@ -337,7 +349,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         attachChild(wall);
     }
     
-    private void initCollisionListener(){
+    public void initCollisionListener(){
         if(collisionListener == null){
             collisionListener = new BottomCollisionListener(this, name, 
                     ElementName.ROPE_HOOK);
@@ -364,4 +376,30 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         parent.attachChild(node); 
         return node; 
     }
+    
+     @Override
+    public void write(JmeExporter ex) throws IOException {
+         super.write(ex);
+          OutputCapsule capsule = ex.getCapsule(this);
+          capsule.write(ropesHorizontal, "HORIZONTAL_ROPES", null);
+          capsule.write(ropesVertical, "VERTICAL_ROPES", null);
+          capsule.write(distanceToHandle, "DISTANCE_TO_HANDLE", 0f);
+          capsule.write(distanceToHandleVertical, "DISTANCE_TO_HANDLE_VERTICAL", 0f);
+     }
+     
+     @Override
+    public void read(JmeImporter im) throws IOException {
+        super.read(im);
+        InputCapsule capsule = im.getCapsule(this);
+        Savable[] ropes1 = capsule.readSavableArray("HORIZONTAL_ROPES", null),
+                ropes2 = capsule.readSavableArray("VERTICAL_ROPES", null);
+        for(int i = 0; i < ropes1.length; i++) {
+            ropesHorizontal[i] = (Geometry)ropes1[i];
+        }
+        for(int i = 0; i < ropes2.length; i++) {
+            ropesVertical[i] = (Geometry)ropes2[i];
+        }
+        distanceToHandle = capsule.readFloat("DISTANCE_TO_HANDLE", 0f);
+        distanceToHandleVertical = capsule.readFloat("DISTANCE_TO_HANDLE_VERTICAL", 0f);
+     }
 }

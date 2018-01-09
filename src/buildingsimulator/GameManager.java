@@ -5,6 +5,8 @@ import eyeview.BirdsEyeView;
 import listeners.BuildingCollisionListener;
 import authorization.User;
 import billboard.Billboard;
+import building.Wall;
+import building.WallsFactory;
 import com.jme3.audio.AudioNode;
 import com.jme3.audio.AudioSource;
 import cranes.CraneAbstract;
@@ -14,6 +16,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import cranes.crane.Crane;
 import cranes.mobileCrane.MobileCrane;
+import java.util.List;
 import menu.HUD;
 import menu.MenuFactory;
 import menu.MenuTypes;
@@ -37,19 +40,22 @@ public class GameManager {
     /**
      * Uruchamia grę. 
      */
-    public static void runGame(){
+    public static void runGame(SavedData loadedData){
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
         addHUD();
         game.getFlyByCamera().setDragToRotate(false);
         BulletAppState bas = game.getBulletAppState(); 
         game.getStateManager().attach(bas);
         addToGame(new Map(9).getScene());
-        mobileCrane = new MobileCrane();
+        mobileCrane = loadedData == null ? new MobileCrane() : new MobileCrane(loadedData.getMobileCrane());
         addToGame(mobileCrane.getCrane());
         actualUnit = mobileCrane;
-        crane = new Crane(); 
+        crane = loadedData == null ? new Crane() : new Crane(loadedData.getCrane()); 
         addToGame(crane.getCrane());
         mobileCrane.setUsing(true);
+        if(loadedData != null) {
+            WallsFactory.restoreWalls(loadedData.getWalls());
+        }
 //        billboard = new Billboard(-720, 20);
 //        addToGame(billboard.getBillboard());
         Control.addListener(mobileCrane);

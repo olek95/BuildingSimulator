@@ -10,6 +10,7 @@ import buildingsimulator.GameManager;
 import buildingsimulator.PhysicsManager;
 import buildingsimulator.RememberingRecentlyHitObject;
 import com.jme3.bounding.BoundingBox;
+import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.joints.HingeJoint;
@@ -203,6 +204,12 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         PhysicsManager.createPhysics(ropeHookCompound, ropeHook, 4f, false);
         RigidBodyControl ropeHookControl = ropeHook.getControl(RigidBodyControl.class);
         ropeHookControl.setCollisionGroup(2); 
+        lineAndHookHandleJoint = PhysicsManager.joinsElementToOtherElement(lineAndHookHandleJoint,
+                hookHandle, ropeHook, Vector3f.ZERO, distanceHookHandleAndRopeHook);
+    }
+    
+    protected void restoreHookPhysics(Vector3f distanceHookHandleAndRopeHook) {
+        PhysicsManager.addPhysicsToGame(ropeHook);
         lineAndHookHandleJoint = PhysicsManager.joinsElementToOtherElement(lineAndHookHandleJoint,
                 hookHandle, ropeHook, Vector3f.ZERO, distanceHookHandleAndRopeHook);
     }

@@ -2,10 +2,17 @@ package menu;
 
 import authorization.DBManager;
 import authorization.User;
+import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
+import buildingsimulator.SavedData;
+import com.jme3.export.binary.BinaryImporter;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.ColorRGBA;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import texts.Translator;
 import tonegod.gui.controls.buttons.CheckBox;
 import tonegod.gui.controls.text.Label;
@@ -44,7 +51,20 @@ public class StartingMenu extends MainMenu{
                     Translator.NOT_LOGGED_IN_ALERT.getValue(), null));
         } else {
             super.start(); 
-            GameManager.runGame();
+            GameManager.runGame(null);
+        }
+    }
+    
+    public void load(MouseButtonEvent evt, boolean isToggled) {
+        super.start(); 
+        BinaryImporter importer = BinaryImporter.getInstance();
+        importer.setAssetManager(BuildingSimulator.getBuildingSimulator().getAssetManager());
+        File file = new File("./game saves/save.j3o");
+        try {
+            SavedData data = (SavedData)importer.load(file);
+            GameManager.runGame(data);
+        } catch (IOException ex) {
+            Logger.getLogger(StartingMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -156,7 +176,7 @@ public class StartingMenu extends MainMenu{
         super.doWhenAcceptedExit(screen, null); 
         GameManager.setUser(new User("Anonim"));
         super.start(); 
-        GameManager.runGame();
+        GameManager.runGame(null);
     }
     
     private void changeAuthorizationPopupState(boolean visible){

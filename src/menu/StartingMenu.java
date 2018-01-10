@@ -59,7 +59,9 @@ public class StartingMenu extends MainMenu{
         super.start(); 
         BinaryImporter importer = BinaryImporter.getInstance();
         importer.setAssetManager(BuildingSimulator.getBuildingSimulator().getAssetManager());
-        File file = new File("./game saves/save.j3o");
+        User user = GameManager.getUser();
+        File file = new File("./game saves/" + (user == null ? "Anonim" 
+                : user.getLogin()) + "/save.j3o");
         try {
             SavedData data = (SavedData)importer.load(file);
             GameManager.runGame(data);

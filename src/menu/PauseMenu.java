@@ -50,7 +50,8 @@ public class PauseMenu extends MainMenu{
     
     public void save(MouseButtonEvent evt, boolean isToggled) {
         BinaryExporter exporter = BinaryExporter.getInstance();
-        File file = new File("./game saves/save.j3o");
+        File file = new File("./game saves/" + GameManager.getUser().getLogin() 
+                + "/save.j3o");
         try {
             exporter.save(new SavedData(), file);
         } catch (IOException ex) {

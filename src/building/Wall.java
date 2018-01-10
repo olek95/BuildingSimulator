@@ -379,12 +379,14 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     
      @Override
     public void write(JmeExporter ex) throws IOException {
-         super.write(ex);
-          OutputCapsule capsule = ex.getCapsule(this);
-          capsule.write(ropesHorizontal, "HORIZONTAL_ROPES", null);
-          capsule.write(ropesVertical, "VERTICAL_ROPES", null);
-          capsule.write(distanceToHandle, "DISTANCE_TO_HANDLE", 0f);
-          capsule.write(distanceToHandleVertical, "DISTANCE_TO_HANDLE_VERTICAL", 0f);
+        super.write(ex);
+        OutputCapsule capsule = ex.getCapsule(this);
+        capsule.write(ropesHorizontal, "HORIZONTAL_ROPES", null);
+        capsule.write(ropesVertical, "VERTICAL_ROPES", null);
+        capsule.write(distanceToHandle, "DISTANCE_TO_HANDLE", 0f);
+        capsule.write(distanceToHandleVertical, "DISTANCE_TO_HANDLE_VERTICAL", 0f);
+        capsule.write(catchingLocation, "CATCHING_LOCATION", null);
+        capsule.write(catchingRotation, "CATCHING_ROTATION", null);
      }
      
      @Override
@@ -401,5 +403,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         }
         distanceToHandle = capsule.readFloat("DISTANCE_TO_HANDLE", 0f);
         distanceToHandleVertical = capsule.readFloat("DISTANCE_TO_HANDLE_VERTICAL", 0f);
+        catchingLocation = (Vector3f)capsule.readSavable("CATCHING_LOCATION", null);
+        catchingRotation = (Quaternion)capsule.readSavable("CATCHING_ROTATION", null);
      }
 }

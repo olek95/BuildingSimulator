@@ -4,6 +4,7 @@ import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
 import buildingsimulator.Map;
+import buildingsimulator.PhysicsManager;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.collision.CollisionResults;
@@ -191,6 +192,23 @@ public class Construction extends Node{
             }
         }
         return object;
+    }
+    
+    /**
+     * Przywraca zapisany budynek. 
+     * @param wall pierwszy element budynku 
+     */
+    public static void restoreConstruction(Wall wall) {
+        List<Spatial> wallElements = wall.getChildren(); 
+        int end = CatchNode.values().length;
+        for(int i = 1; i <= end; i++) {
+            List<Spatial> catchNodeChildren = ((Node)wallElements.get(i)).getChildren(); 
+            int childrenCount = catchNodeChildren.size(); 
+            for(int k = 0; k < childrenCount; k++) { 
+                restoreConstruction((Wall)catchNodeChildren.get(k));
+            }
+        }
+        PhysicsManager.addPhysicsToGame(wall);
     }
     
     /**

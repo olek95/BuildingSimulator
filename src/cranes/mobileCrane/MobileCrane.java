@@ -170,6 +170,14 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         }
     }
     
+    public void stop(){
+        key = "";
+        craneControl.accelerate(0f);
+        craneControl.brake(0f);
+        // jeśli jeszcze jest jakaś mała prędkość, to zeruje
+        craneControl.setLinearVelocity(Vector3f.ZERO); 
+    }
+    
     /**
      * Zwraca dostępne akcje dla dźwigu, czyli - jazda w przód, do tyłu, skręcanie 
      * w lewo i w prawo, a także akcja opuszczania podpór.
@@ -191,14 +199,6 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
      * @return model dźwigu mobilnego 
      */
     public Node getCrane() { return crane; }
-    
-    private void stop(){
-        key = "";
-        craneControl.accelerate(0f);
-        craneControl.brake(0f);
-        // jeśli jeszcze jest jakaś mała prędkość, to zeruje
-        craneControl.setLinearVelocity(Vector3f.ZERO); 
-    }
     
     private void scaleTiresTexture(){
         List<Spatial> craneElements = crane.getChildren();

@@ -97,6 +97,7 @@ public class GameManager {
     public static void pauseGame() {
         BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(true);
         Control.removeListener(Control.getActualListener());
+        mobileCrane.stop();
         startedGame = false;
         pausedGame = true; 
         // billboard.pauseAdvertisement();

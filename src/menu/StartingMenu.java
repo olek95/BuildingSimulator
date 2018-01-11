@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import texts.Translator;
+import tonegod.gui.controls.buttons.Button;
 import tonegod.gui.controls.buttons.CheckBox;
 import tonegod.gui.controls.text.Label;
 import tonegod.gui.controls.windows.Window;
@@ -36,7 +37,12 @@ public class StartingMenu extends MainMenu{
                 .setIsMovable(false);
         changeAuthorizationPopupState(false);
         User user = GameManager.getUser(); 
-        if(user != null && !user.getLogin().equals("Anonim")) setUser();
+        if(user != null && !user.getLogin().equals("Anonim")) {
+            ((Button)MainMenu.getScreen().getElementById("load_game_button")).setIgnoreMouse(false);
+            setUser();
+        } else {
+            ((Button)MainMenu.getScreen().getElementById("load_game_button")).setIgnoreMouse(true);
+        }
     }
     
     /**
@@ -139,6 +145,8 @@ public class StartingMenu extends MainMenu{
                     changeAuthorizationPopupState(false); 
                     GameManager.setUser(new User(login));
                     setUser();
+                    ((Button)MainMenu.getScreen().getElementById("load_game_button"))
+                            .setIgnoreMouse(false);
                 }
             }
         }catch(ClassNotFoundException | SQLException ex){

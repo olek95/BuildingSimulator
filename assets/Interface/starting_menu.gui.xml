@@ -26,7 +26,6 @@
             <component type="Label" id="login_label" position="18%,1%" dimensions="25%,12%"/>
         </component>    
         <component type="Window" id="authorization_popup" position="0,0" dimensions="70%,25%">
-            <method name="setWindowTitle" param0="Autoryzacja" />
             <method name="setIsResizable" param0="false" />
             <method name="centerToParent"/>
             <component type="Label" id="username_label" position="35%,23%" dimensions="20%,5%" >

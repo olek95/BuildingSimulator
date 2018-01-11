@@ -33,8 +33,9 @@ public class StartingMenu extends MainMenu{
                 new Translator[]{Translator.NEW_GAME, Translator.AUTHORIZATION,
                     Translator.CANCELLATION,Translator.USERNAME, Translator.PASSWORD,
                     Translator.LOGIN}, MainMenu.getScreen());
-        ((Window)MainMenu.getScreen().getElementById("authorization_popup")).getDragBar()
-                .setIsMovable(false);
+        Window authorizationPopup = ((Window)MainMenu.getScreen().getElementById("authorization_popup"));
+        authorizationPopup.getDragBar().setIsMovable(false);
+        authorizationPopup.setWindowTitle(Translator.AUTHORIZATION.getValue());
         changeAuthorizationPopupState(false);
         User user = GameManager.getUser(); 
         if(user != null && !user.getLogin().equals("Anonim")) {

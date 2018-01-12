@@ -57,7 +57,7 @@ public class DBManager extends AbstractAppState{
     public static void signUp(String login, String password) throws ClassNotFoundException, SQLException{
         try(Connection connection = connect()){
            PreparedStatement statement = connection
-                   .prepareStatement("INSERT INTO Users(login, password, points) VALUES(?, ?, 0)");
+                   .prepareStatement("INSERT INTO Users(login, password, points) VALUES(?, ?, 999)");
            statement.setString(1, login);
            statement.setString(2, password);
            statement.executeUpdate();
@@ -71,14 +71,15 @@ public class DBManager extends AbstractAppState{
      * @param password hasło użytkownika 
      * @return true jeśli udało się zalogować, false w przeciwnym przypadku 
      */
-    public static boolean signIn(String login, String password) throws ClassNotFoundException, SQLException{
+    public static User signIn(String login, String password) throws ClassNotFoundException, SQLException{
         try(Connection connection = connect()){
             PreparedStatement statement = connection
-                    .prepareStatement("SELECT COUNT(*) FROM Users WHERE login = ?"
+                    .prepareStatement("SELECT points FROM Users WHERE login = ?"
                     + " AND password = ?");
             statement.setString(1, login);
             statement.setString(2, password);
-            return statement.executeQuery().getInt(1) != 0;
+            ResultSet rs = statement.executeQuery();
+            return rs.next() ? new User(login, rs.getInt(1)) : null;
         }
     }
     

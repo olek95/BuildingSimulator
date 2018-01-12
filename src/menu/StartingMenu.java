@@ -139,12 +139,13 @@ public class StartingMenu extends MainMenu{
                     }
                 }
             }else{
-                if(!DBManager.signIn(login, password)){
+                User user = DBManager.signIn(login, password);
+                if(user == null){
                     error.setText(Translator.INCORRECT_DATA.getValue());
                 }else{
                     error.setText("");
                     changeAuthorizationPopupState(false); 
-                    GameManager.setUser(new User(login));
+                    GameManager.setUser(user);
                     setUser();
                     ((Button)MainMenu.getScreen().getElementById("load_game_button"))
                             .setIgnoreMouse(false);
@@ -185,7 +186,7 @@ public class StartingMenu extends MainMenu{
     @Override
     protected void doWhenAcceptedExit(Screen screen, MenuTypes type) {
         super.doWhenAcceptedExit(screen, null); 
-        GameManager.setUser(new User("Anonim"));
+        GameManager.setUser(new User("Anonim", 999));
         super.start(); 
         GameManager.runGame(null);
     }

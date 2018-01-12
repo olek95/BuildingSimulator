@@ -7,9 +7,11 @@ package authorization;
  */
 public class User {
     private String login;
-    private int points = 999; 
-    public User(String login){
+    private int points; 
+    
+    public User(String login, int points) {
         this.login = login; 
+        this.points = points; 
     }
     
     /**

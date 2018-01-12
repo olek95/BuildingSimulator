@@ -3,8 +3,6 @@ package cranes.mobileCrane;
 import buildingsimulator.BuildingSimulator;
 import settings.Control;
 import cranes.CraneAbstract;
-import static buildingsimulator.PhysicsManager.calculateDisplacementAfterScaling;
-import static buildingsimulator.PhysicsManager.moveWithScallingObject;
 import settings.Control.Actions;
 import buildingsimulator.Controllable;
 import buildingsimulator.ElementName;
@@ -66,8 +64,8 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                 GameManager.getGameSoundVolume(), true, crane);
     }
     
-    public MobileCrane(Node loadedCrane) {
-        crane = loadedCrane;
+    public MobileCrane(MobileCraneState state) {
+        crane = state.getCraneNode();
         craneControl = crane.getControl(VehicleControl.class);
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
                 .getBulletAppState().getPhysicsSpace();
@@ -271,5 +269,9 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                 HUD.setMessage(Translator.HEIGHTENED_PROPS.getValue());
             }
         }
+    }
+    
+    private void restore() {
+        
     }
 }

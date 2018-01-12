@@ -156,7 +156,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
      * Zwraca zaczepiony obiekt. 
      * @return zaczepiony obiekt 
      */
-    public Spatial getAttachedObject() { return attachedObject; }
+    public Wall getAttachedObject() { return attachedObject; }
     
     /**
      * Zwraca przesunięcie haka po opuszczeniu liny. 

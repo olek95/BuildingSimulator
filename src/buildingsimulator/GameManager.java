@@ -28,7 +28,6 @@ import menu.MenuTypes;
  * @author AleksanderSklorz
  */
 public class GameManager {
-    private static String lastAction;
     private static Crane crane; 
     private static MobileCrane mobileCrane;
     private static User user; 
@@ -49,9 +48,9 @@ public class GameManager {
         game.getStateManager().attach(bas);
         addToGame(new Map(9).getScene());
         if(loadedData != null) {
+            WallsFactory.restoreWalls(loadedData.getWalls());
             mobileCrane =  new MobileCrane(loadedData.getMobileCrane());
             crane = new Crane(loadedData.getCrane());
-            WallsFactory.restoreWalls(loadedData.getWalls());
             List<Construction> buildings = loadedData.getBuildings();
             int buildingsNumber = buildings.size();
             for(int i = 0; i < buildingsNumber; i++) {
@@ -60,10 +59,10 @@ public class GameManager {
             }
         } else {
             mobileCrane = new MobileCrane(); 
+            actualUnit = mobileCrane;
             crane = new Crane();
         }
         addToGame(mobileCrane.getCrane());
-        actualUnit = mobileCrane;
         addToGame(crane.getCrane());
         mobileCrane.setUsing(true);
 //        billboard = new Billboard(-720, 20);
@@ -175,6 +174,14 @@ public class GameManager {
      * @return aktualnie sterowana jednostka 
      */
     public static CraneAbstract getActualUnit() { return actualUnit; }
+    
+    /**
+     * Ustawia aktualnie sterowaną jednostkę. 
+     * @param actualUnit aktualnie sterowana jednostka 
+     */
+    public static void setActualUnit(CraneAbstract actualUnit) { 
+        GameManager.actualUnit = actualUnit;
+    }
     
     /**
      * Usuwa wszystkie jednostki (dźwigi mobilne i zurawie), które występują w grze. 

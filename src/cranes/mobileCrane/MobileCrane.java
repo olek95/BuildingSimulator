@@ -1,5 +1,6 @@
 package cranes.mobileCrane;
 
+import building.WallMode;
 import buildingsimulator.BuildingSimulator;
 import settings.Control;
 import cranes.CraneAbstract;
@@ -21,6 +22,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.texture.Texture;
 import com.jme3.water.SimpleWaterProcessor;
+import cranes.Hook;
 import java.util.Arrays;
 import java.util.List;
 import menu.HUD;
@@ -80,6 +82,18 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                 GameManager.getGameSoundVolume(), true, crane);
         craneDrivingBackwardsSound = GameManager.createSound("Sounds/crane_driving_backwards.wav",
                 GameManager.getGameSoundVolume(), true, crane);
+        
+        GameManager.setActualUnit(this);
+        Hook hook = getHook(); 
+        
+        //hook.getRopes()[0].setLocalScale(state.getHookLocalTranslation());
+        //h//ook.getHook().setLocalScale(state.getHookScale());
+        //hook.getHook().setLocalTranslation(state.getHookLocalTranslation());
+        hook.setActualLowering(state.getHookActualLowering());
+        hook.setHookDisplacement(state.getHookDisplacement());
+        hook.setRecentlyHitObject(state.getAttachedObjectToHook());
+        hook.addAttachingJoint(WallMode.HORIZONTAL);
+        //hook.attach(false);
     }
     
     /**

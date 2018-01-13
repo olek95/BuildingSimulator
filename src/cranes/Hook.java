@@ -83,8 +83,8 @@ public abstract class Hook implements RememberingRecentlyHitObject{
             }
             if(wallStale || lastAddedWall){
                 if(!vertical) 
-                    joinObject(false, WallMode.HORIZONTAL, attachedObject.getWidth());
-                else joinObject(true, WallMode.VERTICAL, attachedObject.getHeight());
+                    joinObject(WallMode.HORIZONTAL, attachedObject.getWidth());
+                else joinObject(WallMode.VERTICAL, attachedObject.getHeight());
             }else attachedObject = null; 
         }
     }
@@ -139,6 +139,10 @@ public abstract class Hook implements RememberingRecentlyHitObject{
      * @return wartość opuszczenia haka 
      */
     public float getActualLowering(){ return actualLowering; }
+    
+    public void setActualLowering(float actualLowering) { 
+        this.actualLowering = actualLowering; 
+    }
     
     /**
      * Zwraca uchwyt do jakiego przyczepiona jest lina. 
@@ -250,22 +254,12 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         }
     }
     
-    /**
-     * Tworzy fizykę dla całego haka wraz z linami go trzymającymi. 
-     */
-    protected abstract void createRopeHookPhysics();
-    
-    /**
-     * Zwraca tablicę wszystkich lin trzymających hak. 
-     * @return tablica lin 
-     */
-    protected abstract Node[] getRopes();
-    
-    private void joinObject(boolean vertical, WallMode mode, float y){
-        Wall wall = (Wall)attachedObject; 
+    public void addAttachingJoint(WallMode mode) {
+        attachedObject = (Wall)recentlyHitObject;
+        boolean vertical = mode.equals(WallMode.VERTICAL);
         float distanceBetweenHookAndObject = calculateDistanceBetweenHookAndObject(vertical);
-        RigidBodyControl selectedControl = wall.swapControl(mode);
-        wall.rotateToCrane();
+        RigidBodyControl selectedControl = attachedObject.swapControl(mode);
+        attachedObject.rotateToCrane();
         BoundingBox objectBounding = (BoundingBox)attachedObject.getWorldBound();
         Vector3f distanceBetweenHookAndObjectCenter;
         if(objectBounding.getYExtent() < objectBounding.getZExtent()){
@@ -282,15 +276,31 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 Vector3f.ZERO, Vector3f.ZERO);
         BuildingSimulator.getBuildingSimulator().getBulletAppState()
                 .getPhysicsSpace().add(buildingMaterialJoint);
+    }
+    
+    /**
+     * Tworzy fizykę dla całego haka wraz z linami go trzymającymi. 
+     */
+    protected abstract void createRopeHookPhysics();
+    
+    /**
+     * Zwraca tablicę wszystkich lin trzymających hak. 
+     * @return tablica lin 
+     */
+    public abstract Node[] getRopes();
+    
+    private void joinObject(WallMode mode, float y){
+        boolean vertical = mode.equals(WallMode.VERTICAL);
+        addAttachingJoint(mode);
         // +0.1 w przypadku żurawia, aby nie było kolizji z obiektami pod tym obiektem
-        float height = wall.getDistanceToHandle(vertical) + wall.getWorldTranslation().y
-                + (vertical ? wall.getHeight() + 0.1f : wall.getWidth()),
+        float height = attachedObject.getDistanceToHandle(vertical) + attachedObject.getWorldTranslation().y
+                + (vertical ? attachedObject.getHeight() + 0.1f : attachedObject.getWidth()),
                 yHook = hook.getWorldTranslation().y;
         while(yHook <= height){
             heighten();
             yHook += hookDisplacement.y;
         }
-        wall.runCollisionListener();
+        attachedObject.runCollisionListener();
     }
     
     private float calculateDistanceBetweenHookAndObject(boolean vertical){

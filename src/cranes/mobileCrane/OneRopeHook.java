@@ -34,7 +34,7 @@ public class OneRopeHook extends Hook{
     }
     
     @Override
-    protected Node[] getRopes(){
+    public Node[] getRopes(){
         return new Node[] {rope};
     }
 }

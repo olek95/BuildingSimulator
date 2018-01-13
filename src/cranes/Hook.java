@@ -263,7 +263,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         boolean vertical = mode.equals(WallMode.VERTICAL);
         float distanceBetweenHookAndObject = calculateDistanceBetweenHookAndObject(vertical);
         RigidBodyControl selectedControl = attachedObject.swapControl(mode);
-        attachedObject.rotateToCrane();
+        if(GameManager.getActualUnit() != null) attachedObject.rotateToCrane();
         BoundingBox objectBounding = (BoundingBox)attachedObject.getWorldBound();
         Vector3f distanceBetweenHookAndObjectCenter;
         if(objectBounding.getYExtent() < objectBounding.getZExtent()){

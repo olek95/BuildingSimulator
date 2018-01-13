@@ -60,9 +60,9 @@ public class GameManager {
             }
         } else {
             mobileCrane = new MobileCrane(); 
-            actualUnit = mobileCrane;
             crane = new Crane();
         }
+        actualUnit = mobileCrane;
         addToGame(mobileCrane.getCrane());
         addToGame(crane.getCrane());
         mobileCrane.setUsing(true);

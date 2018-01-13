@@ -85,18 +85,16 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         craneDrivingBackwardsSound = GameManager.createSound("Sounds/crane_driving_backwards.wav",
                 GameManager.getGameSoundVolume(), true, crane);
         
-        GameManager.setActualUnit(this);
+        propDisplacement = state.getPropDisplacement();
+        propsLowering = state.getPropsLowering();
         MobileCraneArmControl arm = (MobileCraneArmControl)getArmControl();
-        if(propsLowering <= MAX_PROP_PROTRUSION) {
+        if(propsLowering >= MAX_PROP_PROTRUSION) {
            arm.setUsing(true);
            Control.addListener(arm);
         }
         arm.setHookHandleDisplacement(state.getHookHandleDisplacement());
         arm.setStretchingOut(state.getArmStretchingOut());
         Hook hook = getHook(); 
-        //hook.getRopes()[0].setLocalScale(state.getHookLocalTranslation());
-        //h//ook.getHook().setLocalScale(state.getHookScale());
-        //hook.getHook().setLocalTranslation(state.getHookLocalTranslation());
         hook.setActualLowering(state.getHookActualLowering());
         hook.setHookDisplacement(state.getHookDisplacement());
         Wall wall = state.getAttachedObjectToHook();
@@ -104,7 +102,6 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
             hook.setRecentlyHitObject(wall);
             hook.addAttachingJoint(wall.getActualMode());
         }
-        //hook.attach(false);
     }
     
     /**
@@ -222,6 +219,18 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
      * @return model dźwigu mobilnego 
      */
     public Node getCrane() { return crane; }
+    
+    /**
+     * Zwraca wetor o jaki przesuwa się podpora.
+     * @return wektor o jaki przesuwa się podpora  
+     */
+    public Vector3f getPropDisplacement() { return propDisplacement; }
+    
+    /**
+     * Zwraca aktualne obniżenie podpór. 
+     * @return obniżenie podpór 
+     */
+    public float getPropsLowering() { return propsLowering; }
     
     private void scaleTiresTexture(){
         List<Spatial> craneElements = crane.getChildren();

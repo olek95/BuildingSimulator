@@ -1,7 +1,6 @@
 package cranes.mobileCrane;
 
 import building.Wall;
-import building.WallMode;
 import buildingsimulator.BuildingSimulator;
 import settings.Control;
 import cranes.CraneAbstract;
@@ -23,7 +22,6 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.texture.Texture;
 import com.jme3.water.SimpleWaterProcessor;
-import cranes.ArmControl;
 import cranes.Hook;
 import java.util.Arrays;
 import java.util.List;
@@ -49,42 +47,12 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     private AudioNode craneStartEngineSound, craneDrivingSound, craneDrivingBackwardsSound;
     public MobileCrane(){
         crane = GameManager.loadModel("Models/dzwig/dzwig.j3o");
-        craneControl = crane.getControl(VehicleControl.class);
-        createMobileCranePhysics();
-        scaleTiresTexture();
-//        createMirrors();
-        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
-                .getBulletAppState().getPhysicsSpace();
-        physics.add(craneControl);
-        setArmControl(new MobileCraneArmControl(crane));
-        propDisplacement =  PhysicsManager.calculateDisplacementAfterScaling((Node)crane
-                .getChild("protractileProp1"), new Vector3f(1f, propsLowering + PROP_LOWERING_SPEED,
-                1f), false, true, false);
-        craneStartEngineSound = GameManager.createSound("Sounds/crane_engine_start.wav", 
-                GameManager.getGameSoundVolume(), false, crane);
-        craneDrivingSound = GameManager.createSound("Sounds/crane_engine_driving.wav",
-                GameManager.getGameSoundVolume(), true, crane);
-        craneDrivingBackwardsSound = GameManager.createSound("Sounds/crane_driving_backwards.wav",
-                GameManager.getGameSoundVolume(), true, crane);
+        init();
     }
     
     public MobileCrane(MobileCraneState state) {
         crane = state.getCraneNode();
-        craneControl = crane.getControl(VehicleControl.class);
-        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
-                .getBulletAppState().getPhysicsSpace();
-        physics.add(craneControl);
-        setArmControl(new MobileCraneArmControl(crane));
-        propDisplacement =  PhysicsManager.calculateDisplacementAfterScaling((Node)crane
-                .getChild("protractileProp1"), new Vector3f(1f, propsLowering + PROP_LOWERING_SPEED,
-                1f), false, true, false);
-        craneStartEngineSound = GameManager.createSound("Sounds/crane_engine_start.wav", 
-                GameManager.getGameSoundVolume(), false, crane);
-        craneDrivingSound = GameManager.createSound("Sounds/crane_engine_driving.wav",
-                GameManager.getGameSoundVolume(), true, crane);
-        craneDrivingBackwardsSound = GameManager.createSound("Sounds/crane_driving_backwards.wav",
-                GameManager.getGameSoundVolume(), true, crane);
-        
+        init();
         propDisplacement = state.getPropDisplacement();
         propsLowering = state.getPropsLowering();
         MobileCraneArmControl arm = (MobileCraneArmControl)getArmControl();
@@ -232,11 +200,32 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
      */
     public float getPropsLowering() { return propsLowering; }
     
+    private void init() {
+        craneControl = crane.getControl(VehicleControl.class);
+        scaleTiresTexture();
+        // createMirrors();
+        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
+                .getBulletAppState().getPhysicsSpace();
+        physics.add(craneControl);
+        setArmControl(new MobileCraneArmControl(crane));
+        propDisplacement =  PhysicsManager.calculateDisplacementAfterScaling((Node)crane
+                .getChild("protractileProp1"), new Vector3f(1f, propsLowering + PROP_LOWERING_SPEED,
+                1f), false, true, false);
+        craneStartEngineSound = GameManager.createSound("Sounds/crane_engine_start.wav", 
+                GameManager.getGameSoundVolume(), false, crane);
+        craneDrivingSound = GameManager.createSound("Sounds/crane_engine_driving.wav",
+                GameManager.getGameSoundVolume(), true, crane);
+        craneDrivingBackwardsSound = GameManager.createSound("Sounds/crane_driving_backwards.wav",
+                GameManager.getGameSoundVolume(), true, crane);
+        createMobileCranePhysics();
+    }
+    
     private void scaleTiresTexture(){
         List<Spatial> craneElements = crane.getChildren();
         Texture tireTexture = null;
-        for(Spatial element : craneElements)
-            if(element.getName().startsWith(ElementName.WHEEL)){
+        for(Spatial element : craneElements) {
+            String elementName = element.getName(); 
+            if(elementName != null && elementName.startsWith(ElementName.WHEEL)){
                 Geometry tire = ((Geometry)((Node)((Node)element).getChild(0)).getChild(0));
                 Material tireMaterial = tire.getMaterial();
                 if(tireTexture == null){
@@ -245,6 +234,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                     tire.getMesh().scaleTextureCoordinates(new Vector2f(1,1f));
                 }else tireMaterial.setTexture("DiffuseMap", tireTexture);
             }
+        }
     }
     
     private void createMobileCranePhysics(){

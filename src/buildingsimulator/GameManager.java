@@ -17,6 +17,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import cranes.crane.Crane;
 import cranes.mobileCrane.MobileCrane;
+import cranes.mobileCrane.MobileCraneArmControl;
 import java.util.List;
 import menu.HUD;
 import menu.MenuFactory;
@@ -67,7 +68,8 @@ public class GameManager {
         mobileCrane.setUsing(true);
 //        billboard = new Billboard(-720, 20);
 //        addToGame(billboard.getBillboard());
-        Control.addListener(mobileCrane);
+        if(!((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing())
+            Control.addListener(mobileCrane);
         Control.addListener(game);
         bas.getPhysicsSpace().addCollisionListener(BuildingCollisionListener
                 .createBuildingCollisionListener());

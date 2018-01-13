@@ -87,6 +87,10 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         
         GameManager.setActualUnit(this);
         MobileCraneArmControl arm = (MobileCraneArmControl)getArmControl();
+        if(propsLowering <= MAX_PROP_PROTRUSION) {
+           arm.setUsing(true);
+           Control.addListener(arm);
+        }
         arm.setHookHandleDisplacement(state.getHookHandleDisplacement());
         arm.setStretchingOut(state.getArmStretchingOut());
         Hook hook = getHook(); 
@@ -148,7 +152,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
             case RIGHT: 
                 craneControl.steer(isPressed ? -0.5f : 0);
                 break;
-            case ACTION: if(isPressed) getOff(name);
+            case ACTION: if(isPressed) getOff();
         }
     }
     
@@ -260,7 +264,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         }while(changed < 4);
     }
     
-    private void getOff(String name){
+    private void getOff(){
         // zezwala na opuszczenie podpór tylko gdy dźwig nie porusza się
         if("".equals(key)){
             Control.removeListener(this);
@@ -290,9 +294,5 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                 HUD.setMessage(Translator.HEIGHTENED_PROPS.getValue());
             }
         }
-    }
-    
-    private void restore() {
-        
     }
 }

@@ -1,5 +1,6 @@
 package cranes.mobileCrane;
 
+import building.Wall;
 import building.WallMode;
 import buildingsimulator.BuildingSimulator;
 import settings.Control;
@@ -22,6 +23,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.texture.Texture;
 import com.jme3.water.SimpleWaterProcessor;
+import cranes.ArmControl;
 import cranes.Hook;
 import java.util.Arrays;
 import java.util.List;
@@ -84,15 +86,20 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                 GameManager.getGameSoundVolume(), true, crane);
         
         GameManager.setActualUnit(this);
+        MobileCraneArmControl arm = (MobileCraneArmControl)getArmControl();
+        arm.setHookHandleDisplacement(state.getHookHandleDisplacement());
+        arm.setStretchingOut(state.getArmStretchingOut());
         Hook hook = getHook(); 
-        
         //hook.getRopes()[0].setLocalScale(state.getHookLocalTranslation());
         //h//ook.getHook().setLocalScale(state.getHookScale());
         //hook.getHook().setLocalTranslation(state.getHookLocalTranslation());
         hook.setActualLowering(state.getHookActualLowering());
         hook.setHookDisplacement(state.getHookDisplacement());
-        hook.setRecentlyHitObject(state.getAttachedObjectToHook());
-        hook.addAttachingJoint(WallMode.HORIZONTAL);
+        Wall wall = state.getAttachedObjectToHook();
+        if(wall != null) {
+            hook.setRecentlyHitObject(wall);
+            hook.addAttachingJoint(wall.getActualMode());
+        }
         //hook.attach(false);
     }
     

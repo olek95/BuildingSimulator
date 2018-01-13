@@ -254,6 +254,10 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         }
     }
     
+    /**
+     * Dodaje do gry połączenie pomiędzy hakiem a przyczepionym do niego obiektem. 
+     * @param mode pozycja przyczepianej ściany 
+     */
     public void addAttachingJoint(WallMode mode) {
         attachedObject = (Wall)recentlyHitObject;
         boolean vertical = mode.equals(WallMode.VERTICAL);
@@ -287,7 +291,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
      * Zwraca tablicę wszystkich lin trzymających hak. 
      * @return tablica lin 
      */
-    public abstract Node[] getRopes();
+    protected abstract Node[] getRopes();
     
     private void joinObject(WallMode mode, float y){
         boolean vertical = mode.equals(WallMode.VERTICAL);

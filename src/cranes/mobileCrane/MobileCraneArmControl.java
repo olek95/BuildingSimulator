@@ -150,6 +150,36 @@ public class MobileCraneArmControl extends ArmControl{
         this.using = using;
     }
     
+    /**
+     * Zwraca wektor o jaki przesuwa się część uchwytu na hak podczas wysuwania/wsuwania
+     * ramienia. 
+     * @return wektor przesuwania się części uchwytu na hak
+     */
+    public Vector3f getHookHandleDisplacement() { return hookHandleDisplacement; }
+    
+    /**
+     * Ustawia wektor o jaki przesuwa się część uchwytu na hak podczas wysuwania/wsuwania
+     * ramienia
+     * @param displacement wektor przesuwania się części uchwytu na hak 
+     */
+    public void setHookHandleDisplacement(Vector3f displacement) { 
+        hookHandleDisplacement = displacement;
+    }
+    
+    /**
+     * Zwraca aktualne wysunięcie ramienia. 
+     * @return aktualne wysunięcie remienia 
+     */
+    public float getStrechingOut() { return stretchingOut; }
+    
+    /**
+     * Określa aktualne wysunięcie ramienia. 
+     * @param stretchingOut aktualne wysunięcie ramienia. 
+     */
+    public void setStretchingOut(float stretchingOut) { 
+        this.stretchingOut = stretchingOut; 
+    }
+    
     private void createCranePhysics(){
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
                 .getBulletAppState().getPhysicsSpace();

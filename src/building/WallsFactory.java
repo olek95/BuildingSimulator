@@ -63,7 +63,7 @@ public class WallsFactory {
             for(int j = 0; j < wallModeCount; j++) {
                 PhysicsManager.addPhysicsToGame(wall, j);
             }
-            wall.swapControl(WallMode.LOOSE);
+            //wall.swapControl(WallMode.LOOSE);
         }
     }
 }

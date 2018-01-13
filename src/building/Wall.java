@@ -387,6 +387,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         capsule.write(distanceToHandleVertical, "DISTANCE_TO_HANDLE_VERTICAL", 0f);
         capsule.write(catchingLocation, "CATCHING_LOCATION", null);
         capsule.write(catchingRotation, "CATCHING_ROTATION", null);
+        capsule.write(actualMode, "ACTUAL_MODE", null);
      }
      
      @Override
@@ -405,5 +406,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         distanceToHandleVertical = capsule.readFloat("DISTANCE_TO_HANDLE_VERTICAL", 0f);
         catchingLocation = (Vector3f)capsule.readSavable("CATCHING_LOCATION", null);
         catchingRotation = (Quaternion)capsule.readSavable("CATCHING_ROTATION", null);
+        actualMode = capsule.readEnum("ACTUAL_MODE", WallMode.class, null);
+        System.out.println(actualMode);
      }
 }

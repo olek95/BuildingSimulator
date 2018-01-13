@@ -65,7 +65,7 @@ public class FourRopesHook extends Hook{
     }
     
     @Override 
-    public Node[] getRopes(){
+    protected Node[] getRopes(){
         return ropes; 
     }
 }

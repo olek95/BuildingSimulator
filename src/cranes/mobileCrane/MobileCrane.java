@@ -62,6 +62,8 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         }
         arm.setHookHandleDisplacement(state.getHookHandleDisplacement());
         arm.setStretchingOut(state.getArmStretchingOut());
+        arm.setCranePropsProtrusion(state.getCranePropsProtrusion());
+        arm.setYCraneOffset(state.getYCraneOffset());
         Hook hook = getHook(); 
         hook.setActualLowering(state.getHookActualLowering());
         hook.setHookDisplacement(state.getHookDisplacement());

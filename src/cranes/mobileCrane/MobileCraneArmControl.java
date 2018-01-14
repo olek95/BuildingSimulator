@@ -180,6 +180,32 @@ public class MobileCraneArmControl extends ArmControl{
         this.stretchingOut = stretchingOut; 
     }
     
+    /**
+     * Zwraca wartość wysunięcia podpór ramienia dźwigu. 
+     * @return wysunięcie podpór ramienia dźwigu 
+     */
+    public float getCranePropsProtrusion() { return cranePropsProtrusion; }
+    
+    /**
+     * Ustawia wartość wysunięcia podpór ramienia dźwigu. 
+     * @param cranePropsProtrusion wysunięcie podpór ramienia dźwigu 
+     */
+    public void setCranePropsProtrusion(float cranePropsProtrusion) { 
+        this.cranePropsProtrusion = cranePropsProtrusion;
+    }
+    
+    /**
+     * Zwraca wysokość na jakiej znajduje się ramie dźwigu. 
+     * @return wysokość na jakiej znajduje się ramie dźwigu 
+     */
+    public float getYCraneOffset() { return yCraneOffset; }
+    
+    /**
+     * Ustawia wysokość na jakiej znajduje się ramię dźwigu. 
+     * @param y wysokość na jakiej znajduje się ramię dźwigu 
+     */
+    public void setYCraneOffset(float y) { yCraneOffset = y; }
+    
     private void createCranePhysics(){
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
                 .getBulletAppState().getPhysicsSpace();

@@ -17,7 +17,8 @@ public class MobileCraneState implements Savable{
     private Node craneNode;
     private Wall attachedObjectToHook;
     private Vector3f hookDisplacement, hookHandleDisplacement, propDisplacement; 
-    private float hookActualLowering, armStretchingOut, propsLowering; 
+    private float hookActualLowering, armStretchingOut, propsLowering, cranePropsProtrusion,
+            yCraneOffset; 
     public MobileCraneState() {
         MobileCrane crane = GameManager.getMobileCrane(); 
         if(crane != null) {
@@ -27,6 +28,8 @@ public class MobileCraneState implements Savable{
             ArmControl arm = crane.getArmControl();
             hookHandleDisplacement = ((MobileCraneArmControl)arm).getHookHandleDisplacement();
             armStretchingOut = ((MobileCraneArmControl)arm).getStrechingOut(); 
+            cranePropsProtrusion = ((MobileCraneArmControl)arm).getCranePropsProtrusion();
+            yCraneOffset = ((MobileCraneArmControl)arm).getYCraneOffset();
             Hook hook = arm.getHook();
             attachedObjectToHook = hook.getAttachedObject();
             hookDisplacement = hook.getHookDisplacement();
@@ -42,6 +45,8 @@ public class MobileCraneState implements Savable{
         capsule.write(propsLowering, "PROPS_LOWERING", 0f);
         capsule.write(hookHandleDisplacement, "HOOK_HANDLE_DISPLACEMENT", null);
         capsule.write(armStretchingOut, "ARM_STRETCHING_OUT", 0f);
+        capsule.write(cranePropsProtrusion, "CRANE_PROPS_PROTRUSION", 0f);
+        capsule.write(yCraneOffset, "Y_CRANE_OFFSET", 0f); 
         capsule.write(attachedObjectToHook, "ATTACHED_OBJECT_TO_HOOK", null);
         capsule.write(hookDisplacement, "HOOK_DISPLACEMENT", null);
         capsule.write(hookActualLowering, "HOOK_ACTUAL_LOWERING", 0f);
@@ -55,6 +60,8 @@ public class MobileCraneState implements Savable{
         propsLowering = capsule.readFloat("PROPS_LOWERING", 0f);
         hookHandleDisplacement = (Vector3f)capsule.readSavable("HOOK_HANDLE_DISPLACEMENT", null);
         armStretchingOut = capsule.readFloat("ARM_STRETCHING_OUT", 0f);
+        cranePropsProtrusion = capsule.readFloat("CRANE_PROPS_PROTRUSION", cranePropsProtrusion);
+        yCraneOffset = capsule.readFloat("Y_CRANE_OFFSET", yCraneOffset);
         attachedObjectToHook = (Wall)capsule.readSavable("ATTACHED_OBJECT_TO_HOOK", null);
         hookDisplacement = (Vector3f)capsule.readSavable("HOOK_DISPLACEMENT", null);
         hookActualLowering = capsule.readFloat("HOOK_ACTUAL_LOWERING", 0f);
@@ -77,4 +84,8 @@ public class MobileCraneState implements Savable{
     public Vector3f getPropDisplacement() { return propDisplacement; }
     
     public float getPropsLowering() { return propsLowering; }
+    
+    public float getCranePropsProtrusion() { return cranePropsProtrusion; }
+    
+    public float getYCraneOffset() { return yCraneOffset; }
 }

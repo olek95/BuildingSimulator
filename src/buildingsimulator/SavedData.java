@@ -9,21 +9,22 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import cranes.crane.CraneState;
 import cranes.mobileCrane.MobileCraneState;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SavedData implements Savable{
-    private Node crane;
     private ArrayList<Wall> walls;
     private ArrayList<Construction> buildings;
     private MobileCraneState mobileCrane; 
+    private CraneState crane; 
     @Override
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule capsule = ex.getCapsule(this);
         capsule.write(new MobileCraneState(), "mobileCrane", null);
-        capsule.write(GameManager.getCrane().getCrane(), "crane", null);
+        capsule.write(new CraneState(), "crane", null);
         Node root = BuildingSimulator.getBuildingSimulator().getRootNode();
         List<Spatial> gameObjects = root.getChildren();
         ArrayList<Wall> savedWalls = new ArrayList();
@@ -48,12 +49,12 @@ public class SavedData implements Savable{
     public void read(JmeImporter im) throws IOException {
         InputCapsule capsule = im.getCapsule(this);
         mobileCrane = (MobileCraneState)capsule.readSavable("mobileCrane", null);
-        crane = (Node)capsule.readSavable("crane", null);
+        crane = (CraneState)capsule.readSavable("crane", null);
         walls = capsule.readSavableArrayList("walls", null);
         buildings = capsule.readSavableArrayList("buildings", null);
     }
     
-    public Node getCrane() { return crane; }
+    public CraneState getCrane() { return crane; }
     
     public MobileCraneState getMobileCrane() { return mobileCrane; }
     

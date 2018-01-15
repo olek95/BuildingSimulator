@@ -227,6 +227,12 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
     }
     
     /**
+     * Zwraca minimalną odległość na jaką można przesunąć uchwyt haka. 
+     * @return minimalna odległość przesunięcia uchwytu haka 
+     */
+    public float getMinHandleHookDisplacement() { return minHandleHookDisplacement; }
+    
+    /**
      * Zwraca maksymalną wysokość, na jaką można podnieść ramię dźwigu. 
      * @return maksymalna wysokość położenia ramienia 
      */

@@ -14,7 +14,9 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import cranes.ArmControl;
 import cranes.CraneAbstract;
+import cranes.Hook;
 import java.util.List;
 import menu.HUD;
 
@@ -37,14 +39,20 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
         initCranePhysics();
     }
     
-    public Crane(Node loadedCrane) {
-        crane = loadedCrane;
+    public Crane(CraneState state) {
+        crane = state.getCraneNode();
         craneLocation = crane.getLocalTranslation();
         initCraneElements();
         PhysicsManager.addPhysicsToGame(crane.getChild(ElementName.PROP0), 
                 crane.getChild(ElementName.PROP1), rack, penultimateRack,
                 lastRack, entrancePlatform);
         raiseHeight(0);
+        
+        ArmControl arm = getArmControl(); 
+        arm.setMinHandleHookDisplacement(state.getMinHandleHookDisplacement());
+        Hook hook = arm.getHook(); 
+        hook.setHookDisplacement(state.getHookDisplacement());
+        hook.setActualLowering(state.getHookActualLowering());
     }
     
 //    public Crane(int heightLevel){

@@ -58,18 +58,27 @@ public class GameManager {
                 addToGame(buildings.get(i));
                 Construction.restoreConstruction((Wall)buildings.get(i).getChild(0));
             }
+            if(loadedData.getActualUnit().equals("mobileCrane")) {
+                actualUnit = mobileCrane;
+                mobileCrane.setUsing(true);
+                if(!((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing())
+                    Control.addListener(mobileCrane);
+            } else {
+                actualUnit = crane;
+                Control.addListener(crane.getArmControl());
+                crane.setUsing(true);
+            }
         } else {
             mobileCrane = new MobileCrane(); 
             crane = new Crane();
+            actualUnit = mobileCrane;
+            if(!((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing())
+                Control.addListener(mobileCrane);
         }
-        actualUnit = mobileCrane;
         addToGame(mobileCrane.getCrane());
         addToGame(crane.getCrane());
-        mobileCrane.setUsing(true);
 //        billboard = new Billboard(-720, 20);
 //        addToGame(billboard.getBillboard());
-        if(!((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing())
-            Control.addListener(mobileCrane);
         Control.addListener(game);
         bas.getPhysicsSpace().addCollisionListener(BuildingCollisionListener
                 .createBuildingCollisionListener());

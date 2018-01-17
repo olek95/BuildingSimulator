@@ -15,11 +15,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Klasa <code>SavedData</code> reprezentuje obecny stan gry. Umożliwia jego zapisanie. 
+ * @author AleksanderSklorz 
+ */
 public class SavedData implements Savable{
     private ArrayList<Wall> walls;
     private ArrayList<Construction> buildings;
     private MobileCraneState mobileCrane; 
     private CraneState crane; 
+    private String actualUnit; 
+    
     @Override
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule capsule = ex.getCapsule(this);
@@ -43,6 +49,8 @@ public class SavedData implements Savable{
         }
         capsule.writeSavableArrayList(savedWalls, "walls", null);
         capsule.writeSavableArrayList(savedBuildings, "buildings", null);
+        capsule.write(GameManager.getActualUnit().getCrane().getName().contains("zuraw")
+                ? "crane" : "mobileCrane", "actualUnit", null);
     }
 
     @Override
@@ -52,13 +60,36 @@ public class SavedData implements Savable{
         crane = (CraneState)capsule.readSavable("crane", null);
         walls = capsule.readSavableArrayList("walls", null);
         buildings = capsule.readSavableArrayList("buildings", null);
+        actualUnit = capsule.readString("actualUnit", null);
     }
     
+    /**
+     * Zwraca stan żurawia. 
+     * @return stan żurawia 
+     */
     public CraneState getCrane() { return crane; }
     
+    /**
+     * Zwraca stan dźwigu mobilnego. 
+     * @return stan dźwigu mobilnego 
+     */
     public MobileCraneState getMobileCrane() { return mobileCrane; }
     
+    /**
+     * Zwraca listę zapisanych ścian.  
+     * @return lista ścian  
+     */
     public ArrayList<Wall> getWalls() { return walls; }
     
+    /**
+     * Zwraca listę zapisanych budynków. 
+     * @return lista budynków 
+     */
     public ArrayList<Construction> getBuildings() { return buildings; }
+    
+    /**
+     * Zwraca zapisaną aktualnie używaną podczas zapisu jednostkę. 
+     * @return używana podczas zapisu jednostka
+     */
+    public String getActualUnit() { return actualUnit; }
 }

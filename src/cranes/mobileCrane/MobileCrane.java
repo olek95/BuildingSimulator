@@ -34,7 +34,6 @@ import texts.Translator;
  * @author AleksanderSklorz
  */
 public class MobileCrane extends CraneAbstract implements ActionListener, Controllable{
-    private Node crane;
     private VehicleControl craneControl;
     private static final float ACCELERATION_FORCE = 100.0f, BRAKE_FORCE = 20.0f,
             FRICTION_FORCE = 10.0f, PROP_LOWERING_SPEED = 0.05f;
@@ -46,12 +45,12 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         Actions.RIGHT, Actions.ACTION};
     private AudioNode craneStartEngineSound, craneDrivingSound, craneDrivingBackwardsSound;
     public MobileCrane(){
-        crane = GameManager.loadModel("Models/dzwig/dzwig.j3o");
+        setCrane(GameManager.loadModel("Models/dzwig/dzwig.j3o"));
         init();
     }
     
     public MobileCrane(MobileCraneState state) {
-        crane = state.getCraneNode();
+        setCrane(state.getCraneNode());
         init();
         propDisplacement = state.getPropDisplacement();
         propsLowering = state.getPropsLowering();
@@ -185,12 +184,6 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     public void setSteeringAngle(float angle){ craneControl.steer(angle); }
     
     /**
-     * Zwraca model dźwigu mobilnego. 
-     * @return model dźwigu mobilnego 
-     */
-    public Node getCrane() { return crane; }
-    
-    /**
      * Zwraca wetor o jaki przesuwa się podpora.
      * @return wektor o jaki przesuwa się podpora  
      */
@@ -203,6 +196,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     public float getPropsLowering() { return propsLowering; }
     
     private void init() {
+        Node crane = getCrane(); 
         craneControl = crane.getControl(VehicleControl.class);
         scaleTiresTexture();
         // createMirrors();
@@ -223,7 +217,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     }
     
     private void scaleTiresTexture(){
-        List<Spatial> craneElements = crane.getChildren();
+        List<Spatial> craneElements = getCrane().getChildren();
         Texture tireTexture = null;
         for(Spatial element : craneElements) {
             String elementName = element.getName(); 
@@ -240,6 +234,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     }
     
     private void createMobileCranePhysics(){
+        Node crane = getCrane(); 
         PhysicsManager.addNewCollisionShapeToCompound((CompoundCollisionShape)craneControl
                 .getCollisionShape(),crane, ElementName.OUTSIDE_MOBILE_CRANE_CABIN,
                 Vector3f.ZERO, null);
@@ -248,7 +243,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     }
     
     private void controlProps(boolean lowering){
-        List<Spatial> mobileCraneChildren = crane.getChildren();
+        List<Spatial> mobileCraneChildren = getCrane().getChildren();
         int i = 0, changed = 0;
         String[] props = {ElementName.PROP_PARTS1, ElementName.PROP_PARTS2,
             ElementName.PROP_PARTS3, ElementName.PROP_PARTS4};

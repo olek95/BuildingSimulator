@@ -1,11 +1,14 @@
 package cranes;
 
+import com.jme3.scene.Node;
+
 /**
  * Klasa abstrakcyjna <code>CraneAbstract</code>jest klasą abstrakcyjną dla 
  * wszystkich rodzai dźwigów. 
  * @author AleksanderSklorz
  */
 public abstract class CraneAbstract {
+    private Node crane;
     private ArmControl armControl;
     private boolean using; 
     /**
@@ -50,4 +53,16 @@ public abstract class CraneAbstract {
         Hook hook = armControl.getHook();
         if(using) hook.getCollisionListener().setHittingObject(hook);
     }
+    
+    /**
+     * Zwraca model dźwigu. 
+     * @return model dźwigu 
+     */
+    public Node getCrane() { return crane; }
+    
+    /**
+     * Ustawia model dźwigu. 
+     * @param crane model dźwigu 
+     */
+    public void setCrane(Node crane) { this.crane = crane; }
 }

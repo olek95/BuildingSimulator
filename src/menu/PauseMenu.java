@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import texts.Translator;
+import tonegod.gui.controls.buttons.Button;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Element;
 import tonegod.gui.core.Screen;
@@ -33,8 +34,13 @@ public class PauseMenu extends MainMenu{
                     Translator.CANCELLATION, Translator.RETURN_TO_STARTING_MENU},
                 screen);
         MainMenu.getScreen().getElementById("exit_popup").hide();
-        User user = GameManager.getUser();
-        screen.getElementById("login_label").setText(user.getLogin());
+        String login = GameManager.getUser().getLogin(); 
+        screen.getElementById("login_label").setText(login);
+        if(!login.equals("Anonim")) {
+            ((Button)MainMenu.getScreen().getElementById("save_game_button")).setIgnoreMouse(false);
+        } else {
+            ((Button)MainMenu.getScreen().getElementById("save_game_button")).setIgnoreMouse(true);
+        }
         ((Window)screen.getElementById("exit_popup")).getDragBar().setIsMovable(false);
     }
     

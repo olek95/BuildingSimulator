@@ -1,5 +1,6 @@
 package cranes.crane;
 
+import building.Wall;
 import eyeview.BirdsEyeView;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
@@ -46,13 +47,30 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
         PhysicsManager.addPhysicsToGame(crane.getChild(ElementName.PROP0), 
                 crane.getChild(ElementName.PROP1), rack, penultimateRack,
                 lastRack, entrancePlatform);
-        raiseHeight(0);
-        
         ArmControl arm = getArmControl(); 
         arm.setMinHandleHookDisplacement(state.getMinHandleHookDisplacement());
         Hook hook = arm.getHook(); 
         hook.setHookDisplacement(state.getHookDisplacement());
         hook.setActualLowering(state.getHookActualLowering());
+        Wall wall = state.getAttachedObjectToHook();
+        if(wall != null) {
+            hook.setRecentlyHitObject(wall);
+            hook.addAttachingJoint(wall.getActualMode());
+        }
+        List<Spatial> craneElements = crane.getChildren(); 
+        int elementsNumber = craneElements.size(); 
+        for(int i = 0; i < elementsNumber; i++) {
+            Spatial element = craneElements.get(i);
+            if(element.getName().startsWith("rack")){
+                penultimateRack = lastRack;
+                lastRack = element;
+                if(i > 2) {
+                    BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
+                            .add(setProperControlLocation(element, craneLocation));
+                }
+            }
+        }
+        heightLevel = state.getHeightLevel();
     }
     
 //    public Crane(int heightLevel){

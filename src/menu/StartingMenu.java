@@ -109,6 +109,8 @@ public class StartingMenu extends MainMenu{
             screen.getElementById("authorization_button").setText(Translator
                     .AUTHORIZATION.getValue());
             screen.getElementById("login_label").setText("");
+            ((Button)MainMenu.getScreen().getElementById("load_game_button"))
+                            .setIgnoreMouse(true);
         }
     }
     

@@ -58,7 +58,7 @@ public class GameManager {
                 addToGame(buildings.get(i));
                 Construction.restoreConstruction((Wall)buildings.get(i).getChild(0));
             }
-            if(loadedData.getActualUnit().equals("mobileCrane")) {
+            if(loadedData.getActualUnit().equals(ElementName.MOBILE_CRANE)) {
                 actualUnit = mobileCrane;
                 mobileCrane.setUsing(true);
                 if(!((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing())

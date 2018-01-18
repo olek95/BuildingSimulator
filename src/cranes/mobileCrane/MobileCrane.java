@@ -205,7 +205,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         physics.add(craneControl);
         setArmControl(new MobileCraneArmControl(crane));
         propDisplacement =  PhysicsManager.calculateDisplacementAfterScaling((Node)crane
-                .getChild("protractileProp1"), new Vector3f(1f, propsLowering + PROP_LOWERING_SPEED,
+                .getChild(ElementName.PROTRACTILE_PROP), new Vector3f(1f, propsLowering + PROP_LOWERING_SPEED,
                 1f), false, true, false);
         craneStartEngineSound = GameManager.createSound("Sounds/crane_engine_start.wav", 
                 GameManager.getGameSoundVolume(), false, crane);

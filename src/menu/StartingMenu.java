@@ -38,7 +38,7 @@ public class StartingMenu extends MainMenu{
         authorizationPopup.setWindowTitle(Translator.AUTHORIZATION.getValue());
         changeAuthorizationPopupState(false);
         User user = GameManager.getUser(); 
-        if(user != null && !user.getLogin().equals("Anonim")) {
+        if(user != null && !user.getLogin().equals(User.DEFAULT_LOGIN)) {
             ((Button)MainMenu.getScreen().getElementById("load_game_button")).setIgnoreMouse(false);
             setUser();
         } else {
@@ -67,8 +67,7 @@ public class StartingMenu extends MainMenu{
         BinaryImporter importer = BinaryImporter.getInstance();
         importer.setAssetManager(BuildingSimulator.getBuildingSimulator().getAssetManager());
         User user = GameManager.getUser();
-        File file = new File("./game saves/" + (user == null ? "Anonim" 
-                : user.getLogin()) + "/save.j3o");
+        File file = new File("./game saves/" + user.getLogin() + "/save.j3o");
         try {
             SavedData data = (SavedData)importer.load(file);
             GameManager.runGame(data);
@@ -188,7 +187,7 @@ public class StartingMenu extends MainMenu{
     @Override
     protected void doWhenAcceptedExit(Screen screen, MenuTypes type) {
         super.doWhenAcceptedExit(screen, null); 
-        GameManager.setUser(new User("Anonim", 999));
+        GameManager.setUser(new User(User.DEFAULT_LOGIN, 999));
         super.start(); 
         GameManager.runGame(null);
     }
@@ -213,7 +212,7 @@ public class StartingMenu extends MainMenu{
         if(password.equals("")) return Translator.EMPTY_PASSWORD.getValue();
         if(login.length() > 20 || password.length() > 20) 
             return Translator.TOO_LONG_LOGIN_PASSWORD.getValue();
-        if(login.equalsIgnoreCase("Anonim")) 
+        if(login.equalsIgnoreCase(User.DEFAULT_LOGIN)) 
             return Translator.NOT_ALLOWED_USERNAME.getValue();
         return null; 
     }

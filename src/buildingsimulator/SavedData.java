@@ -29,7 +29,7 @@ public class SavedData implements Savable{
     @Override
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule capsule = ex.getCapsule(this);
-        capsule.write(new MobileCraneState(), "mobileCrane", null);
+        capsule.write(new MobileCraneState(), ElementName.MOBILE_CRANE, null);
         capsule.write(new CraneState(), "crane", null);
         Node root = BuildingSimulator.getBuildingSimulator().getRootNode();
         List<Spatial> gameObjects = root.getChildren();

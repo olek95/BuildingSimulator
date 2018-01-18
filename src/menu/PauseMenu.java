@@ -36,7 +36,7 @@ public class PauseMenu extends MainMenu{
         MainMenu.getScreen().getElementById("exit_popup").hide();
         String login = GameManager.getUser().getLogin(); 
         screen.getElementById("login_label").setText(login);
-        if(!login.equals("Anonim")) {
+        if(!login.equals(User.DEFAULT_LOGIN)) {
             ((Button)MainMenu.getScreen().getElementById("save_game_button")).setIgnoreMouse(false);
         } else {
             ((Button)MainMenu.getScreen().getElementById("save_game_button")).setIgnoreMouse(true);
@@ -60,6 +60,7 @@ public class PauseMenu extends MainMenu{
                 + "/save.j3o");
         try {
             exporter.save(new SavedData(), file);
+            savePoints();
         } catch (IOException ex) {
             Logger.getLogger(PauseMenu.class.getName()).log(Level.SEVERE, null, ex);
         } 
@@ -89,14 +90,7 @@ public class PauseMenu extends MainMenu{
      * @param isToggled 
      */
     public void exit(MouseButtonEvent evt, boolean isToggled){ 
-        User user = GameManager.getUser(); 
-        if(!user.getLogin().equalsIgnoreCase("Anonim")) {
-            try {
-                DBManager.savePoints(user);
-            }catch(SQLException|ClassNotFoundException ex) {
-
-            }
-        }
+        savePoints(); 
         exit(); 
     }
     
@@ -126,14 +120,7 @@ public class PauseMenu extends MainMenu{
      */
     public void returnToStartingMenu(MouseButtonEvent evt, boolean isToggled) {
         getWindow().hide();
-        User user = GameManager.getUser(); 
-        if(!user.getLogin().equalsIgnoreCase("Anonim")) {
-            try {
-                DBManager.savePoints(user);
-            }catch(SQLException|ClassNotFoundException ex) {
-                ex.printStackTrace();
-            }
-        } else GameManager.setUser(null);
+        if(!savePoints()) GameManager.setUser(null);
         Element exitPopup = MainMenu.getScreen().getElementById("exit_popup"); 
         exitPopup.hide();
         Screen screen = MainMenu.getScreen(); 
@@ -141,5 +128,17 @@ public class PauseMenu extends MainMenu{
         BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
         GameManager.deleteGame();
         MenuFactory.showMenu(MenuTypes.STARTING_MENU);
+    }
+    
+    private boolean savePoints() {
+        User user = GameManager.getUser(); 
+        if(!user.getLogin().equals(User.DEFAULT_LOGIN)) {
+            try {
+                DBManager.savePoints(user);
+            }catch(SQLException|ClassNotFoundException ex) {
+                ex.printStackTrace();
+            }
+            return true; 
+        } else return false; 
     }
 }

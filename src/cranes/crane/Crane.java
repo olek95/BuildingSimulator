@@ -61,7 +61,7 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
         int elementsNumber = craneElements.size(); 
         for(int i = 0; i < elementsNumber; i++) {
             Spatial element = craneElements.get(i);
-            if(element.getName().startsWith("rack")){
+            if(element.getName().startsWith(ElementName.RACK)){
                 penultimateRack = lastRack;
                 lastRack = element;
                 if(i > 2) {

@@ -8,6 +8,7 @@ package authorization;
 public class User {
     private String login;
     private int points; 
+    public static final String DEFAULT_LOGIN = "Anonim";
     
     public User(String login, int points) {
         this.login = login; 

@@ -1,5 +1,10 @@
 package buildingsimulator;
 
+/**
+ * Klasa <code>ElementName</code> reprezentuje stałe będące łańcuchami znaków, używane 
+ * w różnych fragmentach aplikacji. 
+ * @author AleksanderSklorz
+ */
 public class ElementName {
     public static final String WALL_BASE_NAME = "Wall";
     public static final String MAP_FIELD_PART_NAME = "terrain-gameMap";
@@ -13,6 +18,7 @@ public class ElementName {
     public static final String HOOK_HANDLE = "hookHandle";
     public static final String CRANE = "dzwig";
     public static final String LADDER = "ladder2";
+    public static final String PROTRACTILE_PROP = "protractileProp1";
     public static final String PROP = "prop";
     public static final String PROP0 = "prop0";
     public static final String PROP1 = "prop1";
@@ -30,6 +36,7 @@ public class ElementName {
     public static final String LITTLE_HOOK_HANDLE = "littleHookHandle";
     public static final String WHEEL = "wheel";
     public static final String OUTSIDE_MOBILE_CRANE_CABIN = "outsideMobileCraneCabin";
+    public static final String MOBILE_CRANE="mobileCrane";
     public static final String BOLLARDS = "bollardsShape";
     public static final String PROP_PARTS1 = "propParts1";
     public static final String PROP_PARTS2 = "propParts2";

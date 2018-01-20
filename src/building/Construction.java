@@ -204,6 +204,7 @@ public class Construction extends Node{
                     wall.setMovable(true);
                     if(wall.getHeight() + 0.01f < wall.getWorldTranslation()
                             .distance(wall.getCatchingLocation())){ 
+                        boolean ceilingStateChanged = false, wallStateChanged = false; 
                         if(!wall.isStale()){
                             wallStateChanged = true; 
                             wall.setStale(true);

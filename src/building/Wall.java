@@ -343,8 +343,9 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setTexture("ColorMap", assetManager.loadTexture("Textures/gips.jpg"));
         wall.setMaterial(mat);     
-        for(int i = 0; i < differenceShapes.length; i++)
-            wall.subtractShape(differenceShapes[i]);
+        if(differenceShapes != null)
+            for(int i = 0; i < differenceShapes.length; i++)
+                wall.subtractShape(differenceShapes[i]);
         setName(ElementName.WALL_BASE_NAME + counter);
         attachChild(wall);
     }

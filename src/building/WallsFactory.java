@@ -64,10 +64,13 @@ public class WallsFactory {
     
     private static Wall createWall(Box wallBox, Vector3f wallLocation, Box[] elements,
             Vector3f... locations) {
-        CSGShape[] shapes = new CSGShape[elements.length];
-        for(int i = 0; i < elements.length; i++) {
-            shapes[i] = new CSGShape("Box" + i, elements[i]);
-            shapes[i].setLocalTranslation(locations[i]);
+        CSGShape[] shapes = null;
+        if(elements != null) {
+            shapes = new CSGShape[elements.length];
+            for(int i = 0; i < elements.length; i++) {
+                shapes[i] = new CSGShape("Box" + i, elements[i]);
+                shapes[i].setLocalTranslation(locations[i]);
+            }
         }
         return new Wall(new CSGShape("Box", wallBox), wallLocation, shapes);
     }

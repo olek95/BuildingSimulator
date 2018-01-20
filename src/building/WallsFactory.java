@@ -22,33 +22,24 @@ public class WallsFactory {
     public static Wall createWall(WallType type, Vector3f location, Vector3f dimensions){
         Box box = new Box(dimensions.x, dimensions.y, dimensions.z); 
         if(WallType.WALL.equals(type)) 
-            return new Wall(new CSGShape("Box", box), location); 
+            return createWall(box, location, null, (Vector3f)null);
         else if(WallType.WINDOWS.equals(type)){
-            CSGShape window1 = new CSGShape("Box0", new Box(1, 0.2f, 1.25f)),
-                    window2 = new CSGShape("Box1", new Box(1, 0.2f, 1.25f));
-            window1.setLocalTranslation(-2f, 0, 1);
-            window2.setLocalTranslation(2f, 0, 1);
-            return new Wall(new CSGShape("Box", box), location,
-                    window1, window2); 
+            return createWall(box, location, new Box[]{createLittleWindow(dimensions), 
+                createLittleWindow(dimensions)}, new Vector3f(-dimensions.x * 0.37f, 0, dimensions.z * 0.37f),
+                new Vector3f(dimensions.x * 0.37f, 0, dimensions.z * 0.37f));
         }else if(WallType.ONE_BIG_WINDOW.equals(type)){
-            CSGShape window = new CSGShape("Box", new Box(1.25f, 0.2f, 1.25f));
-            window.setLocalTranslation(0, 0, 1);
-            return new Wall(new CSGShape("Box", box), location,
-                    window);
+            return createWall(box, location, new Box[]{new Box(dimensions.x * 0.23f, 0.2f,
+                    dimensions.z * 0.46f)}, new Vector3f(0, 0, dimensions.z * 0.37f));
         }else if(WallType.ONE_BIGGER_WINDOW.equals(type)){
-            CSGShape window1 = new CSGShape("Box0", new Box(1, 0.2f, 1.25f)),
-                    window2 = new CSGShape("Box1", new Box(1.6f, 0.2f, 1.25f));
-            window1.setLocalTranslation(-2f, 0, 1);
-            window2.setLocalTranslation(2f, 0, 1);
-            return new Wall(new CSGShape("Box", box), location,
-                    window1, window2); 
+            return createWall(box, location, new Box[]{createLittleWindow(dimensions), 
+                new Box(dimensions.x * 0.3f, 0.2f, dimensions.z * 0.46f)},
+                    new Vector3f(-dimensions.x * 0.37f, 0, dimensions.z * 0.37f),
+                    new Vector3f(dimensions.x * 0.37f, 0, dimensions.z * 0.37f));
         }else if(WallType.DOOR.equals(type)){
-            CSGShape door = new CSGShape("Box0", new Box(1.25f, 0.2f, 2));
-            CSGShape window = new CSGShape("Box1", new Box(1, 0.2f, 1.25f));
-            door.setLocalTranslation(2, 0, -0.4f);
-            window.setLocalTranslation(-2, 0, 1);
-            return new Wall(new CSGShape("Box", box), location,
-                    door, window);
+            return createWall(box, location, new Box[]{new Box(dimensions.x * 0.23f,
+                    0.2f, dimensions.z * 0.74f), createLittleWindow(dimensions)},
+                    new Vector3f(dimensions.x * 0.37f, 0, -dimensions.z * 0.14f),
+                    new Vector3f(-dimensions.x * 0.37f, 0, dimensions.z * 0.37f));
         }
         return null; 
     }
@@ -65,5 +56,19 @@ public class WallsFactory {
             }
             //wall.swapControl(WallMode.LOOSE);
         }
+    }
+    
+    private static Box createLittleWindow(Vector3f dimensions) {
+        return new Box(dimensions.x * 0.19f, 0.2f, dimensions.z * 0.46f);
+    }
+    
+    private static Wall createWall(Box wallBox, Vector3f wallLocation, Box[] elements,
+            Vector3f... locations) {
+        CSGShape[] shapes = new CSGShape[elements.length];
+        for(int i = 0; i < elements.length; i++) {
+            shapes[i] = new CSGShape("Box" + i, elements[i]);
+            shapes[i].setLocalTranslation(locations[i]);
+        }
+        return new Wall(new CSGShape("Box", wallBox), wallLocation, shapes);
     }
 }

@@ -81,18 +81,18 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             unit.updateState();
             List<Spatial> gameObjects = rootNode.getChildren();
             int gameObjectsNumber = gameObjects.size();
-//            for(int i = 0; i < gameObjectsNumber; i++){
-//                Spatial gameObject = gameObjects.get(i); 
-//                if(gameObject.getName().startsWith(ElementName.BUILDING_BASE_NAME)){
-//                    Construction building = (Construction)gameObject; 
-//                    if(building.isHit()){
-//                        building.setResetWalls(false);
-//                        building.updateState((Node)building.getChild(0)); 
-//                        if(!building.isResetWalls()) building.setHit(false);
-//                        //building.setHit(false); // nieodkomentowac
-//                    }
-//                }
-//            }
+            for(int i = 0; i < gameObjectsNumber; i++){
+                Spatial gameObject = gameObjects.get(i); 
+                if(gameObject.getName().startsWith(ElementName.BUILDING_BASE_NAME)){
+                    Construction building = (Construction)gameObject; 
+                    if(building.isHit()){
+                        building.setResetWalls(false);
+                        building.check();
+                        if(!building.isResetWalls()) building.setHit(false);
+                        //building.setHit(false); // nieodkomentowac
+                    }
+                }
+            }
             Shop shop = Shop.getDisplayedShop();
             VisibleFromAbove object;
             if(shop == null) {

@@ -12,6 +12,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import com.jme3.scene.SceneGraphVisitorAdapter;
 import com.jme3.scene.Spatial;
 import cranes.Hook;
 import java.util.ArrayList;
@@ -192,6 +193,27 @@ public class Construction extends Node{
             }
         }
         return object;
+    }
+    
+    public void check() {
+        SceneGraphVisitorAdapter visitor = new SceneGraphVisitorAdapter() {
+            @Override
+            public void visit(Node object) {
+                if(object.getName().startsWith("Wall")) {
+                    Wall wall = (Wall)object;
+                    wall.setMovable(true);
+                    if(wall.getHeight() + 0.01f < wall.getWorldTranslation()
+                            .distance(wall.getCatchingLocation())){ 
+                        if(!wall.isStale()){
+                            wallStateChanged = true; 
+                            wall.setStale(true);
+                        }
+                        if(wallStateChanged) resetWalls = true; 
+                    } else wall.setMovable(false);
+                }
+            }
+        };
+        this.depthFirstTraversal(visitor);
     }
     
     /**

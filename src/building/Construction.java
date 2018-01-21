@@ -199,22 +199,36 @@ public class Construction extends Node{
         SceneGraphVisitorAdapter visitor = new SceneGraphVisitorAdapter() {
             @Override
             public void visit(Node object) {
-                if(object.getName().startsWith("Wall")) {
+                if(object.getName().startsWith("Wall") && object.getWorldTranslation().y >= 0.4f) {
                     Wall wall = (Wall)object;
                     wall.setMovable(true);
-                    if(wall.getHeight() + 0.01f < wall.getWorldTranslation()
+                    if(0.01f < wall.getWorldTranslation()
                             .distance(wall.getCatchingLocation())){ 
-                        boolean ceilingStateChanged = false, wallStateChanged = false; 
+                        boolean wallStateChanged = false; 
                         if(!wall.isStale()){
                             wallStateChanged = true; 
-                            wall.setStale(true);
+                            detachWall(wall);
                         }
                         if(wallStateChanged) resetWalls = true; 
                     } else wall.setMovable(false);
                 }
             }
         };
-        this.depthFirstTraversal(visitor);
+        depthFirstTraversal(visitor);
+    }
+    
+    public void detachWall(Wall wall) {
+        wall.depthFirstTraversal(new SceneGraphVisitorAdapter() {
+            @Override
+            public void visit(Node object) {
+                if(object.getName().startsWith("Wall")) {
+                    Wall wall = (Wall)object; 
+                    wall.removeFromParent();
+                    BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(wall);
+                    wall.setStale(true);
+                }
+            }
+        });
     }
     
     /**

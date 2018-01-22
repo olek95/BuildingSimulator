@@ -174,9 +174,8 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     }
     
     /**
-     * Określa czy ściana jest połączona z budynkiem czy w stanie po zniszczeniu 
-     * budynku. 
-     * @return false gdy ściana jest połączona z budynkiem, true w stanie po 
+     * Określa czy ściana jest zniszczona. 
+     * @return false gdy ściana nie jest zniszczona, true w stanie po 
      * zniszczeniu budynku 
      */
     public boolean isStale(){ return stale; }

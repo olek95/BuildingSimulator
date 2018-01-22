@@ -56,7 +56,9 @@ public class GameManager {
             int buildingsNumber = buildings.size();
             for(int i = 0; i < buildingsNumber; i++) {
                 addToGame(buildings.get(i));
-                Construction.restoreConstruction((Wall)buildings.get(i).getChild(0));
+                Wall wall = (Wall)buildings.get(i).getChild(0);
+                Construction.restoreConstruction(wall);
+                wall.initCollisionListener();
             }
             if(loadedData.getActualUnit().equals(ElementName.MOBILE_CRANE)) {
                 actualUnit = mobileCrane;

@@ -1,5 +1,6 @@
 package listeners;
 
+import building.Wall;
 import buildingsimulator.ElementName;
 import buildingsimulator.RememberingRecentlyHitObject;
 import com.jme3.bounding.BoundingBox;
@@ -89,7 +90,7 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
                         .collideWith(ray, results);
                 ((Node)crane.getChild(ElementName.PROP1)).getChild(0).collideWith(ray, results);
             }else{
-                ray.collideWith((BoundingBox)recentlyHitObject.getWorldBound(), results);
+                recentlyHitObject.collideWith(ray, results);
             }
         }
         return results.size() == 0; 

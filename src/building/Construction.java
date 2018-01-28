@@ -60,7 +60,7 @@ public class Construction extends Node{
                     else touchedWall = mergeHorizontal(wall1, collisionWithGround ? null :
                             (Wall)recentlyHitObject, false, wallMode);
                 }
-                if(!getChildren().isEmpty()) renovateBuilding((Wall)getChild(0));
+                if(!getChildren().isEmpty()) renovateBuilding();
                 if(touchedWall != null){
                     wall1.setMovable(false);
                     touchedWall.attachChild(wall1);
@@ -148,55 +148,9 @@ public class Construction extends Node{
      * Uaktualnia stan budynku. Jeśli jakieś obiekty zostały uderzony lub nie 
      * posiadają elementów trzymających je, zaczynają spadać powodując rozsypywanie 
      * się budynku.
-     * @param object element którego dzieci są sprawdzane 
-     * @return sprawdzany element 
      */
-    public Spatial updateState(Node object){
-        List<Spatial> objectElements = object.getChildren(); 
-        int end = CatchNode.values().length;
-        for(int i = 1; i <= end; i++){ 
-            List<Spatial> catchNodeChildren = ((Node)objectElements.get(i)).getChildren(); 
-            int childrenCount = catchNodeChildren.size(); 
-            for(int k = 0; k < childrenCount; k++) { 
-                Spatial nextWall = updateState((Node)catchNodeChildren.get(k));
-                if(nextWall != null){
-                    Wall wall = (Wall)nextWall;
-                    wall.setMovable(true);
-                    // umowna granica dozwolonego przesunięcia ściany
-                    if(wall.getHeight() + 0.01f < wall.getWorldTranslation()
-                            .distance(wall.getCatchingLocation())){ 
-                        //removeWall(wall);
-                        boolean ceilingStateChanged = false, wallStateChanged = false; 
-                        if(!wall.isStale()){
-                            wallStateChanged = true; 
-                            wall.setStale(true);
-                            detachFromBuilding(wall); 
-                        }
-                        if(i <= 4){
-                            List<Spatial> ceilingChildren = ((Node)wall
-                                .getChild(CatchNode.NORTH.toString())).getChildren();
-                            int ceilingChildrenCount = ceilingChildren.size();
-                            for(int j = 0; j < ceilingChildrenCount; j++){
-                                Wall ceiling = (Wall)ceilingChildren.get(j);
-                                //removeWall(ceiling); 
-                                ceiling.setMovable(true);
-                                if(!ceiling.isStale()){
-                                    ceiling.setStale(true);
-                                    ceilingStateChanged = true;
-                                    detachFromBuilding(ceiling);
-                                }
-                            }
-                        }
-                        if(wallStateChanged || ceilingStateChanged) resetWalls = true; 
-                    }else  wall.setMovable(false);
-                }
-            }
-        }
-        return object;
-    }
-    
-    public void check() {
-        SceneGraphVisitorAdapter visitor = new SceneGraphVisitorAdapter() {
+    public void updateState() {
+        depthFirstTraversal(new SceneGraphVisitorAdapter() {
             @Override
             public void visit(Node object) {
                 if(object.getName().startsWith("Wall") && object.getWorldTranslation().y >= 0.4f) {
@@ -213,8 +167,7 @@ public class Construction extends Node{
                     } else wall.setMovable(false);
                 }
             }
-        };
-        depthFirstTraversal(visitor);
+        });
     }
     
     public void detachWall(Wall wall) {
@@ -226,6 +179,24 @@ public class Construction extends Node{
                     wall.removeFromParent();
                     BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(wall);
                     wall.setStale(true);
+                }
+            }
+        });
+    }
+    
+    /**
+     * Odnawia budynek. 
+     */
+    public void renovateBuilding() {
+        depthFirstTraversal(new SceneGraphVisitorAdapter() {
+            @Override
+            public void visit(Node object) {
+                if(object.getName().startsWith("Wall")) {
+                    Wall wall = (Wall)object; 
+                    if(!wall.isStale()) {
+                        wall.setLocalRotation(wall.getCatchingRotation().clone());
+                        wall.setLocalTranslation(wall.getCatchingLocation().clone());
+                    }
                 }
             }
         });
@@ -469,37 +440,6 @@ public class Construction extends Node{
                 return (Node)hitObject; 
         }
         return null; 
-    }
-    
-    private void renovateBuilding(Wall wall) {
-        List<Spatial> wallElements = wall.getChildren(); 
-        int end = CatchNode.values().length;
-        for(int i = 1; i <= end; i++) {
-            List<Spatial> catchNodeChildren = ((Node)wallElements.get(i)).getChildren(); 
-            int childrenCount = catchNodeChildren.size(); 
-            for(int k = 0; k < childrenCount; k++) { 
-                renovateBuilding((Wall)catchNodeChildren.get(k));
-            }
-        }
-        wall.setLocalRotation(wall.getCatchingRotation().clone());
-        wall.setLocalTranslation(wall.getCatchingLocation().clone());
-    }
-    
-    private void detachFromBuilding(Wall wall) {
-        Node wallParent = wall.getParent(); 
-        if(!wallParent.getName().startsWith(ElementName.BUILDING_BASE_NAME)) { 
-            List<Spatial> wallElements = wall.getChildren(); 
-            int end = CatchNode.values().length;
-            for(int i = 1; i <= end; i++) {
-                List<Spatial> catchNodeChildren = ((Node)wallElements.get(i)).getChildren(); 
-                int childrenCount = catchNodeChildren.size(); 
-                for(int k = 0; k < childrenCount; k++) { 
-                    wallParent.attachChild(catchNodeChildren.get(k));
-                }
-            }
-            wall.removeFromParent();
-            BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(wall);
-        }
     }
     
     private float getBusyPlace(Wall wall2, Wall floor, CatchNode edge,

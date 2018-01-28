@@ -87,8 +87,11 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     Construction building = (Construction)gameObject; 
                     if(building.isHit()){
                         building.setResetWalls(false);
-                        building.check();
-                        if(!building.isResetWalls()) building.setHit(false);
+                        building.updateState();
+                        if(!building.isResetWalls()) {
+                            building.setHit(false);
+                            building.renovateBuilding();
+                        }
                         //building.setHit(false); // nieodkomentowac
                     }
                 }

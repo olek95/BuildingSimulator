@@ -23,6 +23,7 @@ import building.CatchNode.*;
 import buildingsimulator.ElementName;
 import buildingsimulator.PhysicsManager;
 import com.jme3.asset.AssetManager;
+import com.jme3.collision.CollisionResults;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -407,6 +408,5 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         catchingLocation = (Vector3f)capsule.readSavable("CATCHING_LOCATION", null);
         catchingRotation = (Quaternion)capsule.readSavable("CATCHING_ROTATION", null);
         actualMode = capsule.readEnum("ACTUAL_MODE", WallMode.class, null);
-        System.out.println(actualMode);
      }
 }

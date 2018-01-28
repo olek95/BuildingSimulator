@@ -159,12 +159,24 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         }
     }
     
+    /**
+     * Zatrzymuje pojazd. 
+     */
     public void stop(){
         key = "";
         craneControl.accelerate(0f);
         craneControl.brake(0f);
         // jeśli jeszcze jest jakaś mała prędkość, to zeruje
         craneControl.setLinearVelocity(Vector3f.ZERO); 
+    }
+    
+    /**
+     * Określa czy dźwig jest podczas zmiany stanu, tzn. czy opuszcza/podnosi 
+     * podpory. 
+     * @return true jeśli jest podczas zmiany stanu, false w przeciwnym przypadku 
+     */
+    public boolean isDuringStateChanging() {
+        return propsLowering > MIN_PROP_PROTRUSION && propsLowering <= MAX_PROP_PROTRUSION;
     }
     
     /**

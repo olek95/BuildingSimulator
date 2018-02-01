@@ -312,7 +312,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         float distanceBetweenHookAndObject = wall.getDistanceToHandle(vertical);
         Node parent = hook.getParent();
         do{
-            if(parent.getName().contains(ElementName.CRANE))
+            if(parent.getName().contains(ElementName.CRANE)) 
                 distanceBetweenHookAndObject += ((BoundingBox)hook.getWorldBound())
                         .getYExtent(); 
             parent = parent.getParent();

@@ -306,7 +306,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private void createAttachingControl(Vector3f location, boolean vertical){
         Geometry[] ropes = vertical ? ropesVertical : ropesHorizontal; 
         Vector3f end = getWorldTranslation().clone().add(vertical ? 
-                new Vector3f(0f, 0f, 3f) : new Vector3f(0f, 1f, 0f)),
+                new Vector3f(0f, 0f, height + 1) : new Vector3f(0f, 1f, 0f)),
                 start = getProperPoint(0, vertical);
         Vector3f[] ropesLocations = new Vector3f[ropes.length];
         Material ropeMaterial = new Material(BuildingSimulator.getBuildingSimulator()

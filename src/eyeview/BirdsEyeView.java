@@ -45,13 +45,13 @@ public class BirdsEyeView implements ActionListener{
     public void onAction(String name, boolean isPressed, float tpf) {
         if(isPressed) {
             if(name.equals(Control.Actions.SELECT_WAREHOUSE.toString())) {
-                Camera cam = BuildingSimulator.getBuildingSimulator().getCamera();
+                BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
+                Camera cam = game.getCamera();
                 CollisionResults results = new CollisionResults();
                 Vector2f click2d = BuildingSimulator.getBuildingSimulator().getInputManager()
                         .getCursorPosition().clone();
                 Vector3f click3d = cam.getWorldCoordinates(click2d, 0f).clone();
-                BuildingSimulator.getBuildingSimulator().getRootNode()
-                        .getChild(ElementName.SCENE).collideWith(new Ray(click3d,
+                game.getRootNode().getChild(ElementName.SCENE).collideWith(new Ray(click3d, 
                         cam.getWorldCoordinates(click2d, 1f).subtractLocal(click3d)
                         .normalizeLocal()), results);
                 CollisionResult result;

@@ -32,4 +32,10 @@ public class User {
      * @return punkty 
      */
     public int getPoints() { return points; }
+    
+    /**
+     * Ustawia stan punktów. 
+     * @param points punkty 
+     */
+    public void setPoints(int points) { this.points = points; }
 }

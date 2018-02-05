@@ -181,7 +181,7 @@ public class Shop extends Menu implements VisibleFromAbove{
     public Vector3f getWallDimensions() {
         float x = ((TextField)screen.getElementById("x_text_field")).parseFloat(),
                 z = ((TextField)screen.getElementById("z_text_field")).parseFloat();
-        return x >= z ? new Vector3f(x, 0.2f, z) : new Vector3f(z, 0.2f, x); 
+        return new Vector3f(x, 0.2f, z) ; 
     }
     
     @Override

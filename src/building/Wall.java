@@ -47,7 +47,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private static int counter = 0; 
     private WallMode actualMode;
     private List<Spatial> hitObjects = new ArrayList();
-    private boolean stale = false; 
+    private boolean stale = false, protrudingCatched = false; 
     private Vector3f catchingLocation; 
     private Quaternion catchingRotation; 
     
@@ -248,6 +248,22 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         this.catchingRotation = catchingRotation.clone(); 
     }
     
+    
+    /**
+     * Określa czy ściana jest przyczepiona do podłogi budynku wystająco. 
+     * @return true jeśli jest przyczepiona wystająco, false w przeciwnym przypadku 
+     */
+    public boolean isProtrudingCatched() { return protrudingCatched; }
+    
+    /**
+     * Ustawia czy ściana jest przyczepiona do podłogi budynku wystająco. 
+     * @param protrudingCatched true jeśli jest przyczepiona wystająco,
+     * false w przeciwnym przypadku 
+     */
+    public void setProtrudingCatched(boolean protrudingCatched) { 
+        this.protrudingCatched = protrudingCatched; 
+    }
+    
     @Override
     public void setCollision(Spatial b){
         if(recentlyHitObject != null && !hitObjects.contains(b)) hitObjects.add(b);
@@ -389,6 +405,10 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         capsule.write(catchingLocation, "CATCHING_LOCATION", null);
         capsule.write(catchingRotation, "CATCHING_ROTATION", null);
         capsule.write(actualMode, "ACTUAL_MODE", null);
+        capsule.write(length, "LENGTH", 0f);
+        capsule.write(height, "HEIGHT", 0f);
+        capsule.write(width, "WIDTH", 0f);
+        capsule.write(protrudingCatched, "PROTRUDING_CATCHED", false);
      }
      
      @Override
@@ -408,5 +428,10 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         catchingLocation = (Vector3f)capsule.readSavable("CATCHING_LOCATION", null);
         catchingRotation = (Quaternion)capsule.readSavable("CATCHING_ROTATION", null);
         actualMode = capsule.readEnum("ACTUAL_MODE", WallMode.class, null);
+        length = capsule.readFloat("LENGTH", 0f);
+        height = capsule.readFloat("HEIGHT", 0f);
+        width = capsule.readFloat("WIDTH", 0f);
+        protrudingCatched = capsule.readBoolean("PROTRUDING_CATCHED", false);
+        counter++;
      }
 }

@@ -53,11 +53,13 @@ public class StartingMenu extends MainMenu{
      */
     public void start(MouseButtonEvent evt, boolean isToggled) {
         Screen screen = MainMenu.getScreen(); 
-        if(GameManager.getUser() == null) {
+        User user = GameManager.getUser();
+        if(user == null) {
             screen.addElement(createNotSavedChangesAlert(MainMenu.getScreen(),
                     Translator.NOT_LOGGED_IN_ALERT.getValue(), null));
         } else {
             super.start(); 
+            user.setPoints(999);
             GameManager.runGame(null);
         }
     }

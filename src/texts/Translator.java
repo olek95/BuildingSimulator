@@ -85,6 +85,7 @@ public enum Translator {
     WINDOWS,
     ONE_BIG_WINDOW,
     ONE_BIGGER_WINDOW,
+    FRONT_DOOR,
     DOOR,
     AMOUNT,
     DIMENSIONS,

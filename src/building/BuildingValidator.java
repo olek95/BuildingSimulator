@@ -4,9 +4,12 @@ import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import com.jme3.scene.SceneGraphVisitorAdapter;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
+import java.util.ArrayList;
 import java.util.List;
 
 /**

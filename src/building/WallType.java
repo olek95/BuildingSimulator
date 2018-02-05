@@ -15,6 +15,7 @@ public enum WallType {
     WINDOWS(5),
     ONE_BIG_WINDOW(5),
     ONE_BIGGER_WINDOW(5),
+    FRONT_DOOR(5),
     DOOR(5);
     private int price;
     private WallType(int price) { this.price = price; }

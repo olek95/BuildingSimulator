@@ -68,6 +68,8 @@ public class Construction extends Node{
                     wall1.setStale(false);
                     wall1.setCatchingLocation(wall1.getLocalTranslation());
                     wall1.setCatchingRotation(wall1.getLocalRotation());
+                    System.out.println("PRO: " + protruding);
+                    wall1.setProtrudingCatched(protruding);
                     return true;
                 }
             }
@@ -206,17 +208,15 @@ public class Construction extends Node{
      * Przywraca zapisany budynek. 
      * @param wall pierwszy element budynku 
      */
-    public static void restoreConstruction(Wall wall) {
-        List<Spatial> wallElements = wall.getChildren(); 
-        int end = CatchNode.values().length;
-        for(int i = 1; i <= end; i++) {
-            List<Spatial> catchNodeChildren = ((Node)wallElements.get(i)).getChildren(); 
-            int childrenCount = catchNodeChildren.size(); 
-            for(int k = 0; k < childrenCount; k++) { 
-                restoreConstruction((Wall)catchNodeChildren.get(k));
-            }
-        }
-        PhysicsManager.addPhysicsToGame(wall);
+    public static void restoreConstruction(Construction building) {
+        building.breadthFirstTraversal(new SceneGraphVisitorAdapter() {
+            @Override
+            public void visit(Node object) {
+                if(object.getName().startsWith(ElementName.WALL_BASE_NAME)) {
+                    PhysicsManager.addPhysicsToGame(object);
+                }
+            }}
+        );
     }
     
     /**
@@ -352,18 +352,47 @@ public class Construction extends Node{
         float sum = 0;
         boolean bottomUp = bottom || up; 
         if(bottomUp || left || right) {
-            sum -= getBusyPlace((Wall)getChildren().get(0), wall2, 
-                    CatchNode.valueOf(parentName), true);
-            if(sum == 0 && !isEmptyPerpendicularEdge(parentName, wall2, true)) 
-                sum -= wall1.getWidth() * 2;
-            float busyPlaceAfterMerged = -sum + wall1.getLength() * 2;
-            if(busyPlaceAfterMerged > (bottomUp ? wall2.getLength() 
-                    : wall2.getHeight()) * 2)
+            //System.out.println(getName());
+            //System.out.println(getChildren().size());
+            EdgeInformation information = new EdgeInformation(this, wall2,
+                    CatchNode.valueOf(parentName)); 
+            sum -= getBusyPlace(information);
+            System.out.println(bottomUp);
+            System.out.println(wall1.getLength());
+            float busyPlaceAfterMerged = -sum + wall1.getLength() * 2,
+                    checkingDimension = (bottomUp ? wall2.getLength() : wall2.getHeight()) * 2,
+                    busyPlaceOfPerpendicularToEnd = 0;
+            Wall perpendicularToEnd = information.getPerpendicularToEnd();
+            if(perpendicularToEnd != null) {
+                System.out.println(information.getPerpendicularToStart());
+                // System.out.println(information.getPerpendicularToStart().getParent() + " " + information.getPerpendicularToStart().isProtrudingCatched());
+                System.out.println(perpendicularToEnd + " "+ perpendicularToEnd.getParent() + " " + perpendicularToEnd.isProtrudingCatched());
+                busyPlaceOfPerpendicularToEnd = perpendicularToEnd.getWidth();
+                if(!perpendicularToEnd.isProtrudingCatched()) 
+                    busyPlaceOfPerpendicularToEnd *= 2; 
+            }
+            System.out.println(busyPlaceAfterMerged + " " +  checkingDimension + " " + busyPlaceOfPerpendicularToEnd);
+            if(busyPlaceAfterMerged > checkingDimension - busyPlaceOfPerpendicularToEnd)
                 return null;
-            if(busyPlaceAfterMerged > ((bottomUp ? wall2.getLength() 
-                    : wall2.getHeight()) - wall1.getWidth()) * 2 && 
-                    !isEmptyPerpendicularEdge(parentName, wall2, false))
-                return null;
+                    
+                    
+//            sum -= getBusyPlace((Wall)getChildren().get(0), wall2, 
+//                    CatchNode.valueOf(parentName), true);
+//            if(sum == 0 && !isEmptyPerpendicularEdge(parentName, wall2, true)) 
+//                sum -= wall1.getWidth() * 2;
+//            float busyPlaceAfterMerged = -sum + wall1.getLength() * 2;
+//            System.out.println(busyPlaceAfterMerged);
+//            System.out.println(busyPlaceAfterMerged > wall2.getLength() * 2 );
+//            System.out.println(wall2.getLength() * 2);
+//            if(busyPlaceAfterMerged > (bottomUp ? wall2.getLength() 
+//                    : wall2.getHeight()) * 2)
+//                return null;
+//            System.out.println(busyPlaceAfterMerged > (wall2.getLength() - wall1.getWidth()) * 2 );
+//            System.out.println(!isEmptyPerpendicularEdge(parentName, wall2, false));
+//            if(busyPlaceAfterMerged > ((bottomUp ? wall2.getLength() 
+//                    : wall2.getHeight()) - wall1.getWidth()) * 2 && 
+//                    !isEmptyPerpendicularEdge(parentName, wall2, false))
+//                return null;
         } else {
             boolean southOrNorth = south || north;
             for(int i = 0; i < childrenCount; i++) {
@@ -440,6 +469,26 @@ public class Construction extends Node{
                 return (Node)hitObject; 
         }
         return null; 
+    }
+    
+    private float getBusyPlace(EdgeInformation information) {
+        List<Spatial> edgeWalls = information.getEdgeWalls(), 
+                neighborFloorWalls = information.getNeighborFloorWalls(); 
+        int edgeWallsNumber = edgeWalls.size(), 
+                neighborFloorWallsNumber = neighborFloorWalls.size();
+        float sum = 0; 
+        for(int i = 0; i < edgeWallsNumber; i++) 
+            sum += ((Wall)edgeWalls.get(i)).getLength() * 2; 
+        for(int i = 0; i < neighborFloorWallsNumber; i++)
+            sum += ((Wall)neighborFloorWalls.get(i)).getLength() * 2; 
+        if(sum == 0) {
+            Wall wall = information.getPerpendicularToStart(); 
+            if(wall != null) {
+                sum += wall.getWidth();
+                if(!wall.isProtrudingCatched()) sum *= 2; 
+            } 
+        }
+        return sum;
     }
     
     private float getBusyPlace(Wall wall2, Wall floor, CatchNode edge,

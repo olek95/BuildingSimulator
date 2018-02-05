@@ -35,11 +35,15 @@ public class WallsFactory {
                 new Box(dimensions.x * 0.3f, 0.2f, dimensions.z * 0.46f)},
                     new Vector3f(-dimensions.x * 0.37f, 0, dimensions.z * 0.37f),
                     new Vector3f(dimensions.x * 0.37f, 0, dimensions.z * 0.37f));
-        }else if(WallType.DOOR.equals(type)){
+        }else if(WallType.FRONT_DOOR.equals(type)){
             return createWall(box, location, new Box[]{new Box(dimensions.x * 0.23f,
                     0.2f, dimensions.z * 0.74f), createLittleWindow(dimensions)},
                     new Vector3f(dimensions.x * 0.37f, 0, -dimensions.z * 0.14f),
                     new Vector3f(-dimensions.x * 0.37f, 0, dimensions.z * 0.37f));
+        }else if(WallType.DOOR.equals(type)) {
+            return createWall(box, location, new Box[]{new Box(dimensions.x * 0.23f,
+                    0.2f, dimensions.z * 0.74f)}, new Vector3f(dimensions.x * 0f, 
+                    0, -dimensions.z * 0.14f));
         }
         return null; 
     }

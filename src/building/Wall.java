@@ -29,6 +29,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
+import cranes.CraneAbstract;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -115,15 +116,18 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      * Obraca ścianę w kierunku dźwigu do którego jest przyczepiona. 
      */
     public void rotateToCrane(){
-        RigidBodyControl control;
-        int i = -1; 
-        do{
-            control = (RigidBodyControl)getControl(++i); 
-        }while(!control.isEnabled());
-        Quaternion turnToCrane = GameManager.getActualUnit().getArmControl()
+        CraneAbstract crane = GameManager.getActualUnit();
+        Quaternion turnToCrane = crane.getArmControl()
                         .getCraneControl().getWorldRotation().clone();
-        if(i == 2) turnToCrane.multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f));
-        control.setPhysicsRotation(turnToCrane);
+        if(actualMode.equals(WallMode.VERTICAL)) {
+            turnToCrane.multLocal(new Quaternion(-1.570796f, 0, 0, 1.570796f));
+            if(!crane.getCrane().getName().contains(ElementName.CRANE)) 
+                    turnToCrane.multLocal(new Quaternion(0, 0, 0.2f, 0.0f));
+        } else {
+            if(!crane.getCrane().getName().contains(ElementName.CRANE)) 
+                turnToCrane.multLocal(new Quaternion(0, 0.2f, 0, 0.0f));
+        }
+        ((RigidBodyControl)getControl(actualMode.ordinal())).setPhysicsRotation(turnToCrane);
     }
     
     /**

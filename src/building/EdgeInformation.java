@@ -8,14 +8,21 @@ import com.jme3.scene.Spatial;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Klasa <code>EdgeInformation</code> reprezentuje wszystkie najważniejsze 
+ * informacje o wybranej krawędzi. Udostępnia takie informacje jak ściany położone 
+ * przy tej krawędzi (lub na połączeniu tej z sąsiadującą krawędzią), sąsiadująca
+ * podłoga czy ściany prostopadłe do tej krawędzi. 
+ * @author AleksanderSklorz 
+ */
 public class EdgeInformation {
     private List<Spatial> edgeWalls, neighborFloorWalls;
     private Wall neighborFloor, perpendicularToStart, perpendicularToEnd;
     private Construction building;
+    private List<Spatial> temporaryEdgeChildren = null;
     public EdgeInformation(Construction building, Wall floor, CatchNode edge) {
         this.building = building;
         edgeWalls = ((Node)floor.getChild(edge.toString())).getChildren();
-        System.out.println(building);
         neighborFloor = findNeighborFloor((Wall)building.getChild(0), floor, edge);
         neighborFloorWalls = getNeighborFloorWalls(neighborFloor, edge); 
         Vector3f edgeLocation = floor.getChild(edge.toString()).getWorldTranslation();
@@ -26,19 +33,35 @@ public class EdgeInformation {
                 getPerpendicularEdge(edge, false), upLeft);
     }
     
+    /**
+     * Zwraca wszystkie ściany położone przy tej krawędzi. 
+     * @return ściany dla tej krawędzi 
+     */
     public List<Spatial> getEdgeWalls() { return edgeWalls; }
     
+    /**
+     * Zwraca wszystkie ściany położone przy sąsiadującej krawędzi. 
+     * @return ściany dla sąsiadującej krawędzi 
+     */
     public List<Spatial> getNeighborFloorWalls() { return neighborFloorWalls; }
     
+    /**
+     * Zwraca ścianę prostopadłą do początku tej krawędzi. 
+     * @return prostopadła ściana do początku krawędzi 
+     */
     public Wall getPerpendicularToStart() { return perpendicularToStart; }
     
+    /**
+     * Zwraca ścianę prostopadłą do końca krawędzi 
+     * @return ściana prostopadła do końca krawędzi 
+     */
     public Wall getPerpendicularToEnd() { return perpendicularToEnd; }
     
     private Wall findWallFromPerpendicularEnd(Wall floor, Vector3f edgeLocation1, CatchNode edge2,
             boolean start) {
         Node edge2Node = (Node)floor.getChild(edge2.toString());
-        List<Spatial> neighborFloorWallList = edge2Node.getChildren(), 
-                perpendicularNeighborFloorWalls = getNeighborFloorWalls(findNeighborFloor
+        List<Spatial> neighborFloorWallList = getChildrenForEdge(floor, edge2Node); 
+        List<Spatial> perpendicularNeighborFloorWalls = getNeighborFloorWalls(findNeighborFloor
                 ((Wall)building.getChild(0), floor, edge2), edge2);
         if(!start && !checkIfAchievedEnd(neighborFloorWallList,
                 perpendicularNeighborFloorWalls, edge2Node, floor)) {
@@ -54,6 +77,7 @@ public class EdgeInformation {
         if(neighborFloorWallsNotEmpty) {
             minWall = neighborFloorWallList.get(start ? 0 :  neighborFloorWallList.size() - 1);
         } 
+        temporaryEdgeChildren = null;
         if(perpendicularNeighborFloorWallsNotEmpty && neighborFloorWallsNotEmpty) {
             float minDistance = minWall.getWorldTranslation().distance(edgeLocation1),
                     distance = perpendicularNeighborFloorWall.getWorldTranslation()
@@ -128,5 +152,18 @@ public class EdgeInformation {
     private List<Spatial> getNeighborFloorWalls(Wall floor, CatchNode edge) {
         return floor != null ? ((Node)floor.getChild(CatchNode.values()[edge.ordinal() ^ 1]
                 .toString())).getChildren() : new ArrayList();
+    }
+    
+    private List<Spatial> getChildrenForEdge(final Node floor, final Node edge) {
+        floor.breadthFirstTraversal(new SceneGraphVisitorAdapter() {
+            @Override
+            public void visit(Node object) {
+                Node parent = object.getParent();
+                if(parent.getName().equals(edge.getName()) && temporaryEdgeChildren == null) {
+                    temporaryEdgeChildren = parent.getChildren(); 
+                }
+            }
+        });
+        return temporaryEdgeChildren != null ? temporaryEdgeChildren : new ArrayList();
     }
 }

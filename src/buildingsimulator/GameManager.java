@@ -18,6 +18,8 @@ import com.jme3.scene.Spatial;
 import cranes.crane.Crane;
 import cranes.mobileCrane.MobileCrane;
 import cranes.mobileCrane.MobileCraneArmControl;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.List;
 import menu.HUD;
 import menu.MenuFactory;
@@ -41,7 +43,8 @@ public class GameManager {
     /**
      * Uruchamia grę. 
      */
-    public static void runGame(SavedData loadedData){
+    public static void runGame(SavedData loadedData, List<Construction> loadedBuildings,
+            List<Wall> loadedWalls){
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
         addHUD();
         game.getFlyByCamera().setDragToRotate(false);
@@ -252,6 +255,15 @@ public class GameManager {
      */
     public static boolean isSoundStopped(AudioNode sound) {
         return sound.getStatus().equals(AudioSource.Status.Stopped);
+    }
+    
+    public static File[] getFilesStartWithName(String path, final String fileName) {
+        return new File(path).listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.startsWith(fileName);
+            }
+        });
     }
     
     /**

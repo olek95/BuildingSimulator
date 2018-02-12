@@ -17,14 +17,15 @@ import java.util.List;
  */
 public class EdgeInformation {
     private List<Spatial> edgeWalls, neighborFloorWalls;
-    private Wall neighborFloor, perpendicularToStart, perpendicularToEnd;
+    private Wall perpendicularToStart, perpendicularToEnd;
     private Construction building;
     private List<Spatial> temporaryEdgeChildren = null;
+    private List<Node> neighborFloors;
     public EdgeInformation(Construction building, Wall floor, CatchNode edge) {
         this.building = building;
         edgeWalls = ((Node)floor.getChild(edge.toString())).getChildren();
-        neighborFloor = findNeighborFloor((Wall)building.getChild(0), floor, edge);
-        neighborFloorWalls = getNeighborFloorWalls(neighborFloor, edge); 
+        neighborFloors = findNeighborFloors((Wall)building.getChild(0), floor, edge);
+        neighborFloorWalls = getNeighborFloorsWalls(neighborFloors, edge); 
         Vector3f edgeLocation = floor.getChild(edge.toString()).getWorldTranslation();
         boolean upLeft = edge.equals(CatchNode.LEFT) || edge.equals(CatchNode.UP);
         perpendicularToStart = findWallFromPerpendicularEnd(floor, edgeLocation,
@@ -61,7 +62,7 @@ public class EdgeInformation {
             boolean start) {
         Node edge2Node = (Node)floor.getChild(edge2.toString());
         List<Spatial> neighborFloorWallList = getChildrenForEdge(floor, edge2Node); 
-        List<Spatial> perpendicularNeighborFloorWalls = getNeighborFloorWalls(findNeighborFloor
+        List<Spatial> perpendicularNeighborFloorWalls = getNeighborFloorsWalls(findNeighborFloors
                 ((Wall)building.getChild(0), floor, edge2), edge2);
         if(!start && !checkIfAchievedEnd(neighborFloorWallList,
                 perpendicularNeighborFloorWalls, edge2Node, floor)) {
@@ -83,10 +84,16 @@ public class EdgeInformation {
                     distance = perpendicularNeighborFloorWall.getWorldTranslation()
                     .distance(edgeLocation1);
             if(minDistance > distance) minWall = perpendicularNeighborFloorWall; 
+            // System.out.println(1 + " " + minWall + " " + minWall.getParent());
             return (Wall)minWall; 
         } else {
-            if(perpendicularNeighborFloorWallsNotEmpty) return (Wall)perpendicularNeighborFloorWall;
-            else return neighborFloorWallsNotEmpty ? (Wall)minWall : null; 
+            if(perpendicularNeighborFloorWallsNotEmpty) {
+                 // System.out.println(2 + " " + perpendicularNeighborFloorWall + " " + perpendicularNeighborFloorWall.getParent());
+                return (Wall)perpendicularNeighborFloorWall;
+            }
+            else {
+                return neighborFloorWallsNotEmpty ? (Wall)minWall : null;
+            } 
         }
     }
     
@@ -105,9 +112,10 @@ public class EdgeInformation {
         return sum >= max; 
     }
     
-    private Wall findNeighborFloor(final Wall wall, final Wall floor, CatchNode edge) {
+    private List<Node> findNeighborFloors(final Wall wall, final Wall floor, final CatchNode edge) {
         final List<Node> allFloors = new ArrayList(); 
-        final Vector3f floorLocation = floor.getWorldTranslation();
+        final Vector3f floorLocation = floor.getWorldTranslation(),
+                edgeLocation = floor.getChild(edge.toString()).getWorldTranslation();
         final float width = floor.getWidth();
         wall.breadthFirstTraversal(new SceneGraphVisitorAdapter() {
             @Override
@@ -117,27 +125,16 @@ public class EdgeInformation {
                     if(!checkingWall.equals(floor)) {
                         Vector3f wallLocation = checkingWall.getWorldTranslation();
                         if(wallLocation.y < floorLocation.y + width && wallLocation.y > 
-                                floorLocation.y - width && floorLocation.distance(wallLocation)
-                                <= floor.getHeight() + checkingWall.getHeight() + 0.1f) {
+                                floorLocation.y - width && edgeLocation.distance(checkingWall
+                                .getChild(getNeighborEdge(edge).toString()).getWorldTranslation())
+                                <= 1) {
                             allFloors.add(checkingWall);
                         }
                     }
                 }
             }
         });
-        Vector3f edgeLocation = floor.getChild(edge.toString()).getWorldTranslation();
-        int allFloorsNumber = allFloors.size();
-        float minDistance = Float.MAX_VALUE;
-        Node minFloor = null;
-        for(int i = 0; i < allFloorsNumber; i++) {
-            Node neighborOfFloor = allFloors.get(i); 
-            float distance = neighborOfFloor.getWorldTranslation().distance(edgeLocation);
-            if(minDistance > distance) {
-                minFloor = neighborOfFloor; 
-                minDistance = distance; 
-            }
-        }
-        return (Wall)minFloor; 
+        return allFloors; 
     }
     
     private CatchNode getPerpendicularEdge(CatchNode edge, boolean start) {
@@ -149,9 +146,14 @@ public class EdgeInformation {
         }
     }
     
-    private List<Spatial> getNeighborFloorWalls(Wall floor, CatchNode edge) {
-        return floor != null ? ((Node)floor.getChild(CatchNode.values()[edge.ordinal() ^ 1]
-                .toString())).getChildren() : new ArrayList();
+    private List<Spatial> getNeighborFloorsWalls(List<Node> floors, CatchNode edge) {
+        if(floors.isEmpty()) return new ArrayList(); 
+        String neighborEdgeName = getNeighborEdge(edge).toString();
+        List<Spatial> walls = new ArrayList();
+        int floorsNumber = floors.size();
+        for(int i = 0; i < floorsNumber; i++)
+            walls.addAll(((Node)floors.get(i).getChild(neighborEdgeName)).getChildren());
+        return walls;
     }
     
     private List<Spatial> getChildrenForEdge(final Node floor, final Node edge) {
@@ -165,5 +167,9 @@ public class EdgeInformation {
             }
         });
         return temporaryEdgeChildren != null ? temporaryEdgeChildren : new ArrayList();
+    }
+    
+    private CatchNode getNeighborEdge(CatchNode edge) {
+        return CatchNode.values()[edge.ordinal() ^ 1];
     }
 }

@@ -2,7 +2,10 @@ package menu;
 
 import authorization.DBManager;
 import authorization.User;
+import building.Construction;
+import building.Wall;
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
 import buildingsimulator.SavedData;
 import com.jme3.export.binary.BinaryImporter;
@@ -11,6 +14,8 @@ import com.jme3.math.ColorRGBA;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import texts.Translator;
@@ -60,7 +65,7 @@ public class StartingMenu extends MainMenu{
         } else {
             super.start(); 
             user.setPoints(999);
-            GameManager.runGame(null);
+            GameManager.runGame(null, null, null);
         }
     }
     
@@ -68,11 +73,18 @@ public class StartingMenu extends MainMenu{
         super.start(); 
         BinaryImporter importer = BinaryImporter.getInstance();
         importer.setAssetManager(BuildingSimulator.getBuildingSimulator().getAssetManager());
-        User user = GameManager.getUser();
-        File file = new File("./game saves/" + user.getLogin() + "/save.j3o");
+        String userFolder = "./game saves/" + GameManager.getUser().getLogin();
         try {
-            SavedData data = (SavedData)importer.load(file);
-            GameManager.runGame(data);
+            SavedData data = (SavedData)importer.load(new File(userFolder + "/save.j3o"));
+            /*File[] buildingFiles = GameManager.getFilesStartWithName(userFolder, ElementName.BUILDING_BASE_NAME);
+            List<Construction> buildings = new ArrayList();
+            for(int i = 0; i < buildingFiles.length; i++)
+                buildings.add((Construction)importer.load(buildingFiles[i]));
+            File[] wallFiles = GameManager.getFilesStartWithName(userFolder, ElementName.WALL_BASE_NAME);
+            List<Wall> walls = new ArrayList();
+            for(int i = 0; i < wallFiles.length; i++)
+                walls.add((Wall)importer.load(wallFiles[i]));*/
+            GameManager.runGame(data, null, null);
         } catch (IOException ex) {
             Logger.getLogger(StartingMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -191,7 +203,7 @@ public class StartingMenu extends MainMenu{
         super.doWhenAcceptedExit(screen, null); 
         GameManager.setUser(new User(User.DEFAULT_LOGIN, 999));
         super.start(); 
-        GameManager.runGame(null);
+        GameManager.runGame(null, null, null);
     }
     
     private void changeAuthorizationPopupState(boolean visible){

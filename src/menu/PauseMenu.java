@@ -2,14 +2,20 @@ package menu;
 
 import authorization.DBManager;
 import authorization.User;
+import building.Construction;
+import building.Wall;
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
 import buildingsimulator.SavedData;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.input.event.MouseButtonEvent;
+import com.jme3.scene.Spatial;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import texts.Translator;
@@ -56,10 +62,36 @@ public class PauseMenu extends MainMenu{
     
     public void save(MouseButtonEvent evt, boolean isToggled) {
         BinaryExporter exporter = BinaryExporter.getInstance();
-        File file = new File("./game saves/" + GameManager.getUser().getLogin() 
-                + "/save.j3o");
+        List<Spatial> gameObjects = BuildingSimulator.getBuildingSimulator()
+                .getRootNode().getChildren();
+        int gameObjectsNumber = gameObjects.size();
+        List<Construction> savedBuildings = new ArrayList();
+        List<Wall> savedWalls = new ArrayList(); 
+        for(int i = 0; i < gameObjectsNumber; i++) {
+            Spatial object = gameObjects.get(i);
+            String objectName = object.getName();
+            if(objectName != null) {
+                if(objectName.startsWith(ElementName.WALL_BASE_NAME)) {
+                    savedWalls.add((Wall)object);
+                } else {
+                    if(objectName.startsWith(ElementName.BUILDING_BASE_NAME))
+                        savedBuildings.add((Construction)object);
+                }
+            }
+        }
         try {
-            exporter.save(new SavedData(), file);
+            String userFolder = "./game saves/" + GameManager.getUser().getLogin();
+            exporter.save(new SavedData(), new File(userFolder + "/save.j3o"));
+            /*int buildingsNumber = savedBuildings.size();
+            for(int i = 0; i < buildingsNumber; i++) {
+                Construction building = savedBuildings.get(i);
+                exporter.save(building, new File(userFolder + "/" + building.getName() + ".j3o"));
+            }
+            int wallsNumber = savedWalls.size();
+            for(int i = 0; i < wallsNumber; i++) {
+                Wall wall = savedWalls.get(i);
+                exporter.save(wall, new File(userFolder + "/" + wall.getName() + ".j3o"));
+            }*/
             savePoints();
         } catch (IOException ex) {
             Logger.getLogger(PauseMenu.class.getName()).log(Level.SEVERE, null, ex);

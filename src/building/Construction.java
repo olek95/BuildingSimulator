@@ -8,6 +8,9 @@ import buildingsimulator.PhysicsManager;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.collision.CollisionResults;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
@@ -15,6 +18,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.SceneGraphVisitorAdapter;
 import com.jme3.scene.Spatial;
 import cranes.Hook;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -202,6 +206,7 @@ public class Construction extends Node{
             }
         });
     }
+    static int e = 0;
     
     /**
      * Przywraca zapisany budynek. 
@@ -216,6 +221,30 @@ public class Construction extends Node{
                 }
             }}
         );
+        /*for(int i = 0; i < 10; i++) {
+            Construction cl = (Construction)building.clone();
+            cl.setLocalTranslation(60, 60, 60);
+            GameManager.addToGame(cl);
+            cl.setLocalTranslation(60, 60, 60);
+            e = i;
+            cl.breadthFirstTraversal(new SceneGraphVisitorAdapter() {
+            @Override
+            public void visit(Node object) {
+                if(object.getName().startsWith(ElementName.WALL_BASE_NAME)) {
+                    System.out.println(((Wall)object).getActualMode());
+                     object.getControl(RigidBodyControl.class).getPhysicsLocation()
+                             .add(new Vector3f(60, 0, 0))
+                             .mult(new Vector3f(2 * 60f,1f, 1f));
+                     object.setLocalTranslation(60, 60, 60);
+                      PhysicsManager.addPhysicsToGame(object);
+                      object.getControl(RigidBodyControl.class).getPhysicsLocation()
+                             .addLocal(new Vector3f(60, 0, 0))
+                             .multLocal(new Vector3f(2 * 60f,1f, 1f));
+                      System.out.println(object.getWorldTranslation() +  " " + object.getControl(RigidBodyControl.class).getPhysicsLocation());
+                }
+            }}
+        );
+        }*/
     }
     
     /**
@@ -354,6 +383,7 @@ public class Construction extends Node{
             EdgeInformation information = new EdgeInformation(this, wall2,
                     CatchNode.valueOf(parentName)); 
             sum -= getBusyPlace(information);
+            // System.out.println(sum);
             float busyPlaceAfterMerged = -sum + wall1.getLength() * 2,
                     checkingDimension = (bottomUp ? wall2.getLength() : wall2.getHeight()) * 2,
                     busyPlaceOfPerpendicularToEnd = 0;
@@ -449,15 +479,23 @@ public class Construction extends Node{
         int edgeWallsNumber = edgeWalls.size(), 
                 neighborFloorWallsNumber = neighborFloorWalls.size();
         float sum = 0; 
-        for(int i = 0; i < edgeWallsNumber; i++) 
+        for(int i = 0; i < edgeWallsNumber; i++) {
+            //System.out.println(1);
             sum += ((Wall)edgeWalls.get(i)).getLength() * 2; 
-        for(int i = 0; i < neighborFloorWallsNumber; i++)
+        }
+        for(int i = 0; i < neighborFloorWallsNumber; i++) {
+            //System.out.println(2);
             sum += ((Wall)neighborFloorWalls.get(i)).getLength() * 2; 
+        }
         if(sum == 0) {
             Wall wall = information.getPerpendicularToStart(); 
             if(wall != null) {
                 sum += wall.getWidth();
-                if(!wall.isProtrudingCatched()) sum *= 2; 
+                // System.out.println(wall + " " + wall.isProtrudingCatched() + " " + wall.getParent());
+                if(!wall.isProtrudingCatched()) {
+                    // System.out.println(3);
+                    sum *= 2;
+                } 
             } 
         }
         return sum;

@@ -84,11 +84,9 @@ public class EdgeInformation {
                     distance = perpendicularNeighborFloorWall.getWorldTranslation()
                     .distance(edgeLocation1);
             if(minDistance > distance) minWall = perpendicularNeighborFloorWall; 
-            // System.out.println(1 + " " + minWall + " " + minWall.getParent());
             return (Wall)minWall; 
         } else {
             if(perpendicularNeighborFloorWallsNotEmpty) {
-                 // System.out.println(2 + " " + perpendicularNeighborFloorWall + " " + perpendicularNeighborFloorWall.getParent());
                 return (Wall)perpendicularNeighborFloorWall;
             }
             else {

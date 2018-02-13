@@ -93,7 +93,6 @@ public class PauseMenu extends MainMenu{
      * @param isToggled 
      */
     public void exit(MouseButtonEvent evt, boolean isToggled){ 
-        savePoints(); 
         exit(); 
     }
     
@@ -123,7 +122,8 @@ public class PauseMenu extends MainMenu{
      */
     public void returnToStartingMenu(MouseButtonEvent evt, boolean isToggled) {
         getWindow().hide();
-        if(!savePoints()) GameManager.setUser(null);
+        if(GameManager.getUser().getLogin().equals(User.DEFAULT_LOGIN))
+            GameManager.setUser(null);
         Element exitPopup = MainMenu.getScreen().getElementById("exit_popup"); 
         exitPopup.hide();
         Screen screen = MainMenu.getScreen(); 
@@ -133,7 +133,7 @@ public class PauseMenu extends MainMenu{
         MenuFactory.showMenu(MenuTypes.STARTING_MENU);
     }
     
-    private boolean savePoints() {
+    private void savePoints() {
         User user = GameManager.getUser(); 
         if(!user.getLogin().equals(User.DEFAULT_LOGIN)) {
             try {
@@ -141,7 +141,6 @@ public class PauseMenu extends MainMenu{
             }catch(SQLException|ClassNotFoundException ex) {
                 ex.printStackTrace();
             }
-            return true; 
-        } else return false; 
+        } 
     }
 }

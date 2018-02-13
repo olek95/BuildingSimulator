@@ -38,11 +38,16 @@ public class StartingMenu extends MainMenu{
         authorizationPopup.setWindowTitle(Translator.AUTHORIZATION.getValue());
         changeAuthorizationPopupState(false);
         User user = GameManager.getUser(); 
-        if(user != null && !user.getLogin().equals(User.DEFAULT_LOGIN)) {
-            ((Button)MainMenu.getScreen().getElementById("load_game_button")).setIgnoreMouse(false);
-            setUser();
+        if(user != null) {
+            String login = user.getLogin();
+            if(!login.equals(User.DEFAULT_LOGIN) && GameManager.checkIfFileExists("game saves/" + login + "/save.j3o")) {
+                setLoadingButtonState(false);
+                setUser();
+            } else {
+                setLoadingButtonState(true);
+            }
         } else {
-            ((Button)MainMenu.getScreen().getElementById("load_game_button")).setIgnoreMouse(true);
+            setLoadingButtonState(true);
         }
     }
     
@@ -110,8 +115,7 @@ public class StartingMenu extends MainMenu{
             screen.getElementById("authorization_button").setText(Translator
                     .AUTHORIZATION.getValue());
             screen.getElementById("login_label").setText("");
-            ((Button)MainMenu.getScreen().getElementById("load_game_button"))
-                            .setIgnoreMouse(true);
+            setLoadingButtonState(true);
         }
     }
     
@@ -150,8 +154,8 @@ public class StartingMenu extends MainMenu{
                     changeAuthorizationPopupState(false); 
                     GameManager.setUser(user);
                     setUser();
-                    ((Button)MainMenu.getScreen().getElementById("load_game_button"))
-                            .setIgnoreMouse(false);
+                    if(GameManager.checkIfFileExists("game saves/" + login + "/save.j3o")) 
+                        setLoadingButtonState(false);
                 }
             }
         }catch(ClassNotFoundException | SQLException ex){
@@ -223,5 +227,9 @@ public class StartingMenu extends MainMenu{
         Screen screen = MainMenu.getScreen(); 
         screen.getElementById("authorization_button").setText(Translator.LOGOUT.getValue());
         screen.getElementById("login_label").setText(GameManager.getUser().getLogin());
+    }
+    
+    private void setLoadingButtonState(boolean state) {
+        ((Button)MainMenu.getScreen().getElementById("load_game_button")).setIgnoreMouse(state);
     }
 }

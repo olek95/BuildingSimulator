@@ -18,6 +18,9 @@ import com.jme3.scene.Spatial;
 import cranes.crane.Crane;
 import cranes.mobileCrane.MobileCrane;
 import cranes.mobileCrane.MobileCraneArmControl;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Paths;
 import java.util.List;
 import menu.HUD;
 import menu.MenuFactory;
@@ -168,6 +171,15 @@ public class GameManager {
         i++;
         for(; i < length; i++) tempFPSString += fpsString.charAt(i);
         return Integer.parseInt(tempFPSString);
+    }
+    
+    /**
+     * Określa czy dany plik istnieje. 
+     * @param path ścieżka pliku 
+     * @return true jeśli taki plik istnieje, false w przeciwnym przypadku 
+     */
+    public static boolean checkIfFileExists(String path) {
+        return Files.exists(Paths.get(path), new LinkOption[]{});
     }
     
     /**

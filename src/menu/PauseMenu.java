@@ -36,11 +36,8 @@ public class PauseMenu extends MainMenu{
         MainMenu.getScreen().getElementById("exit_popup").hide();
         String login = GameManager.getUser().getLogin(); 
         screen.getElementById("login_label").setText(login);
-        if(!login.equals(User.DEFAULT_LOGIN)) {
-            ((Button)MainMenu.getScreen().getElementById("save_game_button")).setIgnoreMouse(false);
-        } else {
-            ((Button)MainMenu.getScreen().getElementById("save_game_button")).setIgnoreMouse(true);
-        }
+        ((Button)MainMenu.getScreen().getElementById("save_game_button"))
+                .setIgnoreMouse(login.equals(User.DEFAULT_LOGIN));
         ((Window)screen.getElementById("exit_popup")).getDragBar().setIsMovable(false);
     }
     

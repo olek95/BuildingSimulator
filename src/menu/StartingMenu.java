@@ -2,17 +2,10 @@ package menu;
 
 import authorization.DBManager;
 import authorization.User;
-import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
-import buildingsimulator.SavedData;
-import com.jme3.export.binary.BinaryImporter;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.ColorRGBA;
-import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import texts.Translator;
 import tonegod.gui.controls.buttons.Button;
 import tonegod.gui.controls.buttons.CheckBox;
@@ -38,17 +31,9 @@ public class StartingMenu extends MainMenu{
         authorizationPopup.setWindowTitle(Translator.AUTHORIZATION.getValue());
         changeAuthorizationPopupState(false);
         User user = GameManager.getUser(); 
-        if(user != null) {
-            String login = user.getLogin();
-            if(!login.equals(User.DEFAULT_LOGIN) && GameManager.checkIfFileExists("game saves/" + login + "/save.j3o")) {
-                setLoadingButtonState(false);
-                setUser();
-            } else {
-                setLoadingButtonState(true);
-            }
-        } else {
-            setLoadingButtonState(true);
-        }
+        if(user != null && !user.getLogin().equals(User.DEFAULT_LOGIN)) {
+            setUser();
+        } 
     }
     
     /**
@@ -70,17 +55,7 @@ public class StartingMenu extends MainMenu{
     }
     
     public void load(MouseButtonEvent evt, boolean isToggled) {
-        super.start(); 
-        BinaryImporter importer = BinaryImporter.getInstance();
-        importer.setAssetManager(BuildingSimulator.getBuildingSimulator().getAssetManager());
-        User user = GameManager.getUser();
-        File file = new File("./game saves/" + user.getLogin() + "/save.j3o");
-        try {
-            SavedData data = (SavedData)importer.load(file);
-            GameManager.runGame(data);
-        } catch (IOException ex) {
-            Logger.getLogger(StartingMenu.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        load();
     }
     
     /**
@@ -227,9 +202,5 @@ public class StartingMenu extends MainMenu{
         Screen screen = MainMenu.getScreen(); 
         screen.getElementById("authorization_button").setText(Translator.LOGOUT.getValue());
         screen.getElementById("login_label").setText(GameManager.getUser().getLogin());
-    }
-    
-    private void setLoadingButtonState(boolean state) {
-        ((Button)MainMenu.getScreen().getElementById("load_game_button")).setIgnoreMouse(state);
     }
 }

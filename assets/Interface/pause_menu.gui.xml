@@ -5,22 +5,22 @@
             <method name="setWindowTitle" param0="Building Simulator" />
             <method name="setTextAlign" param0="Center" />
             <method name="setIsResizable" param0="false" />
-            <component type="Button" id="start_game_button" position="40%,20%" dimensions="23%,10%" >
+            <component type="Button" id="start_game_button" position="40%,10%" dimensions="23%,10%" >
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="start" />
             </component>
-            <component type="Button" id="save_game_button" position="40%,35%" dimensions="23%,10%" >
+            <component type="Button" id="save_game_button" position="40%,25%" dimensions="23%,10%" >
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="save" />
             </component>
-            <component type="Button" id="statistics_button" position="40%,50%" dimensions="23%,10%" >
+            <component type="Button" id="load_game_button" position="40%,40%" dimensions="23%,10%" >
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="load" />
+            </component>
+            <component type="Button" id="statistics_button" position="40%,55%" dimensions="23%,10%" >
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="showStatistics" />
             </component>
-            <component type="Button" id="load_game_button" position="40%,50%" dimensions="23%,10%" >
-                <eventMethod name="onButtonMouseLeftUp" stateMethodName="showStatistics" />
-            </component>
-            <component type="Button" id="options_button" position="40%,65%" dimensions="23%,10%" >
+            <component type="Button" id="options_button" position="40%,70%" dimensions="23%,10%" >
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="showOptions" />
             </component>
-            <component type="Button" id="exit_button" position="40%,80%" dimensions="23%,10%" >
+            <component type="Button" id="exit_button" position="40%,85%" dimensions="23%,10%" >
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="showExitPopup" />
             </component>
             <component type="Label" id="login_label" position="18%,4%" dimensions="25%,12%"/>

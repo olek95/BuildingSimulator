@@ -58,9 +58,15 @@ public class PauseMenu extends MainMenu{
         try {
             exporter.save(new SavedData(), file);
             savePoints();
+            setLoadingButtonState(false);
         } catch (IOException ex) {
             Logger.getLogger(PauseMenu.class.getName()).log(Level.SEVERE, null, ex);
         } 
+    }
+    
+    public void load(MouseButtonEvent evt, boolean isToggled) {
+        GameManager.deleteGame();
+        load();
     }
     
     /**

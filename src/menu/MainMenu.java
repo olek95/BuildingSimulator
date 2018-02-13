@@ -1,10 +1,18 @@
 package menu;
 
+import authorization.User;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
+import buildingsimulator.SavedData;
 import com.jme3.audio.AudioNode;
+import com.jme3.export.binary.BinaryImporter;
 import com.jme3.input.event.MouseButtonEvent;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import texts.Translator;
+import tonegod.gui.controls.buttons.Button;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
 
@@ -29,6 +37,17 @@ public abstract class MainMenu extends Menu {
         screen.setUseCustomCursors(true);
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
         startBackgroundSound();
+        User user = GameManager.getUser(); 
+        if(user != null) {
+            String login = user.getLogin();
+            if(!login.equals(User.DEFAULT_LOGIN) && GameManager.checkIfFileExists("game saves/" + login + "/save.j3o")) {
+                setLoadingButtonState(false);
+            } else {
+                setLoadingButtonState(true);
+            }
+        } else {
+            setLoadingButtonState(true);
+        }
     }
     
     public static Screen getScreen() { return screen; }
@@ -49,6 +68,31 @@ public abstract class MainMenu extends Menu {
      */
     protected void exit(){
         System.exit(0);
+    }
+    
+    /**
+     * Wczytuje zapisaną grę. 
+     */
+    protected void load() {
+        BinaryImporter importer = BinaryImporter.getInstance();
+        importer.setAssetManager(BuildingSimulator.getBuildingSimulator().getAssetManager());
+        User user = GameManager.getUser();
+        File file = new File("./game saves/" + user.getLogin() + "/save.j3o");
+        try {
+            SavedData data = (SavedData)importer.load(file);
+            GameManager.runGame(data);
+        } catch (IOException ex) {
+            Logger.getLogger(StartingMenu.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        start();
+    }
+    
+    /**
+     * Ustawia (blokuje bądź odblokowuje) stan przycisku ładowania zapisanej gry. 
+     * @param state false jeśli przycisk ma być odblokowany, true w przeciwnym przypadku 
+     */
+    protected void setLoadingButtonState(boolean state) {
+        ((Button)MainMenu.getScreen().getElementById("load_game_button")).setIgnoreMouse(state);
     }
     
     private void startBackgroundSound() {

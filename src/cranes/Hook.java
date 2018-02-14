@@ -10,7 +10,6 @@ import buildingsimulator.GameManager;
 import buildingsimulator.PhysicsManager;
 import buildingsimulator.RememberingRecentlyHitObject;
 import com.jme3.bounding.BoundingBox;
-import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.joints.HingeJoint;
@@ -60,8 +59,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
      * Podnosi hak. 
      */
     public void heighten(){
-        changeHookPosition(new Vector3f(1f, actualLowering -= speed, 1f),
-                true);
+        changeHookPosition(new Vector3f(1f, actualLowering -= speed, 1f),  true);
     }
     
     /**
@@ -295,16 +293,27 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     
     private void joinObject(WallMode mode, float y){
         boolean vertical = mode.equals(WallMode.VERTICAL);
-        addAttachingJoint(mode);
         // +0.1 w przypadku żurawia, aby nie było kolizji z obiektami pod tym obiektem
         float height = attachedObject.getDistanceToHandle(vertical) + attachedObject.getWorldTranslation().y
                 + (vertical ? attachedObject.getHeight() + 0.1f : attachedObject.getWidth()),
                 yHook = hook.getWorldTranslation().y;
+        int i = 0;
         while(yHook <= height){
             heighten();
             yHook += hookDisplacement.y;
+            i++;
+        };
+        if(actualLowering < 1) {
+            for(; i > 0; i--)  {
+                changeHookPosition(new Vector3f(1f, actualLowering += speed, 1f), 
+                        false);
+            }
+            attachedObject = null;
+            HUD.setMessage(Translator.NO_ENOUGH_PLACE.getValue());
+        } else {
+            addAttachingJoint(mode);
+            attachedObject.runCollisionListener();
         }
-        attachedObject.runCollisionListener();
     }
     
     private float calculateDistanceBetweenHookAndObject(boolean vertical){

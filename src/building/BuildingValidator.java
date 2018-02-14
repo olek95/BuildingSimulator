@@ -4,12 +4,10 @@ import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.SceneGraphVisitorAdapter;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +16,7 @@ import java.util.List;
  * @author AleksanderSklorz
  */
 public class BuildingValidator {
+    private static int points = 0;
     /**
      * Oblicza punkty dla zbudowanych budynków. 
      * @return suma zebranych punktów
@@ -25,46 +24,27 @@ public class BuildingValidator {
     public static int validate(){
         List<Spatial> gameObjects = BuildingSimulator.getBuildingSimulator().getRootNode()
                 .getChildren();
-        int objectsAmount = gameObjects.size(), points = 0; 
-        for(int i = 0; i < objectsAmount; i++){
+        int objectsNumber = gameObjects.size(); 
+        for(int i = 0; i < objectsNumber; i++){
             Spatial object = gameObjects.get(i); 
             if(object.getName().startsWith(ElementName.BUILDING_BASE_NAME))
-//                points += calculatePointsForBuilding((Node)object);
-                points += calculatePoints((Wall)((Node)object).getChild(0));
+                object.breadthFirstTraversal(new SceneGraphVisitorAdapter() {
+                    @Override
+                    public void visit(Node object) {
+                        if(object.getName().startsWith(ElementName.WALL_BASE_NAME)) {
+                            Wall wall = (Wall)object; 
+                            if(!wall.isStale()) {
+                                points += wall.getWorldTranslation().y + 
+                                        (wall.getHeight() * wall.getLength() + 
+                                        wall.getType().getPrice()) * 2;
+                                blockWall(wall);
+                            }
+                        }
+                    }
+                });
         }
         return points; 
     }
-    
-    private static int calculatePoints(Wall element) {
-        List<Spatial> wallElements = element.getChildren();
-        int points = 0, end = CatchNode.values().length;
-        for(int i = 1; i <= end; i++){ 
-            List<Spatial> sideChildren  = ((Node)wallElements.get(i)).getChildren();
-            int sideChildrenCount = sideChildren.size();
-            for(int k = 0; k < sideChildrenCount; k++) {
-                points += calculatePoints((Wall)sideChildren.get(k));
-            }
-        }
-        if(!element.isStale()) {
-            points += element.getWorldTranslation().y;
-            blockWall(element);
-        }
-        return points;
-    }
-    
-//    private static int calculatePointsForBuilding(Node building) {
-//        List<Spatial> parts = building.getChildren(); 
-//        int partsAmount = parts.size(), points = 0; 
-//        for(int i = 0; i < partsAmount; i++) { // sprawdza wszystkie początkowe węzły 
-//            Wall part = (Wall)parts.get(i); 
-//            points += calculatePoints(part); 
-//            if(!part.isStale()) {
-//                points += part.getWorldTranslation().y;
-//                blockWall(part);
-//            } 
-//        }
-//        return points; 
-//    }
     
     private static void blockWall(Wall wall) {
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator().getBulletAppState()
@@ -75,7 +55,8 @@ public class BuildingValidator {
             physics.remove(control);
         }
         List<Spatial> children = wall.getChildren();
-        for(int i = 0; i < children.size(); i++) {
+        int childrenNumber = children.size(); 
+        for(int i = 0; i < childrenNumber; i++) {
             Spatial child = children.get(i);
             if(child.getName().startsWith(ElementName.LINE)) {
                 child.removeFromParent();

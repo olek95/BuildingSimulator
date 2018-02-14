@@ -51,6 +51,7 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
     private boolean stale = false, protrudingCatched = false; 
     private Vector3f catchingLocation; 
     private Quaternion catchingRotation; 
+    private WallType type;
     
     /*
      * Konstruktor bezparametrowy jest potrzebny podczas wczytywania ściany z
@@ -58,7 +59,8 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      */
     public Wall(){}
     
-    public Wall(CSGShape shape, Vector3f location, CSGShape... differenceShapes){
+    public Wall(WallType type, CSGShape shape, Vector3f location, CSGShape... differenceShapes){
+        this.type = type; 
         BoundingBox bounding = (BoundingBox)shape.getWorldBound();
         width = bounding.getYExtent(); 
         height = bounding.getZExtent(); 
@@ -151,6 +153,59 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
                 + FastMath.QUARTER_PI < yAngle || yAngleOther + FastMath.QUARTER_PI 
                 < yAngle && yAngleOther + FastMath.PI - FastMath.QUARTER_PI > yAngle;
     }
+    
+    /**
+     * Tworzy słuchacza kolizji od dolnej krawędzi. 
+     */
+    public void initCollisionListener(){
+        if(collisionListener == null){
+            collisionListener = new BottomCollisionListener(this, name, 
+                    ElementName.ROPE_HOOK);
+            BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
+                    .addCollisionGroupListener(collisionListener, 5);
+        }
+    }
+    
+     @Override
+    public void write(JmeExporter ex) throws IOException {
+        super.write(ex);
+        OutputCapsule capsule = ex.getCapsule(this);
+        capsule.write(ropesHorizontal, "HORIZONTAL_ROPES", null);
+        capsule.write(ropesVertical, "VERTICAL_ROPES", null);
+        capsule.write(distanceToHandle, "DISTANCE_TO_HANDLE", 0f);
+        capsule.write(distanceToHandleVertical, "DISTANCE_TO_HANDLE_VERTICAL", 0f);
+        capsule.write(catchingLocation, "CATCHING_LOCATION", null);
+        capsule.write(catchingRotation, "CATCHING_ROTATION", null);
+        capsule.write(actualMode, "ACTUAL_MODE", null);
+        capsule.write(length, "LENGTH", 0f);
+        capsule.write(height, "HEIGHT", 0f);
+        capsule.write(width, "WIDTH", 0f);
+        capsule.write(protrudingCatched, "PROTRUDING_CATCHED", false);
+     }
+     
+     @Override
+    public void read(JmeImporter im) throws IOException {
+        super.read(im);
+        InputCapsule capsule = im.getCapsule(this);
+        Savable[] ropes1 = capsule.readSavableArray("HORIZONTAL_ROPES", null),
+                ropes2 = capsule.readSavableArray("VERTICAL_ROPES", null);
+        for(int i = 0; i < ropes1.length; i++) {
+            ropesHorizontal[i] = (Geometry)ropes1[i];
+        }
+        for(int i = 0; i < ropes2.length; i++) {
+            ropesVertical[i] = (Geometry)ropes2[i];
+        }
+        distanceToHandle = capsule.readFloat("DISTANCE_TO_HANDLE", 0f);
+        distanceToHandleVertical = capsule.readFloat("DISTANCE_TO_HANDLE_VERTICAL", 0f);
+        catchingLocation = (Vector3f)capsule.readSavable("CATCHING_LOCATION", null);
+        catchingRotation = (Quaternion)capsule.readSavable("CATCHING_ROTATION", null);
+        actualMode = capsule.readEnum("ACTUAL_MODE", WallMode.class, null);
+        length = capsule.readFloat("LENGTH", 0f);
+        height = capsule.readFloat("HEIGHT", 0f);
+        width = capsule.readFloat("WIDTH", 0f);
+        protrudingCatched = capsule.readBoolean("PROTRUDING_CATCHED", false);
+        counter++;
+     }
     
     /**
      * Określa czy ściana jest ruchoma. Jeśli true to porusza się zawsze np. gdy 
@@ -292,6 +347,8 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         return Wall.collisionListener; 
     }
     
+    public WallType getType() { return type; }
+    
     /**
      * Zwraca współrzędną wybranego rogu tego obiektu. Możliwe punkty do pobrania, 
      * to tylko te tworzące górną podstawę. Numeracja: 0 - lewy dolny róg (lub 
@@ -370,15 +427,6 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         attachChild(wall);
     }
     
-    public void initCollisionListener(){
-        if(collisionListener == null){
-            collisionListener = new BottomCollisionListener(this, name, 
-                    ElementName.ROPE_HOOK);
-            BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
-                    .addCollisionGroupListener(collisionListener, 5);
-        }
-    }
-    
     private void createLooseControl(Vector3f location){
         PhysicsManager.createObjectPhysics(this, 0.00001f, false, ElementName.WALL_GEOMETRY);
         getControl(RigidBodyControl.class).setPhysicsLocation(location);
@@ -397,45 +445,4 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
         parent.attachChild(node); 
         return node; 
     }
-    
-     @Override
-    public void write(JmeExporter ex) throws IOException {
-        super.write(ex);
-        OutputCapsule capsule = ex.getCapsule(this);
-        capsule.write(ropesHorizontal, "HORIZONTAL_ROPES", null);
-        capsule.write(ropesVertical, "VERTICAL_ROPES", null);
-        capsule.write(distanceToHandle, "DISTANCE_TO_HANDLE", 0f);
-        capsule.write(distanceToHandleVertical, "DISTANCE_TO_HANDLE_VERTICAL", 0f);
-        capsule.write(catchingLocation, "CATCHING_LOCATION", null);
-        capsule.write(catchingRotation, "CATCHING_ROTATION", null);
-        capsule.write(actualMode, "ACTUAL_MODE", null);
-        capsule.write(length, "LENGTH", 0f);
-        capsule.write(height, "HEIGHT", 0f);
-        capsule.write(width, "WIDTH", 0f);
-        capsule.write(protrudingCatched, "PROTRUDING_CATCHED", false);
-     }
-     
-     @Override
-    public void read(JmeImporter im) throws IOException {
-        super.read(im);
-        InputCapsule capsule = im.getCapsule(this);
-        Savable[] ropes1 = capsule.readSavableArray("HORIZONTAL_ROPES", null),
-                ropes2 = capsule.readSavableArray("VERTICAL_ROPES", null);
-        for(int i = 0; i < ropes1.length; i++) {
-            ropesHorizontal[i] = (Geometry)ropes1[i];
-        }
-        for(int i = 0; i < ropes2.length; i++) {
-            ropesVertical[i] = (Geometry)ropes2[i];
-        }
-        distanceToHandle = capsule.readFloat("DISTANCE_TO_HANDLE", 0f);
-        distanceToHandleVertical = capsule.readFloat("DISTANCE_TO_HANDLE_VERTICAL", 0f);
-        catchingLocation = (Vector3f)capsule.readSavable("CATCHING_LOCATION", null);
-        catchingRotation = (Quaternion)capsule.readSavable("CATCHING_ROTATION", null);
-        actualMode = capsule.readEnum("ACTUAL_MODE", WallMode.class, null);
-        length = capsule.readFloat("LENGTH", 0f);
-        height = capsule.readFloat("HEIGHT", 0f);
-        width = capsule.readFloat("WIDTH", 0f);
-        protrudingCatched = capsule.readBoolean("PROTRUDING_CATCHED", false);
-        counter++;
-     }
 }

@@ -208,14 +208,33 @@ public class Construction extends Node{
      * @param wall pierwszy element budynku 
      */
     public static void restoreConstruction(Construction building) {
+        // final List<Vector3f> locations = new ArrayList();
+        // final List<Quaternion> rotations = new ArrayList(); 
         building.breadthFirstTraversal(new SceneGraphVisitorAdapter() {
             @Override
             public void visit(Node object) {
                 if(object.getName().startsWith(ElementName.WALL_BASE_NAME)) {
+                    //Vector3f old = object.getControl(RigidBodyControl.class).getPhysicsLocation();
+                    //locations.add(old.clone());
+                    //rotations.add(object.getControl(RigidBodyControl.class).getPhysicsRotation().clone());
                     PhysicsManager.addPhysicsToGame(object);
                 }
             }}
         );
+        /*Construction c = (Construction)building.clone();
+        GameManager.addToGame(c);
+        c.breadthFirstTraversal(new SceneGraphVisitorAdapter() {
+            private int i = 0;
+            @Override
+            public void visit(Node object) {
+                if(object.getName().startsWith(ElementName.WALL_BASE_NAME)) {
+                    object.getControl(RigidBodyControl.class).setPhysicsLocation(locations.get(i).add(new Vector3f(90, 0,0)));
+                    object.getControl(RigidBodyControl.class).setPhysicsRotation(rotations.get(i));
+                    i++;
+                    PhysicsManager.addPhysicsToGame(object);
+                }
+            }}
+        ); */
     }
     
     /**

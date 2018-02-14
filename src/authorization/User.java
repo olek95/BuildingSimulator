@@ -1,5 +1,11 @@
 package authorization;
 
+import com.jme3.system.NanoTimer;
+import com.jme3.system.Timer;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 /**
  * Klasa <code>User</code> reprezentuje użytkownika w grze. Niezalogowany użytkownik 
  * jest określany jako Anonim. 
@@ -8,11 +14,14 @@ package authorization;
 public class User {
     private String login;
     private int points; 
+    private String time;
+    private Timer timer; 
     public static final String DEFAULT_LOGIN = "Anonim";
     
     public User(String login, int points) {
         this.login = login; 
         this.points = points; 
+        timer = new NanoTimer();
     }
     
     /**
@@ -38,4 +47,12 @@ public class User {
      * @param points punkty 
      */
     public void setPoints(int points) { this.points = points; }
+    
+    public void getTime() {
+        System.out.println(timer.getTimeInSeconds());
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        time = df.format(new Date((long)(timer.getTimeInSeconds() * 1000)));
+        System.out.println(time);
+    }
 }

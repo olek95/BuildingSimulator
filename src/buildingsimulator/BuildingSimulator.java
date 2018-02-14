@@ -26,6 +26,7 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
+import com.jme3.system.Timer;
 import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
 import cranes.Hook;
@@ -77,6 +78,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             Options.refresh(); 
         }
         if(GameManager.isStartedGame()){
+            GameManager.getUser().getTime();
             MobileCrane unit = GameManager.getMobileCrane();
             unit.updateState();
             List<Spatial> gameObjects = rootNode.getChildren();

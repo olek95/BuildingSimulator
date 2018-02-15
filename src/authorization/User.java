@@ -15,7 +15,7 @@ public class User {
     private String login;
     private int points; 
     private String time;
-    private float seconds;
+    private float seconds, stoppedTime = 0;
     private Timer timer; 
     public static final String DEFAULT_LOGIN = "Anonim";
     
@@ -23,6 +23,33 @@ public class User {
         this.login = login; 
         this.points = points; 
         timer = new NanoTimer();
+    }
+    
+    /**
+     * Zwraca czas gry w formacie HH:mm:ss. 
+     * @return czas gry 
+     */
+    public String getTime() {
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        seconds = stoppedTime + timer.getTimeInSeconds();
+        time = df.format(new Date((long)(seconds * 1000)));
+        return time; 
+    }
+    
+    /**
+     * Zatrzymuje  
+     * @return 
+     */
+    public void resetTimer() {
+        timer.reset();
+    }
+    
+    /**
+     * Zapamiętuje czas. 
+     */
+    public void rememberTime() {
+        stoppedTime = seconds; 
     }
     
     /**
@@ -49,23 +76,4 @@ public class User {
      */
     public void setPoints(int points) { this.points = points; }
     
-    /**
-     * Zwraca czas gry w formacie HH:mm:ss. 
-     * @return czas gry 
-     */
-    public String getTime() {
-        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
-        df.setTimeZone(TimeZone.getTimeZone("UTC"));
-        seconds += timer.getTimeInSeconds();
-        time = df.format(new Date((long)(seconds * 1000)));
-        return time; 
-    }
-    
-    /**
-     * Zatrzymuje  
-     * @return 
-     */
-    public void resetTimer() {
-        timer.reset();
-    }
 }

@@ -33,7 +33,7 @@ public abstract class TableMenu extends Menu{
      * @param labels nagłówki kolumn 
      * @return stworzona tabelka
      */
-    protected Table createTable(String[] ids, Translator[] labels) {
+    protected Table createTable(String[] ids, Translator[] labels, int... margins) {
         float width = screen.getWidth();
         table = new Table(screen, new Vector2f(0, 0), new Vector2f(width,
                 screen.getHeight())) {
@@ -44,20 +44,10 @@ public abstract class TableMenu extends Menu{
         for(int i = 0; i < ids.length; i++) {
             Table.TableColumn column = new Table.TableColumn(table, screen, ids[i]);
             column.setText(labels[i].getValue());
-            column.setWidth(width / ids.length);
+            column.setWidth(width / ids.length + (margins.length != 0 ? margins[i] : 0));
             column.setIgnoreMouseLeftButton(true);
             table.addColumn(column);
         }
-        /*Table.TableColumn firstColumn = new Table.TableColumn(table, screen, ids[0]),
-                secondColumn = new Table.TableColumn(table, screen, ids[1]); 
-        firstColumn.setText(labels[0].getValue());
-        firstColumn.setWidth(width / 2 + 100);
-        firstColumn.setIgnoreMouseLeftButton(true);
-        table.addColumn(firstColumn);
-        secondColumn.setText(labels[1].getValue());
-        secondColumn.setWidth(width / 2 - 100);
-        secondColumn.setIgnoreMouseLeftButton(true);
-        table.addColumn(secondColumn);*/
         addRows(); 
         return table; 
     }

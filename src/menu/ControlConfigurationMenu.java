@@ -11,7 +11,6 @@ import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.input.event.MouseMotionEvent;
 import com.jme3.input.event.TouchEvent;
 import com.jme3.math.Vector2f;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -36,7 +35,7 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
         Screen screen = getScreen();
         restoredSettings = new Properties(); 
         Table table = createTable(new String[]{"action_column", "key_column"},
-                new Translator[]{Translator.ACTIVITY, Translator.KEY}); 
+                new Translator[]{Translator.ACTIVITY, Translator.KEY}, new int[]{100, -100}); 
         getWindow().addChild(table);
         createAcceptingButton(); 
         createReturnButton(screen.getWidth() * 0.6f);

@@ -15,6 +15,7 @@ public class User {
     private String login;
     private int points; 
     private String time;
+    private float seconds;
     private Timer timer; 
     public static final String DEFAULT_LOGIN = "Anonim";
     
@@ -55,9 +56,16 @@ public class User {
     public String getTime() {
         SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
-        time = df.format(new Date((long)(timer.getTimeInSeconds() * 1000)));
+        seconds += timer.getTimeInSeconds();
+        time = df.format(new Date((long)(seconds * 1000)));
         return time; 
     }
     
-    
+    /**
+     * Zatrzymuje  
+     * @return 
+     */
+    public void resetTimer() {
+        timer.reset();
+    }
 }

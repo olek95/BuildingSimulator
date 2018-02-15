@@ -101,6 +101,7 @@ public class GameManager {
         } else {
             HUD.changeShopButtonVisibility(false);
         }
+        user.resetTimer();
         // billboard.resumeAdvertisement();
         startedGame = true;
         pausedGame = false; 

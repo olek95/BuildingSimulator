@@ -1,5 +1,6 @@
 package menu;
 
+import authorization.User;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import com.jme3.app.state.AbstractAppState;
@@ -26,8 +27,10 @@ public class HUD extends AbstractAppState{
                 0.95f); 
         addNewButton("shop_button", "Interface/hudIcons/shop_icon.png", 0.9f);
         addNewButton("cleaning_button", "Interface/hudIcons/cleaning_icon.png", 0.85f);
-        addLabel("points_label", 0, 0.2f, GameManager.getUser().getPoints() + "");
-        addLabel("message_label", 0.3f, 0.4f, "");
+        User user = GameManager.getUser();
+        addLabel("points_label", 0, 0, 0.2f, user.getPoints() + "");
+        addLabel("message_label", 0.3f, 0, 0.4f, "");
+        addLabel("time_label", 0, 0.05f, 0.2f, user.getTime());
     }
     
     /**
@@ -39,6 +42,7 @@ public class HUD extends AbstractAppState{
         screen.getElementById("shop_button").hide();
         screen.getElementById("points_label").hide();
         screen.getElementById("cleaning_button").hide();
+        screen.getElementById("time_label").hide();
     }
     
     /**
@@ -55,6 +59,11 @@ public class HUD extends AbstractAppState{
     public static void updatePoints() {
         screen.getElementById("points_label").setText(GameManager.getUser()
                 .getPoints() + "");
+    }
+    
+    public static void updateTime() {
+        screen.getElementById("time_label").setText(GameManager.getUser()
+                .getTime() + "");
     }
     
     /**
@@ -102,10 +111,10 @@ public class HUD extends AbstractAppState{
         screen.addElement(button);
     }
     
-    private void addLabel(String id, float xPosition, float xDimension, String text) {
-        int width = (int)screen.getWidth(); 
-        Label label = new Label(screen, id, new Vector2f(width * xPosition, 0),
-                new Vector2f(width * xDimension, 40));
+    private void addLabel(String id, float xPosition, float yPosition, float xDimension, String text) {
+        int width = (int)screen.getWidth(), height = (int)screen.getHeight(); 
+        Label label = new Label(screen, id, new Vector2f(width * xPosition, 
+                height * yPosition), new Vector2f(width * xDimension, 40));
         label.setFontSize(40);
         label.setText(text);
         label.setFontColor(ColorRGBA.Black);

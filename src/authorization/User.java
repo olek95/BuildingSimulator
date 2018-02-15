@@ -48,11 +48,16 @@ public class User {
      */
     public void setPoints(int points) { this.points = points; }
     
-    public void getTime() {
-        System.out.println(timer.getTimeInSeconds());
+    /**
+     * Zwraca czas gry w formacie HH:mm:ss. 
+     * @return czas gry 
+     */
+    public String getTime() {
         SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
         time = df.format(new Date((long)(timer.getTimeInSeconds() * 1000)));
-        System.out.println(time);
+        return time; 
     }
+    
+    
 }

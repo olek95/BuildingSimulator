@@ -78,7 +78,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             Options.refresh(); 
         }
         if(GameManager.isStartedGame()){
-            GameManager.getUser().getTime();
+            HUD.updateTime();
             MobileCrane unit = GameManager.getMobileCrane();
             unit.updateState();
             List<Spatial> gameObjects = rootNode.getChildren();

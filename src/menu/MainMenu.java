@@ -1,5 +1,6 @@
 package menu;
 
+import authorization.DBManager;
 import authorization.User;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
@@ -77,6 +78,7 @@ public abstract class MainMenu extends Menu {
         BinaryImporter importer = BinaryImporter.getInstance();
         importer.setAssetManager(BuildingSimulator.getBuildingSimulator().getAssetManager());
         User user = GameManager.getUser();
+        GameManager.setUser(DBManager.getUser(user.getLogin()));
         File file = new File("./game saves/" + user.getLogin() + "/save.j3o");
         try {
             SavedData data = (SavedData)importer.load(file);

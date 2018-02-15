@@ -57,7 +57,7 @@ public class PauseMenu extends MainMenu{
                 + "/save.j3o");
         try {
             exporter.save(new SavedData(), file);
-            savePoints();
+            saveScore();
             setLoadingButtonState(false);
         } catch (IOException ex) {
             Logger.getLogger(PauseMenu.class.getName()).log(Level.SEVERE, null, ex);
@@ -133,11 +133,11 @@ public class PauseMenu extends MainMenu{
         MenuFactory.showMenu(MenuTypes.STARTING_MENU);
     }
     
-    private void savePoints() {
+    private void saveScore() {
         User user = GameManager.getUser(); 
         if(!user.getLogin().equals(User.DEFAULT_LOGIN)) {
             try {
-                DBManager.savePoints(user);
+                DBManager.saveScore(user);
             }catch(SQLException|ClassNotFoundException ex) {
                 ex.printStackTrace();
             }

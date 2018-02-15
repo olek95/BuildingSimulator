@@ -30,7 +30,7 @@ public class HUD extends AbstractAppState{
         User user = GameManager.getUser();
         addLabel("points_label", 0, 0, 0.2f, user.getPoints() + "");
         addLabel("message_label", 0.3f, 0, 0.4f, "");
-        addLabel("time_label", 0, 0.05f, 0.2f, user.getTime());
+        addLabel("time_label", 0, 0.05f, 0.2f, user.calculateActualTime());
     }
     
     /**
@@ -63,7 +63,7 @@ public class HUD extends AbstractAppState{
     
     public static void updateTime() {
         screen.getElementById("time_label").setText(GameManager.getUser()
-                .getTime() + "");
+                .calculateActualTime() + "");
     }
     
     /**

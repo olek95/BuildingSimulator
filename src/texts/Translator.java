@@ -75,6 +75,7 @@ public enum Translator {
     NOT_LOGGED_IN_ALERT,
     USER,
     POINTS,
+    TIME,
     GAME_CONTINUATION,
     EXIT_WARNING,
     EXIT_DESKTOP,

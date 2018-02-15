@@ -1,9 +1,13 @@
 package menu;
 
 import authorization.DBManager;
+import authorization.User;
 import buildingsimulator.GameManager;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import texts.Translator;
 import tonegod.gui.core.Screen;
 
@@ -16,8 +20,8 @@ public class Statistics extends TableMenu{
     public Statistics(){
         super("statistics");
         Screen screen = getScreen(); 
-        getWindow().addChild(createTable(new String[]{"user_column", "points_column"},
-                new Translator[]{Translator.USER, Translator.POINTS}));
+        getWindow().addChild(createTable(new String[]{"user_column", "points_column", "time_column"},
+                new Translator[]{Translator.USER, Translator.POINTS, Translator.TIME}));
         createReturnButton(screen.getWidth() * 0.45f);
         Translator.setTexts(new String[]{"return_button"},
                 new Translator[]{Translator.RETURN}, screen);
@@ -32,12 +36,16 @@ public class Statistics extends TableMenu{
     @Override
     protected void addRows(){
         try{
-            Map<String, String> statistics = DBManager.getAllStatistics(); 
-            for(Map.Entry<String, String> entry : statistics.entrySet()){
-                String login = entry.getKey();
-                addRow(login, login, entry.getValue());
+            List<User> statistics = DBManager.getAllStatistics(); 
+            int statisticsNumber = statistics.size();
+            for(int i = 0; i < statisticsNumber; i++){
+                User user = statistics.get(i);
+                String login = user.getLogin();
+                System.out.println(user.getTime());
+                addRow(login, login, user.getPoints() +  "", user.getTime());
             }
         }catch(SQLException|ClassNotFoundException ex){
+            Logger.getLogger(Statistics.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

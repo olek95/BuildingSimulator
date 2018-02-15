@@ -31,7 +31,7 @@ public abstract class TableMenu extends Menu{
      * Tworzy tabelkę.
      * @param ids id kolumn 
      * @param labels nagłówki kolumn 
-     * @return 
+     * @return stworzona tabelka
      */
     protected Table createTable(String[] ids, Translator[] labels) {
         float width = screen.getWidth();
@@ -41,7 +41,14 @@ public abstract class TableMenu extends Menu{
             public void onChange() {}
         };
         table.center();
-        Table.TableColumn firstColumn = new Table.TableColumn(table, screen, ids[0]),
+        for(int i = 0; i < ids.length; i++) {
+            Table.TableColumn column = new Table.TableColumn(table, screen, ids[i]);
+            column.setText(labels[i].getValue());
+            column.setWidth(width / ids.length);
+            column.setIgnoreMouseLeftButton(true);
+            table.addColumn(column);
+        }
+        /*Table.TableColumn firstColumn = new Table.TableColumn(table, screen, ids[0]),
                 secondColumn = new Table.TableColumn(table, screen, ids[1]); 
         firstColumn.setText(labels[0].getValue());
         firstColumn.setWidth(width / 2 + 100);
@@ -50,7 +57,7 @@ public abstract class TableMenu extends Menu{
         secondColumn.setText(labels[1].getValue());
         secondColumn.setWidth(width / 2 - 100);
         secondColumn.setIgnoreMouseLeftButton(true);
-        table.addColumn(secondColumn);
+        table.addColumn(secondColumn);*/
         addRows(); 
         return table; 
     }
@@ -77,10 +84,12 @@ public abstract class TableMenu extends Menu{
      * @param value1 wartość pierwszej komówki 
      * @param label2 etykieta drugiej komórki 
      */
-    protected void addRow(String label1, Object value1, String label2) {
+    protected void addRow(String label1, Object value1, String... additionalValues) {
         Table.TableRow row = new Table.TableRow(screen, table);
         row.addCell(label1, value1);
-        row.addCell(label2, label2);
+        for(int i = 0; i < additionalValues.length; i++) {
+            row.addCell(additionalValues[i], additionalValues[i]);
+        }
         table.addRow(row);
     }
     

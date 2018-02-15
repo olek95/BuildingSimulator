@@ -7,7 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,7 +26,7 @@ public class DBManager extends AbstractAppState{
             Statement statement = connection.createStatement();
             statement.execute("CREATE TABLE IF NOT EXISTS Users "
                     + "(id_user INTEGER PRIMARY KEY AUTOINCREMENT, login VARCHAR(20),"
-                    + " password VARCHAR(20), points INTEGER)");
+                    + " password VARCHAR(20), points INTEGER, time VARCHAR(20))");
         }
     }
     
@@ -57,7 +59,8 @@ public class DBManager extends AbstractAppState{
     public static void signUp(String login, String password) throws ClassNotFoundException, SQLException{
         try(Connection connection = connect()){
            PreparedStatement statement = connection
-                   .prepareStatement("INSERT INTO Users(login, password, points) VALUES(?, ?, 999)");
+                   .prepareStatement("INSERT INTO Users(login, password, points, time)"
+                   + " VALUES(?, ?, 999, '00:00:00')");
            statement.setString(1, login);
            statement.setString(2, password);
            statement.executeUpdate();
@@ -65,59 +68,73 @@ public class DBManager extends AbstractAppState{
     }
     
     /**
-     * Pozwala użytkownikowi się zalogować. Sprawdza tez czy taki użytkownik 
-     * już istnieje. 
+     * Pozwala użytkownikowi się zalogować, a następnie zwraca zalogowanego użytkownika.
      * @param login nazwa użytkownika 
      * @param password hasło użytkownika 
-     * @return true jeśli udało się zalogować, false w przeciwnym przypadku 
+     * @return zalogowany użytkownik, jesli taki istnieje, lub null w przeciwnym przypadku 
      */
     public static User signIn(String login, String password) throws ClassNotFoundException, SQLException{
         try(Connection connection = connect()){
             PreparedStatement statement = connection
-                    .prepareStatement("SELECT points FROM Users WHERE login = ?"
+                    .prepareStatement("SELECT points, time FROM Users WHERE login = ?"
                     + " AND password = ?");
             statement.setString(1, login);
             statement.setString(2, password);
             ResultSet rs = statement.executeQuery();
-            return rs.next() ? new User(login, rs.getInt(1)) : null;
+            return rs.next() ? new User(login, rs.getInt(1), rs.getString(2)) : null;
         }
     }
     
     /**
-     * Zapisuje punkty dla danego użytkownika. 
-     * @param user użytkownik dla którego zapisują się punkty 
+     * Zapisuje wynik (punkty i czas) dla danego użytkownika. 
+     * @param user użytkownik dla którego zapisuje się wynik  
      * @throws SQLException
      * @throws ClassNotFoundException 
      */
-    public static void savePoints(User user) throws SQLException, ClassNotFoundException{
+    public static void saveScore(User user) throws SQLException, ClassNotFoundException{
         String login = user.getLogin();
         try(Connection connection = connect()) {
             PreparedStatement statement = connection
-                    .prepareStatement("UPDATE Users SET points = ? WHERE login=?");
+                    .prepareStatement("UPDATE Users SET points = ?, time = ? WHERE login=?");
             statement.setInt(1, user.getPoints());
-            statement.setString(2, login);
+            System.out.println(user.getTime());
+            statement.setString(2, user.getTime());
+            statement.setString(3, login);
             statement.executeUpdate(); 
         }
     }
     
-    public static Map<String, String> getAllStatistics() throws SQLException, ClassNotFoundException{
-        Map<String, String> statistics = new HashMap();
+    public static List<User> getAllStatistics() throws SQLException, ClassNotFoundException{
+        List<User> statistics = new ArrayList();
         try(Connection connection = connect()) {
             PreparedStatement statement = connection
-                    .prepareStatement("SELECT login, points FROM Users");
+                    .prepareStatement("SELECT login, points, time FROM Users");
             ResultSet restoredStatistics = statement.executeQuery();
             while(restoredStatistics.next()){
-                statistics.put(restoredStatistics.getString(1), restoredStatistics.getString(2));
+                statistics.add(new User(restoredStatistics.getString(1), 
+                        restoredStatistics.getInt(2), restoredStatistics.getString(3)));
             }
         }finally{
             return statistics; 
         }
     }
     
+    public static User getUser(String login) {
+        User user = null;
+        try(Connection connection = connect()) {
+            PreparedStatement statement = connection
+                    .prepareStatement("SELECT points, time FROM Users WHERE login = ?");
+            statement.setString(1, login);
+            ResultSet rs = statement.executeQuery();
+            user = rs.next() ? new User(login, rs.getInt(1), rs.getString(2)) : null;
+        } finally{
+            return user; 
+        }
+    }
+    
     private static Connection connect() throws ClassNotFoundException, SQLException{
-        Connection connection = null;
         Class.forName(DRIVER);
-        connection = DriverManager.getConnection(DB_URL);
+        Connection connection = DriverManager.getConnection(DB_URL);
         return connection; 
     }
 }

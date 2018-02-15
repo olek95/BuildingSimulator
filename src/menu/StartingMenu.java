@@ -50,6 +50,7 @@ public class StartingMenu extends MainMenu{
         } else {
             super.start(); 
             user.setPoints(999);
+            user.resetAllTime();
             GameManager.runGame(null);
         }
     }
@@ -168,7 +169,7 @@ public class StartingMenu extends MainMenu{
     @Override
     protected void doWhenAcceptedExit(Screen screen, MenuTypes type) {
         super.doWhenAcceptedExit(screen, null); 
-        GameManager.setUser(new User(User.DEFAULT_LOGIN, 999));
+        GameManager.setUser(new User(User.DEFAULT_LOGIN, 999, "00:00:00"));
         super.start(); 
         GameManager.runGame(null);
     }

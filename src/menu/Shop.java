@@ -66,12 +66,12 @@ public class Shop extends Menu implements VisibleFromAbove{
         screen.getElementById("actual_height_value").setText(craneHeight + "");
         ((Spinner)screen.getElementById("crane_height_spinner"))
                 .setSelectedIndex(craneHeight);
-        setCost();
+        boolean settingCostCompleted = setCost();
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
         displayedShop = this; 
         view = new BirdsEyeView(this);
         view.setMouseDisabled(true);
-        showPreview();
+        if(settingCostCompleted) showPreview();
     }
     
     /**
@@ -92,7 +92,7 @@ public class Shop extends Menu implements VisibleFromAbove{
             } else view.setMouseDisabled(false);
             goNextMenu(screen, null);
         }
-        hidePreview();
+        hidePreview(true);
     }
     
     /**
@@ -102,7 +102,7 @@ public class Shop extends Menu implements VisibleFromAbove{
      */
     public void cancel(MouseButtonEvent evt, boolean isToggled) {
         displayedShop = null; 
-        hidePreview();
+        hidePreview(true);
         view.setOff();
         BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(false);
         goNextMenu(screen, null);
@@ -133,9 +133,9 @@ public class Shop extends Menu implements VisibleFromAbove{
      * @param value 
      */
     public void prepareOrder(int selectedIndex, Object value) {
-        setCost(); 
-        hidePreview(); 
-        showPreview();
+        boolean settingCostCompleted = setCost(); 
+        hidePreview(false); 
+        if(settingCostCompleted) showPreview();
     }
     
     /**
@@ -143,14 +143,17 @@ public class Shop extends Menu implements VisibleFromAbove{
      * błędne dane to wyświetlony jest stosowny komunikat oraz blokowany jest 
      * przycisk zakupów. 
      */
-    public void setCost() {
+    public boolean setCost() {
         int cost = calculateCost(); 
         if(cost == -1) {
+            hidePreview(true);
             screen.getElementById("cost_value_label").setText(Translator.BAD_DATA.getValue());
             screen.getElementById("buying_button").setIsEnabled(false);
+            return false; 
         } else {
             screen.getElementById("cost_value_label").setText(cost + "");
             screen.getElementById("buying_button").setIsEnabled(true);
+            return true;
         }
     }
     
@@ -288,20 +291,12 @@ public class Shop extends Menu implements VisibleFromAbove{
         return x.matches("([1-5](\\.\\d+)?)|[6]");
     }
     
-    private DummyWall createWallPreview() {
-        Element xTextField = screen.getElementById("x_text_field"),
-                zTextField = screen.getElementById("z_text_field");
-        if(xTextField != null && zTextField != null) {
-            String x = xTextField.getText(), z = zTextField.getText();
-            if(isProperDimension(x) && isProperDimension(z)) { 
-                Vector3f dimensions = getWallDimensions();
-                return (DummyWall)WallsFactory.createWall((WallType)((SelectBox)screen
-                        .getElementById("type_select_box")).getSelectedListItem().getValue(),
-                        Vector3f.NAN, new Vector3f(dimensions.x * 0.05f, 0.02f,
-                        dimensions.z * 0.05f), 0, true);
-            }
-        }
-        return null;
+    private DummyWall createWallPreview() { 
+        Vector3f dimensions = getWallDimensions();
+        return (DummyWall)WallsFactory.createWall((WallType)((SelectBox)screen
+                .getElementById("type_select_box")).getSelectedListItem().getValue(),
+                Vector3f.NAN, new Vector3f(dimensions.x * 0.05f, 0.02f,
+                dimensions.z * 0.05f), 0, true);
     }
     
     private void showPreview() {
@@ -315,9 +310,14 @@ public class Shop extends Menu implements VisibleFromAbove{
         }
     }
     
-    private void hidePreview() {
+    private void hidePreview(boolean stopAnimation) {
         if(wallPreview != null) wallPreview.removeFromParent();
         wallPreview = null;
+        if(stopAnimation) {
+            previewAnimationStop = true; 
+            if(cinematic != null) cinematic.stop();
+            cinematic = null;
+        }
     }
     Cinematic cinematic;
     private void startPreviewAnimation() {

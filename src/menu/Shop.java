@@ -161,8 +161,8 @@ public class Shop extends Menu implements VisibleFromAbove{
     @Override
     public void unload() {
         int amount = ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex();
-        WallType type = (WallType)((SelectBox)screen.getElementById("type_select_box"))
-                .getSelectedListItem().getValue();
+        WallType type = (WallType)((Slider)screen.getElementById("type_slider"))
+                .getSelectedValue();
         Vector3f dimensions = getWallDimensions();
         Vector3f tempDimensions = dimensions.clone(); 
         tempDimensions.multLocal(1, amount, 1);

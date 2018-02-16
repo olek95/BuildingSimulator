@@ -26,6 +26,7 @@ import texts.Translator;
  */
 public class BirdsEyeView implements ActionListener{
     private static VisibleFromAbove viewOwner;
+    private boolean mouseDisabled = false;
     public BirdsEyeView(VisibleFromAbove viewOwner) {
         BirdsEyeView.viewOwner = viewOwner;
         Control.addListener(this);
@@ -41,7 +42,7 @@ public class BirdsEyeView implements ActionListener{
      */
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
-        if(isPressed) {
+        if(isPressed && !mouseDisabled) {
             if(name.equals(Control.Actions.SELECT_WAREHOUSE.toString())) {
                 BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
                 Camera cam = game.getCamera();
@@ -101,6 +102,13 @@ public class BirdsEyeView implements ActionListener{
     public static boolean isActive() {
         return viewOwner != null; 
     }
+    
+    /**
+     * Określa czy sprawdzane są kliknięcia myszką. 
+     * @param disabled true jeśli kliknięcia myszką mają być zablokowane, 
+     * false w przeciwnym przypadku 
+     */
+    public void setMouseDisabled(boolean disabled) { mouseDisabled = disabled; }
     
     private void changeViewMode() {
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();

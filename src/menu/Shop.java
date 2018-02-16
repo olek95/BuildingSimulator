@@ -16,7 +16,6 @@ import com.jme3.math.Vector3f;
 import texts.Translator;
 import tonegod.gui.controls.lists.SelectBox;
 import tonegod.gui.controls.lists.Spinner;
-import tonegod.gui.controls.menuing.MenuItem;
 import tonegod.gui.controls.text.TextField;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Element;
@@ -66,6 +65,7 @@ public class Shop extends Menu implements VisibleFromAbove{
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
         displayedShop = this; 
         view = new BirdsEyeView(this);
+        view.setMouseDisabled(true);
         showPreview();
     }
     
@@ -84,7 +84,7 @@ public class Shop extends Menu implements VisibleFromAbove{
             if(!isMaterialsBought())  {
                 displayedShop = null;
                 view.setOff();
-            }
+            } else view.setMouseDisabled(false);
             goNextMenu(screen, null);
         }
         hidePreview();

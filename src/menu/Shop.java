@@ -8,9 +8,13 @@ import eyeview.BirdsEyeView;
 import buildingsimulator.BuildingSimulator;
 import listeners.DummyCollisionListener;
 import buildingsimulator.GameManager;
+import com.jme3.animation.LoopMode;
+import com.jme3.cinematic.Cinematic;
+import com.jme3.cinematic.events.AbstractCinematicEvent;
 import eyeview.VisibleFromAbove;
 import com.jme3.font.BitmapFont;
 import com.jme3.input.event.MouseButtonEvent;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import texts.Translator;
@@ -35,6 +39,7 @@ public class Shop extends Menu implements VisibleFromAbove{
     private DummyCollisionListener listener; 
     private BirdsEyeView view; 
     private DummyWall wallPreview;
+    private boolean previewAnimationStop = true;
     public Shop(){
         if(displayedShop != null) { 
             GameManager.getUser().addPoints(displayedShop.costForMaterials); 
@@ -292,7 +297,7 @@ public class Shop extends Menu implements VisibleFromAbove{
                 Vector3f dimensions = getWallDimensions();
                 return (DummyWall)WallsFactory.createWall((WallType)((SelectBox)screen
                         .getElementById("type_select_box")).getSelectedListItem().getValue(),
-                        Vector3f.NAN, new Vector3f(dimensions.x * 0.05f, 0.2f,
+                        Vector3f.NAN, new Vector3f(dimensions.x * 0.05f, 0.02f,
                         dimensions.z * 0.05f), 0, true);
             }
         }
@@ -304,13 +309,45 @@ public class Shop extends Menu implements VisibleFromAbove{
         if(wallPreview != null) {
             GameManager.addToScene(wallPreview);
             Vector3f location = GameManager.getCamera().getLocation().clone();
-            wallPreview.setLocalTranslation(location.add(0, -2, 0.4f));
+            wallPreview.setLocalTranslation(location.add(0, -1.7f, 0.35f));
             wallPreview.setOffPhysics();
+            startPreviewAnimation();
         }
     }
     
     private void hidePreview() {
         if(wallPreview != null) wallPreview.removeFromParent();
         wallPreview = null;
+    }
+    Cinematic cinematic;
+    private void startPreviewAnimation() {
+        if(previewAnimationStop) {
+            cinematic = new Cinematic(BuildingSimulator.getBuildingSimulator()
+                    .getRootNode(), 90, LoopMode.DontLoop);
+            cinematic.addCinematicEvent(0, new AbstractCinematicEvent() {
+                @Override
+                protected void onPlay() {
+                    previewAnimationStop = false;
+                }
+
+                @Override
+                protected void onUpdate(float tpf) {
+                    wallPreview.rotate(0, 0, tpf * 2f);
+                }
+
+                @Override
+                protected void onStop() {
+                    if(!previewAnimationStop) {
+                        previewAnimationStop = true;
+                        startPreviewAnimation();
+                    }
+                }
+
+                @Override
+                public void onPause() {}
+
+            });
+            GameManager.startAnimation(cinematic); 
+        }
     }
 }

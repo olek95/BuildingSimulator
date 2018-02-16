@@ -1,16 +1,15 @@
 package listeners;
 
 import building.DummyWall;
+import building.WallType;
+import building.WallsFactory;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
 import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Box;
 import com.jme3.scene.control.Control;
 
 /**
@@ -63,7 +62,8 @@ public class DummyCollisionListener implements PhysicsCollisionGroupListener {
      * @param location położenie sztucznego obiektu 
      */
     public void createDummyWall(Vector3f location, Vector3f dimensions) {
-        collisionOwner = DummyWall.createDummyWall(location, dimensions, 0.00001f);
+        collisionOwner = (DummyWall)WallsFactory.createWall(WallType.WALL, location,
+                    dimensions, 0.00001f, true);
         collisionOwner.getControl(RigidBodyControl.class).setCollisionGroup(6);
         BuildingSimulator.getBuildingSimulator().getBulletAppState()
                 .getPhysicsSpace().addCollisionGroupListener(this, 6);

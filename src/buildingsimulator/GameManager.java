@@ -13,6 +13,7 @@ import com.jme3.audio.AudioSource;
 import cranes.CraneAbstract;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.cinematic.Cinematic;
+import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import cranes.crane.Crane;
@@ -305,4 +306,12 @@ public class GameManager {
      * @return głosność dźwięków
      */
     public static float getGameSoundVolume() { return gameSoundVolume; }
+    
+    /**
+     * Zwraca kamerę gry.
+     * @return kamera gry 
+     */
+    public static Camera getCamera() {
+        return BuildingSimulator.getBuildingSimulator().getCamera();
+    }
 }

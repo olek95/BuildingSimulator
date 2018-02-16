@@ -1,5 +1,6 @@
 package menu;
 
+import building.DummyWall;
 import building.Wall;
 import building.WallType;
 import building.WallsFactory;
@@ -8,13 +9,10 @@ import buildingsimulator.BuildingSimulator;
 import listeners.DummyCollisionListener;
 import buildingsimulator.GameManager;
 import eyeview.VisibleFromAbove;
-import com.jme3.audio.AudioNode;
 import com.jme3.font.BitmapFont;
-import com.jme3.input.FlyByCamera;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import cranes.crane.Crane;
 import texts.Translator;
 import tonegod.gui.controls.lists.SelectBox;
 import tonegod.gui.controls.lists.Spinner;
@@ -79,11 +77,9 @@ public class Shop extends Menu implements VisibleFromAbove{
             buyCraneHeight();
             GameManager.getUser().addPoints(-cost);
             HUD.updatePoints();
-            if(isMaterialsBought()) view = new BirdsEyeView(this); 
-            else {
+            if(!isMaterialsBought())  {
                 displayedShop = null;
-                FlyByCamera camera = BuildingSimulator.getBuildingSimulator().getFlyByCamera();
-                camera.setDragToRotate(false);
+                view.setOff();
             }
             goNextMenu(screen, null);
         }
@@ -96,6 +92,7 @@ public class Shop extends Menu implements VisibleFromAbove{
      */
     public void cancel(MouseButtonEvent evt, boolean isToggled) {
         displayedShop = null; 
+        view.setOff();
         BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(false);
         goNextMenu(screen, null);
     }
@@ -126,6 +123,13 @@ public class Shop extends Menu implements VisibleFromAbove{
      */
     public void beginCalculateCost(int selectedIndex, Object value) {
         setCost(); 
+        view = new BirdsEyeView(this);
+        DummyWall wall = (DummyWall)WallsFactory.createWall(WallType.WALL, 
+                Vector3f.NAN, new Vector3f(1 * 0.2f, 0.2f, 1 * 0.2f), 0, true);
+        GameManager.addToGame(wall);
+        Vector3f location = GameManager.getCamera().getLocation().clone();
+        wall.setLocalTranslation(location.add(0, -2, 0.3f));
+        wall.setOffPhysics();
     }
     
     /**
@@ -153,8 +157,8 @@ public class Shop extends Menu implements VisibleFromAbove{
         Vector3f tempDimensions = dimensions.clone(); 
         tempDimensions.multLocal(1, amount, 1);
         for(int i = 0; i < amount; i++) {
-            Wall wall = WallsFactory.createWall(type, dischargingLocation,
-                    dimensions);
+            Wall wall = (Wall)WallsFactory.createWall(type, dischargingLocation,
+                    dimensions, 0.00001f, false);
             GameManager.addToGame(wall);
             dischargingLocation.y += 0.4f; 
         }

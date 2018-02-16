@@ -181,6 +181,17 @@ public class PhysicsManager {
                 .getPhysicsSpace().add(object.getControl(i));
     }
     
+    /**
+     * Usuwa fizykę dla danego obiektu z gry. 
+     * @param control usuwa fizykę dla obiektu z gry 
+     */
+    public static void removeFromScene(Node object) {
+        RigidBodyControl control = object.getControl(RigidBodyControl.class);
+        object.removeControl(control);
+        BuildingSimulator.getBuildingSimulator().getBulletAppState()
+                .getPhysicsSpace().remove(control);
+    }
+    
     private static void moveDynamicObject(Spatial element, Vector3f displacement){
         RigidBodyControl elementControl = element.getControl(RigidBodyControl.class);
         elementControl.setPhysicsLocation(elementControl.getPhysicsLocation()

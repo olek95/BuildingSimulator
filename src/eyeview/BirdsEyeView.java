@@ -14,8 +14,6 @@ import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
-import com.jme3.scene.Spatial;
-import cranes.CraneAbstract;
 import cranes.mobileCrane.MobileCrane;
 import menu.HUD;
 import menu.Shop;

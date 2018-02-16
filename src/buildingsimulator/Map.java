@@ -1,6 +1,7 @@
 package buildingsimulator;
 
-import building.DummyWall;
+import building.WallType;
+import building.WallsFactory;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
@@ -79,9 +80,13 @@ public class Map {
                 negativeLocation = calculateBorderLocation(true);
         Vector3f xDimensions = new Vector3f(254 * 2.5f, 1, 0.2f),
                 zDimensions = new Vector3f(0.2f, 1, 254 * 2.5f);
-        DummyWall.createDummyWall(new Vector3f(0, 2.2f, positiveLocation), xDimensions, 0); 
-        DummyWall.createDummyWall(new Vector3f(0, 2.2f, negativeLocation), xDimensions, 0); 
-        DummyWall.createDummyWall(new Vector3f(positiveLocation, 2.2f, 0), zDimensions, 0); 
-        DummyWall.createDummyWall(new Vector3f(negativeLocation, 2.2f, 0), zDimensions, 0); 
+        WallsFactory.createWall(WallType.WALL, new Vector3f(0, 2.2f, positiveLocation),
+                    xDimensions, 0, true);
+        WallsFactory.createWall(WallType.WALL, new Vector3f(0, 2.2f, negativeLocation),
+                    xDimensions, 0, true);
+        WallsFactory.createWall(WallType.WALL, new Vector3f(positiveLocation, 2.2f, 0),
+                    zDimensions, 0, true);
+        WallsFactory.createWall(WallType.WALL, new Vector3f(negativeLocation, 2.2f, 0),
+                    zDimensions, 0, true);
     }
 }

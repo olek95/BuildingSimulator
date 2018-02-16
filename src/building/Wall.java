@@ -22,8 +22,6 @@ import net.wcomohundro.jme3.csg.CSGShape;
 import building.CatchNode.*;
 import buildingsimulator.ElementName;
 import buildingsimulator.PhysicsManager;
-import com.jme3.asset.AssetManager;
-import com.jme3.collision.CollisionResults;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -40,7 +38,7 @@ import java.util.ArrayList;
  * przeznaczone na takie elementy jak np. okna. 
  * @author AleksanderSklorz
  */
-final public class Wall extends Node implements RememberingRecentlyHitObject{
+final public class Wall extends AbstractWall implements RememberingRecentlyHitObject{
     private Spatial recentlyHitObject;
     private static BottomCollisionListener collisionListener = null; 
     private Geometry[] ropesHorizontal = new Geometry[4], ropesVertical = new Geometry[2];
@@ -59,17 +57,16 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
      */
     public Wall(){}
     
-    public Wall(WallType type, CSGShape shape, Vector3f location, CSGShape... differenceShapes){
+    public Wall(WallType type, CSGShape shape, Vector3f location, float mass, CSGShape... differenceShapes){
+        super(type, shape, location, mass, ElementName.WALL_BASE_NAME + counter, 
+                differenceShapes);
         this.type = type; 
         BoundingBox bounding = (BoundingBox)shape.getWorldBound();
         width = bounding.getYExtent(); 
         height = bounding.getZExtent(); 
         length = bounding.getXExtent(); 
-        initShape(shape, differenceShapes);
         initCollisionListener(); 
-        ((CSGGeometry)getChild(0)).regenerate();
         createWallNodes(); 
-        createLooseControl(location); 
         createAttachingControl(location, false); 
         createAttachingControl(location, true); 
         swapControl(WallMode.LOOSE);
@@ -411,25 +408,6 @@ final public class Wall extends Node implements RememberingRecentlyHitObject{
             ropes[i].setCullHint(CullHint.Always);
         }          
         controlAttaching.setPhysicsLocation(location);
-    }
-    
-    private void initShape(CSGShape shape, CSGShape... differenceShapes){
-        CSGGeometry wall = new CSGGeometry(ElementName.WALL_GEOMETRY); 
-        wall.addShape(shape);
-        AssetManager assetManager = BuildingSimulator.getBuildingSimulator().getAssetManager(); 
-        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setTexture("ColorMap", assetManager.loadTexture("Textures/gips.jpg"));
-        wall.setMaterial(mat);     
-        if(differenceShapes != null)
-            for(int i = 0; i < differenceShapes.length; i++)
-                wall.subtractShape(differenceShapes[i]);
-        setName(ElementName.WALL_BASE_NAME + counter);
-        attachChild(wall);
-    }
-    
-    private void createLooseControl(Vector3f location){
-        PhysicsManager.createObjectPhysics(this, 0.00001f, false, ElementName.WALL_GEOMETRY);
-        getControl(RigidBodyControl.class).setPhysicsLocation(location);
     }
     
     private void createWallNodes(){

@@ -51,7 +51,7 @@ public class GameManager {
         game.getFlyByCamera().setDragToRotate(false);
         BulletAppState bas = game.getBulletAppState(); 
         game.getStateManager().attach(bas);
-        addToGame(new Map(9).getScene());
+        addToScene(new Map(9).getScene());
         if(loadedData != null) {
             WallsFactory.restoreWalls(loadedData.getWalls());
             mobileCrane =  new MobileCrane(loadedData.getMobileCrane());
@@ -60,7 +60,7 @@ public class GameManager {
             int buildingsNumber = buildings.size();
             for(int i = 0; i < buildingsNumber; i++) {
                 Construction building = buildings.get(i);
-                addToGame(building);
+                addToScene(building);
                 Construction.restoreConstruction(building);
                 ((Wall)building.getChild(0)).initCollisionListener();
             }
@@ -81,10 +81,10 @@ public class GameManager {
             if(!((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing())
                 Control.addListener(mobileCrane);
         }
-        addToGame(mobileCrane.getCrane());
-        addToGame(crane.getCrane());
+        addToScene(mobileCrane.getCrane());
+        addToScene(crane.getCrane());
 //        billboard = new Billboard(-720, 20);
-//        addToGame(billboard.getBillboard());
+//        addToScene(billboard.getBillboard());
         Control.addListener(game);
         bas.getPhysicsSpace().addCollisionListener(BuildingCollisionListener
                 .createBuildingCollisionListener());
@@ -221,10 +221,10 @@ public class GameManager {
     
     
     /**
-     * Dodaje obiekt do gry. 
+     * Dodaje obiekt do świata gry. 
      * @param object dodawany obiekt 
      */
-    public static void addToGame(Spatial object){
+    public static void addToScene(Spatial object){
         BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(object);
     }
     

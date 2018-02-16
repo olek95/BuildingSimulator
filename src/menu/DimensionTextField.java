@@ -15,6 +15,6 @@ public class DimensionTextField extends TextField{
     @Override
     public void onKeyRelease(KeyInputEvent evt) {
         super.onKeyRelease(evt);
-        shop.setCost();
+        shop.prepareOrder(-1, null);
     }
 }

@@ -8,12 +8,12 @@
                 <method name="setIsResizable" param0="false"/>
                 <component type="Label" id="type_label" position="25%,16%" dimensions="10%,12%"/>
                 <component type="SelectBox" id="type_select_box" position="35%,19%" dimensions="40%,7%">
-                    <eventMethod name="onChange" stateMethodName="beginCalculateCost"/>
+                    <eventMethod name="onChange" stateMethodName="prepareOrder"/>
                 </component>
                 <component type="Label" id="amount_label" position="25%,29%" dimensions="10%,12%"/>
                 <component type="Spinner" id="amount_spinner" position="35%,32%" dimensions="20%,7%" orientation="VERTICAL">
                     <method name="setStepIntegerRange" param0="0" param1="5" param2="1"/>
-                    <eventMethod name="onChange" stateMethodName="beginCalculateCost"/>
+                    <eventMethod name="onChange" stateMethodName="prepareOrder"/>
                 </component>
                 <component type="Label" id="dimensions_label" position="25%,42%" dimensions="20%,12%"/>
                 <component type="Label" position="25%,52%" dimensions="10%,12%">
@@ -32,7 +32,7 @@
                 <component type="Label" id="new_height_label" position="25%,36%" dimensions="30%,12%"/>
                 <component type="Spinner" id="crane_height_spinner" position="55%,39%" dimensions="10%,7%" orientation="VERTICAL">
                     <method name="setStepIntegerRange" param0="0" param1="6" param2="1"/>
-                    <eventMethod name="onChange" stateMethodName="beginCalculateCost"/>
+                    <eventMethod name="onChange" stateMethodName="prepareOrder"/>
                 </component>
             </component>
             <component type="Label" id="cost_label" position="25%,70%" dimensions="30%,12%">

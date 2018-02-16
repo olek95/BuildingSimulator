@@ -16,6 +16,7 @@ import com.jme3.math.Vector3f;
 import texts.Translator;
 import tonegod.gui.controls.lists.SelectBox;
 import tonegod.gui.controls.lists.Spinner;
+import tonegod.gui.controls.menuing.MenuItem;
 import tonegod.gui.controls.text.TextField;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Element;
@@ -34,6 +35,7 @@ public class Shop extends Menu implements VisibleFromAbove{
     private Vector3f dischargingLocation = null;
     private DummyCollisionListener listener; 
     private BirdsEyeView view; 
+    private DummyWall wallPreview;
     public Shop(){
         if(displayedShop != null) { 
             GameManager.getUser().addPoints(displayedShop.costForMaterials); 
@@ -63,6 +65,8 @@ public class Shop extends Menu implements VisibleFromAbove{
         setCost();
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
         displayedShop = this; 
+        view = new BirdsEyeView(this);
+        showPreview();
     }
     
     /**
@@ -83,6 +87,7 @@ public class Shop extends Menu implements VisibleFromAbove{
             }
             goNextMenu(screen, null);
         }
+        hidePreview();
     }
     
     /**
@@ -92,6 +97,7 @@ public class Shop extends Menu implements VisibleFromAbove{
      */
     public void cancel(MouseButtonEvent evt, boolean isToggled) {
         displayedShop = null; 
+        hidePreview();
         view.setOff();
         BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(false);
         goNextMenu(screen, null);
@@ -121,15 +127,10 @@ public class Shop extends Menu implements VisibleFromAbove{
      * @param selectedIndex
      * @param value 
      */
-    public void beginCalculateCost(int selectedIndex, Object value) {
+    public void prepareOrder(int selectedIndex, Object value) {
         setCost(); 
-        view = new BirdsEyeView(this);
-        DummyWall wall = (DummyWall)WallsFactory.createWall(WallType.WALL, 
-                Vector3f.NAN, new Vector3f(1 * 0.2f, 0.2f, 1 * 0.2f), 0, true);
-        GameManager.addToGame(wall);
-        Vector3f location = GameManager.getCamera().getLocation().clone();
-        wall.setLocalTranslation(location.add(0, -2, 0.3f));
-        wall.setOffPhysics();
+        hidePreview(); 
+        showPreview();
     }
     
     /**
@@ -159,7 +160,7 @@ public class Shop extends Menu implements VisibleFromAbove{
         for(int i = 0; i < amount; i++) {
             Wall wall = (Wall)WallsFactory.createWall(type, dischargingLocation,
                     dimensions, 0.00001f, false);
-            GameManager.addToGame(wall);
+            GameManager.addToScene(wall);
             dischargingLocation.y += 0.4f; 
         }
         view.setOff();
@@ -174,18 +175,6 @@ public class Shop extends Menu implements VisibleFromAbove{
         this.listener = listener; 
         if(listener != null) 
             listener.createDummyWall(dischargingLocation, getWallDimensions());
-    }
-    
-    /**
-     * Zwraca wymiary kupionej ściany przy następujących założeniach: długość x 
-     * jest dłuższą długością od z. Jeśli będzie odwrotnie, to odwraca rozmiar 
-     * podczas tworzenia sciany. 
-     * @return wymiary kupionej ściany
-     */
-    public Vector3f getWallDimensions() {
-        float x = ((TextField)screen.getElementById("x_text_field")).parseFloat(),
-                z = ((TextField)screen.getElementById("z_text_field")).parseFloat();
-        return new Vector3f(x, 0.2f, z) ; 
     }
     
     @Override
@@ -280,11 +269,48 @@ public class Shop extends Menu implements VisibleFromAbove{
         }
     }
     
+    private Vector3f getWallDimensions() {
+        float x = ((TextField)screen.getElementById("x_text_field")).parseFloat(),
+                z = ((TextField)screen.getElementById("z_text_field")).parseFloat();
+        return new Vector3f(x, 0.2f, z) ; 
+    }
+    
     private boolean isMaterialsBought() {
         return ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex() != 0;
     }
     
     private boolean isProperDimension(String x) {
         return x.matches("([1-5](\\.\\d+)?)|[6]");
+    }
+    
+    private DummyWall createWallPreview() {
+        Element xTextField = screen.getElementById("x_text_field"),
+                zTextField = screen.getElementById("z_text_field");
+        if(xTextField != null && zTextField != null) {
+            String x = xTextField.getText(), z = zTextField.getText();
+            if(isProperDimension(x) && isProperDimension(z)) { 
+                Vector3f dimensions = getWallDimensions();
+                return (DummyWall)WallsFactory.createWall((WallType)((SelectBox)screen
+                        .getElementById("type_select_box")).getSelectedListItem().getValue(),
+                        Vector3f.NAN, new Vector3f(dimensions.x * 0.05f, 0.2f,
+                        dimensions.z * 0.05f), 0, true);
+            }
+        }
+        return null;
+    }
+    
+    private void showPreview() {
+        wallPreview = createWallPreview();
+        if(wallPreview != null) {
+            GameManager.addToScene(wallPreview);
+            Vector3f location = GameManager.getCamera().getLocation().clone();
+            wallPreview.setLocalTranslation(location.add(0, -2, 0.4f));
+            wallPreview.setOffPhysics();
+        }
+    }
+    
+    private void hidePreview() {
+        if(wallPreview != null) wallPreview.removeFromParent();
+        wallPreview = null;
     }
 }

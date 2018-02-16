@@ -62,7 +62,7 @@ public class WallsFactory {
         int wallModeCount =  WallMode.values().length;
         for(int i = 0; i < wallsCount; i++) {
             Wall wall = walls.get(i);
-            GameManager.addToGame(wall);
+            GameManager.addToScene(wall);
             wall.initCollisionListener();
             for(int j = 0; j < wallModeCount; j++) {
                 PhysicsManager.addPhysicsToGame(wall, j);

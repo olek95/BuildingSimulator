@@ -215,7 +215,7 @@ public class Construction extends Node{
             }}
         );
         /*Construction c = (Construction)building.clone();
-        GameManager.addToGame(c);
+        GameManager.addToScene(c);
         c.breadthFirstTraversal(new SceneGraphVisitorAdapter() {
             private int i = 0;
             @Override

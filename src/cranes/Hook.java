@@ -116,7 +116,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                             wallRecentlyHitObject : nearestBuildingWall); 
                     if(construction == null){
                         construction = new Construction();
-                        GameManager.addToGame(construction);
+                        GameManager.addToScene(construction);
                     } 
                     if(construction.add(attachedObject, nearestBuildingWall, oldMode, protruding)) {
                         confirmDetaching();

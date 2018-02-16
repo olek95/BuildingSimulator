@@ -21,14 +21,6 @@ public enum WallType {
     private WallType(int price) { this.price = price; }
     
     /**
-     * Zwraca przetłumaczoną nazwę typu płyty budowlanej. 
-     * @return przetłumaczona nazwa 
-     */
-    public String getTranslatedName() {
-        return Translator.valueOf(toString()).getValue();
-    }
-    
-    /**
      * Zwraca cenę.
      * @return cena 
      */

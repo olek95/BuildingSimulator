@@ -7,7 +7,7 @@
                 <method name="setIsMovable" param0="false"/>
                 <method name="setIsResizable" param0="false"/>
                 <component type="Label" id="type_label" position="25%,16%" dimensions="10%,12%"/>
-                <component type="SelectBox" id="type_select_box" position="35%,19%" dimensions="40%,7%">
+                <component type="Slider" id="type_slider" position="35%,19%" dimensions="40%,7%" orientation="HORIZONTAL">
                     <eventMethod name="onChange" stateMethodName="prepareOrder"/>
                 </component>
                 <component type="Label" id="amount_label" position="25%,29%" dimensions="10%,12%"/>

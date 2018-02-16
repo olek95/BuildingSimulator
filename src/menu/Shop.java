@@ -19,6 +19,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import texts.Translator;
 import tonegod.gui.controls.lists.SelectBox;
+import tonegod.gui.controls.lists.Slider;
 import tonegod.gui.controls.lists.Spinner;
 import tonegod.gui.controls.text.TextField;
 import tonegod.gui.controls.windows.Window;
@@ -58,7 +59,7 @@ public class Shop extends Menu implements VisibleFromAbove{
                 Translator.CANCELLATION, Translator.TYPE, Translator.AMOUNT,
                 Translator.DIMENSIONS, Translator.COST, Translator.NEXT, 
                 Translator.HEIGHT_CHANGE, Translator.ACTUAL_HEIGHT, Translator.NEW_HEIGHT}, screen);
-        fillTypeSelectBox();
+        fillTypeSlider(); 
         createTextField("x_text_field", 0.35f, 0.55f);
         createTextField("z_text_field", 0.35f, 0.65f);
         screen.getElementById("vehicles_panel").hide();
@@ -222,11 +223,11 @@ public class Shop extends Menu implements VisibleFromAbove{
      */
     public BirdsEyeView getView() { return view; }
     
-    private void fillTypeSelectBox() {
+    private void fillTypeSlider() {
         WallType[] types = WallType.values(); 
-        SelectBox typeSelectBox = (SelectBox)screen.getElementById("type_select_box");
+        Slider typeSelectBox = (Slider)screen.getElementById("type_slider");
         for(int i = 0; i < types.length; i++){
-            typeSelectBox.addListItem(types[i].getTranslatedName(), types[i]);
+            typeSelectBox.addStepValue(types[i]);
         }
     }
     
@@ -239,8 +240,8 @@ public class Shop extends Menu implements VisibleFromAbove{
             if(isProperDimension(x) && isProperDimension(z)) { 
                 result = ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex()
                         * ((int)Float.parseFloat(x) * (int)Float.parseFloat(z)
-                        + ((WallType)((SelectBox)screen.getElementById("type_select_box")).getSelectedListItem()
-                        .getValue()).getPrice());
+                        + ((WallType)((Slider)screen.getElementById("type_slider"))
+                        .getSelectedValue()).getPrice());
                 costForMaterials = result; 
                 int selectedHeight = ((Spinner)screen.getElementById("crane_height_spinner"))
                         .getSelectedIndex(), actualHeight = Integer.parseInt(screen
@@ -293,8 +294,8 @@ public class Shop extends Menu implements VisibleFromAbove{
     
     private DummyWall createWallPreview() { 
         Vector3f dimensions = getWallDimensions();
-        return (DummyWall)WallsFactory.createWall((WallType)((SelectBox)screen
-                .getElementById("type_select_box")).getSelectedListItem().getValue(),
+        return (DummyWall)WallsFactory.createWall((WallType)((Slider)screen
+                .getElementById("type_slider")).getSelectedValue(),
                 Vector3f.NAN, new Vector3f(dimensions.x * 0.05f, 0.02f,
                 dimensions.z * 0.05f), 0, true);
     }

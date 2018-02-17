@@ -14,7 +14,7 @@ public class MobileCraneCamera {
         BEHIND("behindCamStart", "behindCamEnd"),
         ARM_CABIN("armCabinCamStart", "armCabinCamEnd"),
         BEHIND_ARM("behindArmCamStart", "behindArmCamEnd"),
-        HOOK("hookCamStart", "hookCamEnd");
+        BIRDS_EYE_VIEW("birdsEyeViewCamStart", "birdsEyeViewCamEnd");
         
         private String start; 
         private String end;
@@ -40,21 +40,19 @@ public class MobileCraneCamera {
     
     public void changeCamera(boolean armControlMode) {
         if(!armControlMode) {
-            type = type.equals(CameraType.CABIN) ? CameraType.BEHIND : CameraType.CABIN;
+            if(type.equals(CameraType.CABIN)) type = CameraType.BEHIND;
+            else type = type.equals(CameraType.BEHIND) ? CameraType.BIRDS_EYE_VIEW : CameraType.CABIN;
         } else {
             switchCameraOwner(((Node)crane.getChild(ElementName.ARM_CONTROL)));
-            if(type.equals(CameraType.ARM_CABIN)) {
-                type = CameraType.BEHIND;
-            } else {
-                type = CameraType.ARM_CABIN;
-            }
+            if(type.equals(CameraType.ARM_CABIN)) type = CameraType.BEHIND_ARM;
+            else type = type.equals(CameraType.BEHIND_ARM) ? CameraType.BIRDS_EYE_VIEW : CameraType.ARM_CABIN;
         }
         setPosition();
     }
     
     private void setPosition() {
-        camera.lookAt(crane.getChild(type.end).getWorldTranslation(), Vector3f.UNIT_XYZ);
         craneCamera.setLocalTranslation(crane.getChild(type.start).getLocalTranslation());
+        craneCamera.setLocalRotation(crane.getChild(type.start).getLocalRotation());
     }
     
     private void switchCameraOwner(Node newOwner) {

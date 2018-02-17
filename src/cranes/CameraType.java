@@ -5,7 +5,8 @@ public enum CameraType {
     BEHIND("behindCamStart", "behindCamEnd"),
     ARM_CABIN("armCabinCamStart", "armCabinCamEnd"),
     BEHIND_ARM("behindArmCamStart", "behindArmCamEnd"),
-    BIRDS_EYE_VIEW("birdsEyeViewCamStart", "birdsEyeViewCamEnd");
+    BIRDS_EYE_VIEW("birdsEyeViewCamStart", "birdsEyeViewCamEnd"),
+    LOOSE(null, null);
 
     private String start; 
     private String end;

@@ -134,7 +134,7 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
         if(isPressed) {
             switch(Actions.valueOf(name)) {
                 case CHANGE_CAMERA: 
-                    if(crane.getName().equals(ElementName.CRANE))
+                    if(crane.getName().contains(ElementName.CRANE))
                         ((MobileCraneCamera)camera).changeCamera(true);
                     else ((CraneCamera)camera).changeCamera();
                     break;

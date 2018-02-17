@@ -5,23 +5,47 @@ import com.jme3.scene.Node;
 import cranes.AbstractCraneCamera;
 import cranes.CameraType;
 
+/**
+ * Klasa <code>MobileCraneCamera</code> reprezentuje kamerę dźwigu mobilnego. 
+ * @author AleksanderSklorz 
+ */
 public class MobileCraneCamera extends AbstractCraneCamera{
     public MobileCraneCamera(Node crane) {
         super(crane);
         switchCameraOwner(crane);
     }
     
+    /**
+     * Zmienia kamerę. 
+     * @param armControlMode true jeśli aktualnie sterowane jest ramię dźwigu, 
+     * false w przeciwnym przypadku 
+     */
     public void changeCamera(boolean armControlMode) {
         CameraType type = getType(); 
         if(!armControlMode) {
             switchCameraOwner(getCrane());
             if(type.equals(CameraType.CABIN)) setType(CameraType.BEHIND);
-            else setType(type.equals(CameraType.BEHIND) ? CameraType.BIRDS_EYE_VIEW : CameraType.CABIN);
+            else if(type.equals(CameraType.BEHIND)) setType(CameraType.BIRDS_EYE_VIEW);
+            else if(type.equals(CameraType.BIRDS_EYE_VIEW)) setType(CameraType.LOOSE);
+            else {
+                if(type.equals(CameraType.LOOSE)) {
+                   setOffLoose();
+                }
+                setType(CameraType.CABIN);
+            }
         } else {
             switchCameraOwner(((Node)getCrane().getChild(ElementName.ARM_CONTROL)));
             if(type.equals(CameraType.ARM_CABIN)) setType(CameraType.BEHIND_ARM);
-            else setType(type.equals(CameraType.BEHIND_ARM) ? CameraType.BIRDS_EYE_VIEW : CameraType.ARM_CABIN);
+            else if(type.equals(CameraType.BEHIND_ARM)) setType(CameraType.BIRDS_EYE_VIEW);
+            else if(type.equals(CameraType.BIRDS_EYE_VIEW)) setType(CameraType.LOOSE);
+            else {
+                if(type.equals(CameraType.LOOSE)) {
+                   setOffLoose();
+                }
+                setType(CameraType.ARM_CABIN);
+            };
         }
-        setPosition();
+        if(getType().equals(CameraType.LOOSE)) setOff();
+        else setPosition();
     }
 }

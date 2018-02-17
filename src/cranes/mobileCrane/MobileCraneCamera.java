@@ -2,76 +2,45 @@ package cranes.mobileCrane;
 
 import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
-import com.jme3.input.FlyByCamera;
-import com.jme3.renderer.Camera;
 import com.jme3.scene.CameraNode;
 import com.jme3.scene.Node;
+import cranes.AbstractCraneCamera;
+import cranes.CameraType;
 
-public class MobileCraneCamera {
-    public enum CameraType {
-        CABIN("cabinCamStart", "cabinCamEnd"),
-        BEHIND("behindCamStart", "behindCamEnd"),
-        ARM_CABIN("armCabinCamStart", "armCabinCamEnd"),
-        BEHIND_ARM("behindArmCamStart", "behindArmCamEnd"),
-        BIRDS_EYE_VIEW("birdsEyeViewCamStart", "birdsEyeViewCamEnd");
-        
-        private String start; 
-        private String end;
-        
-        private CameraType(String start, String end) {
-            this.start = start;
-            this.end = end;
-        }
-    }
-    
-    private Camera camera = GameManager.getCamera();
-    private FlyByCamera flyByCamera = GameManager.getFlyByCamera();
-    private Node crane, cameraOwner;
-    private CameraNode craneCamera; 
-    private CameraType type;
+public class MobileCraneCamera extends AbstractCraneCamera{
+    private Node cameraOwner;
     public MobileCraneCamera(Node crane) {
-        this.crane = crane; 
-        this.type = CameraType.CABIN;
-        craneCamera = new CameraNode("Camera", camera);
+        super(crane);
         switchCameraOwner(crane);
-        setPosition();
     }
     
     public void changeCamera(boolean armControlMode) {
+        CameraType type = getType(); 
         if(!armControlMode) {
-            switchCameraOwner(crane);
-            if(type.equals(CameraType.CABIN)) type = CameraType.BEHIND;
-            else type = type.equals(CameraType.BEHIND) ? CameraType.BIRDS_EYE_VIEW : CameraType.CABIN;
+            switchCameraOwner(getCrane());
+            if(type.equals(CameraType.CABIN)) setType(CameraType.BEHIND);
+            else setType(type.equals(CameraType.BEHIND) ? CameraType.BIRDS_EYE_VIEW : CameraType.CABIN);
         } else {
-            switchCameraOwner(((Node)crane.getChild(ElementName.ARM_CONTROL)));
-            if(type.equals(CameraType.ARM_CABIN)) type = CameraType.BEHIND_ARM;
-            else type = type.equals(CameraType.BEHIND_ARM) ? CameraType.BIRDS_EYE_VIEW : CameraType.ARM_CABIN;
+            switchCameraOwner(((Node)getCrane().getChild(ElementName.ARM_CONTROL)));
+            if(type.equals(CameraType.ARM_CABIN)) setType(CameraType.BEHIND_ARM);
+            else setType(type.equals(CameraType.BEHIND_ARM) ? CameraType.BIRDS_EYE_VIEW : CameraType.ARM_CABIN);
         }
         setPosition();
     }
     
-    public void setOff() {
-        if(craneCamera != null) {
-            craneCamera.removeFromParent();
-            craneCamera = null;
-        }
-    }
-    
+    @Override
     public void restore() {
-        craneCamera = new CameraNode("Camera", camera);
+        CameraNode craneCamera = new CameraNode("Camera", GameManager.getCamera());
+        setCraneCamera(craneCamera);
         cameraOwner.attachChild(craneCamera);
         setPosition();
     }
     
-    private void setPosition() {
-        craneCamera.setLocalTranslation(crane.getChild(type.start).getLocalTranslation());
-        craneCamera.setLocalRotation(crane.getChild(type.start).getLocalRotation());
-    }
-    
     private void switchCameraOwner(Node newOwner) {
         if(!newOwner.equals(cameraOwner)) {
-            craneCamera.removeFromParent();
-            newOwner.attachChild(craneCamera);
+            CameraNode camera = getCraneCamera(); 
+            camera.removeFromParent();
+            newOwner.attachChild(camera);
             cameraOwner = newOwner; 
         }
     }

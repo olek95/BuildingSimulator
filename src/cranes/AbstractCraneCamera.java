@@ -71,8 +71,10 @@ public abstract class AbstractCraneCamera{
      */
     protected void switchCameraOwner(Node newOwner) {
         if(!newOwner.equals(cameraOwner)) {
-            craneCamera.removeFromParent();
-            newOwner.attachChild(craneCamera);
+            if(craneCamera != null) {
+                craneCamera.removeFromParent();
+                newOwner.attachChild(craneCamera);
+            }
             cameraOwner = newOwner; 
         }
     }

@@ -54,6 +54,7 @@ public class Control {
         PAUSE,
         SHOW_CURSOR,
         MOVE_CRANE,
+        CHANGE_CAMERA,
         SELECT_WAREHOUSE(MouseInput.BUTTON_LEFT),
         CANCEL_BIRDS_EYE_VIEW(MouseInput.BUTTON_RIGHT);
         private String key;
@@ -81,9 +82,9 @@ public class Control {
                                 "VERTICAL_ATTACH", "RIGHT", "PULL_OUT", "LEFT", 
                                 "PULL_IN", "SHOW_CURSOR", "PHYSICS", "ACTION", 
                                 "DOWN", "PAUSE", "MERGE", "ATTACH", "LOWER_HOOK",
-                                "FIRST", "DETACH"}, new String[]{"T", "O", "L", "U",
+                                "FIRST", "DETACH", "CHANGE_CAMERA"}, new String[]{"T", "O", "L", "U",
                                     "2", "V", "K", "E", "H", "SPACE", "LSHIFT", "P",
-                                    "F", "J", "ESC", "N", "Y", "R", "1", "B"}, 
+                                    "F", "J", "ESC", "N", "Y", "R", "1", "B", "C"}, 
                                 "settings/control.properties"); 
                 }
             }

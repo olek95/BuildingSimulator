@@ -12,6 +12,8 @@ import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.input.controls.ActionListener;
+import cranes.mobileCrane.MobileCraneCamera;
+import static settings.Control.Actions.CHANGE_CAMERA;
 /**
  * Klasa <code>ArmControl</code> jest klasą abstrakcyjną dla wszystkich klas 
  * reprezentujących sterowanie ramieniem dźwigu w grze. Implementuje ona interfejs
@@ -26,10 +28,12 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
             changingArmLocation = false; 
     private Node crane, craneControl;
     private Spatial hookHandle;
+    private MobileCraneCamera camera; 
     private Actions[] availableActions = { Actions.RIGHT, Actions.LEFT,
         Actions.PULL_OUT, Actions.PULL_IN, Actions.LOWER_HOOK, Actions.HEIGHTEN_HOOK,
         Actions.UP, Actions.DOWN, Actions.ACTION, Actions.ATTACH,
-        Actions.VERTICAL_ATTACH, Actions.DETACH, Actions.MERGE, Actions.MERGE_PROTRUDING};
+        Actions.VERTICAL_ATTACH, Actions.DETACH, Actions.MERGE, Actions.MERGE_PROTRUDING,
+        Actions.CHANGE_CAMERA};
     /**
      * Konstruktor tworzący kabinę. Używany, gdy wartość maksymalnego i 
      * minimalnego przesunięcia uchwytu nie jest znana od początku. Należy 
@@ -48,13 +52,14 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
      * @param minHandleHookDisplacement minimalne przesunięcie uchwytu haka 
      */
     public ArmControl(Node crane, float maxHandleHookDisplacement, float minHandleHookDisplacement,
-            float maxArmHeight, float minArmHeight){
+            float maxArmHeight, float minArmHeight, MobileCraneCamera camera){
         this.crane = crane;
         initCraneArmElements();
         this.maxHandleHookDisplacement = maxHandleHookDisplacement; 
         this.minHandleHookDisplacement = minHandleHookDisplacement;
         this.maxArmHeight = maxArmHeight; 
         this.minArmHeight = minArmHeight;
+        this.camera = camera;
     }
     /**
      * Zezwala na sterowanie ramieniem żurawia. Żuraw może się obracać, 
@@ -126,6 +131,9 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
         Spatial recentlyHitObject;
         if(isPressed) {
             switch(Actions.valueOf(name)) {
+                case CHANGE_CAMERA: 
+                    camera.changeCamera(true);
+                    break;
                 case ATTACH: 
                     recentlyHitObject = hook.getRecentlyHitObject();
                     if(recentlyHitObject != null && recentlyHitObject.getName()

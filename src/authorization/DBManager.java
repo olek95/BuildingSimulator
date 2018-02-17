@@ -97,7 +97,6 @@ public class DBManager extends AbstractAppState{
             PreparedStatement statement = connection
                     .prepareStatement("UPDATE Users SET points = ?, time = ? WHERE login=?");
             statement.setInt(1, user.getPoints());
-            System.out.println(user.getTime());
             statement.setString(2, user.getTime());
             statement.setString(3, login);
             statement.executeUpdate(); 

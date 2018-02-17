@@ -47,6 +47,7 @@ public enum Translator {
     PAUSE,
     SHOW_CURSOR,
     MOVE_CRANE,
+    CHANGE_CAMERA,
     ACTIVITY,
     KEY,
     NEW_GAME, 

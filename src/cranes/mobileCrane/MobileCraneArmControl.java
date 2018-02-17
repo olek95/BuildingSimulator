@@ -35,8 +35,8 @@ public class MobileCraneArmControl extends ArmControl{
             MIN_CRANE_PROP_PROTRUSION = 1f;
     private Geometry leftProtractilePropGeometry, rightProtractilePropGeometry;
     private boolean obstacleLeft = false, obstacleRight = false, using = false;
-    public MobileCraneArmControl(Node crane){
-        super(crane, 9.5f, 1f, 0.6f, 0f);
+    public MobileCraneArmControl(Node crane, MobileCraneCamera camera){
+        super(crane, 9.5f, 1f, 0.6f, 0f, camera);
         hookHandleDisplacement = PhysicsManager.calculateDisplacementAfterScaling(rectractableCranePart, 
                 new Vector3f(1f, 1f, stretchingOut + STRETCHING_OUT_SPEED), false,
                 true, true);

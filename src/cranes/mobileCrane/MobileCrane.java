@@ -42,10 +42,12 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     private String key = "";
     private Vector3f propDisplacement;
     private Actions[] availableActions = {Actions.UP, Actions.DOWN, Actions.LEFT,
-        Actions.RIGHT, Actions.ACTION};
+        Actions.RIGHT, Actions.ACTION, Actions.CHANGE_CAMERA};
     private AudioNode craneStartEngineSound, craneDrivingSound, craneDrivingBackwardsSound;
+    private MobileCraneCamera camera;
     public MobileCrane(){
         setCrane(GameManager.loadModel("Models/dzwig/dzwig.j3o"));
+        camera = new MobileCraneCamera(getCrane());
         init();
     }
     
@@ -118,7 +120,11 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
             case RIGHT: 
                 craneControl.steer(isPressed ? -0.5f : 0);
                 break;
-            case ACTION: if(isPressed) getOff();
+            case ACTION: 
+                if(isPressed) getOff();
+                break;
+            case CHANGE_CAMERA: 
+                if(isPressed) camera.changeCamera(false);
         }
     }
     
@@ -215,7 +221,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
                 .getBulletAppState().getPhysicsSpace();
         physics.add(craneControl);
-        setArmControl(new MobileCraneArmControl(crane));
+        setArmControl(new MobileCraneArmControl(crane, camera));
         propDisplacement =  PhysicsManager.calculateDisplacementAfterScaling((Node)crane
                 .getChild(ElementName.PROTRACTILE_PROP), new Vector3f(1f, propsLowering + PROP_LOWERING_SPEED,
                 1f), false, true, false);
@@ -289,6 +295,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
             if(Control.getActualListener().equals(this)){
                 Control.addListener(getArmControl());
                 HUD.setMessage(Translator.LOWERED_PROPS.getValue());
+                camera.changeCamera(true);
             }
         }
     }

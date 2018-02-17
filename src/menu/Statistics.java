@@ -41,7 +41,6 @@ public class Statistics extends TableMenu{
             for(int i = 0; i < statisticsNumber; i++){
                 User user = statistics.get(i);
                 String login = user.getLogin();
-                System.out.println(user.getTime());
                 addRow(login, login, user.getPoints() +  "", user.getTime());
             }
         }catch(SQLException|ClassNotFoundException ex){

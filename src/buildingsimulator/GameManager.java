@@ -13,6 +13,7 @@ import com.jme3.audio.AudioSource;
 import cranes.CraneAbstract;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.cinematic.Cinematic;
+import com.jme3.input.FlyByCamera;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -313,5 +314,9 @@ public class GameManager {
      */
     public static Camera getCamera() {
         return BuildingSimulator.getBuildingSimulator().getCamera();
+    }
+    
+    public static FlyByCamera getFlyByCamera() {
+        return BuildingSimulator.getBuildingSimulator().getFlyByCamera();
     }
 }

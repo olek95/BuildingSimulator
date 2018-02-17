@@ -192,6 +192,12 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
      */
     public BirdsEyeView getView() { return view; }
     
+    /** 
+     * Ustawia widok z lotu ptaka.
+     * @param view widok z lotu ptaka 
+     */
+    public void setView(BirdsEyeView view) { this.view = view; }
+    
     /**
      * Usuwa widok z lotu ptaka. 
      */

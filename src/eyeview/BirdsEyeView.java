@@ -94,6 +94,7 @@ public class BirdsEyeView implements ActionListener{
         boolean isMobileCrane = crane.equals(mobileCrane);
         if((isMobileCrane && !mobileCrane.isDuringStateChanging()) || !isMobileCrane) 
             Control.addListener(Control.getActualListener());
+        GameManager.getCrane().setView(null);
         viewOwner = null;
         crane.getCamera().restore();
     }

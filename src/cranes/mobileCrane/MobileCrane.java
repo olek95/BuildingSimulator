@@ -22,6 +22,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.texture.Texture;
 import com.jme3.water.SimpleWaterProcessor;
+import cranes.AbstractCraneCamera;
 import cranes.Hook;
 import java.util.Arrays;
 import java.util.List;
@@ -46,13 +47,13 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     private AudioNode craneStartEngineSound, craneDrivingSound, craneDrivingBackwardsSound;
     public MobileCrane(){
         setCrane(GameManager.loadModel("Models/dzwig/dzwig.j3o"));
-        setCamera(new MobileCraneCamera(getCrane()));
         init();
     }
     
     public MobileCrane(MobileCraneState state) {
         setCrane(state.getCraneNode());
         init();
+        getCamera().setType(state.getCameraType());
         propDisplacement = state.getPropDisplacement();
         propsLowering = state.getPropsLowering();
         MobileCraneArmControl arm = (MobileCraneArmControl)getArmControl();
@@ -213,6 +214,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     public float getPropsLowering() { return propsLowering; }
     
     private void init() {
+        setCamera(new MobileCraneCamera(getCrane()));
         Node crane = getCrane(); 
         craneControl = crane.getControl(VehicleControl.class);
         scaleTiresTexture();

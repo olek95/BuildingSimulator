@@ -10,7 +10,7 @@ import com.jme3.scene.Spatial;
  * kamer wszystkich rodzai dźwigów występujących w grze. 
  * @author AleksanderSklorz 
  */
-public abstract class AbstractCraneCamera {
+public abstract class AbstractCraneCamera{
     private Node crane, cameraOwner;
     private CameraNode craneCamera; 
     private CameraType type;
@@ -39,8 +39,22 @@ public abstract class AbstractCraneCamera {
             craneCamera = new CameraNode("Camera", GameManager.getCamera());
             cameraOwner.attachChild(craneCamera);
             setPosition();
+        } else {
+            setOff();
         }
     }
+    
+    /**
+     * Zwraca typ kamery. 
+     * @return typ kamery 
+     */
+    public CameraType getType() { return type; }
+    
+    /**
+     * Ustawia typ kamery. 
+     * @param type typ kamery 
+     */
+    public void setType(CameraType type) { this.type = type; }
     
     /**
      * Ustawia pozycję kamery.
@@ -57,9 +71,7 @@ public abstract class AbstractCraneCamera {
      */
     protected void switchCameraOwner(Node newOwner) {
         if(!newOwner.equals(cameraOwner)) {
-            System.out.println(craneCamera);
             craneCamera.removeFromParent();
-            System.out.println(newOwner);
             newOwner.attachChild(craneCamera);
             cameraOwner = newOwner; 
         }
@@ -78,16 +90,4 @@ public abstract class AbstractCraneCamera {
      * @return dźwig 
      */
     protected Node getCrane() { return crane; }
-    
-    /**
-     * Zwraca typ kamery. 
-     * @return typ kamery 
-     */
-    protected CameraType getType() { return type; }
-    
-    /**
-     * Ustawia typ kamery. 
-     * @param type typ kamery 
-     */
-    protected void setType(CameraType type) { this.type = type; }
 }

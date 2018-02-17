@@ -21,10 +21,12 @@ public class AbstractCraneState implements Savable{
     private Vector3f hookDisplacement;
     private float hookActualLowering;
     private CraneAbstract crane; 
+    private CameraType cameraType; 
     @Override
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule capsule = ex.getCapsule(this);
         capsule.write(crane.getCrane(), "CRANE", null);
+        capsule.write(crane.getCamera().getType(), "CAMERA_TYPE", null);
         ArmControl arm = crane.getArmControl();
         Hook hook = arm.getHook();
         capsule.write(hook.getAttachedObject(), "ATTACHED_OBJECT_TO_HOOK", null);
@@ -36,6 +38,7 @@ public class AbstractCraneState implements Savable{
     public void read(JmeImporter im) throws IOException {
         InputCapsule capsule = im.getCapsule(this);
         craneNode = (Node)capsule.readSavable("CRANE", null);
+        cameraType = capsule.readEnum("CAMERA_TYPE", CameraType.class, null);
         attachedObjectToHook = (Wall)capsule.readSavable("ATTACHED_OBJECT_TO_HOOK", null);
         hookDisplacement = (Vector3f)capsule.readSavable("HOOK_DISPLACEMENT", null);
         hookActualLowering = capsule.readFloat("HOOK_ACTUAL_LOWERING", 0f);
@@ -46,6 +49,12 @@ public class AbstractCraneState implements Savable{
      * @return model dźwigu 
      */
     public Node getCraneNode() { return craneNode; }
+    
+    /**
+     * Zwraca typ kamery. 
+     * @return typ kamery 
+     */
+    public CameraType getCameraType() { return cameraType; }
     
     /**
      * Zwraca przesunięcie haka po opuszczeniu liny. 

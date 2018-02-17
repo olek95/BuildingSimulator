@@ -17,6 +17,7 @@ import com.jme3.input.FlyByCamera;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import cranes.AbstractCraneCamera;
 import cranes.crane.Crane;
 import cranes.mobileCrane.MobileCrane;
 import cranes.mobileCrane.MobileCraneArmControl;
@@ -70,10 +71,14 @@ public class GameManager {
                 mobileCrane.setUsing(true);
                 if(!((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing())
                     Control.addListener(mobileCrane);
+                crane.getCamera().setOff();
+                mobileCrane.getCamera().restore();
             } else {
                 actualUnit = crane;
                 Control.addListener(crane.getArmControl());
                 crane.setUsing(true);
+                mobileCrane.getCamera().setOff();
+                crane.getCamera().restore();
             }
         } else {
             mobileCrane = new MobileCrane(); 
@@ -210,7 +215,6 @@ public class GameManager {
      * @param actualUnit aktualnie sterowana jednostka 
      */
     public static void setActualUnit(CraneAbstract actualUnit) { 
-        System.out.println(444);
         GameManager.actualUnit = actualUnit;
         actualUnit.getCamera().restore();
     }

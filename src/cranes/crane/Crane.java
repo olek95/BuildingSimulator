@@ -15,6 +15,7 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import cranes.AbstractCraneCamera;
 import cranes.ArmControl;
 import cranes.CraneAbstract;
 import cranes.Hook;
@@ -36,7 +37,6 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
     public Crane(){
         crane = GameManager.loadModel("Models/zuraw/zuraw.j3o");
         craneLocation = new Vector3f(10f, 0f, 0f);
-        setCamera(new CraneCamera(getCrane()));
         initCraneElements();
         initCranePhysics();
     }
@@ -45,6 +45,7 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
         crane = state.getCraneNode();
         craneLocation = crane.getLocalTranslation();
         initCraneElements();
+        getCamera().setType(state.getCameraType());
         PhysicsManager.addPhysicsToGame(crane.getChild(ElementName.PROP0), 
                 crane.getChild(ElementName.PROP1), rack, penultimateRack,
                 lastRack, entrancePlatform);
@@ -228,6 +229,7 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
     }
     
     private void initCraneElements() {
+        setCamera(new CraneCamera(getCrane()));
         rack = crane.getChild(ElementName.RACK0);
         entrancePlatform = crane.getChild(ElementName.ENTRANCE_PLATFORM);
         penultimateRack = crane.getChild(ElementName.RACK1); 

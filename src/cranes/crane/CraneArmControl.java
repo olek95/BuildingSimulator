@@ -19,8 +19,8 @@ import cranes.Hook;
  */
 public class CraneArmControl extends ArmControl{
     private Node hookHandleControl;
-    public CraneArmControl(Node crane){
-        super(crane);
+    public CraneArmControl(Node crane, CraneCamera camera){
+        super(crane, camera);
         setMaxHandleHookDisplacement(-63f);
         setMinHandleHookDisplacement(hookHandleControl.getLocalTranslation().z);
     }

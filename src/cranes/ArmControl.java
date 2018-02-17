@@ -12,6 +12,7 @@ import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.input.controls.ActionListener;
+import cranes.crane.CraneCamera;
 import cranes.mobileCrane.MobileCraneCamera;
 import static settings.Control.Actions.CHANGE_CAMERA;
 /**
@@ -28,7 +29,7 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
             changingArmLocation = false; 
     private Node crane, craneControl;
     private Spatial hookHandle;
-    private MobileCraneCamera camera; 
+    private AbstractCraneCamera camera; 
     private Actions[] availableActions = { Actions.RIGHT, Actions.LEFT,
         Actions.PULL_OUT, Actions.PULL_IN, Actions.LOWER_HOOK, Actions.HEIGHTEN_HOOK,
         Actions.UP, Actions.DOWN, Actions.ACTION, Actions.ATTACH,
@@ -40,7 +41,7 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
      * pamiętać, aby przed użyciem kabiny ustawić te wartości. 
      * @param crane dźwig będący właścicielem sterowanego ramienia 
      */
-    public ArmControl(Node crane){ 
+    public ArmControl(Node crane, CraneCamera camera){ 
         this.crane = crane; 
         initCraneArmElements();
     }
@@ -132,7 +133,9 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
         if(isPressed) {
             switch(Actions.valueOf(name)) {
                 case CHANGE_CAMERA: 
-                    camera.changeCamera(true);
+                    if(crane.getName().equals(ElementName.CRANE))
+                        ((MobileCraneCamera)camera).changeCamera(true);
+                    else ((CraneCamera)camera).changeCamera();
                     break;
                 case ATTACH: 
                     recentlyHitObject = hook.getRecentlyHitObject();

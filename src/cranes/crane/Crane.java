@@ -36,6 +36,7 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
     public Crane(){
         crane = GameManager.loadModel("Models/zuraw/zuraw.j3o");
         craneLocation = new Vector3f(10f, 0f, 0f);
+        setCamera(new CraneCamera(getCrane()));
         initCraneElements();
         initCranePhysics();
     }
@@ -217,6 +218,7 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
      * Zwraca dźwig. 
      * @return dźwig
      */
+    @Override
     public Node getCrane() { return crane; }
     
     private RigidBodyControl setProperControlLocation(Spatial object, Vector3f displacement){
@@ -230,7 +232,7 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
         entrancePlatform = crane.getChild(ElementName.ENTRANCE_PLATFORM);
         penultimateRack = crane.getChild(ElementName.RACK1); 
         lastRack = crane.getChild(ElementName.RACK2);
-        setArmControl(new CraneArmControl(crane));
+        setArmControl(new CraneArmControl(crane, (CraneCamera)getCamera()));
     }
     
     private void initCranePhysics(){

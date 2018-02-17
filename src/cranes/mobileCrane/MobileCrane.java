@@ -123,7 +123,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                 if(isPressed) getOff();
                 break;
             case CHANGE_CAMERA: 
-                if(isPressed) getCamera().changeCamera(false);
+                if(isPressed) ((MobileCraneCamera)getCamera()).changeCamera(false);
         }
     }
     
@@ -220,7 +220,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
                 .getBulletAppState().getPhysicsSpace();
         physics.add(craneControl);
-        setArmControl(new MobileCraneArmControl(crane, getCamera()));
+        setArmControl(new MobileCraneArmControl(crane, (MobileCraneCamera)getCamera()));
         propDisplacement =  PhysicsManager.calculateDisplacementAfterScaling((Node)crane
                 .getChild(ElementName.PROTRACTILE_PROP), new Vector3f(1f, propsLowering + PROP_LOWERING_SPEED,
                 1f), false, true, false);
@@ -294,7 +294,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
             if(Control.getActualListener().equals(this)){
                 Control.addListener(getArmControl());
                 HUD.setMessage(Translator.LOWERED_PROPS.getValue());
-                getCamera().changeCamera(true);
+                ((MobileCraneCamera)getCamera()).changeCamera(true);
             }
         }
     }
@@ -306,7 +306,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
             if(Control.getActualListener().equals(getArmControl())){
                 Control.addListener(this);
                 HUD.setMessage(Translator.HEIGHTENED_PROPS.getValue());
-                getCamera().changeCamera(false);
+                ((MobileCraneCamera)getCamera()).changeCamera(false);
             }
         }
     }

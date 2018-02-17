@@ -12,7 +12,7 @@ public abstract class CraneAbstract {
     private Node crane;
     private ArmControl armControl;
     private boolean using; 
-    private MobileCraneCamera camera; 
+    private AbstractCraneCamera camera; 
     /**
      * Zwraca hak dźwigu. 
      * @return hak 
@@ -72,11 +72,11 @@ public abstract class CraneAbstract {
      * Zwraca kamerę dźwigu. 
      * @return kamera dźwigu 
      */
-    public MobileCraneCamera getCamera() { return camera; }
+    public AbstractCraneCamera getCamera() { return camera; }
     
     /**
      * Ustawia kamerę dźwigu. 
      * @param camera kamera dźwigu 
      */
-    public void setCamera(MobileCraneCamera camera) { this.camera = camera; }
+    public void setCamera(AbstractCraneCamera camera) { this.camera = camera; }
 }

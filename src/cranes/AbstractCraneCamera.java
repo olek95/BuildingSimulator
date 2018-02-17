@@ -35,9 +35,11 @@ public abstract class AbstractCraneCamera {
      * Przywraca stan wcześniej wyłączonej kamery. 
      */
     public void restore() {
-        craneCamera = new CameraNode("Camera", GameManager.getCamera());
-        cameraOwner.attachChild(craneCamera);
-        setPosition();
+        if(!type.equals(CameraType.LOOSE)) {
+            craneCamera = new CameraNode("Camera", GameManager.getCamera());
+            cameraOwner.attachChild(craneCamera);
+            setPosition();
+        }
     }
     
     /**

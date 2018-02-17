@@ -14,6 +14,7 @@ import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import cranes.CraneAbstract;
 import cranes.mobileCrane.MobileCrane;
 import menu.HUD;
 import menu.Shop;
@@ -89,10 +90,12 @@ public class BirdsEyeView implements ActionListener{
         camera.setEnabled(true);
         camera.setDragToRotate(false);
         MobileCrane mobileCrane = GameManager.getMobileCrane();
-        boolean isMobileCrane = GameManager.getActualUnit().equals(mobileCrane);
+        CraneAbstract crane = GameManager.getActualUnit();
+        boolean isMobileCrane = crane.equals(mobileCrane);
         if((isMobileCrane && !mobileCrane.isDuringStateChanging()) || !isMobileCrane) 
             Control.addListener(Control.getActualListener());
         viewOwner = null;
+        crane.getCamera().restore();
     }
     
     /**

@@ -1,6 +1,7 @@
 package cranes;
 
 import com.jme3.scene.Node;
+import cranes.mobileCrane.MobileCraneCamera;
 
 /**
  * Klasa abstrakcyjna <code>CraneAbstract</code>jest klasą abstrakcyjną dla 
@@ -11,6 +12,7 @@ public abstract class CraneAbstract {
     private Node crane;
     private ArmControl armControl;
     private boolean using; 
+    private MobileCraneCamera camera; 
     /**
      * Zwraca hak dźwigu. 
      * @return hak 
@@ -65,4 +67,16 @@ public abstract class CraneAbstract {
      * @param crane model dźwigu 
      */
     public void setCrane(Node crane) { this.crane = crane; }
+    
+    /**
+     * Zwraca kamerę dźwigu. 
+     * @return kamera dźwigu 
+     */
+    public MobileCraneCamera getCamera() { return camera; }
+    
+    /**
+     * Ustawia kamerę dźwigu. 
+     * @param camera kamera dźwigu 
+     */
+    public void setCamera(MobileCraneCamera camera) { this.camera = camera; }
 }

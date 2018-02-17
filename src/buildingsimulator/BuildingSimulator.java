@@ -166,6 +166,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                         if(!BirdsEyeView.isActive()) {
                             if(crane.getArmControl().getHook()
                                     .getAttachedObject() == null) {
+                                GameManager.getActualUnit().getCamera().setOff();
                                 crane.startMoving();
                             } else {
                                 HUD.setMessage(Translator.REQUIREMENT_DETACHING_WALL

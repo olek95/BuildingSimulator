@@ -3,7 +3,6 @@ package cranes.mobileCrane;
 import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
 import com.jme3.input.FlyByCamera;
-import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.CameraNode;
 import com.jme3.scene.Node;
@@ -40,6 +39,7 @@ public class MobileCraneCamera {
     
     public void changeCamera(boolean armControlMode) {
         if(!armControlMode) {
+            switchCameraOwner(crane);
             if(type.equals(CameraType.CABIN)) type = CameraType.BEHIND;
             else type = type.equals(CameraType.BEHIND) ? CameraType.BIRDS_EYE_VIEW : CameraType.CABIN;
         } else {
@@ -50,6 +50,19 @@ public class MobileCraneCamera {
         setPosition();
     }
     
+    public void setOff() {
+        if(craneCamera != null) {
+            craneCamera.removeFromParent();
+            craneCamera = null;
+        }
+    }
+    
+    public void restore() {
+        craneCamera = new CameraNode("Camera", camera);
+        cameraOwner.attachChild(craneCamera);
+        setPosition();
+    }
+    
     private void setPosition() {
         craneCamera.setLocalTranslation(crane.getChild(type.start).getLocalTranslation());
         craneCamera.setLocalRotation(crane.getChild(type.start).getLocalRotation());
@@ -57,7 +70,7 @@ public class MobileCraneCamera {
     
     private void switchCameraOwner(Node newOwner) {
         if(!newOwner.equals(cameraOwner)) {
-            crane.detachChild(craneCamera);
+            craneCamera.removeFromParent();
             newOwner.attachChild(craneCamera);
             cameraOwner = newOwner; 
         }

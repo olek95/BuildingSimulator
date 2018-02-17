@@ -41,15 +41,14 @@ public class HUDButton extends ButtonAdapter{
                     BirdsEyeView view = shop.getView(); 
                     if(view != null) {
                         view.setOff();
-                        BuildingSimulator.getBuildingSimulator().getFlyByCamera()
-                                .setDragToRotate(true);
+                        GameManager.getFlyByCamera().setDragToRotate(true);
                         MenuFactory.showMenu(MenuTypes.SHOP); 
                     }
                 } else {
-                    BuildingSimulator.getBuildingSimulator().getFlyByCamera()
-                            .setDragToRotate(true);
+                    GameManager.getFlyByCamera().setDragToRotate(true);
                     MenuFactory.showMenu(MenuTypes.SHOP); 
                 }
+                GameManager.getActualUnit().getCamera().setOff();
             } else {
                 if(shop == null) {
                     if(buttonId.equals("finish_building_button")) {

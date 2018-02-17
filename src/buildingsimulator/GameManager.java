@@ -79,6 +79,7 @@ public class GameManager {
             mobileCrane = new MobileCrane(); 
             crane = new Crane();
             actualUnit = mobileCrane;
+            crane.getCamera().setOff();
             if(!((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing())
                 Control.addListener(mobileCrane);
         }
@@ -209,7 +210,9 @@ public class GameManager {
      * @param actualUnit aktualnie sterowana jednostka 
      */
     public static void setActualUnit(CraneAbstract actualUnit) { 
+        System.out.println(444);
         GameManager.actualUnit = actualUnit;
+        actualUnit.getCamera().restore();
     }
     
     /**

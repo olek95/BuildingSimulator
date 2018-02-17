@@ -43,6 +43,7 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
      */
     public ArmControl(Node crane, CraneCamera camera){ 
         this.crane = crane; 
+        this.camera = camera;
         initCraneArmElements();
     }
     /**

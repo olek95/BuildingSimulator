@@ -6,7 +6,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
 public abstract class AbstractCraneCamera {
-    private Node crane;
+    private Node crane, cameraOwner;
     private CameraNode craneCamera; 
     private CameraType type;
     public AbstractCraneCamera(Node crane) {
@@ -23,12 +23,27 @@ public abstract class AbstractCraneCamera {
         }
     }
     
-    public abstract void restore();
+    public void restore() {
+        craneCamera = new CameraNode("Camera", GameManager.getCamera());
+        System.out.println(cameraOwner);
+        cameraOwner.attachChild(craneCamera);
+        setPosition();
+    }
     
     protected void setPosition() {
         Spatial start = crane.getChild(type.getStart());
         craneCamera.setLocalTranslation(start.getLocalTranslation());
         craneCamera.setLocalRotation(start.getLocalRotation());
+    }
+    
+    protected void switchCameraOwner(Node newOwner) {
+        if(!newOwner.equals(cameraOwner)) {
+            System.out.println(craneCamera);
+            craneCamera.removeFromParent();
+            System.out.println(newOwner);
+            newOwner.attachChild(craneCamera);
+            cameraOwner = newOwner; 
+        }
     }
     
     protected Node getCrane() { return crane; }
@@ -42,4 +57,8 @@ public abstract class AbstractCraneCamera {
     protected void setCraneCamera(CameraNode craneCamera) {
         this.craneCamera = craneCamera; 
     }
+    
+    protected Node getCameraOwner() { return cameraOwner; }
+    
+    protected void setCameraOwner(Node cameraOwner) { this.cameraOwner = cameraOwner; }
 }

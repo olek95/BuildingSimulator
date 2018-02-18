@@ -124,4 +124,4 @@ public class BirdsEyeView implements ActionListener{
         game.getFlyByCamera().setEnabled(false);
         Control.removeListener(Control.getActualListener());
     }
-}
+    }

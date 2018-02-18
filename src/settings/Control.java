@@ -55,6 +55,7 @@ public class Control {
         SHOW_CURSOR,
         MOVE_CRANE,
         CHANGE_CAMERA,
+        COPY_BUILDING,
         SELECT_WAREHOUSE(MouseInput.BUTTON_LEFT),
         CANCEL_BIRDS_EYE_VIEW(MouseInput.BUTTON_RIGHT);
         private String key;
@@ -82,9 +83,9 @@ public class Control {
                                 "VERTICAL_ATTACH", "RIGHT", "PULL_OUT", "LEFT", 
                                 "PULL_IN", "SHOW_CURSOR", "PHYSICS", "ACTION", 
                                 "DOWN", "PAUSE", "MERGE", "ATTACH", "LOWER_HOOK",
-                                "FIRST", "DETACH", "CHANGE_CAMERA"}, new String[]{"T", "O", "L", "U",
+                                "FIRST", "DETACH", "CHANGE_CAMERA", "COPY_BUILDING"}, new String[]{"T", "O", "L", "U",
                                     "2", "V", "K", "E", "H", "SPACE", "LSHIFT", "P",
-                                    "F", "J", "ESC", "N", "Y", "R", "1", "B", "C"}, 
+                                    "F", "J", "ESC", "N", "Y", "R", "1", "B", "C", "5"}, 
                                 "settings/control.properties"); 
                 }
             }
@@ -191,6 +192,7 @@ public class Control {
                     inputManager.addListener(o, Actions.PAUSE.toString());
                     inputManager.addListener(o, Actions.SHOW_CURSOR.toString());
                     inputManager.addListener(o, Actions.MOVE_CRANE.toString());
+                    inputManager.addListener(o, Actions.COPY_BUILDING.toString());
                 } else {
                     inputManager.addListener(o, Actions.SELECT_WAREHOUSE.toString());
                     inputManager.addListener(o, Actions.CANCEL_BIRDS_EYE_VIEW.toString());

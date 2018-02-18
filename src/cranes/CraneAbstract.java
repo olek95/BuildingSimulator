@@ -78,5 +78,5 @@ public abstract class CraneAbstract {
      * Ustawia kamerę dźwigu. 
      * @param camera kamera dźwigu 
      */
-    public void setCamera(AbstractCraneCamera camera) { System.out.println(camera); this.camera = camera; }
+    public void setCamera(AbstractCraneCamera camera) { this.camera = camera; }
 }

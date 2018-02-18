@@ -6,6 +6,7 @@ import eyeview.BirdsEyeView;
 import listeners.DummyCollisionListener;
 import building.BuildingValidator;
 import building.Construction;
+import building.ConstructionCopier;
 import building.Wall;
 import building.WallType;
 import building.WallsFactory;
@@ -144,6 +145,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     public void onAction(String name, boolean isPressed, float tpf){
         MobileCrane mobileCrane = GameManager.getMobileCrane();
         Crane crane = GameManager.getCrane();
+        BirdsEyeView view;
         if(isPressed) {
             switch(Control.Actions.valueOf(name)) {
                 case PAUSE:
@@ -161,7 +163,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     flyCam.setDragToRotate(true);
                     break;
                 case MOVE_CRANE:
-                    BirdsEyeView view = crane.getView();
+                    view = crane.getView();
                     if(view == null) {
                         if(!BirdsEyeView.isActive()) {
                             if(crane.getArmControl().getHook()
@@ -204,6 +206,16 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     crane.setUsing(true);
                     mobileCrane.getCamera().setOff();
                     GameManager.setActualUnit(crane);
+                    break;
+                case COPY_BUILDING: 
+                    ConstructionCopier copier = new ConstructionCopier(); 
+                    view = copier.getView();
+                    if(view == null) {
+                        if(!BirdsEyeView.isActive()) {
+                            GameManager.getActualUnit().getCamera().setOff();
+                            copier.startCopying();
+                        }
+                    }
             }
         } else {
             if(name.equals(Control.Actions.SHOW_CURSOR.toString()) 

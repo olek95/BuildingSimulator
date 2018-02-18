@@ -119,9 +119,11 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                         construction = new Construction();
                         GameManager.addToScene(construction);
                     } 
-                    if(construction.add(attachedObject, nearestBuildingWall, oldMode, protruding)) {
-                        confirmDetaching();
-                    } else attachedObject.swapControl(oldMode);
+                    if(!construction.isSold()) {
+                        if(construction.add(attachedObject, nearestBuildingWall, oldMode, protruding)) {
+                            confirmDetaching();
+                        } else attachedObject.swapControl(oldMode);
+                    }
                 } else confirmDetaching();
             } else confirmDetaching();
         }

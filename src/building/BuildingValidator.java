@@ -5,12 +5,14 @@ import buildingsimulator.ElementName;
 import buildingsimulator.PhysicsManager;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Node;
 import com.jme3.scene.SceneGraphVisitorAdapter;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
 import java.util.ArrayList;
 import java.util.List;
+import net.wcomohundro.jme3.csg.CSGGeometry;
 
 /**
  * Klasa <code>BuildingValidator</code> sprawdza i ocenia zbudowany budynek. 
@@ -42,6 +44,8 @@ public class BuildingValidator {
                                     points += wall.getWorldTranslation().y + 
                                             (wall.getHeight() * wall.getLength() + 
                                             wall.getType().getPrice()) * 2;
+                                    ((CSGGeometry)wall.getChild(ElementName.WALL_GEOMETRY))
+                                            .getMaterial().setColor("Color", ColorRGBA.Gray);
                                 }
                             }
                         }

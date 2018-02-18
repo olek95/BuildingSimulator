@@ -27,11 +27,11 @@ public class BuildingCollisionListener implements PhysicsCollisionListener{
         if(a != null && b != null){
             if(checkIfHitWall(a, b)){
                 Construction building = Construction.getWholeConstruction(a);
-                if(building != null && !building.isSold()) building.setHit(true);
+                if(building != null) building.setHit(true);
             }else{
                 if(checkIfHitWall(b, a)){
                     Construction building = Construction.getWholeConstruction(b);
-                    if(building != null && !building.isSold()) building.setHit(true);
+                    if(building != null) building.setHit(true);
                     
                 }
             }

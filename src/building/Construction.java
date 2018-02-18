@@ -5,12 +5,17 @@ import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
 import buildingsimulator.PhysicsManager;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.SceneGraphVisitorAdapter;
 import com.jme3.scene.Spatial;
 import cranes.Hook;
+import java.io.IOException;
 import java.util.List;
 import menu.HUD;
 import texts.Translator;
@@ -25,7 +30,7 @@ import texts.Translator;
 public class Construction extends Node{
     private static int counter = -1; 
     private Wall lastAddedWall; 
-    private boolean hit = false, resetWalls = false; 
+    private boolean hit = false, resetWalls = false, sold = false; 
     public Construction(){
         setName(ElementName.BUILDING_BASE_NAME + (++counter));
     }
@@ -201,33 +206,28 @@ public class Construction extends Node{
      * @param wall pierwszy element budynku 
      */
     public static void restoreConstruction(Construction building) {
-        // final List<Vector3f> locations = new ArrayList();
-        // final List<Quaternion> rotations = new ArrayList(); 
         building.breadthFirstTraversal(new SceneGraphVisitorAdapter() {
             @Override
             public void visit(Node object) {
                 if(object.getName().startsWith(ElementName.WALL_BASE_NAME)) {
-                    //Vector3f old = object.getControl(RigidBodyControl.class).getPhysicsLocation();
-                    //locations.add(old.clone());
-                    //rotations.add(object.getControl(RigidBodyControl.class).getPhysicsRotation().clone());
                     PhysicsManager.addPhysicsToGame(object);
                 }
             }}
         );
-        /*Construction c = (Construction)building.clone();
-        GameManager.addToScene(c);
-        c.breadthFirstTraversal(new SceneGraphVisitorAdapter() {
-            private int i = 0;
-            @Override
-            public void visit(Node object) {
-                if(object.getName().startsWith(ElementName.WALL_BASE_NAME)) {
-                    object.getControl(RigidBodyControl.class).setPhysicsLocation(locations.get(i).add(new Vector3f(90, 0,0)));
-                    object.getControl(RigidBodyControl.class).setPhysicsRotation(rotations.get(i));
-                    i++;
-                    PhysicsManager.addPhysicsToGame(object);
-                }
-            }}
-        ); */
+    }
+    
+    @Override
+    public void write(JmeExporter ex) throws IOException {
+        super.write(ex);
+        OutputCapsule capsule = ex.getCapsule(this);
+        capsule.write(sold, "SOLD", false);
+    }
+    
+    @Override
+    public void read(JmeImporter im) throws IOException {
+        super.read(im);
+        InputCapsule capsule = im.getCapsule(this);
+        sold = capsule.readBoolean("SOLD", false);
     }
     
     /**
@@ -260,6 +260,18 @@ public class Construction extends Node{
      * przypadku 
      */
     public void setResetWalls(boolean resetWalls) { this.resetWalls = resetWalls; }
+    
+    /**
+     * Określa czy budynek został już oceniony i sprzedany. 
+     * @return true jeśli budynek jest już sprzedany, false jeśli jest w trakcie budowy 
+     */
+    public boolean isSold() { return sold; }
+    
+    /**
+     * Ustawia czy budynek został już oceniony i sprzedany. 
+     * @param sold true jeśli budynek jest już sprzedany, false jeśli jest w trakcie budowy 
+     */
+    public void setSold(boolean sold) { this.sold = sold; }
     
     private Node merge(Wall wall1, Wall wall2, boolean ceiling, WallMode mode,
             boolean protruding, int start, int end){

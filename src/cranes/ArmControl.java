@@ -26,7 +26,7 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
     private float maxHandleHookDisplacement, minHandleHookDisplacement,
             maxArmHeight = 0, minArmHeight = 0;
     private boolean usedNotUsingKey = false, changingHookLocation = false,
-            changingArmLocation = false; 
+            changingArmLocation = false, obstacleLeft = false, obstacleRight = false; 
     private Node crane, craneControl;
     private Spatial hookHandle;
     private AbstractCraneCamera camera; 
@@ -291,6 +291,18 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
      */
     public void setHookHandle(Spatial hookHandle){
         this.hookHandle = hookHandle;
+    }
+    
+    public boolean isObstacleLeft() { return obstacleLeft; }
+    
+    public void setObstacleLeft(boolean obstacleLeft) { 
+        this.obstacleLeft = obstacleLeft;
+    }
+    
+    public boolean isObstacleRight() { return obstacleRight; }
+    
+    public void setObstacleRight(boolean obstacleRight) { 
+        this.obstacleRight = obstacleRight;
     }
     
     /**

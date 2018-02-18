@@ -34,7 +34,7 @@ public class MobileCraneArmControl extends ArmControl{
             CRANE_PROP_GOING_OUT_SPEED = 0.07f,
             MIN_CRANE_PROP_PROTRUSION = 1f;
     private Geometry leftProtractilePropGeometry, rightProtractilePropGeometry;
-    private boolean obstacleLeft = false, obstacleRight = false, using = false;
+    private boolean using = false;
     public MobileCraneArmControl(Node crane, MobileCraneCamera camera){
         super(crane, 9.5f, 1f, 0.6f, 0f, camera);
         hookHandleDisplacement = PhysicsManager.calculateDisplacementAfterScaling(rectractableCranePart, 
@@ -49,13 +49,13 @@ public class MobileCraneArmControl extends ArmControl{
      */
     @Override
     protected void rotate(float yAngle){
-        boolean obstacle = yAngle < 0 ? obstacleRight : obstacleLeft;
+        boolean obstacle = yAngle < 0 ? isObstacleRight() : isObstacleLeft();
         if(!obstacle){
             getCraneControl().rotate(0f, yAngle, 0f);
             rotateHook(); 
         }else{
-            if(yAngle < 0) obstacleRight = false; 
-            else obstacleLeft = false;
+            if(yAngle < 0) setObstacleRight(false); 
+            else setObstacleLeft(false);
         }
     }
     
@@ -130,7 +130,6 @@ public class MobileCraneArmControl extends ArmControl{
         else {
             PhysicsManager.addPhysicsToGame(getHookHandle(), craneControlNode,
                     rectractableCranePart, lift.getChild(ElementName.LONG_CRANE_ELEMENT));
-            createRotateAfterImpactListener();
         }
     }
     
@@ -222,31 +221,6 @@ public class MobileCraneArmControl extends ArmControl{
                 Vector3f.ZERO,Vector3f.ZERO, Vector3f.ZERO);
         physics.add(cabinAndMobilecraneJoin);
         physics.add(lift.getChild(ElementName.LONG_CRANE_ELEMENT).getControl(0));
-        createRotateAfterImpactListener();
-    }
-    
-    private void createRotateAfterImpactListener() {
-        /* Dodaje listener sprawdzający kolizję haka z obiektami otoczenia.
-         Dla optymalizacji sprawdzam kolizję tylko dla grupy 2, czyli tej w 
-         której znajduje sie hak.*/
-        BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
-                .addCollisionListener(new PhysicsCollisionListener(){
-            @Override
-            public void collision(PhysicsCollisionEvent event) {
-                Spatial a = event.getNodeA(), b = event.getNodeB();
-                if(a != null && b != null){
-                    if(a.equals(rectractableCranePart) || a.equals(getHook().getHookHandle())){
-                        if(b.getName().startsWith(ElementName.RACK))
-                            rotateAfterImpact(a);
-                    }else{
-                        if(b.equals(rectractableCranePart) || b.equals(getHook().getHookHandle())){
-                            if(a.getName().startsWith(ElementName.RACK))
-                                rotateAfterImpact(b);
-                        }
-                    }
-                }
-            }
-        });
     }
     
     private void changeHandleHookPosition(Node scallingGeometryParent, 
@@ -274,20 +248,5 @@ public class MobileCraneArmControl extends ArmControl{
         }
         leftProtractilePropGeometry.setLocalScale(1f, cranePropsProtrusion, 1f);
         rightProtractilePropGeometry.setLocalScale(1f, cranePropsProtrusion, 1f);
-    }
-    
-    private void rotateAfterImpact(Spatial object){
-        float rotate;
-        if(object.equals(rectractableCranePart)) rotate = getFPS() <= 10 ? 0.09f : 0.04f;
-        else rotate = getFPS() <= 10 ? 0.09f : 0.02f;
-        Node craneControlNode = getCraneControl();
-        float yRotation = craneControlNode.getLocalRotation().getY();
-        if(yRotation > 0){
-            obstacleLeft = true;
-            craneControlNode.rotate(0f, -rotate, 0f);
-        }else{
-            obstacleRight = true; 
-            craneControlNode.rotate(0f, rotate, 0f);
-        }
     }
 }

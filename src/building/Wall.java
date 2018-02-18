@@ -163,7 +163,7 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
         }
     }
     
-     @Override
+    @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
@@ -181,7 +181,7 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
         capsule.write(type, "TYPE", null);
      }
      
-     @Override
+    @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);

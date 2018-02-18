@@ -12,12 +12,12 @@ import com.jme3.audio.AudioNode;
 import com.jme3.audio.AudioSource;
 import cranes.CraneAbstract;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.PhysicsSpace;
 import com.jme3.cinematic.Cinematic;
 import com.jme3.input.FlyByCamera;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import cranes.AbstractCraneCamera;
 import cranes.crane.Crane;
 import cranes.mobileCrane.MobileCrane;
 import cranes.mobileCrane.MobileCraneArmControl;
@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Paths;
 import java.util.List;
+import listeners.ArmCollisionListener;
 import menu.HUD;
 import menu.MenuFactory;
 import menu.MenuTypes;
@@ -93,8 +94,9 @@ public class GameManager {
 //        billboard = new Billboard(-720, 20);
 //        addToScene(billboard.getBillboard());
         Control.addListener(game);
-        bas.getPhysicsSpace().addCollisionListener(BuildingCollisionListener
-                .createBuildingCollisionListener());
+        PhysicsSpace physics = bas.getPhysicsSpace();
+        physics.addCollisionListener(ArmCollisionListener.createRotateAfterImpactListener());
+        physics.addCollisionListener(BuildingCollisionListener.createBuildingCollisionListener());
         startedGame = true; 
     }
     

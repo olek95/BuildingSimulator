@@ -2,12 +2,14 @@ package building;
 
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
+import buildingsimulator.PhysicsManager;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.scene.Node;
 import com.jme3.scene.SceneGraphVisitorAdapter;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,14 +56,16 @@ public class BuildingValidator {
             wall.removeControl(control);
             physics.remove(control);
         }
-        List<Spatial> children = wall.getChildren();
+        List<Spatial> children = wall.getChildren(), lines = new ArrayList();
         int childrenNumber = children.size(); 
         for(int i = 0; i < childrenNumber; i++) {
             Spatial child = children.get(i);
             if(child.getName().startsWith(ElementName.LINE)) {
-                child.removeFromParent();
-                i--;
+                lines.add(child);
             }
+        }
+        for(int i = 0; i < lines.size(); i++) {
+            lines.get(i).removeFromParent();
         }
         RigidBodyControl blockControl = new RigidBodyControl(0f);
         wall.addControl(blockControl);

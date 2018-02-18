@@ -178,6 +178,7 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
         capsule.write(height, "HEIGHT", 0f);
         capsule.write(width, "WIDTH", 0f);
         capsule.write(protrudingCatched, "PROTRUDING_CATCHED", false);
+        capsule.write(type, "TYPE", null);
      }
      
      @Override
@@ -201,6 +202,7 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
         height = capsule.readFloat("HEIGHT", 0f);
         width = capsule.readFloat("WIDTH", 0f);
         protrudingCatched = capsule.readBoolean("PROTRUDING_CATCHED", false);
+        type = capsule.readEnum("TYPE", WallType.class, null);
         counter++;
      }
     

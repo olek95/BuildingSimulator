@@ -155,7 +155,7 @@ public class Construction extends Node{
                 if(object.getName().startsWith("Wall") && object.getWorldTranslation().y >= 0.4f) {
                     Wall wall = (Wall)object;
                     wall.setMovable(true);
-                    if(0.01f < wall.getWorldTranslation()
+                    if(1f < wall.getWorldTranslation()
                             .distance(wall.getCatchingLocation())){ 
                         boolean wallStateChanged = false; 
                         if(!wall.isStale()){

@@ -88,15 +88,14 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                 Spatial gameObject = gameObjects.get(i); 
                 if(gameObject.getName().startsWith(ElementName.BUILDING_BASE_NAME)){
                     Construction building = (Construction)gameObject; 
-                    //if(building.isHit()){
-                      //  building.setResetWalls(false);
-                        //building.updateState();
-                        //if(!building.isResetWalls()) {
+                    if(building.isHit()){
+                        building.setResetWalls(false);
+                        building.updateState();
+                        if(!building.isResetWalls()) {
                             building.setHit(false);
-                          //  building.renovateBuilding();
-                        //}
-                        //building.setHit(false); // nieodkomentowac
-                    //}
+                            building.renovateBuilding();
+                        }
+                    }
                 }
             }
             Shop shop = Shop.getDisplayedShop();

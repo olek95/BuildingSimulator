@@ -4,10 +4,13 @@ import authorization.User;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import com.jme3.app.state.AbstractAppState;
+import com.jme3.font.BitmapFont;
+import com.jme3.font.LineWrapMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import java.util.Timer;
 import java.util.TimerTask;
+import texts.Translator;
 import tonegod.gui.controls.text.Label;
 import tonegod.gui.core.Screen;
 import tonegod.gui.effects.Effect;
@@ -28,9 +31,11 @@ public class HUD extends AbstractAppState{
         addNewButton("shop_button", "Interface/hudIcons/shop_icon.png", 0.9f);
         addNewButton("cleaning_button", "Interface/hudIcons/cleaning_icon.png", 0.85f);
         User user = GameManager.getUser();
-        addLabel("points_label", 0, 0, 0.2f, user.getPoints() + "");
-        addLabel("message_label", 0.3f, 0, 0.4f, "");
-        addLabel("time_label", 0, 0.05f, 0.2f, user.calculateActualTime());
+        addLabel("points_label", 0, 0, 0.4f, Translator.POINTS.getValue() + ": " 
+                + user.getPoints(), false);
+        addLabel("message_label", 0.35f, 0, 0.4f, "", true);
+        addLabel("time_label", 0, 0.05f, 0.4f, Translator.TIME.getValue() + ": "
+                + user.calculateActualTime(), false);
     }
     
     /**
@@ -57,13 +62,13 @@ public class HUD extends AbstractAppState{
      * Uaktualnia liczbę zdobytych punktów. 
      */
     public static void updatePoints() {
-        screen.getElementById("points_label").setText(GameManager.getUser()
-                .getPoints() + "");
+        screen.getElementById("points_label").setText(Translator.POINTS.getValue() + ": " 
+                + GameManager.getUser().getPoints());
     }
     
     public static void updateTime() {
-        screen.getElementById("time_label").setText(GameManager.getUser()
-                .calculateActualTime() + "");
+        screen.getElementById("time_label").setText(Translator.TIME.getValue() + ": " 
+                + GameManager.getUser().calculateActualTime() + "");
     }
     
     /**
@@ -111,13 +116,16 @@ public class HUD extends AbstractAppState{
         screen.addElement(button);
     }
     
-    private void addLabel(String id, float xPosition, float yPosition, float xDimension, String text) {
+    private void addLabel(String id, float xPosition, float yPosition, float xDimension, String text,
+            boolean centered) {
         int width = (int)screen.getWidth(), height = (int)screen.getHeight(); 
         Label label = new Label(screen, id, new Vector2f(width * xPosition, 
                 height * yPosition), new Vector2f(width * xDimension, 40));
         label.setFontSize(40);
         label.setText(text);
         label.setFontColor(ColorRGBA.Black);
+        if(centered) label.setTextAlign(BitmapFont.Align.Center);
+        label.setTextWrap(LineWrapMode.Word);
         screen.addElement(label);
     }
 }

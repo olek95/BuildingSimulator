@@ -16,20 +16,20 @@ import tonegod.gui.core.Screen;
  * @author AleksanderSklorz
  */
 public abstract class Menu extends AbstractAppState{
-    private Window window;
+    private static Window window;
     private static AudioNode backgroundSound;
     
     /**
      * Zwraca okno aktualnie wybranego menu. 
      * @return okno menu 
      */
-    protected Window getWindow() { return window; }
+    protected static Window getWindow() { return window; }
     
     /**
      * Ustawia okno. 
      * @param window okno 
      */
-    protected void setWindow(Window window) { this.window = window; }
+    protected static void setWindow(Window window) { Menu.window = window; }
     
     /**
      * Zwraca dźwięk tła. 

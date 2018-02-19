@@ -112,7 +112,7 @@ public class GameManager {
             HUD.changeShopButtonVisibility(false);
         }
         user.resetTimer();
-         billboard.resumeAdvertisement();
+        billboard.resumeAdvertisement();
         startedGame = true;
         pausedGame = false; 
     }
@@ -127,7 +127,7 @@ public class GameManager {
         user.rememberTime();
         startedGame = false;
         pausedGame = true; 
-         billboard.pauseAdvertisement();
+        billboard.pauseAdvertisement();
         MenuFactory.showMenu(MenuTypes.PAUSE_MENU);
     }
     

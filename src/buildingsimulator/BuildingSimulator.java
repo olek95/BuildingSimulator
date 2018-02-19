@@ -148,15 +148,20 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         if(isPressed) {
             switch(Control.Actions.valueOf(name)) {
                 case PAUSE:
-                    Shop shop = Shop.getDisplayedShop();
-                    if(shop != null) shop.cancel(null, true);
-                    else {
-                        CleaningDialogWindow cleaningWindow = CleaningDialogWindow
-                                .getDisplayedCleaningDialogWindow();
-                        if(cleaningWindow != null) cleaningWindow.cancel(null, true);
+                    if(!GameManager.isPausedGame()) {
+                        Shop shop = Shop.getDisplayedShop();
+                        if(shop != null) shop.cancel(null, true);
+                        else {
+                            CleaningDialogWindow cleaningWindow = CleaningDialogWindow
+                                    .getDisplayedCleaningDialogWindow();
+                            if(cleaningWindow != null) cleaningWindow.cancel(null, true);
+                        }
+                        GameManager.pauseGame();
+                        GameManager.removeHUD();
+                    } else {
+                        MainMenu.start();
+                        GameManager.continueGame();
                     }
-                    GameManager.pauseGame();
-                    GameManager.removeHUD();
                     break;
                 case SHOW_CURSOR:
                     flyCam.setDragToRotate(true);

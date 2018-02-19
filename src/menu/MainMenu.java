@@ -56,7 +56,7 @@ public abstract class MainMenu extends Menu {
     /** 
      * Uruchamia grę 
      */
-    protected void start() {
+    public static void start() {
         AudioNode backgroundSound = getBackgroundSound();
         GameManager.stopSound(backgroundSound, true);
         setBackgroundSound(null);

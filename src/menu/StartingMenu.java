@@ -6,9 +6,10 @@ import buildingsimulator.GameManager;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.ColorRGBA;
 import java.sql.SQLException;
+import static menu.MainMenu.getScreen;
 import texts.Translator;
-import tonegod.gui.controls.buttons.Button;
 import tonegod.gui.controls.buttons.CheckBox;
+import tonegod.gui.controls.form.Form;
 import tonegod.gui.controls.text.Label;
 import tonegod.gui.controls.windows.Window;
 import tonegod.gui.core.Screen;
@@ -34,6 +35,7 @@ public class StartingMenu extends MainMenu{
         if(user != null && !user.getLogin().equals(User.DEFAULT_LOGIN)) {
             setUser();
         } 
+        createForm();
     }
     
     /**
@@ -178,6 +180,9 @@ public class StartingMenu extends MainMenu{
         Screen screen = MainMenu.getScreen();
         if(visible){
             ((Window)screen.getElementById("authorization_popup")).showAsModal(true);
+            Form form = screen.getElementById("login_text_field").getForm();
+            form.tabNext();
+            form.tabPrev();
         }else{
             screen.getElementById("login_text_field").setText("");
             screen.getElementById("password").setText("");
@@ -203,5 +208,12 @@ public class StartingMenu extends MainMenu{
         Screen screen = MainMenu.getScreen(); 
         screen.getElementById("authorization_button").setText(Translator.LOGOUT.getValue());
         screen.getElementById("login_label").setText(GameManager.getUser().getLogin());
+    }
+    
+    private void createForm() {
+        Form form = new Form(getScreen()); 
+        Screen screen = getScreen();
+        form.addFormElement(screen.getElementById("login_text_field"));
+        form.addFormElement(screen.getElementById("password"));
     }
 }

@@ -6,7 +6,6 @@ import buildingsimulator.GameManager;
 import buildingsimulator.PhysicsManager;
 import com.jme3.animation.LoopMode;
 import com.jme3.asset.AssetManager;
-import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -14,10 +13,8 @@ import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.cinematic.Cinematic;
 import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Box;
 import com.jme3.texture.Texture;
 
 /**
@@ -41,8 +38,6 @@ public class Billboard {
         RigidBodyControl control = new RigidBodyControl(compound, 0f);
         billboard.addControl(control);
         billboard.setLocalTranslation(new Vector3f(60, 0, 0));
-        //PhysicsManager.addPhysicsToGame(billboard.getChild("pole"));
-        //billboard.addControl(new RigidBodyControl( 0f));
         PhysicsManager.addPhysicsToGame(billboard);
     }
     

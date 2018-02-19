@@ -23,12 +23,12 @@ public class ArmCollisionListener {
                     String aName = a.getName(), bName = b.getName(); 
                     if(aName.equals(ElementName.RETRACTABLE_CRANE_PART) 
                             || aName.equals(ElementName.HOOK_HANDLE)){
-                        if(bName.startsWith(ElementName.RACK))
+                        if(bName.startsWith(ElementName.RACK) || bName.contains(ElementName.BILLBOARD))
                             rotateAfterImpact(a);
                     }else{
                         if(bName.equals(ElementName.RETRACTABLE_CRANE_PART) 
                                 || bName.equals(ElementName.HOOK_HANDLE)){
-                            if(aName.startsWith(ElementName.RACK))
+                            if(aName.startsWith(ElementName.RACK) || aName.contains(ElementName.BILLBOARD))
                                 rotateAfterImpact(b);
                         }
                     }

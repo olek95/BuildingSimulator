@@ -52,4 +52,5 @@ public class ElementName {
     public static final String SCENE = "New Scene";
     public static final String LINE = "Line";
     public static final String WALL_GEOMETRY = "Box";
+    public static final String BILLBOARD = "billboard";
 }

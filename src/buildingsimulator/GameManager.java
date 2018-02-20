@@ -53,6 +53,7 @@ public class GameManager {
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
         addHUD();
         game.getFlyByCamera().setDragToRotate(false);
+        game.getInputManager().setCursorVisible(false);
         BulletAppState bas = game.getBulletAppState(); 
         game.getStateManager().attach(bas);
         addToScene(new Map(9).getScene());
@@ -108,6 +109,7 @@ public class GameManager {
         addHUD();
         if(!BirdsEyeView.isActive()) {
             BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(false);
+            GameManager.getInputManager().setCursorVisible(false);
             Control.addListener(Control.getActualListener());
         } else {
             HUD.changeShopButtonVisibility(false);
@@ -123,6 +125,7 @@ public class GameManager {
      */
     public static void pauseGame() {
         BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(true);
+        GameManager.getInputManager().setCursorVisible(true);
         Control.removeListener(Control.getActualListener());
         mobileCrane.stop();
         user.rememberTime();

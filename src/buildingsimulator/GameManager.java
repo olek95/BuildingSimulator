@@ -15,6 +15,7 @@ import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.cinematic.Cinematic;
 import com.jme3.input.FlyByCamera;
+import com.jme3.input.InputManager;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -91,7 +92,7 @@ public class GameManager {
         }
         addToScene(mobileCrane.getCrane());
         addToScene(crane.getCrane());
-        billboard = new Billboard(20, 0);
+        billboard = new Billboard(80, 0);
         addToScene(billboard.getBillboard());
         Control.addListener(game);
         PhysicsSpace physics = bas.getPhysicsSpace();
@@ -327,5 +328,9 @@ public class GameManager {
     
     public static FlyByCamera getFlyByCamera() {
         return BuildingSimulator.getBuildingSimulator().getFlyByCamera();
+    }
+    
+    public static InputManager getInputManager() {
+        return BuildingSimulator.getBuildingSimulator().getInputManager();
     }
 }

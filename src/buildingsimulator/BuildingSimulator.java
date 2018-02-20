@@ -70,6 +70,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         sun.setDirection(new Vector3f(-.5f,-.5f,-.5f).normalizeLocal());
         rootNode.addLight(sun);
         MenuFactory.showMenu(MenuTypes.STARTING_MENU);
+        this.flyCam.unregisterInput();
+        this.flyCam = new LimitedFlyByCamera(cam);
     }
 
     @Override

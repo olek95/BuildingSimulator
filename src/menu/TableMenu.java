@@ -36,7 +36,7 @@ public abstract class TableMenu extends Menu{
     protected Table createTable(String[] ids, Translator[] labels, int... margins) {
         float width = screen.getWidth();
         table = new Table(screen, new Vector2f(0, 0), new Vector2f(width,
-                screen.getHeight())) {
+                screen.getHeight() * 0.87f)) {
             @Override
             public void onChange() {}
         };

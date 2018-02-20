@@ -89,8 +89,7 @@ public class ConstructionCopier implements VisibleFromAbove{
                 }
             }}
         );
-        final Vector3f newPosition = FastMath.interpolateLinear(5, locations.get(0), location)
-                .subtractLocal(-11, 0, 0);
+        final Vector3f distance = location.subtract(locations.get(0));
         Construction clonedConstruction = (Construction)selectedConstruction.clone();
         clonedConstruction.setName(createUniqueName());
         GameManager.addToScene(clonedConstruction);
@@ -100,7 +99,7 @@ public class ConstructionCopier implements VisibleFromAbove{
             public void visit(Node object) {
                 if(object.getName().startsWith(ElementName.WALL_BASE_NAME)) {
                     object.getControl(RigidBodyControl.class)
-                            .setPhysicsLocation(locations.get(i).add(newPosition));
+                            .setPhysicsLocation(locations.get(i).add(distance));
                     object.getControl(RigidBodyControl.class).setPhysicsRotation(rotations.get(i));
                     i++;
                     PhysicsManager.addPhysicsToGame(object);

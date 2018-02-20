@@ -28,10 +28,10 @@ import texts.Translator;
 public class BirdsEyeView implements ActionListener{
     private static VisibleFromAbove viewOwner;
     private boolean mouseDisabled = false;
-    public BirdsEyeView(VisibleFromAbove viewOwner) {
+    public BirdsEyeView(VisibleFromAbove viewOwner, boolean movingAvailable) {
         BirdsEyeView.viewOwner = viewOwner;
         Control.addListener(this);
-        changeViewMode();
+        changeViewMode(movingAvailable);
     }
     
     /**
@@ -114,14 +114,14 @@ public class BirdsEyeView implements ActionListener{
      */
     public void setMouseDisabled(boolean disabled) { mouseDisabled = disabled; }
     
-    private void changeViewMode() {
-        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-        Camera cam = game.getCamera();
+    private void changeViewMode(boolean movingAvailable) {
+        Camera cam = GameManager.getCamera();
         Vector3f actualUnitLocation = GameManager.getActualUnit().getArmControl()
                 .getCrane().getWorldTranslation();
         cam.setLocation(actualUnitLocation.add(0, 100, 0));
         cam.lookAt(actualUnitLocation, Vector3f.UNIT_Z);
-        game.getFlyByCamera().setEnabled(false);
+        if(movingAvailable) GameManager.getFlyByCamera().setRotationSpeed(0);
+        else GameManager.getFlyByCamera().setEnabled(false);
         Control.removeListener(Control.getActualListener());
     }
     }

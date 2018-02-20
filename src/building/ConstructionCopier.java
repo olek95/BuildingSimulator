@@ -28,7 +28,7 @@ public class ConstructionCopier implements VisibleFromAbove{
     
     public void startCopying() {
         HUD.changeShopButtonVisibility(false);
-        view = new BirdsEyeView(this); 
+        view = new BirdsEyeView(this, true); 
     }
 
     @Override
@@ -41,17 +41,13 @@ public class ConstructionCopier implements VisibleFromAbove{
     }
 
     @Override
-    public void setListener(DummyCollisionListener listener) {
-    }
+    public void setListener(DummyCollisionListener listener) {}
 
     @Override
-    public DummyCollisionListener getListener() {
-        return null;
-    }
+    public DummyCollisionListener getListener() { return null; }
 
     @Override
-    public void unload() {
-    }
+    public void unload() {}
     
     private Construction getSelectedConstruction(final Vector3f location) {
         List<Spatial> gameObjects = BuildingSimulator.getBuildingSimulator()

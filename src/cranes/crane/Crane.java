@@ -150,7 +150,7 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
      */
     public void startMoving() {
         HUD.changeShopButtonVisibility(false);
-        view = new BirdsEyeView(this); 
+        view = new BirdsEyeView(this, false); 
     }
     
     @Override

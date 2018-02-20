@@ -70,7 +70,7 @@ public class Shop extends Menu implements VisibleFromAbove{
         boolean settingCostCompleted = setCost();
         BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
         displayedShop = this; 
-        view = new BirdsEyeView(this);
+        view = new BirdsEyeView(this, false);
         view.setMouseDisabled(true);
         if(settingCostCompleted) showPreview();
     }

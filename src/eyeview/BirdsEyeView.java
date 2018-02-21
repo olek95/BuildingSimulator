@@ -89,6 +89,7 @@ public class BirdsEyeView implements ActionListener{
         FlyByCamera camera = BuildingSimulator.getBuildingSimulator().getFlyByCamera();
         camera.setEnabled(true);
         camera.setDragToRotate(false);
+        camera.setRotationSpeed(1);
         MobileCrane mobileCrane = GameManager.getMobileCrane();
         CraneAbstract crane = GameManager.getActualUnit();
         boolean isMobileCrane = crane.equals(mobileCrane);
@@ -120,8 +121,10 @@ public class BirdsEyeView implements ActionListener{
                 .getCrane().getWorldTranslation();
         cam.setLocation(actualUnitLocation.add(0, 100, 0));
         cam.lookAt(actualUnitLocation, Vector3f.UNIT_Z);
-        if(movingAvailable) GameManager.getFlyByCamera().setRotationSpeed(0);
-        else GameManager.getFlyByCamera().setEnabled(false);
+        if(movingAvailable) {
+            GameManager.getFlyByCamera().setRotationSpeed(0);
+            GameManager.getInputManager().setCursorVisible(true);
+        } else GameManager.getFlyByCamera().setEnabled(false);
         Control.removeListener(Control.getActualListener());
     }
-    }
+}

@@ -35,7 +35,7 @@
             <component type="Label" id="password_label" position="35%,45%" dimensions="20%,5%" >
                 <method name="setTextAlign" param0="Left" />
             </component>
-            <component type="Password" id="password" position="50%,47%"  dimensions="21%,13%" />
+            <component type="Password" id="password" position="50%,47%"  dimensions="120,20" />
             <component type="Label" id="error_label" position="38%,60%" dimensions="100%,12%" />
             <component type="Button" id="sending_data_button" position="20%,80%" dimensions="23%,15%" >
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="sendData" />

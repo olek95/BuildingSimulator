@@ -8,10 +8,13 @@ import com.jme3.font.BitmapFont;
 import com.jme3.font.LineWrapMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import settings.Control.Actions;
 import texts.Translator;
 import tonegod.gui.controls.text.Label;
+import tonegod.gui.core.Element;
 import tonegod.gui.core.Screen;
 import tonegod.gui.effects.Effect;
 
@@ -32,10 +35,11 @@ public class HUD extends AbstractAppState{
         addNewButton("cleaning_button", "Interface/hudIcons/cleaning_icon.png", 0.85f);
         User user = GameManager.getUser();
         addLabel("points_label", 0, 0, 0.4f, Translator.POINTS.getValue() + ": " 
-                + user.getPoints(), false);
-        addLabel("message_label", 0.35f, 0, 0.4f, "", true);
+                + user.getPoints(), false, 40);
+        addLabel("message_label", 0.35f, 0, 0.4f, "", true, 40);
         addLabel("time_label", 0, 0.05f, 0.4f, Translator.TIME.getValue() + ": "
-                + user.calculateActualTime(), false);
+                + user.calculateActualTime(), false, 40);
+        addLabel("control_label", 0.8f, 0.7f, 0.3f, "", false, 20).setFontColor(ColorRGBA.White);
     }
     
     /**
@@ -48,6 +52,7 @@ public class HUD extends AbstractAppState{
         screen.getElementById("points_label").hide();
         screen.getElementById("cleaning_button").hide();
         screen.getElementById("time_label").hide();
+        screen.getElementById("control_label").hide();
     }
     
     /**
@@ -96,6 +101,27 @@ public class HUD extends AbstractAppState{
     }
     
     /**
+     * Uzupełnia informację o aktualnym sterowaniu. Funkcja ta posiada następujące
+     * znaki specjalne: tekst w okrągłych nawiasach jest niewyświetlany, natomiast
+     * jeśli tekst jest oddzielony ukośnikami (/), brana jest ta część której poda się 
+     * indeks. 
+     * @param actions tablica aktualnie dostępnych akcji 
+     * @param indexes tablica indeksów oznaczających, która część oddzielona 
+     * ukośnikiem ma zostać wzięta pod uwagę
+     */
+    public static void fillControlInformation(Actions[] actions, int[] indexes) {
+        String information = "";
+        for(int i = 0; i < actions.length; i++) {
+            String value = actions[i].getValue();
+            int optionalPhraseIndex = value.indexOf('(');
+            information += actions[i].getValue().substring(0, optionalPhraseIndex != -1 
+                    ? optionalPhraseIndex : value.length()) + " - " + actions[i].getKey() 
+                    + System.getProperty("line.separator");;
+        }
+        screen.getElementById("control_label").setText(information);
+    }
+    
+    /**
      * Zwraca ekran z HUDem.
      * @return ekran 
      */
@@ -116,16 +142,17 @@ public class HUD extends AbstractAppState{
         screen.addElement(button);
     }
     
-    private void addLabel(String id, float xPosition, float yPosition, float xDimension, String text,
-            boolean centered) {
+    private Label addLabel(String id, float xPosition, float yPosition, float xDimension, String text,
+            boolean centered, float fontSize) {
         int width = (int)screen.getWidth(), height = (int)screen.getHeight(); 
         Label label = new Label(screen, id, new Vector2f(width * xPosition, 
                 height * yPosition), new Vector2f(width * xDimension, 40));
-        label.setFontSize(40);
+        label.setFontSize(fontSize);
         label.setText(text);
         label.setFontColor(ColorRGBA.Black);
         if(centered) label.setTextAlign(BitmapFont.Align.Center);
         label.setTextWrap(LineWrapMode.Word);
         screen.addElement(label);
+        return label;
     }
 }

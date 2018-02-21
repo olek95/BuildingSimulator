@@ -10,6 +10,7 @@ import building.ConstructionCopier;
 import building.Wall;
 import building.WallType;
 import building.WallsFactory;
+import com.jme3.app.FlyCamAppState;
 import cranes.mobileCrane.MobileCraneArmControl;
 import cranes.mobileCrane.MobileCrane;
 import cranes.crane.Crane;
@@ -70,8 +71,6 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         sun.setDirection(new Vector3f(-.5f,-.5f,-.5f).normalizeLocal());
         rootNode.addLight(sun);
         MenuFactory.showMenu(MenuTypes.STARTING_MENU);
-        this.flyCam.unregisterInput();
-        this.flyCam = new LimitedFlyByCamera(cam);
     }
 
     @Override
@@ -237,5 +236,13 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
      */
     public static String getFPSString(){
         return BuildingSimulator.game.fpsText.getText();
+    }
+    
+    /**
+     * Ustawia poruszającą się kamerę. 
+     * @param camera poruszająca się kamera
+     */
+    public static void setFlyByCamera(FlyByCamera camera) {
+        BuildingSimulator.game.flyCam = camera;
     }
 }

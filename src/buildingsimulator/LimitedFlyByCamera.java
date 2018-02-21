@@ -12,10 +12,7 @@ import com.jme3.renderer.Camera;
 public class LimitedFlyByCamera extends FlyByCamera{
     public LimitedFlyByCamera(Camera cam) {
         super(cam);
-        GameManager.getInputManager().addListener(this, "FLYCAM_Left", "FLYCAM_Right",
-                "FLYCAM_Up", "FLYCAM_Down", "FLYCAM_StrafeLeft", "FLYCAM_StrafeRight", 
-                "FLYCAM_Forward", "FLYCAM_Backward", "FLYCAM_ZoomIn", "FLYCAM_ZoomOut",
-                "FLYCAM_RotateDrag", "FLYCAM_Rise", "FLYCAM_Lower",  "FLYCAM_InvertY");
+        setMoveSpeed(100f);
     }
     
     @Override

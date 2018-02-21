@@ -52,8 +52,12 @@ public class GameManager {
     public static void runGame(SavedData loadedData){
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
         addHUD();
-        game.getFlyByCamera().setDragToRotate(false);
-        game.getInputManager().setCursorVisible(false);
+        FlyByCamera cam = game.getFlyByCamera();
+        cam.setDragToRotate(false);
+        cam.unregisterInput();
+        LimitedFlyByCamera limitedCamera = new LimitedFlyByCamera(game.getCamera());
+        BuildingSimulator.setFlyByCamera(limitedCamera);
+        limitedCamera.registerWithInput(game.getInputManager());
         BulletAppState bas = game.getBulletAppState(); 
         game.getStateManager().attach(bas);
         addToScene(new Map(9).getScene());

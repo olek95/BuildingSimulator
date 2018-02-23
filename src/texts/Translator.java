@@ -105,7 +105,8 @@ public enum Translator {
     INACCESSIBLE_SPACE,
     NO_ENOUGH_PLACE,
     REQUIREMENT_DETACHING_WALL,
-    NO_FOUNDATIONS;
+    NO_FOUNDATIONS,
+    MOUSE_MOVEMENT;
     
     private String value; 
     

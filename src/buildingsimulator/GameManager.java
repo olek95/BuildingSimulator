@@ -231,9 +231,7 @@ public class GameManager {
         GameManager.actualUnit = actualUnit;
         actualUnit.getCamera().restore();
         if(actualUnit.getCrane().getName().contains(ElementName.CRANE)) {
-            MobileCraneArmControl arm = (MobileCraneArmControl)actualUnit.getArmControl();
-            HUD.fillControlInformation(arm.getAvailableActions(), arm.isUsing() 
-                    ? new int[]{0, 0, 1, 1} : new int[] {0, 0});
+            displayProperMobileCraneHUD();
         } else {
             Actions[] actions = actualUnit.getArmControl().getAvailableActions();
             HUD.fillControlInformation(Arrays.copyOf(actions, actions.length - 3),
@@ -297,6 +295,19 @@ public class GameManager {
      */
     public static boolean isSoundStopped(AudioNode sound) {
         return sound.getStatus().equals(AudioSource.Status.Stopped);
+    }
+    
+    /**
+     * Wybiera HUD do wyświetlenia pomiędzy sterowaniem pojazdu dźwigu mobilnego 
+     * a jego ramieniem. 
+     */
+    public static void displayProperMobileCraneHUD() {
+        MobileCraneArmControl arm = (MobileCraneArmControl)mobileCrane.getArmControl();
+        if(arm.isUsing()) {
+            HUD.fillControlInformation(arm.getAvailableActions(), new int[] {0, 0, 1, 1});
+        } else {
+            HUD.fillControlInformation(mobileCrane.getAvailableActions(), new int[] {0, 0});
+        }
     }
     
     /**

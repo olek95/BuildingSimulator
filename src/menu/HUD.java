@@ -9,6 +9,7 @@ import com.jme3.font.LineWrapMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
+import cranes.CameraType;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -113,19 +114,24 @@ public class HUD extends AbstractAppState{
      */
     public static void fillControlInformation(Actions[] actions, int... indexes) {
         String information = "";
-        int k = 0;
+        int k = 0, additionalRows = 0;
+        String lineSeparator = System.getProperty("line.separator");
+        if(GameManager.getActualUnit().getCamera().getType().equals(CameraType.LOOSE)) {
+            information += Translator.MOUSE_MOVEMENT.getValue() + lineSeparator;
+            additionalRows++;
+        }
         for(int i = 0; i < actions.length; i++) {
             String[] values = actions[i].getValue().split("/");
             String value = values.length != 1 ? values[indexes[k++]] : values[0];
             int optionalPhraseIndex = value.indexOf('(');
             information += value.substring(0, optionalPhraseIndex != -1 
                     ? optionalPhraseIndex : value.length()) + " - " + actions[i].getKey() 
-                    + System.getProperty("line.separator");
+                    + lineSeparator;
         }
         Element controlLabel = screen.getElementById("control_label");
         controlLabel.setText(information);
-        // 18 rozmiar pojedynczego wiersza
-        controlLabel.setY(18f * actions.length + controlLabel.getHeight());
+        // 20 rozmiar pojedynczego wiersza
+        controlLabel.setY(20f * (actions.length + additionalRows) + controlLabel.getHeight());
     }
     
     /**

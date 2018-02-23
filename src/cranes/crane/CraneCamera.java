@@ -1,9 +1,13 @@
 package cranes.crane;
 
 import buildingsimulator.ElementName;
+import buildingsimulator.GameManager;
 import com.jme3.scene.Node;
 import cranes.AbstractCraneCamera;
 import cranes.CameraType;
+import java.util.Arrays;
+import menu.HUD;
+import settings.Control;
 
 /**
  * Klasa <code>CraneCamera</code> reprezentuje kamerę żurawia. 
@@ -38,8 +42,18 @@ public class CraneCamera extends AbstractCraneCamera {
                    setOffLoose();
                 }
                 setType(CameraType.CABIN);
+                Control.Actions[] actions = GameManager.getCrane().getArmControl()
+                        .getAvailableActions();
+                HUD.fillControlInformation(Arrays.copyOf(actions, actions.length - 3),
+                        1, 1);
         }
-        if(getType().equals(CameraType.LOOSE)) setOff();
+        if(getType().equals(CameraType.LOOSE)) {
+            setOff();
+            Control.Actions[] actions = GameManager.getCrane().getArmControl()
+                        .getAvailableActions();
+            HUD.fillControlInformation(Arrays.copyOf(actions, actions.length - 3),
+                    1, 1);
+        }
         else setPosition();
     }
 }

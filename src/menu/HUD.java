@@ -40,7 +40,7 @@ public class HUD extends AbstractAppState{
         addLabel("message_label", 0.35f, 0, 0.4f, "", BitmapFont.Align.Center, 40);
         addLabel("time_label", 0, 0.05f, 0.4f, Translator.TIME.getValue() + ": "
                 + user.calculateActualTime(), BitmapFont.Align.Left, 40);
-        addLabel("control_label", 0.7f, 0.76f, 0.3f, "", BitmapFont.Align.Right, 20)
+        addLabel("control_label", 0.6f, 0.76f, 0.4f, "", BitmapFont.Align.Right, 20)
                 .setFontColor(ColorRGBA.White);
     }
     
@@ -124,14 +124,8 @@ public class HUD extends AbstractAppState{
         }
         Element controlLabel = screen.getElementById("control_label");
         controlLabel.setText(information);
-        System.out.println(actions.length);
-        float controlLabelY = controlLabel.getPosition().y;
-        System.out.println(controlLabelY);
-//        System.out.println(75 * actions.length);
-//        System.out.println(600 - 75 * actions.length - 40);
-//        controlLabel.setY(600 - 75 * actions.length - 40 > 0 ? 600 - 75 * actions.length - 40
-//                : 75 * actions.length - 40);
-        //screen.getElementById("control_label").setHeight((screen.getHeight() / 6.67f - actions.length * 6.67f) * 6.67f);
+        // 18 rozmiar pojedynczego wiersza
+        controlLabel.setY(18f * actions.length + controlLabel.getHeight());
     }
     
     /**

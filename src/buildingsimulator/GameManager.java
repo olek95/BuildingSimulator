@@ -232,11 +232,6 @@ public class GameManager {
         actualUnit.getCamera().restore();
         if(actualUnit.getCrane().getName().contains(ElementName.CRANE)) {
             MobileCraneArmControl arm = (MobileCraneArmControl)actualUnit.getArmControl();
-            if(!arm.isUsing())
-            HUD.fillControlInformation(((Controllable)actualUnit)
-                    .getAvailableActions(), 0, 0);
-            else HUD.fillControlInformation(((Controllable)actualUnit.getArmControl())
-                    .getAvailableActions(), 0, 0, 1, 1);
             HUD.fillControlInformation(arm.getAvailableActions(), arm.isUsing() 
                     ? new int[]{0, 0, 1, 1} : new int[] {0, 0});
         } else {

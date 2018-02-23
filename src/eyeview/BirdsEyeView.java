@@ -18,6 +18,7 @@ import cranes.CraneAbstract;
 import cranes.mobileCrane.MobileCrane;
 import menu.HUD;
 import menu.Shop;
+import settings.Control.Actions;
 import texts.Translator;
 
 /**
@@ -98,6 +99,7 @@ public class BirdsEyeView implements ActionListener{
         GameManager.getCrane().setView(null);
         viewOwner = null;
         crane.getCamera().restore();
+        GameManager.displayActualUnitControlsInHUD();
     }
     
     /**
@@ -124,6 +126,10 @@ public class BirdsEyeView implements ActionListener{
         if(movingAvailable) {
             GameManager.getFlyByCamera().setRotationSpeed(0);
             GameManager.getInputManager().setCursorVisible(true);
+            HUD.fillControlInformation(new Actions[] {Actions.FLYCAM_FORWARD, 
+                Actions.FLYCAM_BACKWARD, Actions.FLYCAM_STRAFE_LEFT, Actions.FLYCAM_STRAFE_RIGHT},
+                    new String[]{Translator.RIGHT_CLICK_CANCELLATION.getValue(),
+                    Translator.LEFT_CLICK_CLONE.getValue()});
         } else GameManager.getFlyByCamera().setEnabled(false);
         Control.removeListener(Control.getActualListener());
     }

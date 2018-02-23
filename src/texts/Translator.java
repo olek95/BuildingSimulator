@@ -49,6 +49,10 @@ public enum Translator {
     MOVE_CRANE,
     CHANGE_CAMERA,
     COPY_BUILDING,
+    FLYCAM_FORWARD,
+    FLYCAM_BACKWARD,
+    FLYCAM_STRAFE_LEFT,
+    FLYCAM_STRAFE_RIGHT,
     ACTIVITY,
     KEY,
     NEW_GAME, 
@@ -106,7 +110,9 @@ public enum Translator {
     NO_ENOUGH_PLACE,
     REQUIREMENT_DETACHING_WALL,
     NO_FOUNDATIONS,
-    MOUSE_MOVEMENT;
+    MOUSE_MOVEMENT,
+    RIGHT_CLICK_CANCELLATION,
+    LEFT_CLICK_CLONE;
     
     private String value; 
     

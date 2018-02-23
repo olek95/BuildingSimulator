@@ -56,6 +56,10 @@ public class Control {
         MOVE_CRANE,
         CHANGE_CAMERA,
         COPY_BUILDING,
+        FLYCAM_FORWARD,
+        FLYCAM_BACKWARD,
+        FLYCAM_STRAFE_LEFT,
+        FLYCAM_STRAFE_RIGHT,
         SELECT_WAREHOUSE(MouseInput.BUTTON_LEFT),
         CANCEL_BIRDS_EYE_VIEW(MouseInput.BUTTON_RIGHT);
         private String key;

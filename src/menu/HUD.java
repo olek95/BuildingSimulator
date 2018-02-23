@@ -109,16 +109,20 @@ public class HUD extends AbstractAppState{
      * jeśli tekst jest oddzielony ukośnikami (/), brana jest ta część której poda się 
      * indeks. 
      * @param actions tablica aktualnie dostępnych akcji 
+     * @param additionalInformation tablica stringów zawierających dodatkowe informacje 
+     * bądź opisowe przedstawienie sterowania 
      * @param indexes tablica indeksów oznaczających, która część oddzielona 
      * ukośnikiem ma zostać wzięta pod uwagę
      */
-    public static void fillControlInformation(Actions[] actions, int... indexes) {
+    public static void fillControlInformation(Actions[] actions, String[] additionalInformation,
+            int... indexes) {
         String information = "";
-        int k = 0, additionalRows = 0;
+        int k = 0;
         String lineSeparator = System.getProperty("line.separator");
-        if(GameManager.getActualUnit().getCamera().getType().equals(CameraType.LOOSE)) {
-            information += Translator.MOUSE_MOVEMENT.getValue() + lineSeparator;
-            additionalRows++;
+        if(additionalInformation != null) {
+            for(int i = 0; i < additionalInformation.length; i++) {
+                information += additionalInformation[i] + lineSeparator;
+            }
         }
         for(int i = 0; i < actions.length; i++) {
             String[] values = actions[i].getValue().split("/");
@@ -131,7 +135,8 @@ public class HUD extends AbstractAppState{
         Element controlLabel = screen.getElementById("control_label");
         controlLabel.setText(information);
         // 20 rozmiar pojedynczego wiersza
-        controlLabel.setY(20f * (actions.length + additionalRows) + controlLabel.getHeight());
+        controlLabel.setY(20f * (actions.length + (additionalInformation == null ? 0 :
+                additionalInformation.length)) + controlLabel.getHeight());
     }
     
     /**

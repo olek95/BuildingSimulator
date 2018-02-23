@@ -8,6 +8,7 @@ import cranes.CameraType;
 import java.util.Arrays;
 import menu.HUD;
 import settings.Control;
+import texts.Translator;
 
 /**
  * Klasa <code>CraneCamera</code> reprezentuje kamerę żurawia. 
@@ -45,14 +46,14 @@ public class CraneCamera extends AbstractCraneCamera {
                 Control.Actions[] actions = GameManager.getCrane().getArmControl()
                         .getAvailableActions();
                 HUD.fillControlInformation(Arrays.copyOf(actions, actions.length - 3),
-                        1, 1);
+                        null, 1, 1);
         }
         if(getType().equals(CameraType.LOOSE)) {
             setOff();
             Control.Actions[] actions = GameManager.getCrane().getArmControl()
                         .getAvailableActions();
             HUD.fillControlInformation(Arrays.copyOf(actions, actions.length - 3),
-                    1, 1);
+                    new String[] {Translator.MOUSE_MOVEMENT.getValue()}, 1, 1);
         }
         else setPosition();
     }

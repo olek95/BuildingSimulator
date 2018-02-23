@@ -79,4 +79,8 @@ public abstract class CraneAbstract {
      * @param camera kamera dźwigu 
      */
     public void setCamera(AbstractCraneCamera camera) { this.camera = camera; }
+    
+    public boolean hasLooseCamera() {
+        return camera.getType().equals(CameraType.LOOSE);
+    }
 }

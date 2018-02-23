@@ -32,6 +32,7 @@ import menu.HUD;
 import menu.MenuFactory;
 import menu.MenuTypes;
 import settings.Control.Actions;
+import texts.Translator;
 
 /**
  * Klasa <code>GameManager</code> reprezentuje zarządcę gry, posiadającego 
@@ -105,7 +106,7 @@ public class GameManager {
         PhysicsSpace physics = bas.getPhysicsSpace();
         physics.addCollisionListener(ArmCollisionListener.createRotateAfterImpactListener());
         physics.addCollisionListener(BuildingCollisionListener.createBuildingCollisionListener());
-        HUD.fillControlInformation(mobileCrane.getAvailableActions(), 0, 0);
+        displayActualUnitControlsInHUD();
         startedGame = true; 
     }
     
@@ -230,13 +231,7 @@ public class GameManager {
     public static void setActualUnit(CraneAbstract actualUnit) { 
         GameManager.actualUnit = actualUnit;
         actualUnit.getCamera().restore();
-        if(actualUnit.getCrane().getName().contains(ElementName.CRANE)) {
-            displayProperMobileCraneHUD();
-        } else {
-            Actions[] actions = actualUnit.getArmControl().getAvailableActions();
-            HUD.fillControlInformation(Arrays.copyOf(actions, actions.length - 3),
-                    1, 1);
-        }
+        displayActualUnitControlsInHUD();
     }
     
     /**
@@ -304,9 +299,24 @@ public class GameManager {
     public static void displayProperMobileCraneHUD() {
         MobileCraneArmControl arm = (MobileCraneArmControl)mobileCrane.getArmControl();
         if(arm.isUsing()) {
-            HUD.fillControlInformation(arm.getAvailableActions(), new int[] {0, 0, 1, 1});
+            HUD.fillControlInformation(arm.getAvailableActions(), mobileCrane.hasLooseCamera()
+                    ? new String[] {Translator.MOUSE_MOVEMENT.getValue()} : null,
+                    0, 0, 1, 1);
         } else {
-            HUD.fillControlInformation(mobileCrane.getAvailableActions(), new int[] {0, 0});
+            HUD.fillControlInformation(mobileCrane.getAvailableActions(), mobileCrane.hasLooseCamera()
+                    ? new String[] {Translator.MOUSE_MOVEMENT.getValue()} : null,
+                    0, 0);
+        }
+    }
+    
+    public static void displayActualUnitControlsInHUD() {
+        if(actualUnit.getCrane().getName().contains(ElementName.CRANE)) {
+            displayProperMobileCraneHUD();
+        } else {
+            Actions[] actions = actualUnit.getArmControl().getAvailableActions();
+            HUD.fillControlInformation(Arrays.copyOf(actions, actions.length - 3),
+                    actualUnit.hasLooseCamera() ? new String[] {Translator.MOUSE_MOVEMENT
+                    .getValue()} : null, 1, 1);
         }
     }
     

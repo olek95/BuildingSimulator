@@ -12,13 +12,21 @@ import com.jme3.renderer.Camera;
 public class LimitedFlyByCamera extends FlyByCamera{
     public LimitedFlyByCamera(Camera cam) {
         super(cam);
-        setMoveSpeed(100f);
+        moveSpeed = 100;
     }
     
     @Override
     public void onAnalog(String name, float value, float tpf) {
-        super.onAnalog(name, value, tpf);
         Vector3f location = cam.getLocation();
         if(location.y <= 0) cam.setLocation(location.setY(1));
+        if(rotationSpeed == 0) {
+            if(name.equals("FLYCAM_Forward")) {
+                cam.setLocation(cam.getLocation().addLocal(0, 0, value * moveSpeed));
+            } else {
+                if(name.equals("FLYCAM_Backward")) {
+                    cam.setLocation(cam.getLocation().subtractLocal(0, 0, value * moveSpeed));
+                } else super.onAnalog(name, value, tpf);
+            }
+        } else super.onAnalog(name, value, tpf);
     }
 }

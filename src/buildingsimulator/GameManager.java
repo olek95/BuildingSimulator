@@ -103,7 +103,7 @@ public class GameManager {
         PhysicsSpace physics = bas.getPhysicsSpace();
         physics.addCollisionListener(ArmCollisionListener.createRotateAfterImpactListener());
         physics.addCollisionListener(BuildingCollisionListener.createBuildingCollisionListener());
-        HUD.fillControlInformation(mobileCrane.getAvailableActions());
+        HUD.fillControlInformation(mobileCrane.getAvailableActions(), 0, 0);
         startedGame = true; 
     }
     

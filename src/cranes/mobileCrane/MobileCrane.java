@@ -297,7 +297,8 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                 Control.addListener(getArmControl());
                 HUD.setMessage(Translator.LOWERED_PROPS.getValue());
                 ((MobileCraneCamera)getCamera()).changeCamera(true);
-                HUD.fillControlInformation(getArmControl().getAvailableActions());
+                HUD.fillControlInformation(getArmControl().getAvailableActions(),
+                        0, 0);
             }
         }
     }
@@ -310,7 +311,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                 Control.addListener(this);
                 HUD.setMessage(Translator.HEIGHTENED_PROPS.getValue());
                 ((MobileCraneCamera)getCamera()).changeCamera(false);
-                HUD.fillControlInformation(availableActions);
+                HUD.fillControlInformation(availableActions, 0, 0);
             }
         }
     }

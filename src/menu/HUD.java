@@ -7,6 +7,7 @@ import com.jme3.app.state.AbstractAppState;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.LineWrapMode;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import java.util.List;
 import java.util.Timer;
@@ -35,11 +36,12 @@ public class HUD extends AbstractAppState{
         addNewButton("cleaning_button", "Interface/hudIcons/cleaning_icon.png", 0.85f);
         User user = GameManager.getUser();
         addLabel("points_label", 0, 0, 0.4f, Translator.POINTS.getValue() + ": " 
-                + user.getPoints(), false, 40);
-        addLabel("message_label", 0.35f, 0, 0.4f, "", true, 40);
+                + user.getPoints(), BitmapFont.Align.Left, 40);
+        addLabel("message_label", 0.35f, 0, 0.4f, "", BitmapFont.Align.Center, 40);
         addLabel("time_label", 0, 0.05f, 0.4f, Translator.TIME.getValue() + ": "
-                + user.calculateActualTime(), false, 40);
-        addLabel("control_label", 0.8f, 0.7f, 0.3f, "", false, 20).setFontColor(ColorRGBA.White);
+                + user.calculateActualTime(), BitmapFont.Align.Left, 40);
+        addLabel("control_label", 0.7f, 0.76f, 0.3f, "", BitmapFont.Align.Right, 20)
+                .setFontColor(ColorRGBA.White);
     }
     
     /**
@@ -109,16 +111,27 @@ public class HUD extends AbstractAppState{
      * @param indexes tablica indeksów oznaczających, która część oddzielona 
      * ukośnikiem ma zostać wzięta pod uwagę
      */
-    public static void fillControlInformation(Actions[] actions, int[] indexes) {
+    public static void fillControlInformation(Actions[] actions, int... indexes) {
         String information = "";
+        int k = 0;
         for(int i = 0; i < actions.length; i++) {
-            String value = actions[i].getValue();
+            String[] values = actions[i].getValue().split("/");
+            String value = values.length != 1 ? values[indexes[k++]] : values[0];
             int optionalPhraseIndex = value.indexOf('(');
-            information += actions[i].getValue().substring(0, optionalPhraseIndex != -1 
+            information += value.substring(0, optionalPhraseIndex != -1 
                     ? optionalPhraseIndex : value.length()) + " - " + actions[i].getKey() 
-                    + System.getProperty("line.separator");;
+                    + System.getProperty("line.separator");
         }
-        screen.getElementById("control_label").setText(information);
+        Element controlLabel = screen.getElementById("control_label");
+        controlLabel.setText(information);
+        System.out.println(actions.length);
+        float controlLabelY = controlLabel.getPosition().y;
+        System.out.println(controlLabelY);
+//        System.out.println(75 * actions.length);
+//        System.out.println(600 - 75 * actions.length - 40);
+//        controlLabel.setY(600 - 75 * actions.length - 40 > 0 ? 600 - 75 * actions.length - 40
+//                : 75 * actions.length - 40);
+        //screen.getElementById("control_label").setHeight((screen.getHeight() / 6.67f - actions.length * 6.67f) * 6.67f);
     }
     
     /**
@@ -143,14 +156,15 @@ public class HUD extends AbstractAppState{
     }
     
     private Label addLabel(String id, float xPosition, float yPosition, float xDimension, String text,
-            boolean centered, float fontSize) {
+            BitmapFont.Align alignment, float fontSize) {
         int width = (int)screen.getWidth(), height = (int)screen.getHeight(); 
         Label label = new Label(screen, id, new Vector2f(width * xPosition, 
                 height * yPosition), new Vector2f(width * xDimension, 40));
         label.setFontSize(fontSize);
         label.setText(text);
         label.setFontColor(ColorRGBA.Black);
-        if(centered) label.setTextAlign(BitmapFont.Align.Center);
+        label.setTextAlign(alignment);
+        if(id.equals("control_label")) System.out.println(label.getPosition());
         label.setTextWrap(LineWrapMode.Word);
         screen.addElement(label);
         return label;

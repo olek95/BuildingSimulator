@@ -124,19 +124,22 @@ public class HUD extends AbstractAppState{
                 information += additionalInformation[i] + lineSeparator;
             }
         }
-        for(int i = 0; i < actions.length; i++) {
-            String[] values = actions[i].getValue().split("/");
-            String value = values.length != 1 ? values[indexes[k++]] : values[0];
-            int optionalPhraseIndex = value.indexOf('(');
-            information += value.substring(0, optionalPhraseIndex != -1 
-                    ? optionalPhraseIndex : value.length()) + " - " + actions[i].getKey() 
-                    + lineSeparator;
+        if(actions != null) {
+            for(int i = 0; i < actions.length; i++) {
+                String[] values = actions[i].getValue().split("/");
+                String value = values.length != 1 ? values[indexes[k++]] : values[0];
+                int optionalPhraseIndex = value.indexOf('(');
+                information += value.substring(0, optionalPhraseIndex != -1 
+                        ? optionalPhraseIndex : value.length()) + " - " + actions[i].getKey() 
+                        + lineSeparator;
+            }
         }
         Element controlLabel = screen.getElementById("control_label");
         controlLabel.setText(information);
         // 20 rozmiar pojedynczego wiersza
-        controlLabel.setY(20f * (actions.length + (additionalInformation == null ? 0 :
-                additionalInformation.length)) + controlLabel.getHeight());
+        controlLabel.setY(20f * ((actions == null ? 0 : actions.length)
+                + (additionalInformation == null ? 0 : additionalInformation.length))
+                + controlLabel.getHeight());
     }
     
     /**

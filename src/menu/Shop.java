@@ -90,7 +90,12 @@ public class Shop extends Menu implements VisibleFromAbove{
             if(!isMaterialsBought())  {
                 displayedShop = null;
                 view.setOff();
-            } else view.setMouseDisabled(false);
+            } else {
+                view.setMouseDisabled(false);
+                HUD.fillControlInformation(null, new String[] {Translator
+                    .RIGHT_CLICK_CANCELLATION.getValue(), Translator
+                    .LEFT_CLICK_DROPPING.getValue()});
+            }
             goNextMenu(screen, null);
         }
         hidePreview(true);

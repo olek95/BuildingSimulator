@@ -112,7 +112,8 @@ public enum Translator {
     NO_FOUNDATIONS,
     MOUSE_MOVEMENT,
     RIGHT_CLICK_CANCELLATION,
-    LEFT_CLICK_CLONE;
+    LEFT_CLICK_CLONE,
+    LEFT_CLICK_DROPPING;
     
     private String value; 
     

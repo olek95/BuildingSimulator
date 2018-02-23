@@ -32,9 +32,9 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
     private AbstractCraneCamera camera; 
     private Actions[] availableActions = { Actions.RIGHT, Actions.LEFT,
         Actions.PULL_OUT, Actions.PULL_IN, Actions.LOWER_HOOK, Actions.HEIGHTEN_HOOK,
-        Actions.UP, Actions.DOWN, Actions.ACTION, Actions.ATTACH,
-        Actions.VERTICAL_ATTACH, Actions.DETACH, Actions.MERGE, Actions.MERGE_PROTRUDING,
-        Actions.CHANGE_CAMERA};
+        Actions.ATTACH, Actions.VERTICAL_ATTACH, Actions.DETACH, Actions.MERGE,
+        Actions.MERGE_PROTRUDING, Actions.CHANGE_CAMERA, Actions.UP, Actions.DOWN,
+        Actions.ACTION};
     /**
      * Konstruktor tworzący kabinę. Używany, gdy wartość maksymalnego i 
      * minimalnego przesunięcia uchwytu nie jest znana od początku. Należy 

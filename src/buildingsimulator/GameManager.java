@@ -25,11 +25,13 @@ import cranes.mobileCrane.MobileCraneArmControl;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import listeners.ArmCollisionListener;
 import menu.HUD;
 import menu.MenuFactory;
 import menu.MenuTypes;
+import settings.Control.Actions;
 
 /**
  * Klasa <code>GameManager</code> reprezentuje zarządcę gry, posiadającego 
@@ -228,6 +230,20 @@ public class GameManager {
     public static void setActualUnit(CraneAbstract actualUnit) { 
         GameManager.actualUnit = actualUnit;
         actualUnit.getCamera().restore();
+        if(actualUnit.getCrane().getName().contains(ElementName.CRANE)) {
+            MobileCraneArmControl arm = (MobileCraneArmControl)actualUnit.getArmControl();
+            if(!arm.isUsing())
+            HUD.fillControlInformation(((Controllable)actualUnit)
+                    .getAvailableActions(), 0, 0);
+            else HUD.fillControlInformation(((Controllable)actualUnit.getArmControl())
+                    .getAvailableActions(), 0, 0, 1, 1);
+            HUD.fillControlInformation(arm.getAvailableActions(), arm.isUsing() 
+                    ? new int[]{0, 0, 1, 1} : new int[] {0, 0});
+        } else {
+            Actions[] actions = actualUnit.getArmControl().getAvailableActions();
+            HUD.fillControlInformation(Arrays.copyOf(actions, actions.length - 3),
+                    1, 1);
+        }
     }
     
     /**

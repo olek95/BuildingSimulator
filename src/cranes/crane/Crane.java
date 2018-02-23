@@ -75,11 +75,6 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
         heightLevel = state.getHeightLevel();
     }
     
-//    public Crane(int heightLevel){
-//        this.heightLevel = heightLevel;
-//        initCrane();
-//    }
-    
     /**
      * Zwiększa wysokość żurawia. 
      * @param height nowa wysokość 

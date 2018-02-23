@@ -125,6 +125,7 @@ public class GameManager {
         user.resetTimer();
         billboard.resumeAdvertisement();
         HUD.updateControlsLabel();
+        resetGameControls();
         startedGame = true;
         pausedGame = false; 
     }
@@ -373,5 +374,11 @@ public class GameManager {
     
     public static InputManager getInputManager() {
         return BuildingSimulator.getBuildingSimulator().getInputManager();
+    }
+    
+    private static void resetGameControls() {
+        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
+        Control.removeListener(game);
+        Control.addListener(game);
     }
 }

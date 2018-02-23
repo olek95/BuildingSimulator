@@ -92,9 +92,7 @@ public class Shop extends Menu implements VisibleFromAbove{
                 view.setOff();
             } else {
                 view.setMouseDisabled(false);
-                HUD.fillControlInformation(null, new String[] {Translator
-                    .RIGHT_CLICK_CANCELLATION.getValue(), Translator
-                    .LEFT_CLICK_DROPPING.getValue()});
+                BirdsEyeView.displayNotMovingModeHUD();
             }
             goNextMenu(screen, null);
         }

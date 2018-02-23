@@ -28,11 +28,13 @@ import texts.Translator;
  */
 public class BirdsEyeView implements ActionListener{
     private static VisibleFromAbove viewOwner;
+    private static boolean movingAvailable;
     private boolean mouseDisabled = false;
     public BirdsEyeView(VisibleFromAbove viewOwner, boolean movingAvailable) {
         BirdsEyeView.viewOwner = viewOwner;
         Control.addListener(this);
-        changeViewMode(movingAvailable);
+        BirdsEyeView.movingAvailable = movingAvailable; 
+        changeViewMode();
     }
     
     /**
@@ -103,6 +105,25 @@ public class BirdsEyeView implements ActionListener{
     }
     
     /**
+     * Wyświetla sterowanie stosowane w trybie poruszania się. 
+     */
+    public static void displayMovingModeHUD() {
+        HUD.fillControlInformation(new Actions[] {Actions.FLYCAM_FORWARD, 
+                Actions.FLYCAM_BACKWARD, Actions.FLYCAM_STRAFE_LEFT, Actions.FLYCAM_STRAFE_RIGHT},
+                    new String[]{Translator.RIGHT_CLICK_CANCELLATION.getValue(),
+                    Translator.LEFT_CLICK_CLONE.getValue()});
+    }
+    
+    /**
+     * Wyświetla sterowanie stosowne w trybie zablokowanego poruszania się. 
+     */
+    public static void displayNotMovingModeHUD() {
+        HUD.fillControlInformation(null, new String[] {Translator
+                    .RIGHT_CLICK_CANCELLATION.getValue(), Translator
+                    .LEFT_CLICK_DROPPING.getValue()});
+    }
+    
+    /**
      * Okresla czy aktualnie tryb widoku z lotu ptaka jest włączony. 
      * @return true jeśli tryb widoku z lotu ptaka jest włączony, false w przeciwnym przypadku 
      */
@@ -117,7 +138,14 @@ public class BirdsEyeView implements ActionListener{
      */
     public void setMouseDisabled(boolean disabled) { mouseDisabled = disabled; }
     
-    private void changeViewMode(boolean movingAvailable) {
+    /**
+     * Określa czy widok z lotu ptaka jest w trybie poruszania się. 
+     * @return true jeśli jest tryb poruszania się, false jeśli poruszanie się 
+     * jest zabronione 
+     */
+    public static boolean isMovingAvailable() { return movingAvailable; }
+    
+    private void changeViewMode() {
         Camera cam = GameManager.getCamera();
         Vector3f actualUnitLocation = GameManager.getActualUnit().getArmControl()
                 .getCrane().getWorldTranslation();
@@ -126,10 +154,7 @@ public class BirdsEyeView implements ActionListener{
         if(movingAvailable) {
             GameManager.getFlyByCamera().setRotationSpeed(0);
             GameManager.getInputManager().setCursorVisible(true);
-            HUD.fillControlInformation(new Actions[] {Actions.FLYCAM_FORWARD, 
-                Actions.FLYCAM_BACKWARD, Actions.FLYCAM_STRAFE_LEFT, Actions.FLYCAM_STRAFE_RIGHT},
-                    new String[]{Translator.RIGHT_CLICK_CANCELLATION.getValue(),
-                    Translator.LEFT_CLICK_CLONE.getValue()});
+            displayMovingModeHUD();
         } else GameManager.getFlyByCamera().setEnabled(false);
         Control.removeListener(Control.getActualListener());
     }

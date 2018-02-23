@@ -10,6 +10,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import cranes.CameraType;
+import eyeview.BirdsEyeView;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -140,6 +141,19 @@ public class HUD extends AbstractAppState{
         controlLabel.setY(20f * ((actions == null ? 0 : actions.length)
                 + (additionalInformation == null ? 0 : additionalInformation.length))
                 + controlLabel.getHeight());
+    }
+    
+    /**
+     * Aktualizuje zawartość etykiety zawierającej aktualne sterowanie. Stosować
+     * gdy w czasie gry zmieniono sterowanie. 
+     */
+    public static void updateControlsLabel() {
+        if(BirdsEyeView.isActive()) {
+            if(BirdsEyeView.isMovingAvailable()) BirdsEyeView.displayMovingModeHUD();
+            else BirdsEyeView.displayNotMovingModeHUD();
+        } else {
+            GameManager.displayActualUnitControlsInHUD();
+        }
     }
     
     /**

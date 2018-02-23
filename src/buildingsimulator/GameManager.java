@@ -124,6 +124,7 @@ public class GameManager {
         }
         user.resetTimer();
         billboard.resumeAdvertisement();
+        HUD.updateControlsLabel();
         startedGame = true;
         pausedGame = false; 
     }

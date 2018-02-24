@@ -11,63 +11,78 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.List;
 
+
+class WallData {
+    private WallType type;
+    private boolean perpendicularity = false;
+    private CatchNode catchNode; 
+    private WallMode mode; 
+    private Vector3f dimensions;
+    private boolean protruding; 
+    public WallData(WallType type, CatchNode catchNode, WallMode mode, Vector3f dimensions,
+            boolean protruding) {
+        this.type = type; 
+        this.catchNode = catchNode; 
+        this.mode = mode;
+        this.dimensions = dimensions;
+        this.protruding = protruding;
+    }
+    
+    public WallData(WallType type, boolean perpendicularity, CatchNode catchNode,
+            WallMode mode, Vector3f dimensions, boolean protruding) {
+        this.type = type; 
+        this.catchNode = catchNode; 
+        this.mode = mode;
+        this.protruding = protruding;
+        this.dimensions = dimensions;
+        this.perpendicularity = perpendicularity; 
+    }
+    
+    public WallType getType() { return type; }
+    
+    public boolean isPerpendicularity() { return perpendicularity; }
+    
+    public CatchNode getCatchNode() { return catchNode; }
+    
+    public WallMode getMode() { return mode; }
+    
+    public boolean isProtruding() { return protruding; }
+    
+    public Vector3f getDimensions() { return dimensions; }
+}
+
 public class BuildingSample extends Construction{
     private Node catchNode; 
     private boolean perpendicularity;
     public BuildingSample(Vector3f location) {
         setName("123");
         GameManager.addToScene(this);
-        Wall wall = (Wall)WallsFactory.createWall(WallType.WALL, location, 
-                new Vector3f(6, 0.2f, 4), 0.00001f, false);
-        GameManager.addToScene(wall);
-        wall.setRecentlyHitObject(BuildingSimulator.getBuildingSimulator()
-                .getRootNode().getChild(ElementName.MAP_FIELD_PART_NAME));
-        add(wall, null, WallMode.HORIZONTAL, false);
-        wall.setLocalTranslation(location);
+        createRoom(this, location, new WallData(WallType.WALL, null, 
+            WallMode.HORIZONTAL, new Vector3f(6, 0.2f, 4), false),
+                new WallData(WallType.WALL, CatchNode.UP, WallMode.VERTICAL,
+                new Vector3f(6, 0.2f, 4), true), new WallData(WallType.WALL,
+                CatchNode.BOTTOM, WallMode.VERTICAL, new Vector3f(6, 0.2f, 4), false), 
+                new WallData(WallType.WALL, CatchNode.LEFT, WallMode.VERTICAL, 
+                new Vector3f(3.6f, 0.2f, 4), false), new WallData(WallType.WALL, CatchNode.RIGHT,
+                WallMode.VERTICAL, new Vector3f(3.6f, 0.2f, 4), false));
         
-        Wall wall2 = (Wall)WallsFactory.createWall(WallType.WALL, location, 
-                new Vector3f(6, 0.2f, 4), 0.00001f, false);
-        wall2.setRecentlyHitObject(wall);
-        this.perpendicularity = false; 
-        this.catchNode = (Node)wall.getChild(CatchNode.UP.toString());
-        this.add(wall2, wall, WallMode.VERTICAL, false);
-        wall2.setLocalTranslation(wall2.getControl(RigidBodyControl.class).getPhysicsLocation());
-        
-        Wall wall3 = (Wall)WallsFactory.createWall(WallType.WALL, location, 
-                new Vector3f(6, 0.2f, 4), 0.00001f, false);
-        wall3.setRecentlyHitObject(wall);
-        this.perpendicularity = false; 
-        this.catchNode = (Node)wall.getChild(CatchNode.BOTTOM.toString());
-        wall.setLocalTranslation(location);
-        this.add(wall3, wall, WallMode.VERTICAL, false);
-        wall3.setLocalTranslation(wall3.getControl(RigidBodyControl.class).getPhysicsLocation());
-        
-        Wall wall4 = (Wall)WallsFactory.createWall(WallType.WALL, location, 
-                new Vector3f(3.6f, 0.2f, 4), 0.00001f, false);
-        wall4.setRecentlyHitObject(wall);
-        this.perpendicularity = true; 
-        this.catchNode = (Node)wall.getChild(CatchNode.LEFT.toString());
-        wall.setLocalTranslation(location);
-        this.add(wall4, wall, WallMode.VERTICAL, false);
-        wall4.setLocalTranslation(wall4.getControl(RigidBodyControl.class).getPhysicsLocation());
-        
-        Wall wall5 = (Wall)WallsFactory.createWall(WallType.WALL, location, 
-                new Vector3f(3.6f, 0.2f, 4), 0.00001f, false);
-        wall5.setRecentlyHitObject(wall);
-        this.perpendicularity = false; 
-        this.catchNode = (Node)wall.getChild(CatchNode.RIGHT.toString());
-        wall.setLocalTranslation(location);
-        this.add(wall5, wall, WallMode.VERTICAL, false);
-        wall5.setLocalTranslation(wall5.getControl(RigidBodyControl.class).getPhysicsLocation());
-        
-        Wall wall6 = (Wall)WallsFactory.createWall(WallType.WALL, location, 
+        /*Wall wall6 = (Wall)WallsFactory.createWall(WallType.WALL, location, 
                 new Vector3f(6f, 0.2f, 4), 0.00001f, false);
         wall6.setRecentlyHitObject(wall);
         this.perpendicularity = false; 
         this.catchNode = (Node)wall.getChild(CatchNode.NORTH.toString());
         wall.setLocalTranslation(location);
         this.add(wall6, wall, WallMode.HORIZONTAL, false);
-        wall5.setLocalTranslation(wall6.getControl(RigidBodyControl.class).getPhysicsLocation());
+        wall6.setLocalTranslation(wall6.getControl(RigidBodyControl.class).getPhysicsLocation());
+        
+        Wall wall7 = (Wall)WallsFactory.createWall(WallType.WALL, location, 
+                new Vector3f(6f, 0.2f, 4), 0.00001f, false);
+        wall7.setRecentlyHitObject(wall);
+        this.perpendicularity = false; 
+        this.catchNode = (Node)wall.getChild(CatchNode.EAST.toString());
+        wall.setLocalTranslation(location);
+        this.add(wall7, wall, WallMode.HORIZONTAL, false);
+        wall7.setLocalTranslation(wall7.getControl(RigidBodyControl.class).getPhysicsLocation());*/
         
     }
     
@@ -81,5 +96,31 @@ public class BuildingSample extends Construction{
             return null;
         }
         return this;
+    }
+    
+    private Wall createRoom(Node owner, Vector3f location, WallData... data) {
+        Wall floor = null;
+        Spatial firstWall = null;
+        if(children.size() > 0) firstWall = getChild(0);
+        for(int i = 0; i < data.length; i++) {
+            Wall wall = (Wall)WallsFactory.createWall(data[i].getType(), location, 
+                data[i].getDimensions(), 0.00001f, false);
+            if(floor == null) floor = wall;
+            if(this.equals(owner)) {
+                wall.setRecentlyHitObject(BuildingSimulator.getBuildingSimulator()
+                        .getRootNode().getChild(ElementName.MAP_FIELD_PART_NAME));
+                add(wall, null, data[i].getMode(), data[i].isProtruding());
+                firstWall = wall; 
+            } else {
+                perpendicularity = data[i].isPerpendicularity(); 
+                catchNode = (Node)floor.getChild(data[i].getCatchNode().toString());
+                wall.setRecentlyHitObject(floor);
+                firstWall.setLocalTranslation(location);
+                add(wall, floor, data[i].getMode(), data[i].isProtruding());
+            }
+            wall.setLocalTranslation(wall.getControl(RigidBodyControl.class).getPhysicsLocation());
+            owner = wall;
+        }
+        return floor; 
     }
 }

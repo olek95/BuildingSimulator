@@ -33,6 +33,7 @@ public class ConstructionCopier implements VisibleFromAbove{
 
     @Override
     public void setDischargingLocation(Vector3f location) {
+        new BuildingSample(location);
         if(selectedConstruction == null) {
             selectedConstruction = getSelectedConstruction(location);
         } else {

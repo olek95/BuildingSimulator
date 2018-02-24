@@ -273,7 +273,7 @@ public class Construction extends Node{
      */
     public void setSold(boolean sold) { this.sold = sold; }
     
-    private Node merge(Wall wall1, Wall wall2, boolean ceiling, WallMode mode,
+    protected Node merge(Wall wall1, Wall wall2, boolean ceiling, WallMode mode,
             boolean protruding, int start, int end){
         if(wall2 != null){ 
             Vector3f location = ((RigidBodyControl)wall1.getControl(mode.ordinal())).getPhysicsLocation();
@@ -290,7 +290,7 @@ public class Construction extends Node{
             boolean perpendicularity = wall1.checkPerpendicularity(wall2); 
             int minDistance = getMin(distances); 
             if(setWallInProperPosition(wall1, wall2, catchNodes[minDistance], perpendicularity, 
-                    ceiling, mode.equals(WallMode.HORIZONTAL), protruding, minDistance))
+                    ceiling, mode.equals(WallMode.HORIZONTAL), protruding))
                 return catchNodes[minDistance];
             return null;
         }
@@ -326,9 +326,9 @@ public class Construction extends Node{
         return this; 
     }
     
-    private boolean setWallInProperPosition(Wall wall1, Wall wall2, Node catchNode,
+    protected boolean setWallInProperPosition(Wall wall1, Wall wall2, Node catchNode,
             boolean perpendicularity, boolean ceiling, boolean horizontal, 
-            boolean protruding, int i) {
+            boolean protruding) {
         RigidBodyControl control = wall1.getControl(RigidBodyControl.class);
         RigidBodyControl control2 = wall2.getControl(RigidBodyControl.class);
         Node newCatchNode = createCatchNode(wall1, wall2, catchNode,
@@ -342,7 +342,7 @@ public class Construction extends Node{
             Vector3f edgeLocation = newCatchNode.getWorldTranslation();
             control.setPhysicsLocation(edgeLocation);
             control.setPhysicsRotation(calculateProperRotation(wall2,
-                    i, !horizontal, perpendicularity, ceiling));
+                    catchNode, !horizontal, perpendicularity, ceiling));
             wall2.detachChild(newCatchNode);
             return true;
         }
@@ -416,14 +416,17 @@ public class Construction extends Node{
         return node;
     }
     
-    private Quaternion calculateProperRotation(Wall ownerRotation, int direction,
+    private Quaternion calculateProperRotation(Wall ownerRotation, Node catchNode,
             boolean vertical, boolean perpendicular, boolean ceiling){
         if(ceiling) return ownerRotation.getParent().getParent().getWorldRotation();
         Quaternion newRotation = ownerRotation.getControl(RigidBodyControl.class)
                 .getPhysicsRotation();
         if(vertical){
             newRotation = newRotation.clone().multLocal(-1.570796f, 0, 0, 1.570796f);
-            if(direction > 1) newRotation.multLocal(0, 0, -1.570796f, 1.570796f);
+            String catchNodeName = catchNode.getName(); 
+            if(catchNodeName.equals(CatchNode.LEFT.toString()) 
+                    || catchNodeName.equals(CatchNode.RIGHT.toString()))
+                newRotation.multLocal(0, 0, -1.570796f, 1.570796f);
         }else{
             newRotation = newRotation.clone();
             if(perpendicular) newRotation.multLocal(0, -1.570796f, 0, 1.570796f);

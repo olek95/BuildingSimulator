@@ -19,25 +19,33 @@ import java.util.List;
 import listeners.DummyCollisionListener;
 import menu.HUD;
 
-public class ConstructionCopier implements VisibleFromAbove{
+public class BuildingCreator implements VisibleFromAbove{
     private BirdsEyeView view; 
     private boolean foundSelectedConstruction = false;
     private Construction selectedConstruction; 
+    private boolean cloning; 
+    
+    public BuildingCreator(boolean cloning) {
+        this.cloning = cloning; 
+    }
     
     public BirdsEyeView getView() { return view; }
     
-    public void startCopying() {
+    public void start() {
         HUD.changeShopButtonVisibility(false);
         view = new BirdsEyeView(this, true); 
     }
 
     @Override
     public void setDischargingLocation(Vector3f location) {
-        new BuildingSample(location);
-        if(selectedConstruction == null) {
-            selectedConstruction = getSelectedConstruction(location);
+        if(cloning) {
+            if(selectedConstruction == null) {
+                selectedConstruction = getSelectedConstruction(location);
+            } else {
+                copy(location);
+            }
         } else {
-            copy(location);
+            new BuildingSample(location);
         }
     }
 

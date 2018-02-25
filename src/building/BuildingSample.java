@@ -9,6 +9,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import java.util.List;
 
 
 /**
@@ -23,6 +24,8 @@ class WallData {
     private WallMode mode; 
     private Vector3f dimensions;
     private boolean protruding; 
+    private boolean ceiling = false; 
+    private Wall additionalHitWall; 
     public WallData(WallType type, CatchNode catchNode, WallMode mode, Vector3f dimensions,
             boolean protruding) {
         this.type = type; 
@@ -42,6 +45,17 @@ class WallData {
         this.perpendicularity = perpendicularity; 
     }
     
+    public WallData(WallType type, CatchNode catchNode,
+            Vector3f dimensions, boolean protruding, boolean ceiling, Wall additionalHitWall) {
+        this.type = type; 
+        this.catchNode = catchNode; 
+        this.mode = WallMode.HORIZONTAL;
+        this.protruding = protruding;
+        this.dimensions = dimensions;
+        this.ceiling = ceiling;
+        this.additionalHitWall = additionalHitWall; 
+    }
+    
     public WallType getType() { return type; }
     
     public boolean isPerpendicularity() { return perpendicularity; }
@@ -53,6 +67,10 @@ class WallData {
     public boolean isProtruding() { return protruding; }
     
     public Vector3f getDimensions() { return dimensions; }
+    
+    public boolean isCeiling() { return ceiling; }
+    
+    public Wall getAdditionalHitWall() { return additionalHitWall; }
 }
 
 /**
@@ -64,30 +82,39 @@ public class BuildingSample extends Construction{
     private Node catchNode; 
     private boolean perpendicularity;
     public BuildingSample(Vector3f location) {
-        setName("123");
+        setName(ElementName.BUILDING_BASE_NAME + " sample");
         GameManager.addToScene(this);
+        location.setY(0.2f);
         this.setLocalTranslation(location);
-        Wall floor1 = createRoom(this, location, new WallData(WallType.WALL, null, 
+        System.out.println(location);
+        Wall[] wall1 = createRoom(this, location, new WallData(WallType.WALL, null, 
             WallMode.HORIZONTAL, new Vector3f(6, 0.2f, 4), false),
                 new WallData(WallType.DOOR, CatchNode.UP, WallMode.VERTICAL,
                 new Vector3f(6, 0.2f, 4), true), new WallData(WallType.FRONT_DOOR,
                 CatchNode.BOTTOM, WallMode.VERTICAL, new Vector3f(6, 0.2f, 4), false), 
                 new WallData(WallType.ONE_BIG_WINDOW, CatchNode.LEFT, WallMode.VERTICAL, 
                 new Vector3f(3.7f, 0.2f, 4), false));
-        createRoom(floor1, location, new WallData(WallType.WALL, CatchNode.NORTH, 
+        Wall[] wall2 = createRoom(wall1[0], location, new WallData(WallType.WALL, CatchNode.NORTH, 
             WallMode.HORIZONTAL, new Vector3f(6, 0.2f, 4), false), 
                 new WallData(WallType.WINDOWS, CatchNode.UP, WallMode.VERTICAL,
                 new Vector3f(6, 0.2f, 4), false), new WallData(WallType.ONE_BIG_WINDOW,
                 CatchNode.LEFT, WallMode.VERTICAL, new Vector3f(3.7f, 0.2f, 4), false),
                 new WallData(WallType.WALL, CatchNode.RIGHT, WallMode.VERTICAL,
                 new Vector3f(3.7f, 0.2f, 4), false));
-        createRoom(floor1, location, new WallData(WallType.WALL, CatchNode.EAST, 
+        Wall[] wall3 = createRoom(wall1[0], location, new WallData(WallType.WALL, CatchNode.EAST, 
             WallMode.HORIZONTAL, new Vector3f(6, 0.2f, 4), false), 
                 new WallData(WallType.WALL, CatchNode.BOTTOM, 
                 WallMode.VERTICAL, new Vector3f(6, 0.2f, 4), false), 
                 new WallData(WallType.WINDOWS, CatchNode.UP, WallMode.VERTICAL,
                 new Vector3f(6f, 0.2f, 4), false), new WallData(WallType.ONE_BIG_WINDOW,
-                CatchNode.RIGHT, WallMode.VERTICAL, new Vector3f(3.6f, 0.2f, 4), false));  
+                CatchNode.RIGHT, WallMode.VERTICAL, new Vector3f(3.6f, 0.2f, 4), false));
+        createRoom(wall1[2], location, new WallData(WallType.WALL, CatchNode.NORTH, 
+                new Vector3f(6, 0.2f, 4), false, true, wall1[1]) );
+        createRoom(wall1[1], location, new WallData(WallType.WALL, CatchNode.NORTH, 
+                new Vector3f(6, 0.2f, 4), false, true, wall2[1]) );
+        createRoom(wall3[1], location, new WallData(WallType.WALL, CatchNode.NORTH, 
+                new Vector3f(6, 0.2f, 4), false, true, wall3[2]) );
+        
     }
     
     @Override
@@ -95,32 +122,74 @@ public class BuildingSample extends Construction{
             boolean protruding, int start, int end){
         if(wall2 != null){ 
             if(setWallInProperPosition(wall1, wall2, catchNode, perpendicularity, 
-                    ceiling, mode.equals(WallMode.HORIZONTAL), protruding))
+                    ceiling, mode.equals(WallMode.HORIZONTAL), protruding)) {
                 return catchNode;
+            }
             return null;
         }
         return this;
     }
     
-    private Wall createRoom(Node owner, Vector3f location, WallData... data) {
-        Wall floor = null;
+    @Override
+    protected Node mergeHorizontal(Wall wall1, Wall wall2, boolean foundations,
+            WallMode mode){
+        if(!foundations){
+            if(wall2 != null){
+                // sprawdza czy na przeciwko jest druga ściana 
+                boolean oppositeWall = getWallFromOpposite(wall1, wall2) != null;
+                if(oppositeWall) {
+                    Node ceilingCatchNode = merge(wall1, wall2, true, mode, false,
+                            4, 8);
+                    return ceilingCatchNode;
+                }
+                return oppositeWall ? 
+                        merge(wall1, wall2, (int)(wall1.getWorldTranslation()
+                        .y - wall2.getWorldTranslation().y) > 0, mode, false, 4, 8)
+                        : null;
+            }
+        }else{
+            return merge(wall1, wall2, false, mode, false, 4, 8); 
+        }
+        return this; 
+    }
+    
+    private Wall[] createRoom(Node owner, Vector3f location, WallData... data) {
+        Wall[] walls = new Wall[data.length];
         for(int i = 0; i < data.length; i++) {
             Wall wall = (Wall)WallsFactory.createWall(data[i].getType(), location, 
                 data[i].getDimensions(), 0.00001f, false);
-            if(floor == null) floor = wall;
+            walls[i] = wall;
             if(owner.equals(this)) {
                 wall.setRecentlyHitObject(BuildingSimulator.getBuildingSimulator()
                         .getRootNode().getChild(ElementName.MAP_FIELD_PART_NAME));
                 add(wall, null, data[i].getMode(), data[i].isProtruding());
             } else {
-                perpendicularity = data[i].isPerpendicularity(); 
-                catchNode = (Node)owner.getChild(data[i].getCatchNode().toString());
+                perpendicularity = data[i].isPerpendicularity();
+                List<Spatial> ownerChildren = owner.getChildren();
+                int ownerChildrenNumber = ownerChildren.size();
+                for(int k = 0; k < ownerChildrenNumber; k++) {
+                    Spatial child = ownerChildren.get(k);
+                    if(child.getName().equals(data[i].getCatchNode().toString())) 
+                        catchNode = (Node)child;
+                }
                 wall.setRecentlyHitObject(owner);
-                add(wall, (Wall)owner, data[i].getMode(), data[i].isProtruding());
-                floor.setLocalTranslation(floor.worldToLocal(floor.getControl(RigidBodyControl.class).getPhysicsLocation(), null));
+                if(data[i].isCeiling()) {
+                    wall.getHitObjects().add(data[i].getAdditionalHitWall());
+                    owner.setLocalTranslation(owner.worldToLocal(owner.getControl(RigidBodyControl.class).getPhysicsLocation(), null));
+                    Wall additionalHitWall = data[i].getAdditionalHitWall();
+                    System.out.println(owner + " " + owner.getParent() + " " +  " "+ additionalHitWall + " " + additionalHitWall.getParent());
+                    additionalHitWall.setLocalTranslation(additionalHitWall
+                            .worldToLocal(additionalHitWall.getControl(RigidBodyControl.class)
+                            .getPhysicsLocation(), null));
+                    add(wall, null, data[i].getMode(), data[i].isProtruding());
+                    
+                } else {
+                    add(wall, (Wall)owner, data[i].getMode(), data[i].isProtruding());
+                }
+                walls[0].setLocalTranslation(walls[0].worldToLocal(walls[0].getControl(RigidBodyControl.class).getPhysicsLocation(), null));
             }
             if(i == 0) owner = wall;
         }
-        return floor; 
+        return walls; 
     }
 }

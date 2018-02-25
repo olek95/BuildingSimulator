@@ -63,24 +63,49 @@ public enum CatchNode {
                         .getProperFoundationsDimension(wall2, perpendicularity,
                         true, init));
             case NORTH: 
-                float y, z;
+                float y = 0, z = 0;
                 if(ceiling) {
                     switch(valueOf(wall1.getParent().getName())) {
                         case UP: 
-                            y = wall2.getHeight() - getProperOffsetForCeiling(wall1);
+                            if(!Construction.getWholeConstruction(wall1).getName().contains("sample")) {
+                                y = wall2.getHeight() - getProperOffsetForCeiling(wall1);
+                            } else {
+                                z = wall2.getHeight() - getProperOffsetForCeiling(wall1);
+                            }
                             break; 
                         case BOTTOM:
-                            y = -wall2.getHeight() + getProperOffsetForCeiling(wall1);
+                            if(!Construction.getWholeConstruction(wall1).getName().contains("sample")) {
+                                y = -wall2.getHeight() + getProperOffsetForCeiling(wall1);
+                            } else {
+                                System.out.println(123);
+                                z = wall2.getHeight() - getProperOffsetForCeiling(wall1);
+                            }
                             break; 
                         case EAST: 
-                            y = wall2.getLength() - getProperOffsetForCeiling(wall1);
+                            if(!Construction.getWholeConstruction(wall1).getName().contains("sample")) {
+                                y = wall2.getLength() - getProperOffsetForCeiling(wall1);
+                            } else {
+                                z = wall2.getLength() - getProperOffsetForCeiling(wall1);
+                            }
                             break; 
                         default: 
-                            y = -wall2.getLength() + getProperOffsetForCeiling(wall1);
+                            if(!Construction.getWholeConstruction(wall1).getName().contains("sample")) {
+                                y = -wall2.getLength() + getProperOffsetForCeiling(wall1);
+                            } else {
+                                z = -wall2.getLength() + getProperOffsetForCeiling(wall1);
+                            }
                             
                     }
-                    if(isOnTheOtherSide(wall1, wall2)) y = -y;
-                    z = wall1.getHeight();
+                    if(isOnTheOtherSide(wall1, wall2)) { 
+                        if(!Construction.getWholeConstruction(wall1).getName().contains("sample")) {
+                            y = -y;
+                        }
+                    }
+                    if(!Construction.getWholeConstruction(wall1).getName().contains("sample")) {
+                        z = wall1.getHeight();
+                    } else {
+                        y = wall1.getHeight(); 
+                    }
                 } else {
                     y = 0;
                     z = wall1.getHeight() + CatchNode

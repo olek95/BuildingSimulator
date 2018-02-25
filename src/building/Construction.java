@@ -297,7 +297,7 @@ public class Construction extends Node{
         return this;
     }
     
-    private Node mergeHorizontal(Wall wall1, Wall wall2, boolean foundations,
+    protected Node mergeHorizontal(Wall wall1, Wall wall2, boolean foundations,
             WallMode mode){
         if(!foundations){
             if(wall2 != null){
@@ -457,7 +457,7 @@ public class Construction extends Node{
                 ? nearestWall : null;
     }
     
-    private Node getWallFromOpposite(Wall wall, Wall recentlyHitWall){
+    protected Node getWallFromOpposite(Wall wall, Wall recentlyHitWall){
         List<Spatial> hitObjects = wall.getHitObjects();
         int numberHitObjects = hitObjects.size(); 
         for(int i = 0; i < numberHitObjects; i++){

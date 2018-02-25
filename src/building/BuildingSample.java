@@ -86,34 +86,49 @@ public class BuildingSample extends Construction{
         GameManager.addToScene(this);
         location.setY(0.2f);
         this.setLocalTranslation(location);
-        System.out.println(location);
-        Wall[] wall1 = createRoom(this, location, new WallData(WallType.WALL, null, 
+        Wall[] walls1 = createRoom(this, location, new WallData(WallType.WALL, null, 
             WallMode.HORIZONTAL, new Vector3f(6, 0.2f, 4), false),
                 new WallData(WallType.DOOR, CatchNode.UP, WallMode.VERTICAL,
                 new Vector3f(6, 0.2f, 4), true), new WallData(WallType.FRONT_DOOR,
                 CatchNode.BOTTOM, WallMode.VERTICAL, new Vector3f(6, 0.2f, 4), false), 
                 new WallData(WallType.ONE_BIG_WINDOW, CatchNode.LEFT, WallMode.VERTICAL, 
                 new Vector3f(3.7f, 0.2f, 4), false));
-        Wall[] wall2 = createRoom(wall1[0], location, new WallData(WallType.WALL, CatchNode.NORTH, 
+        Wall[] walls2 = createRoom(walls1[0], location, new WallData(WallType.WALL, CatchNode.NORTH, 
             WallMode.HORIZONTAL, new Vector3f(6, 0.2f, 4), false), 
                 new WallData(WallType.WINDOWS, CatchNode.UP, WallMode.VERTICAL,
                 new Vector3f(6, 0.2f, 4), false), new WallData(WallType.ONE_BIG_WINDOW,
                 CatchNode.LEFT, WallMode.VERTICAL, new Vector3f(3.7f, 0.2f, 4), false),
                 new WallData(WallType.WALL, CatchNode.RIGHT, WallMode.VERTICAL,
                 new Vector3f(3.7f, 0.2f, 4), false));
-        Wall[] wall3 = createRoom(wall1[0], location, new WallData(WallType.WALL, CatchNode.EAST, 
+        Wall[] walls3 = createRoom(walls1[0], location, new WallData(WallType.WALL, CatchNode.EAST, 
             WallMode.HORIZONTAL, new Vector3f(6, 0.2f, 4), false), 
                 new WallData(WallType.WALL, CatchNode.BOTTOM, 
                 WallMode.VERTICAL, new Vector3f(6, 0.2f, 4), false), 
                 new WallData(WallType.WINDOWS, CatchNode.UP, WallMode.VERTICAL,
                 new Vector3f(6f, 0.2f, 4), false), new WallData(WallType.ONE_BIG_WINDOW,
                 CatchNode.RIGHT, WallMode.VERTICAL, new Vector3f(3.6f, 0.2f, 4), false));
-        createRoom(wall1[2], location, new WallData(WallType.WALL, CatchNode.NORTH, 
-                new Vector3f(6, 0.2f, 4), false, true, wall1[1]) );
-        createRoom(wall1[1], location, new WallData(WallType.WALL, CatchNode.NORTH, 
-                new Vector3f(6, 0.2f, 4), false, true, wall2[1]) );
-        createRoom(wall3[1], location, new WallData(WallType.WALL, CatchNode.NORTH, 
-                new Vector3f(6, 0.2f, 4), false, true, wall3[2]) );
+        Wall[] walls4 = createRoom(walls1[2], location, new WallData(WallType.WALL, CatchNode.NORTH, 
+                new Vector3f(6, 0.2f, 4), false, true, walls1[1]), 
+                new WallData(WallType.WINDOWS, CatchNode.BOTTOM, WallMode.VERTICAL,
+                new Vector3f(6, 0.2f, 4), false), new WallData(WallType.WINDOWS,
+                CatchNode.UP, WallMode.VERTICAL, new Vector3f(6, 0.2f, 4), false),
+                new WallData(WallType.WALL, CatchNode.LEFT, WallMode.VERTICAL,
+                new Vector3f(3.6f, 0.2f, 4), false), new WallData(WallType.WALL,
+                CatchNode.RIGHT, WallMode.VERTICAL, new Vector3f(3.6f, 0.2f, 4), false));
+        createRoom(walls1[1], location, new WallData(WallType.WALL, CatchNode.NORTH, 
+                new Vector3f(6, 0.2f, 4), false, true, walls2[1]));
+        createRoom(walls3[1], location, new WallData(WallType.WALL, CatchNode.NORTH, 
+                new Vector3f(6, 0.2f, 4), false, true, walls3[2]) );
+        Wall[] walls7 = createRoom(walls4[1], location, new WallData(WallType.WALL, CatchNode.NORTH, 
+                new Vector3f(6, 0.2f, 4), false, true, walls4[2]),
+                new WallData(WallType.WINDOWS, CatchNode.BOTTOM, WallMode.VERTICAL,
+                new Vector3f(6, 0.2f, 4), false), new WallData(WallType.WINDOWS,
+                CatchNode.UP, WallMode.VERTICAL, new Vector3f(6, 0.2f, 4), false),
+                new WallData(WallType.WALL, CatchNode.LEFT, WallMode.VERTICAL,
+                new Vector3f(3.6f, 0.2f, 4), false), new WallData(WallType.WALL,
+                CatchNode.RIGHT, WallMode.VERTICAL, new Vector3f(3.6f, 0.2f, 4), false));
+        createRoom(walls7[1], location, new WallData(WallType.WALL, CatchNode.NORTH, 
+                new Vector3f(6, 0.2f, 4), false, true, walls7[2]));
         
     }
     

@@ -19,6 +19,11 @@ import java.util.List;
 import listeners.DummyCollisionListener;
 import menu.HUD;
 
+/**
+ * Klasa <code>BuildingCreator</code> umożliwia kupowanie gotowego budynku bądź 
+ * klonowanie już istniejącego. 
+ * @author AleksanderSklorz 
+ */
 public class BuildingCreator implements VisibleFromAbove{
     private BirdsEyeView view; 
     private boolean foundSelectedConstruction = false;
@@ -29,8 +34,16 @@ public class BuildingCreator implements VisibleFromAbove{
         this.cloning = cloning; 
     }
     
+    /**
+     * Zwraca widok z lotu ptaka. 
+     * @return widok z lotu ptaka 
+     */
     public BirdsEyeView getView() { return view; }
     
+    /**
+     * Rozpoczyna kopiowanie bądź kupowanie nowego budynku. Przełącza automatycznie 
+     * w tryb widoku z lotu ptaka. 
+     */
     public void start() {
         HUD.changeShopButtonVisibility(false);
         view = new BirdsEyeView(this, true); 

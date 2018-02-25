@@ -77,7 +77,6 @@ public enum CatchNode {
                             if(!Construction.getWholeConstruction(wall1).getName().contains("sample")) {
                                 y = -wall2.getHeight() + getProperOffsetForCeiling(wall1);
                             } else {
-                                System.out.println(123);
                                 z = wall2.getHeight() - getProperOffsetForCeiling(wall1);
                             }
                             break; 

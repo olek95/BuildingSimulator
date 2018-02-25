@@ -186,7 +186,6 @@ public class HUD extends AbstractAppState{
         label.setText(text);
         label.setFontColor(ColorRGBA.Black);
         label.setTextAlign(alignment);
-        if(id.equals("control_label")) System.out.println(label.getPosition());
         label.setTextWrap(LineWrapMode.Word);
         screen.addElement(label);
         return label;

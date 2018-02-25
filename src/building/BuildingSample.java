@@ -82,7 +82,9 @@ public class BuildingSample extends Construction{
     private Node catchNode; 
     private boolean perpendicularity;
     public BuildingSample(Vector3f location) {
-        setName(ElementName.BUILDING_BASE_NAME + " sample");
+        int newCounter = getCounter(); 
+        setCounter(++newCounter); 
+        setName(ElementName.BUILDING_BASE_NAME + newCounter + " sample");
         GameManager.addToScene(this);
         location.setY(0.2f);
         this.setLocalTranslation(location);
@@ -192,7 +194,6 @@ public class BuildingSample extends Construction{
                     wall.getHitObjects().add(data[i].getAdditionalHitWall());
                     owner.setLocalTranslation(owner.worldToLocal(owner.getControl(RigidBodyControl.class).getPhysicsLocation(), null));
                     Wall additionalHitWall = data[i].getAdditionalHitWall();
-                    System.out.println(owner + " " + owner.getParent() + " " +  " "+ additionalHitWall + " " + additionalHitWall.getParent());
                     additionalHitWall.setLocalTranslation(additionalHitWall
                             .worldToLocal(additionalHitWall.getControl(RigidBodyControl.class)
                             .getPhysicsLocation(), null));

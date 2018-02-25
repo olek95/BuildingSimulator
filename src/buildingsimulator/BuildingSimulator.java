@@ -189,7 +189,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     debug = !debug;
                     break; 
                 case FIRST:
-                    if(BirdsEyeView.isActive()) break;
+                    if(BirdsEyeView.isActive() || GameManager.getActualUnit().equals(mobileCrane))
+                        break;
                     inputManager.removeListener(crane.getArmControl());
                     crane.setUsing(false);
                     Control.addListener(((MobileCraneArmControl)mobileCrane
@@ -200,7 +201,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     GameManager.setActualUnit(mobileCrane);
                     break;
                 case SECOND:
-                    if(BirdsEyeView.isActive()) break;
+                    if(BirdsEyeView.isActive() || GameManager.getActualUnit().equals(crane))
+                        break;
                     if(((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing()){
                         inputManager.removeListener(mobileCrane.getArmControl());
                     }else{

@@ -89,6 +89,7 @@ public enum Translator {
     RETURN_TO_STARTING_MENU,
     SHOP,
     TYPE,
+    COLOR,
     AMOUNT,
     DIMENSIONS,
     BUYING,

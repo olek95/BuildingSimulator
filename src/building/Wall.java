@@ -57,8 +57,9 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
      */
     public Wall(){}
     
-    public Wall(WallType type, CSGShape shape, Vector3f location, float mass, CSGShape... differenceShapes){
-        super(type, shape, location, mass, ElementName.WALL_BASE_NAME + counter, 
+    public Wall(WallType type, CSGShape shape, Vector3f location, float mass, ColorRGBA color,
+            CSGShape... differenceShapes){
+        super(type, shape, location, mass, ElementName.WALL_BASE_NAME + counter, color,
                 differenceShapes);
         this.type = type; 
         BoundingBox bounding = (BoundingBox)shape.getWorldBound();

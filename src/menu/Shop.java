@@ -14,6 +14,7 @@ import com.jme3.cinematic.events.AbstractCinematicEvent;
 import eyeview.VisibleFromAbove;
 import com.jme3.font.BitmapFont;
 import com.jme3.input.event.MouseButtonEvent;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -55,11 +56,13 @@ public class Shop extends Menu implements VisibleFromAbove{
         Translator.setTexts(new String[]{"buying_button", "cancellation_button",
             "type_label", "amount_label", "dimensions_label", "cost_label",
             "change_page_button", "height_change_label", "actual_height_label",
-            "new_height_label"}, new Translator[]{Translator.BUYING, 
+            "new_height_label", "color_label"}, new Translator[]{Translator.BUYING, 
                 Translator.CANCELLATION, Translator.TYPE, Translator.AMOUNT,
                 Translator.DIMENSIONS, Translator.COST, Translator.NEXT, 
-                Translator.HEIGHT_CHANGE, Translator.ACTUAL_HEIGHT, Translator.NEW_HEIGHT}, screen);
+                Translator.HEIGHT_CHANGE, Translator.ACTUAL_HEIGHT, Translator.NEW_HEIGHT,
+                Translator.COLOR}, screen);
         fillTypeSlider(); 
+        fillColorSelectBox();
         createTextField("x_text_field", 0.45f, 0.55f);
         createTextField("z_text_field", 0.45f, 0.65f);
         screen.getElementById("vehicles_panel").hide();
@@ -171,7 +174,8 @@ public class Shop extends Menu implements VisibleFromAbove{
         tempDimensions.multLocal(1, amount, 1);
         for(int i = 0; i < amount; i++) {
             Wall wall = (Wall)WallsFactory.createWall(type, dischargingLocation,
-                    dimensions, 0.00001f, false);
+                    dimensions, 0.00001f, false, (ColorRGBA)((Slider)screen
+                .getElementById("color_slider")).getSelectedValue());
             GameManager.addToScene(wall);
             dischargingLocation.y += 0.4f; 
         }
@@ -228,9 +232,20 @@ public class Shop extends Menu implements VisibleFromAbove{
     
     private void fillTypeSlider() {
         WallType[] types = WallType.values(); 
-        Slider typeSelectBox = (Slider)screen.getElementById("type_slider");
+        Slider typeSlider = (Slider)screen.getElementById("type_slider");
         for(int i = 0; i < types.length; i++){
-            typeSelectBox.addStepValue(types[i]);
+            typeSlider.addStepValue(types[i]);
+        }
+    }
+    
+    private void fillColorSelectBox() {
+        ColorRGBA[] colors = new ColorRGBA[] {ColorRGBA.Black, ColorRGBA.BlackNoAlpha, 
+            ColorRGBA.Blue, ColorRGBA.Brown, ColorRGBA.Cyan, ColorRGBA.DarkGray, 
+            ColorRGBA.Green, ColorRGBA.LightGray, ColorRGBA.Magenta, ColorRGBA.Orange,
+            ColorRGBA.Pink, ColorRGBA.Yellow};
+        Slider colorSlider = (Slider)screen.getElementById("color_slider");
+        for(int i = 0; i < colors.length; i++){
+            colorSlider.addStepValue(colors[i]);
         }
     }
     
@@ -300,7 +315,8 @@ public class Shop extends Menu implements VisibleFromAbove{
         return (DummyWall)WallsFactory.createWall((WallType)((Slider)screen
                 .getElementById("type_slider")).getSelectedValue(),
                 Vector3f.NAN, new Vector3f(dimensions.x * 0.05f, 0.02f,
-                dimensions.z * 0.05f), 0, true);
+                dimensions.z * 0.05f), 0, true, (ColorRGBA)((Slider)screen
+                .getElementById("color_slider")).getSelectedValue());
     }
     
     private void showPreview() {

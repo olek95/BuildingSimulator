@@ -6,6 +6,7 @@ import buildingsimulator.PhysicsManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import net.wcomohundro.jme3.csg.CSGGeometry;
@@ -21,20 +22,21 @@ public abstract class AbstractWall extends Node{
     public AbstractWall() {}
     
     public AbstractWall(WallType type, CSGShape shape, Vector3f location, 
-            float mass, String name, CSGShape... differenceShapes) {
+            float mass, String name, ColorRGBA color, CSGShape... differenceShapes) {
         setName(name);
-        initShape(shape, differenceShapes);
+        initShape(shape, color, differenceShapes);
         ((CSGGeometry)getChild(0)).regenerate();
         createLooseControl(location, mass); 
     }
     
-    private void initShape(CSGShape shape, CSGShape... differenceShapes){
+    private void initShape(CSGShape shape, ColorRGBA color, CSGShape... differenceShapes){
         CSGGeometry wall = new CSGGeometry(ElementName.WALL_GEOMETRY); 
         wall.addShape(shape);
         AssetManager assetManager = BuildingSimulator.getBuildingSimulator().getAssetManager(); 
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setTexture("ColorMap", assetManager.loadTexture("Textures/gips.jpg"));
-        wall.setMaterial(mat);     
+        if(color != null) mat.setColor("Color", color);
+        wall.setMaterial(mat);
         if(differenceShapes != null)
             for(int i = 0; i < differenceShapes.length; i++)
                 wall.subtractShape(differenceShapes[i]);

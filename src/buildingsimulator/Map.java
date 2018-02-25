@@ -81,12 +81,12 @@ public class Map {
         Vector3f xDimensions = new Vector3f(254 * 2.5f, 1, 0.2f),
                 zDimensions = new Vector3f(0.2f, 1, 254 * 2.5f);
         WallsFactory.createWall(WallType.WALL, new Vector3f(0, 2.2f, positiveLocation),
-                    xDimensions, 0, true);
+                    xDimensions, 0, true, null);
         WallsFactory.createWall(WallType.WALL, new Vector3f(0, 2.2f, negativeLocation),
-                    xDimensions, 0, true);
+                    xDimensions, 0, true, null);
         WallsFactory.createWall(WallType.WALL, new Vector3f(positiveLocation, 2.2f, 0),
-                    zDimensions, 0, true);
+                    zDimensions, 0, true, null);
         WallsFactory.createWall(WallType.WALL, new Vector3f(negativeLocation, 2.2f, 0),
-                    zDimensions, 0, true);
+                    zDimensions, 0, true, null);
     }
 }

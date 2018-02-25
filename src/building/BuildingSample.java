@@ -4,6 +4,7 @@ import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -174,7 +175,7 @@ public class BuildingSample extends Construction{
         Wall[] walls = new Wall[data.length];
         for(int i = 0; i < data.length; i++) {
             Wall wall = (Wall)WallsFactory.createWall(data[i].getType(), location, 
-                data[i].getDimensions(), 0.00001f, false);
+                data[i].getDimensions(), 0.00001f, false, ColorRGBA.Black);
             walls[i] = wall;
             if(owner.equals(this)) {
                 wall.setRecentlyHitObject(BuildingSimulator.getBuildingSimulator()

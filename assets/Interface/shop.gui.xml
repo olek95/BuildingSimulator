@@ -16,11 +16,11 @@
                     <eventMethod name="onChange" stateMethodName="prepareOrder"/>
                 </component>
                 <component type="Label" id="dimensions_label" position="25%,42%" dimensions="20%,12%"/>
-                <component type="Label" position="25%,52%" dimensions="10%,12%">
-                    <method name="setText" param0="x = " />
+                <component type="Label" position="25%,52%" dimensions="18%,12%">
+                    <method name="setText" param0="x (max 6) = " />
                 </component>
-                <component type="Label" position="25%,62%" dimensions="10%,12%">
-                    <method name="setText" param0="z = " />
+                <component type="Label" position="25%,62%" dimensions="18%,12%">
+                    <method name="setText" param0="z (max 6) = " />
                 </component>
             </component>
             <component type="Panel" id="vehicles_panel" position="0,0" dimensions="100%,91%">

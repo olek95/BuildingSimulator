@@ -11,6 +11,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.List;
+import java.util.Random;
 
 
 /**
@@ -175,7 +176,7 @@ public class BuildingSample extends Construction{
         Wall[] walls = new Wall[data.length];
         for(int i = 0; i < data.length; i++) {
             Wall wall = (Wall)WallsFactory.createWall(data[i].getType(), location, 
-                data[i].getDimensions(), 0.00001f, false, ColorRGBA.Black);
+                data[i].getDimensions(), 0.00001f, false, (ColorRGBA)randomColor());
             walls[i] = wall;
             if(owner.equals(this)) {
                 wall.setRecentlyHitObject(BuildingSimulator.getBuildingSimulator()
@@ -208,5 +209,13 @@ public class BuildingSample extends Construction{
             if(i == 0) owner = wall;
         }
         return walls; 
+    }
+    
+    private ColorRGBA randomColor() {
+        ColorRGBA[] colors = new ColorRGBA[] {ColorRGBA.Black, ColorRGBA.BlackNoAlpha, 
+            ColorRGBA.Blue, ColorRGBA.Brown, ColorRGBA.Cyan, ColorRGBA.DarkGray, 
+            ColorRGBA.Green, ColorRGBA.LightGray, ColorRGBA.Magenta, ColorRGBA.Orange,
+            ColorRGBA.Pink, ColorRGBA.Yellow};
+        return colors[FastMath.rand.nextInt(colors.length)];
     }
 }

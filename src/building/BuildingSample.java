@@ -12,6 +12,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.List;
 import java.util.Random;
+import net.wcomohundro.jme3.csg.CSGGeometry;
 
 
 /**
@@ -176,7 +177,7 @@ public class BuildingSample extends Construction{
         Wall[] walls = new Wall[data.length];
         for(int i = 0; i < data.length; i++) {
             Wall wall = (Wall)WallsFactory.createWall(data[i].getType(), location, 
-                data[i].getDimensions(), 0.00001f, false, (ColorRGBA)randomColor());
+                data[i].getDimensions(), 0.00001f, false, null);
             walls[i] = wall;
             if(owner.equals(this)) {
                 wall.setRecentlyHitObject(BuildingSimulator.getBuildingSimulator()
@@ -206,16 +207,18 @@ public class BuildingSample extends Construction{
                 }
                 walls[0].setLocalTranslation(walls[0].worldToLocal(walls[0].getControl(RigidBodyControl.class).getPhysicsLocation(), null));
             }
+            randomColor(wall);
             if(i == 0) owner = wall;
         }
         return walls; 
     }
     
-    private ColorRGBA randomColor() {
+    private void randomColor(Wall wall) {
         ColorRGBA[] colors = new ColorRGBA[] {ColorRGBA.Black, ColorRGBA.BlackNoAlpha, 
             ColorRGBA.Blue, ColorRGBA.Brown, ColorRGBA.Cyan, ColorRGBA.DarkGray, 
             ColorRGBA.Green, ColorRGBA.LightGray, ColorRGBA.Magenta, ColorRGBA.Orange,
             ColorRGBA.Pink, ColorRGBA.Yellow};
-        return colors[FastMath.rand.nextInt(colors.length)];
+        ((CSGGeometry)wall.getChild(ElementName.WALL_GEOMETRY)).getMaterial().setColor("Color",
+                colors[FastMath.rand.nextInt(colors.length)]);
     }
 }

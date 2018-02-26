@@ -47,6 +47,7 @@ public class HUDButton extends ButtonAdapter{
                 } else {
                     GameManager.getFlyByCamera().setDragToRotate(true);
                     MenuFactory.showMenu(MenuTypes.SHOP); 
+                    HUD.setControlsVisibility(false);
                 }
                 GameManager.getActualUnit().getCamera().setOff();
             } else {

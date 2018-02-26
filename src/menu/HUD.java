@@ -166,6 +166,11 @@ public class HUD extends AbstractAppState{
         else controlsLabel.show();
     }
     
+    public static void setControlsVisibility(boolean visible) {
+        if(visible) screen.getElementById("control_label").show();
+        else screen.getElementById("control_label").hide();
+    }
+    
     /**
      * Zwraca ekran z HUDem.
      * @return ekran 

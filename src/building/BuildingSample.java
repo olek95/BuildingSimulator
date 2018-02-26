@@ -6,12 +6,10 @@ import buildingsimulator.GameManager;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.List;
-import java.util.Random;
 import net.wcomohundro.jme3.csg.CSGGeometry;
 
 
@@ -59,20 +57,53 @@ class WallData {
         this.additionalHitWall = additionalHitWall; 
     }
     
+    /**
+     * Zwraca typ ściany. 
+     * @return typ ściany 
+     */
     public WallType getType() { return type; }
     
+    /**
+     * Określa czy jest prostopadła do krawędzi.
+     * @return prostopadłość 
+     */
     public boolean isPerpendicularity() { return perpendicularity; }
     
+    /**
+     * Zwraca węzeł zaczepu. 
+     * @return węzeł zaczepu 
+     */
     public CatchNode getCatchNode() { return catchNode; }
     
+    /**
+     * Zwraca tryb w którym jest ściana np. HORIZONTAL
+     * @return tryb 
+     */
     public WallMode getMode() { return mode; }
     
+    /**
+     * Określa czy znajduje się na krawędzi, pomiędzy dwoma podłogami 
+     * @return informacja czy znajduje się na krawędzi 
+     */
     public boolean isProtruding() { return protruding; }
     
+    /**
+     * Rozmiar ściany 
+     * @return rozmiar ściany 
+     */
     public Vector3f getDimensions() { return dimensions; }
     
+    /**
+     * Określa czy jest to sufit 
+     * @return informacja czy jest to sufit 
+     */
     public boolean isCeiling() { return ceiling; }
     
+    /**
+     * Dodatkowo uderzona ściana (używane gdy stawia się sufit bo wtedy są dwie 
+     * ściany)
+     * @return dodatkowo uderzona śćiana  
+     */
     public Wall getAdditionalHitWall() { return additionalHitWall; }
 }
 

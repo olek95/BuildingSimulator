@@ -227,6 +227,9 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                             creator.start();
                         }
                     }
+                    break;
+                case CHANGING_CONTROLS_HUD_VISIBILITY:
+                    HUD.switchControlsVisibility();
             }
         } else {
             if(name.equals(Control.Actions.SHOW_CURSOR.toString()) 

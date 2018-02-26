@@ -44,6 +44,7 @@ public class HUD extends AbstractAppState{
                 + user.calculateActualTime(), BitmapFont.Align.Left, 40);
         addLabel("control_label", 0.6f, 0.76f, 0.4f, "", BitmapFont.Align.Right, 20)
                 .setFontColor(ColorRGBA.White);
+        screen.getElementById("control_label").hide();
     }
     
     /**
@@ -154,6 +155,15 @@ public class HUD extends AbstractAppState{
         } else {
             GameManager.displayActualUnitControlsInHUD();
         }
+    }
+    
+    /**
+     * Przełącza widocznność etykiety z obecnym sterowaniem. 
+     */
+    public static void switchControlsVisibility() {
+        Element controlsLabel = screen.getElementById("control_label");
+        if(controlsLabel.getIsVisible()) controlsLabel.hide();
+        else controlsLabel.show();
     }
     
     /**

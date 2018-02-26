@@ -61,6 +61,7 @@ public class Control {
         FLYCAM_BACKWARD,
         FLYCAM_STRAFE_LEFT,
         FLYCAM_STRAFE_RIGHT,
+        CHANGING_CONTROLS_HUD_VISIBILITY,
         SELECT_WAREHOUSE(MouseInput.BUTTON_LEFT),
         CANCEL_BIRDS_EYE_VIEW(MouseInput.BUTTON_RIGHT);
         private String key;
@@ -90,10 +91,11 @@ public class Control {
                                 "DOWN", "PAUSE", "MERGE", "ATTACH", "LOWER_HOOK",
                                 "FIRST", "DETACH", "CHANGE_CAMERA", "COPY_BUILDING", 
                                 "BUY_BUILDING", "FLYCAM_FORWARD", "FLYCAM_BACKWARD",
-                                "FLYCAM_STRAFE_LEFT", "FLYCAM_STRAFE_RIGHT"},
+                                "FLYCAM_STRAFE_LEFT", "FLYCAM_STRAFE_RIGHT",
+                                "CHANGING_CONTROLS_HUD_VISIBILITY"},
                             new String[]{"T", "O", "L", "U", "2", "V", "K", "E", "H",
                                 "SPACE", "LSHIFT", "P", "F", "J", "ESC", "N", "Y",
-                                "R", "1", "B", "C", "5", "6", "W", "S", "A", "D"}, 
+                                "R", "1", "B", "C", "5", "6", "W", "S", "A", "D", "7"}, 
                                 "settings/control.properties"); 
                 }
             }
@@ -202,6 +204,7 @@ public class Control {
                     inputManager.addListener(o, Actions.MOVE_CRANE.toString());
                     inputManager.addListener(o, Actions.COPY_BUILDING.toString());
                     inputManager.addListener(o, Actions.BUY_BUILDING.toString());
+                    inputManager.addListener(o, Actions.CHANGING_CONTROLS_HUD_VISIBILITY.toString());
                 } else {
                     inputManager.addListener(o, Actions.SELECT_WAREHOUSE.toString());
                     inputManager.addListener(o, Actions.CANCEL_BIRDS_EYE_VIEW.toString());

@@ -42,6 +42,7 @@ public class Shop extends Menu implements VisibleFromAbove{
     private BirdsEyeView view; 
     private DummyWall wallPreview;
     private boolean previewAnimationStop = true;
+    private Cinematic previewAnimation;
     public Shop(){
         if(displayedShop != null) { 
             GameManager.getUser().addPoints(displayedShop.costForMaterials); 
@@ -184,7 +185,6 @@ public class Shop extends Menu implements VisibleFromAbove{
         BuildingSimulator.getBuildingSimulator().getBulletAppState()
                 .getPhysicsSpace().removeCollisionGroupListener(6);
     }
-    
     
     @Override
     public void setListener(DummyCollisionListener listener) {
@@ -335,16 +335,15 @@ public class Shop extends Menu implements VisibleFromAbove{
         wallPreview = null;
         if(stopAnimation) {
             previewAnimationStop = true; 
-            if(cinematic != null) cinematic.stop();
-            cinematic = null;
+            if(previewAnimation != null) previewAnimation.stop();
+            previewAnimation = null;
         }
     }
-    Cinematic cinematic;
     private void startPreviewAnimation() {
         if(previewAnimationStop) {
-            cinematic = new Cinematic(BuildingSimulator.getBuildingSimulator()
+            previewAnimation = new Cinematic(BuildingSimulator.getBuildingSimulator()
                     .getRootNode(), 90, LoopMode.DontLoop);
-            cinematic.addCinematicEvent(0, new AbstractCinematicEvent() {
+            previewAnimation.addCinematicEvent(0, new AbstractCinematicEvent() {
                 @Override
                 protected void onPlay() {
                     previewAnimationStop = false;
@@ -367,7 +366,7 @@ public class Shop extends Menu implements VisibleFromAbove{
                 public void onPause() {}
 
             });
-            GameManager.startAnimation(cinematic); 
+            GameManager.startAnimation(previewAnimation); 
         }
     }
 }

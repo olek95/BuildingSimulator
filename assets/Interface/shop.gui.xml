@@ -10,20 +10,20 @@
                 <component type="Slider" id="type_slider" position="35%,15%" dimensions="40%,7%" orientation="HORIZONTAL">
                     <eventMethod name="onChange" stateMethodName="prepareOrder"/>
                 </component>
-                <component type="Label" id="amount_label" position="25%,29%" dimensions="10%,12%"/>
-                <component type="Spinner" id="amount_spinner" position="35%,32%" dimensions="20%,7%" orientation="VERTICAL">
+                <component type="Label" id="color_label" position="25%,23%" dimensions="10%,12%"/>
+                <component type="Slider" id="color_slider" position="35%,27%" dimensions="40%,7%" orientation="HORIZONTAL">
+                    <eventMethod name="onChange" stateMethodName="prepareOrder"/>
+                </component>
+                <component type="Label" id="amount_label" position="25%,35%" dimensions="10%,12%"/>
+                <component type="Spinner" id="amount_spinner" position="35%,38%" dimensions="20%,7%" orientation="VERTICAL">
                     <method name="setStepIntegerRange" param0="0" param1="5" param2="1"/>
                     <eventMethod name="onChange" stateMethodName="prepareOrder"/>
                 </component>
-                <component type="Label" id="color_label" position="25%,19%" dimensions="10%,12%"/>
-                <component type="Slider" id="color_slider" position="35%,22%" dimensions="40%,7%" orientation="HORIZONTAL">
-                    <eventMethod name="onChange" stateMethodName="prepareOrder"/>
-                </component>
-                <component type="Label" id="dimensions_label" position="25%,42%" dimensions="20%,12%"/>
-                <component type="Label" position="25%,52%" dimensions="18%,12%">
+                <component type="Label" id="dimensions_label" position="25%,46%" dimensions="20%,12%"/>
+                <component type="Label" position="25%,54%" dimensions="18%,12%">
                     <method name="setText" param0="x (max 6) = " />
                 </component>
-                <component type="Label" position="25%,62%" dimensions="18%,12%">
+                <component type="Label" position="25%,66%" dimensions="18%,12%">
                     <method name="setText" param0="z (max 6) = " />
                 </component>
             </component>

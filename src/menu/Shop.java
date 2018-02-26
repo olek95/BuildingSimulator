@@ -63,8 +63,8 @@ public class Shop extends Menu implements VisibleFromAbove{
                 Translator.COLOR}, screen);
         fillTypeSlider(); 
         fillColorSelectBox();
-        createTextField("x_text_field", 0.45f, 0.55f);
-        createTextField("z_text_field", 0.45f, 0.65f);
+        createTextField("x_text_field", 0.45f, 0.56f);
+        createTextField("z_text_field", 0.45f, 0.68f);
         screen.getElementById("vehicles_panel").hide();
         int craneHeight = GameManager.getCrane().getHeightLevel();
         screen.getElementById("actual_height_value").setText(craneHeight + "");

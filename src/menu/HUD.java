@@ -42,6 +42,8 @@ public class HUD extends AbstractAppState{
                 + user.calculateActualTime(), BitmapFont.Align.Left, 40);
         addLabel("control_label", 0.6f, 0.76f, 0.4f, "", BitmapFont.Align.Right, 20)
                 .setFontColor(ColorRGBA.White);
+        addLabel("general_controls_label", 0.25f, 0.92f, 0.4f, "", BitmapFont.Align.Center,
+                36).setFontColor(ColorRGBA.White);
         screen.getElementById("control_label").hide();
     }
     
@@ -156,6 +158,13 @@ public class HUD extends AbstractAppState{
         } else {
             GameManager.displayActualUnitControlsInHUD();
         }
+    }
+    
+    public static void fillGeneralControlsLabel() {
+        screen.getElementById("general_controls_label")
+                .setText(Actions.CHANGING_CONTROLS_HUD_VISIBILITY.getKey() + " " 
+                + Actions.COPY_BUILDING.getKey() + " " + Actions.BUY_BUILDING.getKey() + " " 
+                + Actions.SHOW_CURSOR.getKey());
     }
     
     /**

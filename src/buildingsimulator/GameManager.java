@@ -107,6 +107,7 @@ public class GameManager {
         physics.addCollisionListener(ArmCollisionListener.createRotateAfterImpactListener());
         physics.addCollisionListener(BuildingCollisionListener.createBuildingCollisionListener());
         displayActualUnitControlsInHUD();
+        HUD.fillGeneralControlsLabel();
         startedGame = true; 
     }
     

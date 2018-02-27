@@ -7,11 +7,8 @@ import com.jme3.app.state.AbstractAppState;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.LineWrapMode;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
-import cranes.CameraType;
 import eyeview.BirdsEyeView;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import settings.Control.Actions;
@@ -30,6 +27,7 @@ public class HUD extends AbstractAppState{
     private static Screen screen;
     private static boolean shouldMessageBeDeleted; 
     private static Timer messageTimer; 
+    private static boolean controlsLabelVisibilityBeforeHiding;
     public HUD(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
         addNewButton("finish_building_button", "Interface/hudIcons/end_building_icon.png",
@@ -76,6 +74,9 @@ public class HUD extends AbstractAppState{
                 + GameManager.getUser().getPoints());
     }
     
+    /**
+     * Uaktualnia licznik czasu. 
+     */
     public static void updateTime() {
         screen.getElementById("time_label").setText(Translator.TIME.getValue() + ": " 
                 + GameManager.getUser().calculateActualTime() + "");
@@ -166,9 +167,44 @@ public class HUD extends AbstractAppState{
         else controlsLabel.show();
     }
     
+    /**
+     * Ustawia widoczność etykiety ze sterowaniem. 
+     * @param visible widoczność etykiety 
+     */
     public static void setControlsVisibility(boolean visible) {
-        if(visible) screen.getElementById("control_label").show();
-        else screen.getElementById("control_label").hide();
+        Element controlLabel = screen.getElementById("control_label");
+        if(visible) controlLabel.show();
+        else {
+            controlsLabelVisibilityBeforeHiding = controlLabel.getIsVisible();
+            controlLabel.hide();
+        }
+    }
+    
+    /**
+     * Określa czy etykieta ze sterowaniem była wcześniej ukryta czy widoczna. 
+     * @return true jeśli etykieta ze sterowaniem była wcześniej widoczna, 
+     * false w przeciwnym przypadku 
+     */
+    public static boolean isControlsLabelVisibilityBeforeHiding() {
+        return controlsLabelVisibilityBeforeHiding;
+    }
+    
+    /**
+     * Ustawia czy etykieta ze sterowaniem była wcześniej ukryta czy widoczna. 
+     * @param visible true jeśli etykieta ze sterowaniem była wcześniej widoczna, 
+     * false w przeciwnym przypadku 
+     */
+    public static void setControlsLabelVisibilityBeforeHiding(boolean visible) {
+        controlsLabelVisibilityBeforeHiding = visible;
+    }
+    
+    /**
+     * Zwraca aktualną widoczność etykiety ze sterowaniem. 
+     * @return true jeśli etykieta ze sterowaniem jest widoczna, false w przeciwnym 
+     * przypadku 
+     */
+    public static boolean isControlsLabelVisible() {
+        return screen.getElementById("control_label").getIsVisible();
     }
     
     /**

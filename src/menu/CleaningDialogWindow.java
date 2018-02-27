@@ -48,6 +48,7 @@ public class CleaningDialogWindow extends Menu{
      */
     public void deleteAllBuildings(MouseButtonEvent evt, boolean isToggled) {
         deleteBuildings(false);
+        HUD.setControlsVisibility(HUD.isControlsLabelVisibilityBeforeHiding());
     }
     
     /**
@@ -57,6 +58,7 @@ public class CleaningDialogWindow extends Menu{
      */
     public void deleteInfiniteBuildings(MouseButtonEvent evt, boolean isToggled) {
         deleteBuildings(true);
+        HUD.setControlsVisibility(HUD.isControlsLabelVisibilityBeforeHiding());
     }
     
     /**
@@ -68,6 +70,7 @@ public class CleaningDialogWindow extends Menu{
         displayedCleaningDialogWindow = null; 
         BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(false);
         goNextMenu(screen, null);
+        HUD.setControlsVisibility(HUD.isControlsLabelVisibilityBeforeHiding());
     }
     
     /**

@@ -101,6 +101,7 @@ public class Shop extends Menu implements VisibleFromAbove{
             goNextMenu(screen, null);
         }
         hidePreview(true);
+        HUD.setControlsVisibility(HUD.isControlsLabelVisibilityBeforeHiding());
     }
     
     /**
@@ -114,6 +115,7 @@ public class Shop extends Menu implements VisibleFromAbove{
         view.setOff();
         BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(false);
         goNextMenu(screen, null);
+        HUD.setControlsVisibility(HUD.isControlsLabelVisibilityBeforeHiding());
     }
     
     /**

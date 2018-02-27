@@ -43,6 +43,7 @@ public class HUDButton extends ButtonAdapter{
                         view.setOff();
                         GameManager.getFlyByCamera().setDragToRotate(true);
                         MenuFactory.showMenu(MenuTypes.SHOP); 
+                        HUD.setControlsVisibility(false);
                     }
                 } else {
                     GameManager.getFlyByCamera().setDragToRotate(true);
@@ -62,6 +63,7 @@ public class HUDButton extends ButtonAdapter{
                         BuildingSimulator.getBuildingSimulator().getFlyByCamera()
                                 .setDragToRotate(true);
                         MenuFactory.showMenu(MenuTypes.CLEANING_DIALOG_WINDOW);
+                        HUD.setControlsVisibility(false);
                     }
                 }
             }

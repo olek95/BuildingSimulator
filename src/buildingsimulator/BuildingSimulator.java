@@ -159,6 +159,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                             if(cleaningWindow != null) cleaningWindow.cancel(null, true);
                         }
                         GameManager.pauseGame();
+                        HUD.setControlsLabelVisibilityBeforeHiding(HUD.isControlsLabelVisible());
                         GameManager.removeHUD();
                     } else {
                         MainMenu.start();

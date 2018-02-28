@@ -107,7 +107,7 @@ public class GameManager {
         physics.addCollisionListener(ArmCollisionListener.createRotateAfterImpactListener());
         physics.addCollisionListener(BuildingCollisionListener.createBuildingCollisionListener());
         displayActualUnitControlsInHUD();
-        HUD.fillGeneralControlsLabel();
+        HUD.fillGeneralControlsLabel(false);
         startedGame = true; 
     }
     
@@ -126,6 +126,7 @@ public class GameManager {
         user.resetTimer();
         //billboard.resumeAdvertisement();
         HUD.updateControlsLabel();
+        HUD.fillGeneralControlsLabel(HUD.isControlsLabelVisibilityBeforeHiding());
         HUD.setControlsVisibility(HUD.isControlsLabelVisibilityBeforeHiding());
         resetGameControls();
         startedGame = true;

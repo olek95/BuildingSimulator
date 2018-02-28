@@ -59,6 +59,7 @@ public class HUD extends AbstractAppState{
         screen.getElementById("cleaning_button").hide();
         screen.getElementById("time_label").hide();
         screen.getElementById("control_label").hide();
+        screen.getElementById("general_controls_label").hide();
     }
     
     /**
@@ -161,9 +162,10 @@ public class HUD extends AbstractAppState{
         }
     }
     
-    public static void fillGeneralControlsLabel() {
-        Actions[] actions = new Actions[]{Actions.CHANGING_CONTROLS_HUD_VISIBILITY, 
-            Actions.COPY_BUILDING, Actions.BUY_BUILDING, Actions.SHOW_CURSOR};
+    public static void fillGeneralControlsLabel(boolean showedAll) {
+        Actions[] actions = showedAll ? new Actions[]{Actions.CHANGING_CONTROLS_HUD_VISIBILITY, 
+            Actions.COPY_BUILDING, Actions.BUY_BUILDING, Actions.SHOW_CURSOR}
+                : new Actions[] {Actions.CHANGING_CONTROLS_HUD_VISIBILITY};
         String controls = "";
         for(int i = 0; i < actions.length; i++) {
             controls += actions[i].getKey() + " - "  + actions[i].getValue() + "   ";
@@ -177,8 +179,13 @@ public class HUD extends AbstractAppState{
      */
     public static void switchControlsVisibility() {
         Element controlsLabel = screen.getElementById("control_label");
-        if(controlsLabel.getIsVisible()) controlsLabel.hide();
-        else controlsLabel.show();
+        if(controlsLabel.getIsVisible()) {
+            controlsLabel.hide();
+            fillGeneralControlsLabel(false);
+        } else {
+            controlsLabel.show();
+            fillGeneralControlsLabel(true);
+        }
     }
     
     /**
@@ -192,6 +199,11 @@ public class HUD extends AbstractAppState{
             controlsLabelVisibilityBeforeHiding = controlLabel.getIsVisible();
             controlLabel.hide();
         }
+    }
+    
+    public static void setGeneralControlsLabelVisibility(boolean visible) {
+        if(visible) screen.getElementById("general_controls_label").show();
+        else screen.getElementById("general_controls_label").hide();
     }
     
     /**

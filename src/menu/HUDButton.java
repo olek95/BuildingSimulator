@@ -44,11 +44,13 @@ public class HUDButton extends ButtonAdapter{
                         GameManager.getFlyByCamera().setDragToRotate(true);
                         MenuFactory.showMenu(MenuTypes.SHOP); 
                         HUD.setControlsVisibility(false);
+                        HUD.setGeneralControlsLabelVisibility(false);
                     }
                 } else {
                     GameManager.getFlyByCamera().setDragToRotate(true);
                     MenuFactory.showMenu(MenuTypes.SHOP); 
                     HUD.setControlsVisibility(false);
+                    HUD.setGeneralControlsLabelVisibility(false);
                 }
                 GameManager.getActualUnit().getCamera().setOff();
             } else {

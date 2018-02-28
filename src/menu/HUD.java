@@ -14,6 +14,7 @@ import java.util.TimerTask;
 import settings.Control.Actions;
 import texts.Translator;
 import tonegod.gui.controls.text.Label;
+import tonegod.gui.controls.windows.Panel;
 import tonegod.gui.core.Element;
 import tonegod.gui.core.Screen;
 import tonegod.gui.effects.Effect;
@@ -36,15 +37,15 @@ public class HUD extends AbstractAppState{
         addNewButton("cleaning_button", "Interface/hudIcons/cleaning_icon.png", 0.85f);
         User user = GameManager.getUser();
         addLabel("points_label", 0, 0, 0.4f, Translator.POINTS.getValue() + ": " 
-                + user.getPoints(), BitmapFont.Align.Left, 40);
-        addLabel("message_label", 0.35f, 0, 0.4f, "", BitmapFont.Align.Center, 40);
+                + user.getPoints(), BitmapFont.Align.Left, 40, ColorRGBA.Black);
+        addLabel("message_label", 0.35f, 0, 0.4f, "", BitmapFont.Align.Center, 40,
+                ColorRGBA.Black);
         addLabel("time_label", 0, 0.05f, 0.4f, Translator.TIME.getValue() + ": "
-                + user.calculateActualTime(), BitmapFont.Align.Left, 40);
-        addLabel("control_label", 0.6f, 0.76f, 0.4f, "", BitmapFont.Align.Right, 20)
-                .setFontColor(ColorRGBA.White);
-        addLabel("general_controls_label", 0.25f, 0.92f, 0.4f, "", BitmapFont.Align.Center,
-                36).setFontColor(ColorRGBA.White);
-        screen.getElementById("control_label").hide();
+                + user.calculateActualTime(), BitmapFont.Align.Left, 40, ColorRGBA.Black);
+        addLabel("control_label", 0.6f, 0.76f, 0.4f, "", BitmapFont.Align.Right,
+                20, ColorRGBA.White).hide();
+        addLabel("general_controls_label", 0.17f, 0.92f, 0.9f, "", BitmapFont.Align.Center,
+                16, ColorRGBA.White);
     }
     
     /**
@@ -161,10 +162,14 @@ public class HUD extends AbstractAppState{
     }
     
     public static void fillGeneralControlsLabel() {
+        Actions[] actions = new Actions[]{Actions.CHANGING_CONTROLS_HUD_VISIBILITY, 
+            Actions.COPY_BUILDING, Actions.BUY_BUILDING, Actions.SHOW_CURSOR};
+        String controls = "";
+        for(int i = 0; i < actions.length; i++) {
+            controls += actions[i].getKey() + " - "  + actions[i].getValue() + "   ";
+        }
         screen.getElementById("general_controls_label")
-                .setText(Actions.CHANGING_CONTROLS_HUD_VISIBILITY.getKey() + " " 
-                + Actions.COPY_BUILDING.getKey() + " " + Actions.BUY_BUILDING.getKey() + " " 
-                + Actions.SHOW_CURSOR.getKey());
+                .setText(controls);
     }
     
     /**
@@ -238,13 +243,13 @@ public class HUD extends AbstractAppState{
     }
     
     private Label addLabel(String id, float xPosition, float yPosition, float xDimension, String text,
-            BitmapFont.Align alignment, float fontSize) {
+            BitmapFont.Align alignment, float fontSize, ColorRGBA color) {
         int width = (int)screen.getWidth(), height = (int)screen.getHeight(); 
         Label label = new Label(screen, id, new Vector2f(width * xPosition, 
                 height * yPosition), new Vector2f(width * xDimension, 40));
         label.setFontSize(fontSize);
         label.setText(text);
-        label.setFontColor(ColorRGBA.Black);
+        label.setFontColor(color);
         label.setTextAlign(alignment);
         label.setTextWrap(LineWrapMode.Word);
         screen.addElement(label);

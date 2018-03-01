@@ -84,6 +84,7 @@ public enum Translator {
     USER,
     POINTS,
     TIME,
+    BUILDINGS_NUMBER,
     GAME_CONTINUATION,
     EXIT_WARNING,
     EXIT_DESKTOP,

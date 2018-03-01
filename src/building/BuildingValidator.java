@@ -1,16 +1,13 @@
 package building;
 
+import authorization.User;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
-import buildingsimulator.PhysicsManager;
-import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.control.RigidBodyControl;
+import buildingsimulator.GameManager;
 import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Node;
 import com.jme3.scene.SceneGraphVisitorAdapter;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.control.Control;
-import java.util.ArrayList;
 import java.util.List;
 import net.wcomohundro.jme3.csg.CSGGeometry;
 
@@ -30,9 +27,12 @@ public class BuildingValidator {
         List<Spatial> gameObjects = BuildingSimulator.getBuildingSimulator().getRootNode()
                 .getChildren();
         int objectsNumber = gameObjects.size(); 
+        User user = GameManager.getUser();
         for(int i = 0; i < objectsNumber; i++){
             Spatial object = gameObjects.get(i); 
-            if(object.getName().startsWith(ElementName.BUILDING_BASE_NAME)) {
+            String objectName = object.getName(); 
+            if(objectName.startsWith(ElementName.BUILDING_BASE_NAME) && 
+                    !objectName.contains("sample")) {
                 Construction building = (Construction)object; 
                 if(!building.isSold()) {
                     building.breadthFirstTraversal(new SceneGraphVisitorAdapter() {
@@ -51,6 +51,7 @@ public class BuildingValidator {
                         }
                     });
                     building.setSold(true);
+                    user.setBuildingsNumber(user.getBuildingsNumber() + 1);
                 }
             }
         }

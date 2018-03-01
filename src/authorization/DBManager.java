@@ -8,9 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Klasa <code>DBManager</code> odpowiada za obsługę logowania i rejestracji
@@ -26,7 +24,8 @@ public class DBManager extends AbstractAppState{
             Statement statement = connection.createStatement();
             statement.execute("CREATE TABLE IF NOT EXISTS Users "
                     + "(id_user INTEGER PRIMARY KEY AUTOINCREMENT, login VARCHAR(20),"
-                    + " password VARCHAR(20), points INTEGER, time VARCHAR(20))");
+                    + " password VARCHAR(20), points INTEGER, time VARCHAR(20),"
+                    + " buildings INTEGER)");
         }
     }
     
@@ -59,8 +58,8 @@ public class DBManager extends AbstractAppState{
     public static void signUp(String login, String password) throws ClassNotFoundException, SQLException{
         try(Connection connection = connect()){
            PreparedStatement statement = connection
-                   .prepareStatement("INSERT INTO Users(login, password, points, time)"
-                   + " VALUES(?, ?, 999, '00:00:00')");
+                   .prepareStatement("INSERT INTO Users(login, password, points, time, buildings)"
+                   + " VALUES(?, ?, 999, '00:00:00', 0)");
            statement.setString(1, login);
            statement.setString(2, password);
            statement.executeUpdate();
@@ -76,12 +75,13 @@ public class DBManager extends AbstractAppState{
     public static User signIn(String login, String password) throws ClassNotFoundException, SQLException{
         try(Connection connection = connect()){
             PreparedStatement statement = connection
-                    .prepareStatement("SELECT points, time FROM Users WHERE login = ?"
+                    .prepareStatement("SELECT points, time , buildings FROM Users WHERE login = ?"
                     + " AND password = ?");
             statement.setString(1, login);
             statement.setString(2, password);
             ResultSet rs = statement.executeQuery();
-            return rs.next() ? new User(login, rs.getInt(1), rs.getString(2)) : null;
+            return rs.next() ? new User(login, rs.getInt(1), rs.getString(2), rs.getInt(3))
+                    : null;
         }
     }
     
@@ -95,10 +95,12 @@ public class DBManager extends AbstractAppState{
         String login = user.getLogin();
         try(Connection connection = connect()) {
             PreparedStatement statement = connection
-                    .prepareStatement("UPDATE Users SET points = ?, time = ? WHERE login=?");
+                    .prepareStatement("UPDATE Users SET points = ?, time = ?,"
+                    + " buildings = ? WHERE login=?");
             statement.setInt(1, user.getPoints());
             statement.setString(2, user.getTime());
-            statement.setString(3, login);
+            statement.setInt(3, user.getBuildingsNumber());
+            statement.setString(4, login);
             statement.executeUpdate(); 
         }
     }
@@ -107,11 +109,12 @@ public class DBManager extends AbstractAppState{
         List<User> statistics = new ArrayList();
         try(Connection connection = connect()) {
             PreparedStatement statement = connection
-                    .prepareStatement("SELECT login, points, time FROM Users");
+                    .prepareStatement("SELECT login, points, time, buildings FROM Users");
             ResultSet restoredStatistics = statement.executeQuery();
             while(restoredStatistics.next()){
                 statistics.add(new User(restoredStatistics.getString(1), 
-                        restoredStatistics.getInt(2), restoredStatistics.getString(3)));
+                        restoredStatistics.getInt(2), restoredStatistics.getString(3),
+                        restoredStatistics.getInt(4)));
             }
         }finally{
             return statistics; 
@@ -122,10 +125,12 @@ public class DBManager extends AbstractAppState{
         User user = null;
         try(Connection connection = connect()) {
             PreparedStatement statement = connection
-                    .prepareStatement("SELECT points, time FROM Users WHERE login = ?");
+                    .prepareStatement("SELECT points, time, buildings "
+                    + "FROM Users WHERE login = ?");
             statement.setString(1, login);
             ResultSet rs = statement.executeQuery();
-            user = rs.next() ? new User(login, rs.getInt(1), rs.getString(2)) : null;
+            user = rs.next() ? new User(login, rs.getInt(1), rs.getString(2),
+                    rs.getInt(3)) : null;
         } finally{
             return user; 
         }

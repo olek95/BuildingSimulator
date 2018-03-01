@@ -69,16 +69,14 @@ public abstract class TableMenu extends Menu{
     }
     
     /**
-     * Dodaje wiersz do tabelki. Etykiety są wyświetlane. 
-     * @param label1 etykieta pierwszej komórki 
-     * @param value1 wartość pierwszej komówki 
-     * @param label2 etykieta drugiej komórki 
+     * Dodaje wiersz do tabelki. 
+     * @param columnLabels tablica wyświetlanych etykiet  
+     * @param values tablica wartości jakie posiada dana komórka 
      */
-    protected void addRow(String label1, Object value1, String... additionalValues) {
+    protected void addRow(String[] columnLabels, Object... values) {
         Table.TableRow row = new Table.TableRow(screen, table);
-        row.addCell(label1, value1);
-        for(int i = 0; i < additionalValues.length; i++) {
-            row.addCell(additionalValues[i], additionalValues[i]);
+        for(int i = 0; i < values.length; i++) {
+            row.addCell(columnLabels[i], values[i]);
         }
         table.addRow(row);
     }

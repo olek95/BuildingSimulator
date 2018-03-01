@@ -1,5 +1,6 @@
 package building;
 
+import authorization.User;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
@@ -57,7 +58,11 @@ public class BuildingCreator implements VisibleFromAbove{
             } else {
                 copy(location);
             }
-        } else new BuildingSample().drop(location);
+        } else {
+            new BuildingSample().drop(location);
+            User user = GameManager.getUser();
+            user.setBuildingsNumber(user.getBuildingsNumber());
+        }
     }
 
     @Override

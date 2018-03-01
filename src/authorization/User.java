@@ -17,16 +17,17 @@ import java.util.logging.Logger;
  */
 public class User {
     private String login;
-    private int points; 
+    private int points, buildingsNumber; 
     private String time;
     private float seconds, stoppedTime = 0;
     private Timer timer; 
     public static final String DEFAULT_LOGIN = "Anonim", TIME_FORMAT = "HH:mm:ss";
     
-    public User(String login, int points, String time) {
+    public User(String login, int points, String time, int buildingsNumber) {
         this.login = login; 
         this.points = points; 
         this.time = time;
+        this.buildingsNumber = buildingsNumber; 
         stoppedTime = getTimeInSeconds(time);
         timer = new NanoTimer();
     }
@@ -96,6 +97,20 @@ public class User {
      * @return czas jako string 
      */
     public String getTime() { return time; }
+    
+    /**
+     * Zwraca liczbę budynków. 
+     * @return liczba budynków 
+     */
+    public int getBuildingsNumber() { return buildingsNumber; }
+    
+    /**
+     * Ustawia liczbę budynków. 
+     * @param buildingsNumber ustawia liczbę budynków
+     */
+    public void setBuildingsNumber(int buildingsNumber) { 
+        this.buildingsNumber = buildingsNumber;
+    }
     
     private float getTimeInSeconds(String time) {
         DateFormat dateFormat = new SimpleDateFormat(TIME_FORMAT);

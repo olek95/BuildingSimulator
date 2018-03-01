@@ -171,7 +171,7 @@ public class StartingMenu extends MainMenu{
     @Override
     protected void doWhenAcceptedExit(Screen screen, MenuTypes type) {
         super.doWhenAcceptedExit(screen, null); 
-        GameManager.setUser(new User(User.DEFAULT_LOGIN, 999, "00:00:00"));
+        GameManager.setUser(new User(User.DEFAULT_LOGIN, 999, "00:00:00", 0));
         super.start(); 
         GameManager.runGame(null);
     }

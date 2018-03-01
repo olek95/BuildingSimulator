@@ -87,7 +87,7 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
         // -2 bo ostatnie klawisze (lewy  i prawy przycisk myszy) nie da się zmienic
         for(int i = 0; i < actions.length - 2; i++){ 
             String key = actions[i].getKey(), actionName = actions[i].getValue();
-            addRow(actionName, actions[i], key); 
+            addRow(new String[]{actionName, key}, actions[i], key);
             restoredSettings.setProperty(actionName, key);
         }
     }

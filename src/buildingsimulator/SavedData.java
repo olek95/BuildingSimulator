@@ -1,5 +1,6 @@
 package buildingsimulator;
 
+import building.BuildingSample;
 import building.Construction;
 import building.Wall;
 import com.jme3.export.InputCapsule;
@@ -22,6 +23,7 @@ import java.util.List;
 public class SavedData implements Savable{
     private ArrayList<Wall> walls;
     private ArrayList<Construction> buildings;
+    private ArrayList<BuildingSample> sampleBuildings;
     private MobileCraneState mobileCrane; 
     private CraneState crane; 
     private String actualUnit; 
@@ -35,6 +37,7 @@ public class SavedData implements Savable{
         List<Spatial> gameObjects = root.getChildren();
         ArrayList<Wall> savedWalls = new ArrayList();
         ArrayList<Construction> savedBuildings = new ArrayList();
+        ArrayList<BuildingSample> savedSampleBuildings = new ArrayList(); 
         for(int i = 0; i < gameObjects.size(); i++) {
             Spatial object = gameObjects.get(i);
             String objectName = object.getName();
@@ -42,13 +45,17 @@ public class SavedData implements Savable{
                 if(objectName.startsWith(ElementName.WALL_BASE_NAME)) {
                     savedWalls.add((Wall)object);
                 } else {
-                    if(objectName.startsWith(ElementName.BUILDING_BASE_NAME))
-                        savedBuildings.add((Construction)object);
+                    if(objectName.startsWith(ElementName.BUILDING_BASE_NAME)) {
+                        if(objectName.contains("sample"))
+                            savedSampleBuildings.add((BuildingSample)object);
+                        else savedBuildings.add((Construction)object);
+                    }
                 }
             }
         }
         capsule.writeSavableArrayList(savedWalls, "walls", null);
         capsule.writeSavableArrayList(savedBuildings, "buildings", null);
+        capsule.writeSavableArrayList(savedSampleBuildings, "sampleBuildings", null);
         capsule.write(GameManager.getActualUnit().getCrane().getName().contains("zuraw")
                 ? "crane" : "mobileCrane", "actualUnit", null);
     }
@@ -60,6 +67,7 @@ public class SavedData implements Savable{
         crane = (CraneState)capsule.readSavable("crane", null);
         walls = capsule.readSavableArrayList("walls", null);
         buildings = capsule.readSavableArrayList("buildings", null);
+        sampleBuildings = capsule.readSavableArrayList("sampleBuildings", null);
         actualUnit = capsule.readString("actualUnit", null);
     }
     
@@ -86,6 +94,12 @@ public class SavedData implements Savable{
      * @return lista budynków 
      */
     public ArrayList<Construction> getBuildings() { return buildings; }
+    
+    /**
+     * Zwraca listę zapisanych przykładowych budynków. 
+     * @return lista przykładowych budynków 
+     */
+    public ArrayList<BuildingSample> getSampleBuildings() { return sampleBuildings; }
     
     /**
      * Zwraca zapisaną aktualnie używaną podczas zapisu jednostkę. 

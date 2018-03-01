@@ -214,8 +214,8 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     public float getPropsLowering() { return propsLowering; }
     
     private void init() {
-        setCamera(new MobileCraneCamera(getCrane()));
-        Node crane = getCrane(); 
+        Node crane = getCrane();
+        setCamera(new MobileCraneCamera(crane));
         craneControl = crane.getControl(VehicleControl.class);
         scaleTiresTexture();
         // createMirrors();

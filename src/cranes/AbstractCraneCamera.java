@@ -36,8 +36,10 @@ public abstract class AbstractCraneCamera{
      */
     public void restore() {
         if(!type.equals(CameraType.LOOSE)) {
-            craneCamera = new CameraNode("Camera", GameManager.getCamera());
-            cameraOwner.attachChild(craneCamera);
+            if(craneCamera == null) {
+                craneCamera = new CameraNode("Camera", GameManager.getCamera());
+                cameraOwner.attachChild(craneCamera);
+            }
             setPosition();
         } else {
             setOff();

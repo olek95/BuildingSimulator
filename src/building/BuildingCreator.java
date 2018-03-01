@@ -57,9 +57,7 @@ public class BuildingCreator implements VisibleFromAbove{
             } else {
                 copy(location);
             }
-        } else {
-            new BuildingSample(location);
-        }
+        } else new BuildingSample().drop(location);
     }
 
     @Override

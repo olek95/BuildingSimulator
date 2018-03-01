@@ -5,6 +5,7 @@ import eyeview.BirdsEyeView;
 import listeners.BuildingCollisionListener;
 import authorization.User;
 import billboard.Billboard;
+import building.BuildingSample;
 import building.Construction;
 import building.Wall;
 import building.WallsFactory;
@@ -69,6 +70,7 @@ public class GameManager {
             mobileCrane =  new MobileCrane(loadedData.getMobileCrane());
             crane = new Crane(loadedData.getCrane());
             List<Construction> buildings = loadedData.getBuildings();
+            buildings.addAll(loadedData.getSampleBuildings());
             int buildingsNumber = buildings.size();
             for(int i = 0; i < buildingsNumber; i++) {
                 Construction building = buildings.get(i);

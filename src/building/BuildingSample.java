@@ -115,10 +115,16 @@ class WallData {
 public class BuildingSample extends Construction{
     private Node catchNode; 
     private boolean perpendicularity;
-    public BuildingSample(Vector3f location) {
-        int newCounter = getCounter(); 
-        setCounter(++newCounter); 
-        setName(ElementName.BUILDING_BASE_NAME + newCounter + " sample");
+    
+    public BuildingSample() {
+        setName(ElementName.BUILDING_BASE_NAME + getCounter() + " sample");
+    }
+    
+    /**
+     * Umieszcza przykładowy budynek w podanej lokalizacji. 
+     * @param location 
+     */
+    public void drop(Vector3f location) {
         GameManager.addToScene(this);
         location.setY(0.2f);
         this.setLocalTranslation(location);

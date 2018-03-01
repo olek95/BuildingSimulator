@@ -279,12 +279,6 @@ public class Construction extends Node{
      */
     public static int getCounter() { return Construction.counter; }
     
-    /**
-     * Ustawia licznik 
-     * @param counter ilość budynków 
-     */
-    public static void setCounter(int counter) { Construction.counter = counter; }
-    
     protected Node merge(Wall wall1, Wall wall2, boolean ceiling, WallMode mode,
             boolean protruding, int start, int end){
         if(wall2 != null){ 

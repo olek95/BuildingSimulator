@@ -59,9 +59,11 @@ public class BuildingCreator implements VisibleFromAbove{
                 copy(location);
             }
         } else {
-            new BuildingSample().drop(location);
+            BuildingSample building = new BuildingSample();
+            building.drop(location);
+            building.setSold(true);
             User user = GameManager.getUser();
-            user.setBuildingsNumber(user.getBuildingsNumber());
+            user.setBuildingsNumber(user.getBuildingsNumber() + 1);
         }
     }
 
@@ -127,6 +129,10 @@ public class BuildingCreator implements VisibleFromAbove{
                 }
             }}
         );
+        if(clonedConstruction.isSold()) {
+            User user = GameManager.getUser();
+            user.setBuildingsNumber(user.getBuildingsNumber() + 1);
+        }
     }
     
     private String createUniqueName() {

@@ -31,8 +31,7 @@ public class BuildingValidator {
         for(int i = 0; i < objectsNumber; i++){
             Spatial object = gameObjects.get(i); 
             String objectName = object.getName(); 
-            if(objectName.startsWith(ElementName.BUILDING_BASE_NAME) && 
-                    !objectName.contains("sample")) {
+            if(objectName.startsWith(ElementName.BUILDING_BASE_NAME)) {
                 Construction building = (Construction)object; 
                 if(!building.isSold()) {
                     building.breadthFirstTraversal(new SceneGraphVisitorAdapter() {

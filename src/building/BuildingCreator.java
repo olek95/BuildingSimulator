@@ -19,10 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 import listeners.DummyCollisionListener;
 import menu.HUD;
+import menu.Shop;
 
 /**
  * Klasa <code>BuildingCreator</code> umożliwia kupowanie gotowego budynku bądź 
- * klonowanie już istniejącego. 
+ * klonowanie już istniejącego. Zarówno kupowanie, jak i kopiowanie skutkuje 
+ * odjęciem pewnej wartości punktów. 
  * @author AleksanderSklorz 
  */
 public class BuildingCreator implements VisibleFromAbove{
@@ -59,11 +61,7 @@ public class BuildingCreator implements VisibleFromAbove{
                 copy(location);
             }
         } else {
-            BuildingSample building = new BuildingSample();
-            building.drop(location);
-            building.setSold(true);
-            User user = GameManager.getUser();
-            user.setBuildingsNumber(user.getBuildingsNumber() + 1);
+            buyBuilding(location);
         }
     }
 
@@ -121,14 +119,18 @@ public class BuildingCreator implements VisibleFromAbove{
             @Override
             public void visit(Node object) {
                 if(object.getName().startsWith(ElementName.WALL_BASE_NAME)) {
-                    object.getControl(RigidBodyControl.class)
+                    Wall wall = (Wall)object; 
+                    wall.getControl(RigidBodyControl.class)
                             .setPhysicsLocation(locations.get(i).add(distance));
-                    object.getControl(RigidBodyControl.class).setPhysicsRotation(rotations.get(i));
+                    wall.getControl(RigidBodyControl.class).setPhysicsRotation(rotations.get(i));
                     i++;
-                    PhysicsManager.addPhysicsToGame(object);
+                    PhysicsManager.addPhysicsToGame(wall);
+                    GameManager.getUser().addPoints(-Shop.calculateWallCost(wall.getLength(),
+                            wall.getHeight(), wall.getType()));
                 }
             }}
         );
+        HUD.updatePoints();
         if(clonedConstruction.isSold()) {
             User user = GameManager.getUser();
             user.setBuildingsNumber(user.getBuildingsNumber() + 1);
@@ -146,5 +148,24 @@ public class BuildingCreator implements VisibleFromAbove{
             }
         }
         return ElementName.BUILDING_BASE_NAME + counter;
+    }
+    
+    private void buyBuilding(Vector3f location) {
+        BuildingSample building = new BuildingSample();
+        building.drop(location);
+        building.setSold(true);
+        User user = GameManager.getUser();
+        user.setBuildingsNumber(user.getBuildingsNumber() + 1);
+        building.breadthFirstTraversal(new SceneGraphVisitorAdapter() {
+            @Override
+            public void visit(Node object) {
+                if(object.getName().startsWith(ElementName.WALL_BASE_NAME)) {
+                    Wall wall = (Wall)object;
+                    GameManager.getUser().addPoints(-Shop.calculateWallCost(wall.getLength(),
+                            wall.getHeight(), wall.getType()));
+                }
+            }
+        });
+        HUD.updatePoints();
     }
 }

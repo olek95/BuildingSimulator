@@ -9,6 +9,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.SceneGraphVisitorAdapter;
 import com.jme3.scene.Spatial;
 import java.util.List;
+import menu.Shop;
 import net.wcomohundro.jme3.csg.CSGGeometry;
 
 /**
@@ -40,9 +41,9 @@ public class BuildingValidator {
                             if(object.getName().startsWith(ElementName.WALL_BASE_NAME)) {
                                 Wall wall = (Wall)object; 
                                 if(!wall.isStale()) {
-                                    points += wall.getWorldTranslation().y + 
-                                            (wall.getHeight() * wall.getLength() + 
-                                            wall.getType().getPrice()) * 2;
+                                    points += wall.getWorldTranslation().y +
+                                            Shop.calculateWallCost(wall.getLength(),
+                                            wall.getHeight(), wall.getType()) * 2;
                                     ((CSGGeometry)wall.getChild(ElementName.WALL_GEOMETRY))
                                             .getMaterial().setColor("Color", ColorRGBA.Gray);
                                 }

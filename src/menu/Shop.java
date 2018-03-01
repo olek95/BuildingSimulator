@@ -15,11 +15,9 @@ import eyeview.VisibleFromAbove;
 import com.jme3.font.BitmapFont;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import texts.Translator;
-import tonegod.gui.controls.lists.SelectBox;
 import tonegod.gui.controls.lists.Slider;
 import tonegod.gui.controls.lists.Spinner;
 import tonegod.gui.controls.text.TextField;
@@ -190,6 +188,14 @@ public class Shop extends Menu implements VisibleFromAbove{
                 .getPhysicsSpace().removeCollisionGroupListener(6);
     }
     
+    /**
+     * Oblicza koszt pojedynczej ściany. 
+     * @return koszt ściany 
+     */
+    public static int calculateWallCost(float x, float z, WallType type) {
+        return (int)x * (int)z + type.getPrice();
+    }
+    
     @Override
     public void setListener(DummyCollisionListener listener) {
         this.listener = listener; 
@@ -261,9 +267,9 @@ public class Shop extends Menu implements VisibleFromAbove{
             String x = xTextField.getText(), z = zTextField.getText();
             if(isProperDimension(x) && isProperDimension(z)) { 
                 result = ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex()
-                        * ((int)Float.parseFloat(x) * (int)Float.parseFloat(z)
-                        + ((WallType)((Slider)screen.getElementById("type_slider"))
-                        .getSelectedValue()).getPrice());
+                        * calculateWallCost(Float.parseFloat(x), Float.parseFloat(z), 
+                        (WallType)((Slider)screen.getElementById("type_slider"))
+                        .getSelectedValue());
                 costForMaterials = result; 
                 int selectedHeight = ((Spinner)screen.getElementById("crane_height_spinner"))
                         .getSelectedIndex(), actualHeight = Integer.parseInt(screen
@@ -343,6 +349,7 @@ public class Shop extends Menu implements VisibleFromAbove{
             previewAnimation = null;
         }
     }
+    
     private void startPreviewAnimation() {
         if(previewAnimationStop) {
             previewAnimation = new Cinematic(BuildingSimulator.getBuildingSimulator()

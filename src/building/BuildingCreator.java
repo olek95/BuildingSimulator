@@ -5,7 +5,10 @@ import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
 import buildingsimulator.PhysicsManager;
+import com.jme3.bounding.BoundingBox;
+import com.jme3.bounding.BoundingVolume;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.collision.CollisionResults;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -113,7 +116,7 @@ public class BuildingCreator implements VisibleFromAbove{
         final Vector3f distance = location.subtract(locations.get(0));
         Construction clonedConstruction = (Construction)selectedConstruction.clone();
         clonedConstruction.setName(createUniqueName());
-        GameManager.addToScene(clonedConstruction);
+        final List<Wall> clonedWalls = new ArrayList();
         clonedConstruction.breadthFirstTraversal(new SceneGraphVisitorAdapter() {
             private int i = 0;
             @Override
@@ -124,16 +127,40 @@ public class BuildingCreator implements VisibleFromAbove{
                             .setPhysicsLocation(locations.get(i).add(distance));
                     wall.getControl(RigidBodyControl.class).setPhysicsRotation(rotations.get(i));
                     i++;
-                    PhysicsManager.addPhysicsToGame(wall);
-                    GameManager.getUser().addPoints(-Shop.calculateWallCost(wall.getLength(),
-                            wall.getHeight(), wall.getType()));
+                    clonedWalls.add(wall);
                 }
             }}
         );
-        HUD.updatePoints();
-        if(clonedConstruction.isSold()) {
-            User user = GameManager.getUser();
-            user.setBuildingsNumber(user.getBuildingsNumber() + 1);
+        List<Spatial> gameObjects = BuildingSimulator.getBuildingSimulator().getRootNode()
+                .getChildren();
+        int gameObjectsNumber = gameObjects.size(); 
+        boolean intersected = false; 
+        BoundingVolume bounding = clonedConstruction.getWorldBound();
+        bounding.setCenter(location);
+        for(int i = 0; i < gameObjectsNumber && !intersected; i++) {
+            Spatial gameObject = gameObjects.get(i); 
+            String gameObjectName = gameObject.getName(); 
+            if(!gameObjectName.equals(ElementName.SCENE) 
+                    && gameObject.getWorldBound().intersects(bounding)) {
+                intersected = gameObjectName.contains(ElementName.STATIC_CRANE) ?
+                        gameObject.collideWith(bounding, new CollisionResults()) != 0 
+                        : true; 
+            }
+        }
+        if(!intersected) {
+            int clonedWallsNumber = clonedWalls.size(); 
+            for(int i = 0; i < clonedWallsNumber; i++) {
+                Wall wall = clonedWalls.get(i);
+                PhysicsManager.addPhysicsToGame(wall);
+                GameManager.getUser().addPoints(-Shop.calculateWallCost(wall.getLength(),
+                            wall.getHeight(), wall.getType()));
+            }
+            GameManager.addToScene(clonedConstruction);
+            HUD.updatePoints();
+            if(clonedConstruction.isSold()) {
+                User user = GameManager.getUser();
+                user.setBuildingsNumber(user.getBuildingsNumber() + 1);
+            }
         }
     }
     

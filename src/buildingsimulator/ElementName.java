@@ -17,6 +17,7 @@ public class ElementName {
     public static final String ROPE_HOOK = "ropeHook";
     public static final String HOOK_HANDLE = "hookHandle";
     public static final String CRANE = "dzwig";
+    public static final String STATIC_CRANE = "zuraw";
     public static final String LADDER = "ladder2";
     public static final String PROTRACTILE_PROP = "protractileProp1";
     public static final String PROP = "prop";

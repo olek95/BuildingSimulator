@@ -77,6 +77,31 @@ public class BuildingCreator implements VisibleFromAbove{
     @Override
     public void unload() {}
     
+    /**
+     * Sprawdza czy granice budynku przecinają się z jakimkolwiek obiektem ze świata gry. 
+     * @param bounding granice sprawdzanego budynku 
+     * @return true jeśli granice budynku przecinają się z jakimkolwiek obiektem, 
+     * false gdy dana przestrzeń jest pusta 
+     */
+    public static boolean checkIntersection(BoundingVolume bounding) {
+        List<Spatial> gameObjects = BuildingSimulator.getBuildingSimulator().getRootNode()
+                .getChildren();
+        int gameObjectsNumber = gameObjects.size();
+        for(int i = 0; i < gameObjectsNumber; i++) {
+            Spatial gameObject = gameObjects.get(i); 
+            String gameObjectName = gameObject.getName(); 
+            if(!gameObjectName.equals(ElementName.SCENE) 
+                    && gameObject.getWorldBound().intersects(bounding)) {
+                if(gameObjectName.contains(ElementName.STATIC_CRANE)){
+                    if(gameObject.collideWith(bounding, new CollisionResults()) != 0) {
+                        return true;
+                    }
+                } else return true;
+            }
+        }
+        return false;
+    }
+    
     private Construction getSelectedConstruction(final Vector3f location) {
         List<Spatial> gameObjects = BuildingSimulator.getBuildingSimulator()
                 .getRootNode().getChildren();
@@ -115,7 +140,8 @@ public class BuildingCreator implements VisibleFromAbove{
         );
         final Vector3f distance = location.subtract(locations.get(0));
         Construction clonedConstruction = (Construction)selectedConstruction.clone();
-        clonedConstruction.setName(createUniqueName());
+        clonedConstruction.setName(createUniqueName(clonedConstruction.getName()));
+        System.out.println(clonedConstruction.getName());
         final List<Wall> clonedWalls = new ArrayList();
         clonedConstruction.breadthFirstTraversal(new SceneGraphVisitorAdapter() {
             private int i = 0;
@@ -150,54 +176,30 @@ public class BuildingCreator implements VisibleFromAbove{
         }
     }
     
-    private String createUniqueName() {
-        List<Spatial> gameObjects = BuildingSimulator.getBuildingSimulator()
-                .getRootNode().getChildren();
-        int gameObjectsNumber = gameObjects.size(), counter = 0;
-        for(int i = 0; i < gameObjectsNumber; i++) {
-            Spatial object = gameObjects.get(i);
-            if(object.getName().startsWith(ElementName.BUILDING_BASE_NAME)) {
-                counter++;
-            }
-        }
-        return ElementName.BUILDING_BASE_NAME + counter;
+    private String createUniqueName(String oldName) {
+        int counter = Construction.getCounter(); 
+        Construction.setCounter(++counter);
+        return ElementName.BUILDING_BASE_NAME + counter + (oldName.endsWith("sample") ? 
+                " sample" : "");
     }
     
     private void buyBuilding(Vector3f location) {
         BuildingSample building = new BuildingSample();
-        building.drop(location);
-        building.setSold(true);
-        User user = GameManager.getUser();
-        user.setBuildingsNumber(user.getBuildingsNumber() + 1);
-        building.breadthFirstTraversal(new SceneGraphVisitorAdapter() {
-            @Override
-            public void visit(Node object) {
-                if(object.getName().startsWith(ElementName.WALL_BASE_NAME)) {
-                    Wall wall = (Wall)object;
-                    GameManager.getUser().addPoints(-Shop.calculateWallCost(wall.getLength(),
-                            wall.getHeight(), wall.getType()));
-                }
-            }
-        });
-        HUD.updatePoints();
-    }
-    
-    public static boolean checkIntersection(BoundingVolume bounding) {
-        List<Spatial> gameObjects = BuildingSimulator.getBuildingSimulator().getRootNode()
-                .getChildren();
-        int gameObjectsNumber = gameObjects.size();
-        for(int i = 0; i < gameObjectsNumber; i++) {
-            Spatial gameObject = gameObjects.get(i); 
-            String gameObjectName = gameObject.getName(); 
-            if(!gameObjectName.equals(ElementName.SCENE) 
-                    && gameObject.getWorldBound().intersects(bounding)) {
-                if(gameObjectName.contains(ElementName.STATIC_CRANE)){
-                    if(gameObject.collideWith(bounding, new CollisionResults()) != 0) {
-                        return true;
+        if(building.drop(location)) {
+            building.setSold(true);
+            User user = GameManager.getUser();
+            user.setBuildingsNumber(user.getBuildingsNumber() + 1);
+            building.breadthFirstTraversal(new SceneGraphVisitorAdapter() {
+                @Override
+                public void visit(Node object) {
+                    if(object.getName().startsWith(ElementName.WALL_BASE_NAME)) {
+                        Wall wall = (Wall)object;
+                        GameManager.getUser().addPoints(-Shop.calculateWallCost(wall.getLength(),
+                                wall.getHeight(), wall.getType()));
                     }
-                } else return true;
-            }
-        }
-        return false;
+                }
+            });
+            HUD.updatePoints();
+        } else Construction.setCounter(Construction.getCounter() - 1);
     }
 }

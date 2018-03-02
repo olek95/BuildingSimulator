@@ -124,9 +124,11 @@ public class BuildingSample extends Construction{
     
     /**
      * Umieszcza przykładowy budynek w podanej lokalizacji. 
-     * @param location 
+     * @param location
+     * @return true jeśli udało sie umieścić budynek, false jeśli zabrakło dla
+     * niego miejsca 
      */
-    public void drop(Vector3f location) {
+    public boolean drop(Vector3f location) {
         location.setY(0.2f);
         setLocalTranslation(location);
         List<Wall> walls1 = createRoom(this, location, new WallData(WallType.WALL, null, 
@@ -158,9 +160,9 @@ public class BuildingSample extends Construction{
                 new WallData(WallType.WALL, CatchNode.LEFT, WallMode.VERTICAL,
                 new Vector3f(3.6f, 0.2f, 4), false), new WallData(WallType.WALL,
                 CatchNode.RIGHT, WallMode.VERTICAL, new Vector3f(3.6f, 0.2f, 4), false));
-        createRoom(walls1.get(1), location, new WallData(WallType.WALL, CatchNode.NORTH, 
+        List<Wall> walls5 = createRoom(walls1.get(1), location, new WallData(WallType.WALL, CatchNode.NORTH, 
                 new Vector3f(6, 0.2f, 4), false, true, walls2.get(1)));
-        createRoom(walls3.get(1), location, new WallData(WallType.WALL, CatchNode.NORTH, 
+        List<Wall> walls6 = createRoom(walls3.get(1), location, new WallData(WallType.WALL, CatchNode.NORTH, 
                 new Vector3f(6, 0.2f, 4), false, true, walls3.get(2)));
         List<Wall> walls7 = createRoom(walls4.get(1), location, new WallData(WallType.WALL, CatchNode.NORTH, 
                 new Vector3f(6, 0.2f, 4), false, true, walls4.get(2)),
@@ -170,12 +172,15 @@ public class BuildingSample extends Construction{
                 new WallData(WallType.WALL, CatchNode.LEFT, WallMode.VERTICAL,
                 new Vector3f(3.6f, 0.2f, 4), false), new WallData(WallType.WALL,
                 CatchNode.RIGHT, WallMode.VERTICAL, new Vector3f(3.6f, 0.2f, 4), false));
-        createRoom(walls7.get(1), location, new WallData(WallType.WALL, CatchNode.NORTH, 
+        List<Wall> walls8 = createRoom(walls7.get(1), location, new WallData(WallType.WALL, CatchNode.NORTH, 
                 new Vector3f(6, 0.2f, 4), false, true, walls7.get(2)));
         walls1.addAll(walls2);
         walls1.addAll(walls3);
         walls1.addAll(walls4);
+        walls1.addAll(walls5);
+        walls1.addAll(walls6);
         walls1.addAll(walls7);
+        walls1.addAll(walls8);
         if(!BuildingCreator.checkIntersection(getWorldBound())) {
             int wallsNumber = walls1.size(); 
             for(int i = 0; i < wallsNumber; i++) {
@@ -183,7 +188,9 @@ public class BuildingSample extends Construction{
                 PhysicsManager.addPhysicsToGame(wall);
             }
             GameManager.addToScene(this);
+            return true; 
         }
+        return false; 
     }
     
     @Override

@@ -3,12 +3,14 @@ package building;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
+import buildingsimulator.PhysicsManager;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import java.util.ArrayList;
 import java.util.List;
 import net.wcomohundro.jme3.csg.CSGGeometry;
 
@@ -125,53 +127,63 @@ public class BuildingSample extends Construction{
      * @param location 
      */
     public void drop(Vector3f location) {
-        GameManager.addToScene(this);
         location.setY(0.2f);
-        this.setLocalTranslation(location);
-        Wall[] walls1 = createRoom(this, location, new WallData(WallType.WALL, null, 
+        setLocalTranslation(location);
+        List<Wall> walls1 = createRoom(this, location, new WallData(WallType.WALL, null, 
             WallMode.HORIZONTAL, new Vector3f(6, 0.2f, 4), false),
                 new WallData(WallType.DOOR, CatchNode.UP, WallMode.VERTICAL,
                 new Vector3f(6, 0.2f, 4), true), new WallData(WallType.FRONT_DOOR,
                 CatchNode.BOTTOM, WallMode.VERTICAL, new Vector3f(6, 0.2f, 4), false), 
                 new WallData(WallType.ONE_BIG_WINDOW, CatchNode.LEFT, WallMode.VERTICAL, 
                 new Vector3f(3.7f, 0.2f, 4), false));
-        Wall[] walls2 = createRoom(walls1[0], location, new WallData(WallType.WALL, CatchNode.NORTH, 
+        List<Wall> walls2 = createRoom(walls1.get(0), location, new WallData(WallType.WALL, CatchNode.NORTH, 
             WallMode.HORIZONTAL, new Vector3f(6, 0.2f, 4), false), 
                 new WallData(WallType.WINDOWS, CatchNode.UP, WallMode.VERTICAL,
                 new Vector3f(6, 0.2f, 4), false), new WallData(WallType.ONE_BIG_WINDOW,
                 CatchNode.LEFT, WallMode.VERTICAL, new Vector3f(3.7f, 0.2f, 4), false),
                 new WallData(WallType.WALL, CatchNode.RIGHT, WallMode.VERTICAL,
                 new Vector3f(3.7f, 0.2f, 4), false));
-        Wall[] walls3 = createRoom(walls1[0], location, new WallData(WallType.WALL, CatchNode.EAST, 
+        List<Wall> walls3 = createRoom(walls1.get(0), location, new WallData(WallType.WALL, CatchNode.EAST, 
             WallMode.HORIZONTAL, new Vector3f(6, 0.2f, 4), false), 
                 new WallData(WallType.WALL, CatchNode.BOTTOM, 
                 WallMode.VERTICAL, new Vector3f(6, 0.2f, 4), false), 
                 new WallData(WallType.WINDOWS, CatchNode.UP, WallMode.VERTICAL,
                 new Vector3f(6f, 0.2f, 4), false), new WallData(WallType.ONE_BIG_WINDOW,
                 CatchNode.RIGHT, WallMode.VERTICAL, new Vector3f(3.6f, 0.2f, 4), false));
-        Wall[] walls4 = createRoom(walls1[2], location, new WallData(WallType.WALL, CatchNode.NORTH, 
-                new Vector3f(6, 0.2f, 4), false, true, walls1[1]), 
+        List<Wall> walls4 = createRoom(walls1.get(2), location, new WallData(WallType.WALL, CatchNode.NORTH, 
+                new Vector3f(6, 0.2f, 4), false, true, walls1.get(1)), 
                 new WallData(WallType.WINDOWS, CatchNode.BOTTOM, WallMode.VERTICAL,
                 new Vector3f(6, 0.2f, 4), false), new WallData(WallType.WINDOWS,
                 CatchNode.UP, WallMode.VERTICAL, new Vector3f(6, 0.2f, 4), false),
                 new WallData(WallType.WALL, CatchNode.LEFT, WallMode.VERTICAL,
                 new Vector3f(3.6f, 0.2f, 4), false), new WallData(WallType.WALL,
                 CatchNode.RIGHT, WallMode.VERTICAL, new Vector3f(3.6f, 0.2f, 4), false));
-        createRoom(walls1[1], location, new WallData(WallType.WALL, CatchNode.NORTH, 
-                new Vector3f(6, 0.2f, 4), false, true, walls2[1]));
-        createRoom(walls3[1], location, new WallData(WallType.WALL, CatchNode.NORTH, 
-                new Vector3f(6, 0.2f, 4), false, true, walls3[2]) );
-        Wall[] walls7 = createRoom(walls4[1], location, new WallData(WallType.WALL, CatchNode.NORTH, 
-                new Vector3f(6, 0.2f, 4), false, true, walls4[2]),
+        createRoom(walls1.get(1), location, new WallData(WallType.WALL, CatchNode.NORTH, 
+                new Vector3f(6, 0.2f, 4), false, true, walls2.get(1)));
+        createRoom(walls3.get(1), location, new WallData(WallType.WALL, CatchNode.NORTH, 
+                new Vector3f(6, 0.2f, 4), false, true, walls3.get(2)));
+        List<Wall> walls7 = createRoom(walls4.get(1), location, new WallData(WallType.WALL, CatchNode.NORTH, 
+                new Vector3f(6, 0.2f, 4), false, true, walls4.get(2)),
                 new WallData(WallType.WINDOWS, CatchNode.BOTTOM, WallMode.VERTICAL,
                 new Vector3f(6, 0.2f, 4), false), new WallData(WallType.WINDOWS,
                 CatchNode.UP, WallMode.VERTICAL, new Vector3f(6, 0.2f, 4), false),
                 new WallData(WallType.WALL, CatchNode.LEFT, WallMode.VERTICAL,
                 new Vector3f(3.6f, 0.2f, 4), false), new WallData(WallType.WALL,
                 CatchNode.RIGHT, WallMode.VERTICAL, new Vector3f(3.6f, 0.2f, 4), false));
-        createRoom(walls7[1], location, new WallData(WallType.WALL, CatchNode.NORTH, 
-                new Vector3f(6, 0.2f, 4), false, true, walls7[2]));
-        
+        createRoom(walls7.get(1), location, new WallData(WallType.WALL, CatchNode.NORTH, 
+                new Vector3f(6, 0.2f, 4), false, true, walls7.get(2)));
+        walls1.addAll(walls2);
+        walls1.addAll(walls3);
+        walls1.addAll(walls4);
+        walls1.addAll(walls7);
+        if(!BuildingCreator.checkIntersection(getWorldBound())) {
+            int wallsNumber = walls1.size(); 
+            for(int i = 0; i < wallsNumber; i++) {
+                Wall wall = walls1.get(i);
+                PhysicsManager.addPhysicsToGame(wall);
+            }
+            GameManager.addToScene(this);
+        }
     }
     
     @Override
@@ -210,12 +222,12 @@ public class BuildingSample extends Construction{
         return this; 
     }
     
-    private Wall[] createRoom(Node owner, Vector3f location, WallData... data) {
-        Wall[] walls = new Wall[data.length];
+    private List<Wall> createRoom(Node owner, Vector3f location, WallData... data) {
+        List<Wall> walls = new ArrayList(data.length);
         for(int i = 0; i < data.length; i++) {
             Wall wall = (Wall)WallsFactory.createWall(data[i].getType(), location, 
                 data[i].getDimensions(), 0.00001f, false, null);
-            walls[i] = wall;
+            walls.add(wall);
             if(owner.equals(this)) {
                 wall.setRecentlyHitObject(BuildingSimulator.getBuildingSimulator()
                         .getRootNode().getChild(ElementName.MAP_FIELD_PART_NAME));
@@ -242,8 +254,12 @@ public class BuildingSample extends Construction{
                 } else {
                     add(wall, (Wall)owner, data[i].getMode(), data[i].isProtruding());
                 }
-                walls[0].setLocalTranslation(walls[0].worldToLocal(walls[0].getControl(RigidBodyControl.class).getPhysicsLocation(), null));
+                Wall newOwner = walls.get(0);
+                newOwner.setLocalTranslation(newOwner.worldToLocal(newOwner
+                        .getControl(RigidBodyControl.class).getPhysicsLocation(), null));
             }
+            BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
+                        .remove(wall.getControl(RigidBodyControl.class));
             randomColor(wall);
             if(i == 0) owner = wall;
         }

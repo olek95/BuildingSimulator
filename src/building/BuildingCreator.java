@@ -131,23 +131,9 @@ public class BuildingCreator implements VisibleFromAbove{
                 }
             }}
         );
-        List<Spatial> gameObjects = BuildingSimulator.getBuildingSimulator().getRootNode()
-                .getChildren();
-        int gameObjectsNumber = gameObjects.size(); 
-        boolean intersected = false; 
         BoundingVolume bounding = clonedConstruction.getWorldBound();
         bounding.setCenter(location);
-        for(int i = 0; i < gameObjectsNumber && !intersected; i++) {
-            Spatial gameObject = gameObjects.get(i); 
-            String gameObjectName = gameObject.getName(); 
-            if(!gameObjectName.equals(ElementName.SCENE) 
-                    && gameObject.getWorldBound().intersects(bounding)) {
-                intersected = gameObjectName.contains(ElementName.STATIC_CRANE) ?
-                        gameObject.collideWith(bounding, new CollisionResults()) != 0 
-                        : true; 
-            }
-        }
-        if(!intersected) {
+        if(!checkIntersection(bounding)) {
             int clonedWallsNumber = clonedWalls.size(); 
             for(int i = 0; i < clonedWallsNumber; i++) {
                 Wall wall = clonedWalls.get(i);
@@ -194,5 +180,24 @@ public class BuildingCreator implements VisibleFromAbove{
             }
         });
         HUD.updatePoints();
+    }
+    
+    public static boolean checkIntersection(BoundingVolume bounding) {
+        List<Spatial> gameObjects = BuildingSimulator.getBuildingSimulator().getRootNode()
+                .getChildren();
+        int gameObjectsNumber = gameObjects.size();
+        for(int i = 0; i < gameObjectsNumber; i++) {
+            Spatial gameObject = gameObjects.get(i); 
+            String gameObjectName = gameObject.getName(); 
+            if(!gameObjectName.equals(ElementName.SCENE) 
+                    && gameObject.getWorldBound().intersects(bounding)) {
+                if(gameObjectName.contains(ElementName.STATIC_CRANE)){
+                    if(gameObject.collideWith(bounding, new CollisionResults()) != 0) {
+                        return true;
+                    }
+                } else return true;
+            }
+        }
+        return false;
     }
 }

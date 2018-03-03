@@ -114,12 +114,16 @@ public class HUD extends AbstractAppState{
     }
     
     /**
-     * Zmienia kolor komunikatów. 
-     * @param black true jeśli komunikat ma mieć kolor czarny, false jeśli biały
+     * Zmienia kolor komunikatów, liczby punktów, czasu oraz ikon w HUD. 
+     * Przełączają się między kolorem białym a czarnym. 
+     * @param black true jeśli elementy mają mieć kolor czarny, false jeśli biały
      */
     public static void changeHUDColor(boolean black) {
-        screen.getElementById("message_label").setFontColor(black ? ColorRGBA.Black : 
-                ColorRGBA.White);
+        ColorRGBA color = black ? ColorRGBA.Black : ColorRGBA.White;
+        screen.getElementById("message_label").setFontColor(color);
+        screen.getElementById("time_label").setFontColor(color);
+        screen.getElementById("points_label").setFontColor(color);
+        changeButtonsIcon(black);
     }
     
     /**
@@ -262,8 +266,17 @@ public class HUD extends AbstractAppState{
                 0), new  Vector2f(32, 32));
         button.removeEffect(Effect.EffectEvent.Hover);
         button.removeEffect(Effect.EffectEvent.Press);
-        button.setColorMap(path);
         screen.addElement(button);
+    }
+    
+    private static void changeButtonsIcon(boolean black) {
+        String color = black ? "black" : "white";
+        screen.getElementById("finish_building_button")
+                .setColorMap("Interface/hudIcons/end_building_icon_" + color +".png");
+        screen.getElementById("shop_button")
+                .setColorMap("Interface/hudIcons/shop_icon_" + color +".png");
+        screen.getElementById("cleaning_button")
+                .setColorMap("Interface/hudIcons/cleaning_icon_" + color +".png");
     }
     
     private Label addLabel(String id, float xPosition, float yPosition, float xDimension, String text,

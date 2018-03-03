@@ -101,6 +101,9 @@ public class HUD extends AbstractAppState{
         }, 3000);
     }
     
+    /**
+     * Usuwa wyświetlony komunikat. 
+     */
     public static void removeMessage() {
         screen.getElementById("message_label").setText("");
         shouldMessageBeDeleted = false; 
@@ -108,6 +111,15 @@ public class HUD extends AbstractAppState{
             messageTimer.cancel();
             messageTimer = null;
         }
+    }
+    
+    /**
+     * Zmienia kolor komunikatów. 
+     * @param black true jeśli komunikat ma mieć kolor czarny, false jeśli biały
+     */
+    public static void changeHUDColor(boolean black) {
+        screen.getElementById("message_label").setFontColor(black ? ColorRGBA.Black : 
+                ColorRGBA.White);
     }
     
     /**

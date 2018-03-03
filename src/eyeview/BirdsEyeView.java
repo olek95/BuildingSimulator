@@ -14,6 +14,7 @@ import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import cranes.CameraType;
 import cranes.CraneAbstract;
 import cranes.mobileCrane.MobileCrane;
 import menu.HUD;
@@ -94,8 +95,13 @@ public class BirdsEyeView implements ActionListener{
         MobileCrane mobileCrane = GameManager.getMobileCrane();
         CraneAbstract crane = GameManager.getActualUnit();
         boolean isMobileCrane = crane.equals(mobileCrane);
-        if((isMobileCrane && !mobileCrane.isDuringStateChanging()) || !isMobileCrane) 
+        if(isMobileCrane) {
+            if(!mobileCrane.isDuringStateChanging())
+                Control.addListener(Control.getActualListener());
+            HUD.changeHUDColor(!mobileCrane.getCamera().getType().equals(CameraType.CABIN));
+        } else {
             Control.addListener(Control.getActualListener());
+        }
         GameManager.getCrane().setView(null);
         viewOwner = null;
         crane.getCamera().restore();

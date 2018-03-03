@@ -25,6 +25,7 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.Renderer;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import cranes.CameraType;
 import java.util.List;
 import menu.CleaningDialogWindow;
 import menu.HUD;
@@ -152,6 +153,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                                     .getAttachedObject() == null) {
                                 GameManager.getActualUnit().getCamera().setOff();
                                 crane.startMoving();
+                                HUD.changeHUDColor(true);
                             } else {
                                 HUD.setMessage(Translator.REQUIREMENT_DETACHING_WALL
                                         .getValue());
@@ -175,6 +177,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     mobileCrane.setUsing(true);
                     crane.getCamera().setOff();
                     GameManager.setActualUnit(mobileCrane);
+                    HUD.changeHUDColor(!mobileCrane.getCamera().getType()
+                            .equals(CameraType.CABIN));
                     break;
                 case SECOND:
                     if(BirdsEyeView.isActive() || GameManager.getActualUnit().equals(crane))
@@ -190,6 +194,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     crane.setUsing(true);
                     mobileCrane.getCamera().setOff();
                     GameManager.setActualUnit(crane);
+                    HUD.changeHUDColor(true);
                     break;
                 case COPY_BUILDING: 
                     buildingCloning = true; 
@@ -199,6 +204,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     view = creator.getView();
                     if(view == null) {
                         if(!BirdsEyeView.isActive()) {
+                            HUD.changeHUDColor(true);
                             GameManager.getActualUnit().getCamera().setOff();
                             creator.start();
                         }

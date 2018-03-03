@@ -17,6 +17,8 @@ import com.jme3.cinematic.Cinematic;
 import com.jme3.input.FlyByCamera;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import cranes.AbstractCraneCamera;
+import cranes.CameraType;
 import cranes.crane.Crane;
 import cranes.mobileCrane.MobileCrane;
 import cranes.mobileCrane.MobileCraneArmControl;
@@ -81,18 +83,22 @@ public class GameManager {
                 if(!((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing())
                     Control.addListener(mobileCrane);
                 crane.getCamera().setOff();
-                mobileCrane.getCamera().restore();
+                AbstractCraneCamera mobileCraneCam = mobileCrane.getCamera();
+                mobileCraneCam.restore();
+                HUD.changeHUDColor(!mobileCraneCam.getType().equals(CameraType.CABIN));
             } else {
                 actualUnit = crane;
                 Control.addListener(crane.getArmControl());
                 crane.setUsing(true);
                 mobileCrane.getCamera().setOff();
                 crane.getCamera().restore();
+                HUD.changeHUDColor(true);
             }
         } else {
             mobileCrane = new MobileCrane(); 
             crane = new Crane();
             actualUnit = mobileCrane;
+            HUD.changeHUDColor(false);
             crane.getCamera().setOff();
             if(!((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing())
                 Control.addListener(mobileCrane);

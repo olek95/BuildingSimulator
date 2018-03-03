@@ -22,6 +22,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.texture.Texture;
 import com.jme3.water.SimpleWaterProcessor;
+import cranes.CameraType;
 import cranes.Hook;
 import java.util.Arrays;
 import java.util.List;
@@ -123,7 +124,11 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                 if(isPressed) getOff();
                 break;
             case CHANGE_CAMERA: 
-                if(isPressed) ((MobileCraneCamera)getCamera()).changeCamera(false);
+                if(isPressed) {
+                    MobileCraneCamera cam = (MobileCraneCamera)getCamera(); 
+                    cam.changeCamera(false);
+                    HUD.changeHUDColor(!cam.getType().equals(CameraType.CABIN));
+                }
         }
     }
     
@@ -298,6 +303,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                 HUD.fillControlInformation(getArmControl().getAvailableActions(),
                         hasLooseCamera() ? new String[] {Translator.MOUSE_MOVEMENT
                         .getValue()} : null, 0, 0, 1, 1);
+                HUD.changeHUDColor(true);
             }
         }
     }
@@ -312,6 +318,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                 ((MobileCraneCamera)getCamera()).changeCamera(false);
                 HUD.fillControlInformation(availableActions, hasLooseCamera() 
                         ? new String[] {Translator.MOUSE_MOVEMENT.getValue()} : null, 0, 0);
+                HUD.changeHUDColor(false);
             }
         }
     }

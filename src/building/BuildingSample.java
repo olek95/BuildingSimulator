@@ -133,10 +133,10 @@ public class BuildingSample extends Construction{
     }
     
     private void randomColor(Wall wall) {
-        ColorRGBA[] colors = new ColorRGBA[] {ColorRGBA.Black, ColorRGBA.BlackNoAlpha, 
-            ColorRGBA.Blue, ColorRGBA.Brown, ColorRGBA.Cyan, ColorRGBA.DarkGray, 
-            ColorRGBA.Green, ColorRGBA.LightGray, ColorRGBA.Magenta, ColorRGBA.Orange,
-            ColorRGBA.Pink, ColorRGBA.Yellow};
+        ColorRGBA[] colors = new ColorRGBA[] {ColorRGBA.White, ColorRGBA.Black,
+            ColorRGBA.BlackNoAlpha, ColorRGBA.Blue, ColorRGBA.Brown, ColorRGBA.Cyan,
+            ColorRGBA.DarkGray, ColorRGBA.Green, ColorRGBA.LightGray, ColorRGBA.Magenta,
+            ColorRGBA.Orange, ColorRGBA.Pink, ColorRGBA.Yellow};
         ((CSGGeometry)wall.getChild(ElementName.WALL_GEOMETRY)).getMaterial().setColor("Color",
                 colors[FastMath.rand.nextInt(colors.length)]);
     }
@@ -255,6 +255,7 @@ public class BuildingSample extends Construction{
         walls1.addAll(walls9);
         walls1.addAll(walls10);
         walls1.addAll(walls11);
+        walls1.addAll(walls12);
         return walls1;
     }
     

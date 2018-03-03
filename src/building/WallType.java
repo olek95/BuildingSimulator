@@ -11,12 +11,12 @@ import texts.Translator;
  * @author AleksanderSklorz
  */
 public enum WallType {
-    WALL(10), 
-    WINDOWS(5),
-    ONE_BIG_WINDOW(5),
-    ONE_BIGGER_WINDOW(5),
-    FRONT_DOOR(5),
-    DOOR(5);
+    WALL(5), 
+    WINDOWS(10),
+    ONE_BIG_WINDOW(10),
+    ONE_BIGGER_WINDOW(10),
+    FRONT_DOOR(10),
+    DOOR(10);
     private int price;
     private WallType(int price) { this.price = price; }
     

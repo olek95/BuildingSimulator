@@ -13,6 +13,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import buildingsimulator.PhysicsManager;
+import cranes.CameraType;
 import menu.HUD;
 import texts.Translator;
 
@@ -99,6 +100,13 @@ public class MobileCraneArmControl extends ArmControl{
         } else {
             HUD.setMessage(Translator.REQUIREMENT_DETACHING_WALL.getValue());
         }
+    }
+    
+    @Override
+    protected void changeCamera() {
+        MobileCraneCamera cam = (MobileCraneCamera)getCamera();
+        cam.changeCamera(true);
+        HUD.changeHUDColor(!cam.getType().equals(CameraType.ARM_CABIN));
     }
     
     /**

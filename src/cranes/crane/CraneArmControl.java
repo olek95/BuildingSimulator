@@ -82,6 +82,9 @@ public class CraneArmControl extends ArmControl{
         }
     }
     
+    @Override
+    protected void changeCamera() { ((CraneCamera)getCamera()).changeCamera(); }
+    
     private RigidBodyControl setProperControlLocation(Spatial object, Vector3f displacement){
         RigidBodyControl control = object.getControl(RigidBodyControl.class);
         control.setPhysicsLocation(object.getLocalTranslation().add(displacement));

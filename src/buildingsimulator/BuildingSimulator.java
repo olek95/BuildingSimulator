@@ -171,14 +171,20 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                         break;
                     inputManager.removeListener(crane.getArmControl());
                     crane.setUsing(false);
-                    Control.addListener(((MobileCraneArmControl)mobileCrane
-                            .getArmControl()).isUsing() ? mobileCrane.getArmControl()
-                            : mobileCrane);
+                    MobileCraneArmControl armControl = (MobileCraneArmControl)mobileCrane
+                            .getArmControl();
+                    if(armControl.isUsing()) {
+                        Control.addListener(armControl);
+                        HUD.changeHUDColor(!armControl.getCamera().getType()
+                            .equals(CameraType.ARM_CABIN));
+                    } else {
+                        Control.addListener(mobileCrane);
+                        HUD.changeHUDColor(!mobileCrane.getCamera().getType()
+                            .equals(CameraType.CABIN));
+                    }
                     mobileCrane.setUsing(true);
                     crane.getCamera().setOff();
                     GameManager.setActualUnit(mobileCrane);
-                    HUD.changeHUDColor(!mobileCrane.getCamera().getType()
-                            .equals(CameraType.CABIN));
                     break;
                 case SECOND:
                     if(BirdsEyeView.isActive() || GameManager.getActualUnit().equals(crane))

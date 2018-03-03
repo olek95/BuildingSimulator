@@ -80,12 +80,18 @@ public class GameManager {
             if(loadedData.getActualUnit().equals(ElementName.MOBILE_CRANE)) {
                 actualUnit = mobileCrane;
                 mobileCrane.setUsing(true);
-                if(!((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing())
-                    Control.addListener(mobileCrane);
-                crane.getCamera().setOff();
                 AbstractCraneCamera mobileCraneCam = mobileCrane.getCamera();
+                MobileCraneArmControl armControl = (MobileCraneArmControl)mobileCrane
+                        .getArmControl();
+                if(!armControl.isUsing()) {
+                    Control.addListener(mobileCrane);
+                    HUD.changeHUDColor(!mobileCraneCam.getType().equals(CameraType.CABIN));
+                } else {
+                    HUD.changeHUDColor(!armControl.getCamera().getType()
+                            .equals(CameraType.ARM_CABIN));
+                }
+                crane.getCamera().setOff();
                 mobileCraneCam.restore();
-                HUD.changeHUDColor(!mobileCraneCam.getType().equals(CameraType.CABIN));
             } else {
                 actualUnit = crane;
                 Control.addListener(crane.getArmControl());
@@ -98,10 +104,16 @@ public class GameManager {
             mobileCrane = new MobileCrane(); 
             crane = new Crane();
             actualUnit = mobileCrane;
-            HUD.changeHUDColor(false);
             crane.getCamera().setOff();
-            if(!((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing())
+            MobileCraneArmControl armControl = (MobileCraneArmControl)mobileCrane
+                    .getArmControl();
+            if(!armControl.isUsing()) {
                 Control.addListener(mobileCrane);
+                HUD.changeHUDColor(!mobileCrane.getCamera().getType().equals(CameraType.CABIN));
+            } else {
+                HUD.changeHUDColor(!armControl.getCamera().getType()
+                        .equals(CameraType.ARM_CABIN));
+            }
         }
         addToScene(mobileCrane.getCrane());
         addToScene(crane.getCrane());

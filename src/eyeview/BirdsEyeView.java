@@ -17,6 +17,7 @@ import com.jme3.renderer.Camera;
 import cranes.CameraType;
 import cranes.CraneAbstract;
 import cranes.mobileCrane.MobileCrane;
+import cranes.mobileCrane.MobileCraneArmControl;
 import menu.HUD;
 import menu.Shop;
 import settings.Control.Actions;
@@ -98,7 +99,15 @@ public class BirdsEyeView implements ActionListener{
         if(isMobileCrane) {
             if(!mobileCrane.isDuringStateChanging())
                 Control.addListener(Control.getActualListener());
-            HUD.changeHUDColor(!mobileCrane.getCamera().getType().equals(CameraType.CABIN));
+            MobileCraneArmControl armControl = (MobileCraneArmControl)mobileCrane
+                    .getArmControl();
+            if(!armControl.isUsing()) {
+                Control.addListener(mobileCrane);
+                HUD.changeHUDColor(!mobileCrane.getCamera().getType().equals(CameraType.CABIN));
+            } else {
+                HUD.changeHUDColor(!armControl.getCamera().getType()
+                        .equals(CameraType.ARM_CABIN));
+            }
         } else {
             Control.addListener(Control.getActualListener());
         }

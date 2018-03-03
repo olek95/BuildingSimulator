@@ -134,9 +134,7 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
         if(isPressed) {
             switch(Actions.valueOf(name)) {
                 case CHANGE_CAMERA: 
-                    if(crane.getName().contains(ElementName.CRANE))
-                        ((MobileCraneCamera)camera).changeCamera(true);
-                    else ((CraneCamera)camera).changeCamera();
+                    changeCamera();
                     break;
                 case ATTACH: 
                     recentlyHitObject = hook.getRecentlyHitObject();
@@ -184,6 +182,11 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
      * @param speed prędkość przesuwania uchwytu haka 
      */
     protected abstract void moveHandleHook(float limit, boolean movingForward, float speed);
+    
+    /**
+     * Zmienia pozycję kamery.
+     */
+    protected abstract void changeCamera(); 
     
     /**
      * Podnosi lub opuszcza ramię dźwigu. Domyślna implementacja ustawia znacznik 
@@ -313,6 +316,12 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
     public Control.Actions[] getAvailableActions(){
         return availableActions;
     }
+    
+    /**
+     * Zwraca kamerę. 
+     * @return kamera
+     */
+    public AbstractCraneCamera getCamera() { return camera; }
     
     /**
      * Metoda inicjuje węzeł posiadający elementy składające się na całe sterowane 

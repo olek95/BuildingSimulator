@@ -50,6 +50,7 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
     private Vector3f catchingLocation; 
     private Quaternion catchingRotation; 
     private WallType type;
+    private ColorRGBA initialColor; 
     
     /*
      * Konstruktor bezparametrowy jest potrzebny podczas wczytywania ściany z
@@ -62,6 +63,7 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
         super(type, shape, location, mass, ElementName.WALL_BASE_NAME + counter, color,
                 differenceShapes);
         this.type = type; 
+        this.initialColor = color;
         BoundingBox bounding = (BoundingBox)shape.getWorldBound();
         width = bounding.getYExtent(); 
         height = bounding.getZExtent(); 
@@ -203,6 +205,8 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
         width = capsule.readFloat("WIDTH", 0f);
         protrudingCatched = capsule.readBoolean("PROTRUDING_CATCHED", false);
         type = capsule.readEnum("TYPE", WallType.class, null);
+        initialColor = (ColorRGBA)((CSGGeometry)getChild(ElementName.WALL_GEOMETRY))
+                .getMaterial().getParam("Color").getValue();
         counter++;
      }
     
@@ -228,7 +232,7 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
      */
     public void setStale(boolean stale){
         ((CSGGeometry)getChild(ElementName.WALL_GEOMETRY)).getMaterial().setColor("Color", stale ?
-                ColorRGBA.Red : ColorRGBA.White);
+                ColorRGBA.Red : initialColor);
         this.stale = stale; 
     }
     

@@ -51,6 +51,7 @@ public class BuildingCreator implements VisibleFromAbove{
     public void start() {
         HUD.changeShopButtonVisibility(false);
         view = new BirdsEyeView(this, true); 
+        BirdsEyeView.displayMovingModeHUD(cloning);
     }
 
     @Override
@@ -98,6 +99,13 @@ public class BuildingCreator implements VisibleFromAbove{
         }
         return false;
     }
+    
+    /**
+     * Zwraca informację czy twórca budynków jest w trybie klonowania czy kupowania 
+     * przykładowego budynku. 
+     * @return true jeśli tryb klonowania, false w przeciwnym przypadku 
+     */
+    public boolean isCloning() { return cloning; }
     
     private Construction getSelectedConstruction(final Vector3f location) {
         List<Spatial> gameObjects = GameManager.getGameObjects();

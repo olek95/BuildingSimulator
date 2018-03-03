@@ -1,6 +1,7 @@
 package menu;
 
 import authorization.User;
+import building.BuildingCreator;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import com.jme3.app.state.AbstractAppState;
@@ -150,7 +151,12 @@ public class HUD extends AbstractAppState{
         if(actions != null) {
             for(int i = 0; i < actions.length; i++) {
                 String[] values = actions[i].getValue().split("/");
-                String value = values.length != 1 ? values[indexes[k++]] : values[0];
+                String value;
+                if(values.length != 1) {
+                    value = values[indexes[k]].substring(0, 1).toUpperCase() 
+                            + values[indexes[k]].substring(1);
+                    k++;
+                } else value = values[0];
                 int optionalPhraseIndex = value.indexOf('(');
                 information += value.substring(0, optionalPhraseIndex != -1 
                         ? optionalPhraseIndex : value.length()) + " - " + actions[i].getKey() 
@@ -171,7 +177,10 @@ public class HUD extends AbstractAppState{
      */
     public static void updateControlsLabel() {
         if(BirdsEyeView.isActive()) {
-            if(BirdsEyeView.isMovingAvailable()) BirdsEyeView.displayMovingModeHUD();
+            if(BirdsEyeView.isMovingAvailable()) {
+                BirdsEyeView.displayMovingModeHUD(((BuildingCreator)BirdsEyeView.getViewOwner())
+                        .isCloning());
+            }
             else BirdsEyeView.displayNotMovingModeHUD();
         } else {
             GameManager.displayActualUnitControlsInHUD();

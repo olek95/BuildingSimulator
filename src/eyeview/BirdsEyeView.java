@@ -120,11 +120,12 @@ public class BirdsEyeView implements ActionListener{
     /**
      * Wyświetla sterowanie stosowane w trybie poruszania się. 
      */
-    public static void displayMovingModeHUD() {
+    public static void displayMovingModeHUD(boolean cloning) {
         HUD.fillControlInformation(new Actions[] {Actions.FLYCAM_FORWARD, 
                 Actions.FLYCAM_BACKWARD, Actions.FLYCAM_STRAFE_LEFT, Actions.FLYCAM_STRAFE_RIGHT},
                     new String[]{Translator.RIGHT_CLICK_CANCELLATION.getValue(),
-                    Translator.LEFT_CLICK_CLONE.getValue()});
+                    (cloning ? Translator.LEFT_CLICK_CLONE : Translator.LEFT_CLICK_DROPPING)
+                .getValue()});
     }
     
     /**
@@ -143,6 +144,12 @@ public class BirdsEyeView implements ActionListener{
     public static boolean isActive() {
         return viewOwner != null; 
     }
+    
+    /**
+     * Zwraca właściciela widoku z lotu ptaka. 
+     * @return właściciel widoku z lotu ptaka 
+     */
+    public static VisibleFromAbove getViewOwner() { return viewOwner; }
     
     /**
      * Określa czy sprawdzane są kliknięcia myszką. 
@@ -168,7 +175,6 @@ public class BirdsEyeView implements ActionListener{
         if(movingAvailable) {
             game.getFlyByCamera().setRotationSpeed(0);
             game.getInputManager().setCursorVisible(true);
-            displayMovingModeHUD();
         } else game.getFlyByCamera().setEnabled(false);
         Control.removeListener(Control.getActualListener());
     }

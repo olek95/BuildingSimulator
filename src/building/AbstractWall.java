@@ -32,7 +32,7 @@ public abstract class AbstractWall extends Node{
     private void initShape(CSGShape shape, ColorRGBA color, CSGShape... differenceShapes){
         CSGGeometry wall = new CSGGeometry(ElementName.WALL_GEOMETRY); 
         wall.addShape(shape);
-        AssetManager assetManager = BuildingSimulator.getBuildingSimulator().getAssetManager(); 
+        AssetManager assetManager = BuildingSimulator.getGameAssetManager(); 
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setTexture("ColorMap", assetManager.loadTexture("Textures/gips.jpg"));
         if(color != null) mat.setColor("Color", color);

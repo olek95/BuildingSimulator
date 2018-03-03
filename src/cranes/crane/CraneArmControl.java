@@ -1,6 +1,5 @@
 package cranes.crane;
 
-import building.Wall;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
 import buildingsimulator.PhysicsManager;
@@ -10,7 +9,6 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import cranes.Hook;
 
 /**
  * Obiekt klasy <code>CraneArmControl</code> reprezentuje obiekt kontrolujący 
@@ -64,8 +62,7 @@ public class CraneArmControl extends ArmControl{
         Node craneControlNode = getCraneControl(), craneNode = getCrane();
         Spatial turntable = craneControlNode.getChild(ElementName.TURNTABLE);
         if(turntable.getControl(RigidBodyControl.class) == null) {
-            PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
-                    .getBulletAppState().getPhysicsSpace();
+            PhysicsSpace physics = BuildingSimulator.getPhysicsSpace();
             Vector3f craneLocation = craneNode.getLocalTranslation();
             physics.add(setProperControlLocation(turntable,  craneLocation));
             physics.add(setProperControlLocation(craneControlNode

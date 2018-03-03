@@ -5,7 +5,6 @@ import eyeview.BirdsEyeView;
 import listeners.BuildingCollisionListener;
 import authorization.User;
 import billboard.Billboard;
-import building.BuildingSample;
 import building.Construction;
 import building.Wall;
 import building.WallsFactory;
@@ -16,8 +15,6 @@ import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.cinematic.Cinematic;
 import com.jme3.input.FlyByCamera;
-import com.jme3.input.InputManager;
-import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import cranes.crane.Crane;
@@ -105,7 +102,7 @@ public class GameManager {
         //billboard = new Billboard(80, 0);
         //addToScene(billboard.getBillboard());
         Control.addListener(game);
-        PhysicsSpace physics = bas.getPhysicsSpace();
+        PhysicsSpace physics = BuildingSimulator.getPhysicsSpace();
         physics.addCollisionListener(ArmCollisionListener.createRotateAfterImpactListener());
         physics.addCollisionListener(BuildingCollisionListener.createBuildingCollisionListener());
         displayActualUnitControlsInHUD();
@@ -119,8 +116,9 @@ public class GameManager {
     public static void continueGame() {
         addHUD();
         if(!BirdsEyeView.isActive()) {
-            BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(false);
-            GameManager.getInputManager().setCursorVisible(false);
+            BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
+            game.getFlyByCamera().setDragToRotate(false);
+            game.getInputManager().setCursorVisible(false);
             Control.addListener(Control.getActualListener());
         } else {
             HUD.changeShopButtonVisibility(false);
@@ -139,8 +137,9 @@ public class GameManager {
      * Zatrzymuje grę. 
      */
     public static void pauseGame() {
-        BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(true);
-        GameManager.getInputManager().setCursorVisible(true);
+        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
+        game.getFlyByCamera().setDragToRotate(true);
+        game.getInputManager().setCursorVisible(true);
         Control.removeListener(Control.getActualListener());
         mobileCrane.stop();
         user.rememberTime();
@@ -164,8 +163,7 @@ public class GameManager {
     }
     
     private static void addHUD() {
-        BuildingSimulator.getBuildingSimulator().getGuiNode()
-                .addControl(new HUD().getScreen());
+        GameManager.addControlToGui(new HUD().getScreen());
     }
     
     /**
@@ -173,7 +171,7 @@ public class GameManager {
      */
     public static void removeHUD() {
         HUD.hideElements();
-        BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(HUD.getScreen());
+        GameManager.removeControlFromGui(HUD.getScreen());
     }
     
     /**
@@ -181,12 +179,12 @@ public class GameManager {
      * @param animation animacja 
      */
     public static void startAnimation(Cinematic animation) {
-        BuildingSimulator.getBuildingSimulator().getStateManager().attach(animation);
+        BuildingSimulator.getGameStateManager().attach(animation);
         animation.play();
     }
     
     public static Node loadModel(String path) {
-        return (Node)BuildingSimulator.getBuildingSimulator().getAssetManager().loadModel(path);
+        return (Node)BuildingSimulator.getGameAssetManager().loadModel(path);
     }
     
     /**
@@ -255,7 +253,15 @@ public class GameManager {
      * @param object dodawany obiekt 
      */
     public static void addToScene(Spatial object){
-        BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(object);
+        BuildingSimulator.getGameRootNode().attachChild(object);
+    }
+    
+    /**
+     * Usuwa obiekt ze świata gry. 
+     * @param object usuwany obiekt 
+     */
+    public static void removeFromScene(Spatial object) {
+        BuildingSimulator.getGameRootNode().detachChild(object);
     }
     
     /**
@@ -286,8 +292,7 @@ public class GameManager {
      */
     public static void stopSound(AudioNode sound, boolean autoDetaching) {
         sound.stop();
-        if(autoDetaching)
-            BuildingSimulator.getBuildingSimulator().getRootNode().detachChild(sound);
+        if(autoDetaching) GameManager.removeFromScene(sound);
     }
     
     /**
@@ -366,19 +371,27 @@ public class GameManager {
     public static float getGameSoundVolume() { return gameSoundVolume; }
     
     /**
-     * Zwraca kamerę gry.
-     * @return kamera gry 
+     * Zwraca listę wszystkich obiektów istniejących w świecie gry. 
+     * @return lista obiektów ze świata gry 
      */
-    public static Camera getCamera() {
-        return BuildingSimulator.getBuildingSimulator().getCamera();
+    public static List<Spatial> getGameObjects() {
+        return BuildingSimulator.getGameRootNode().getChildren();
     }
     
-    public static FlyByCamera getFlyByCamera() {
-        return BuildingSimulator.getBuildingSimulator().getFlyByCamera();
+    /**
+     * Dodaje obiekt kontroli dla GUI. 
+     * @param control obiekt kontroli 
+     */
+    public static void addControlToGui(com.jme3.scene.control.Control control) {
+        BuildingSimulator.getGameGuiNode().addControl(control);
     }
     
-    public static InputManager getInputManager() {
-        return BuildingSimulator.getBuildingSimulator().getInputManager();
+    /**
+     * Usuwa obiekt kontroli z GUI. 
+     * @param control obiekt kontroli 
+     */
+    public static void removeControlFromGui(com.jme3.scene.control.Control control) {
+        BuildingSimulator.getGameGuiNode().removeControl(control);
     }
     
     private static void resetGameControls() {

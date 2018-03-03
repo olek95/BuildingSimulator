@@ -8,7 +8,6 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
-import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import cranes.crane.CraneState;
 import cranes.mobileCrane.MobileCraneState;
@@ -33,8 +32,7 @@ public class SavedData implements Savable{
         OutputCapsule capsule = ex.getCapsule(this);
         capsule.write(new MobileCraneState(), ElementName.MOBILE_CRANE, null);
         capsule.write(new CraneState(), "crane", null);
-        Node root = BuildingSimulator.getBuildingSimulator().getRootNode();
-        List<Spatial> gameObjects = root.getChildren();
+        List<Spatial> gameObjects = GameManager.getGameObjects();
         ArrayList<Wall> savedWalls = new ArrayList();
         ArrayList<Construction> savedBuildings = new ArrayList();
         ArrayList<BuildingSample> savedSampleBuildings = new ArrayList(); 

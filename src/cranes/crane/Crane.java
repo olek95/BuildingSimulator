@@ -8,27 +8,23 @@ import listeners.DummyCollisionListener;
 import buildingsimulator.GameManager;
 import buildingsimulator.PhysicsManager;
 import eyeview.VisibleFromAbove;
-import com.jme3.audio.AudioNode;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import cranes.AbstractCraneCamera;
 import cranes.ArmControl;
 import cranes.CraneAbstract;
 import cranes.Hook;
 import java.util.List;
 import menu.HUD;
-import texts.Translator;
 
 /**
  * Obiekt klasy <code>Crane</code> reprezentuje żuraw. 
  * @author AleksanderSklorz
  */
 public class Crane extends CraneAbstract implements VisibleFromAbove{
-    private BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
     private Node crane;
     private Spatial rack, entrancePlatform, penultimateRack, lastRack;
     private Vector3f craneLocation, newLocation;
@@ -68,8 +64,8 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
                 penultimateRack = lastRack;
                 lastRack = element;
                 if(i > 2) {
-                    BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
-                            .add(setProperControlLocation(element, craneLocation));
+                    BuildingSimulator.getPhysicsSpace().add(setProperControlLocation(element,
+                            craneLocation));
                 }
             }
         }
@@ -82,6 +78,7 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
      */
     public void raiseHeight(int height){
         boolean initial = false; 
+        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         Node rootNode = game.getRootNode();
         if(rootNode.hasChild(crane)) {
             initial = true; 
@@ -118,7 +115,7 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
      * @param height wysokość żurawia 
      */
     public void decreaseHeight(int height) {
-        Node rootNode = game.getRootNode();
+        Node rootNode = BuildingSimulator.getGameRootNode();
         rootNode.detachChild(crane);
         List<Spatial> rackElements = crane.getChildren();
         int lastIndex = rackElements.size() - 1, difference = heightLevel - height; 
@@ -163,8 +160,7 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
                 setProperControlLocation(element, craneLocation);
         }
         removeView(); 
-        BuildingSimulator.getBuildingSimulator().getBulletAppState()
-                .getPhysicsSpace().removeCollisionGroupListener(6);
+        BuildingSimulator.getPhysicsSpace().removeCollisionGroupListener(6);
     }
     
     @Override
@@ -236,7 +232,7 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
     
     private void initCranePhysics(){
         crane.setLocalTranslation(craneLocation);
-        PhysicsSpace physics = game.getBulletAppState().getPhysicsSpace();
+        PhysicsSpace physics = BuildingSimulator.getPhysicsSpace();
         physics.add(setProperControlLocation(crane.getChild(ElementName.PROP0), craneLocation));
         physics.add(setProperControlLocation(crane.getChild(ElementName.PROP1), craneLocation));
         physics.add(setProperControlLocation(rack, craneLocation));

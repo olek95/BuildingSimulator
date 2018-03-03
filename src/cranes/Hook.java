@@ -39,8 +39,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         if(collisionListener == null){
             collisionListener = new BottomCollisionListener(this, ElementName.ROPE_HOOK,
                     ElementName.HOOK_HANDLE);
-            BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
-                    .addCollisionGroupListener(collisionListener, 2);
+            BuildingSimulator.getPhysicsSpace().addCollisionGroupListener(collisionListener, 2);
         }
     } 
     
@@ -279,8 +278,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         buildingMaterialJoint = new HingeJoint(hook.getControl(RigidBodyControl.class),
                 selectedControl, Vector3f.ZERO, distanceBetweenHookAndObjectCenter,
                 Vector3f.ZERO, Vector3f.ZERO);
-        BuildingSimulator.getBuildingSimulator().getBulletAppState()
-                .getPhysicsSpace().add(buildingMaterialJoint);
+        BuildingSimulator.getPhysicsSpace().add(buildingMaterialJoint);
     }
     
     /**
@@ -333,8 +331,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     }
     
     private void confirmDetaching() {
-        BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
-                .remove(buildingMaterialJoint);
+        BuildingSimulator.getPhysicsSpace().remove(buildingMaterialJoint);
         attachedObject = null;
         buildingMaterialJoint = null;
     }

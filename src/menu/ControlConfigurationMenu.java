@@ -39,7 +39,7 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
         getWindow().addChild(table);
         createAcceptingButton(); 
         createReturnButton(screen.getWidth() * 0.6f);
-        BuildingSimulator.getBuildingSimulator().getInputManager().addRawInputListener(this);
+        BuildingSimulator.getGameInputManager().addRawInputListener(this);
         Translator.setTexts(new String[]{"accepting_button", "return_button"}, 
                 new Translator[]{Translator.ACCEPTING, Translator.RETURN}, screen);
         table.setEnableKeyboardNavigation(false);

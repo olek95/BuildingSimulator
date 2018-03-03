@@ -3,6 +3,7 @@ package menu;
 import building.CatchNode;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
+import buildingsimulator.GameManager;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.font.BitmapFont;
@@ -25,7 +26,8 @@ public class CleaningDialogWindow extends Menu{
     private static Screen screen;
     private static CleaningDialogWindow displayedCleaningDialogWindow = null;
     public CleaningDialogWindow() {
-        screen = new Screen(BuildingSimulator.getBuildingSimulator());
+        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
+        screen = new Screen(game);
         screen.parseLayout("Interface/cleaning_dialog.gui.xml", this);
         Window window = (Window)screen.getElementById("cleaning_window");
         window.setWindowTitle(Translator.CLEANING_MAP.getValue());
@@ -37,7 +39,7 @@ public class CleaningDialogWindow extends Menu{
             "infinite_buildings_button", "cancellation_button"}, new Translator[]{Translator
                 .CLEANING_MAP_MESSAGE, Translator.ENTIRE_MAP, Translator.INFINITE_BUILDINGS,
                 Translator.CANCELLATION}, screen);
-        BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
+        game.getGuiNode().addControl(screen);
         displayedCleaningDialogWindow = this; 
     }
     
@@ -68,7 +70,7 @@ public class CleaningDialogWindow extends Menu{
      */
     public void cancel(MouseButtonEvent evt, boolean isToggled) {
         displayedCleaningDialogWindow = null; 
-        BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(false);
+        BuildingSimulator.getGameFlyByCamera().setDragToRotate(false);
         goNextMenu(screen, null);
         HUD.setControlsVisibility(HUD.isControlsLabelVisibilityBeforeHiding());
     }
@@ -82,8 +84,7 @@ public class CleaningDialogWindow extends Menu{
     }
     
     private void deleteBuildings(boolean onlyInfiniteBuildings) {
-        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-        List<Spatial> gameObjects = game.getRootNode().getChildren(); 
+        List<Spatial> gameObjects = GameManager.getGameObjects(); 
         int objectsCount = gameObjects.size();
         for(int i = 0; i < objectsCount; i++) {
             Spatial object = gameObjects.get(i);
@@ -131,8 +132,7 @@ public class CleaningDialogWindow extends Menu{
 //    }
     
     private static void deleteWallControl(Node wall) {
-        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator().getBulletAppState()
-                        .getPhysicsSpace();
+        PhysicsSpace physics = BuildingSimulator.getPhysicsSpace();
         for(int i = 0; i < 3; i++) {
             physics.remove(wall.getControl(0));
         }

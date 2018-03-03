@@ -2,7 +2,6 @@ package menu;
 
 import authorization.DBManager;
 import authorization.User;
-import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import buildingsimulator.SavedData;
 import com.jme3.export.binary.BinaryExporter;
@@ -128,7 +127,7 @@ public class PauseMenu extends MainMenu{
         exitPopup.hide();
         Screen screen = MainMenu.getScreen(); 
         screen.removeElement(exitPopup);
-        BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
+        GameManager.removeControlFromGui(screen);
         GameManager.deleteGame();
         MenuFactory.showMenu(MenuTypes.STARTING_MENU);
     }

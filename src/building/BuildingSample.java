@@ -231,13 +231,13 @@ public class BuildingSample extends Construction{
     
     private List<Wall> createRoom(Node owner, Vector3f location, WallData... data) {
         List<Wall> walls = new ArrayList(data.length);
+        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         for(int i = 0; i < data.length; i++) {
             Wall wall = (Wall)WallsFactory.createWall(data[i].getType(), location, 
                 data[i].getDimensions(), 0.00001f, false, null);
             walls.add(wall);
             if(owner.equals(this)) {
-                wall.setRecentlyHitObject(BuildingSimulator.getBuildingSimulator()
-                        .getRootNode().getChild(ElementName.MAP_FIELD_PART_NAME));
+                wall.setRecentlyHitObject(game.getRootNode().getChild(ElementName.MAP_FIELD_PART_NAME));
                 add(wall, null, data[i].getMode(), data[i].isProtruding());
             } else {
                 perpendicularity = data[i].isPerpendicularity();
@@ -265,8 +265,8 @@ public class BuildingSample extends Construction{
                 newOwner.setLocalTranslation(newOwner.worldToLocal(newOwner
                         .getControl(RigidBodyControl.class).getPhysicsLocation(), null));
             }
-            BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
-                        .remove(wall.getControl(RigidBodyControl.class));
+            game.getBulletAppState().getPhysicsSpace()
+                    .remove(wall.getControl(RigidBodyControl.class));
             randomColor(wall);
             if(i == 0) owner = wall;
         }

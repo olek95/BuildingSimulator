@@ -1,6 +1,5 @@
 package listeners;
 
-import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
 import static buildingsimulator.GameManager.getFPS;
@@ -20,7 +19,7 @@ public class ArmCollisionListener {
             public void collision(PhysicsCollisionEvent event) {
                 Spatial a = event.getNodeA(), b = event.getNodeB();
                 if(a != null && b != null){
-                    String aName = a.getName(), bName = b.getName(); 
+                    String aName = a.getName(), bName = b.getName();
                     if(aName.equals(ElementName.RETRACTABLE_CRANE_PART) 
                             || aName.equals(ElementName.HOOK_HANDLE)){
                         if(bName.startsWith(ElementName.RACK) || bName.contains(ElementName.BILLBOARD))

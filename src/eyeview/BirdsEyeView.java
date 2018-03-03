@@ -51,8 +51,7 @@ public class BirdsEyeView implements ActionListener{
                 BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
                 Camera cam = game.getCamera();
                 CollisionResults results = new CollisionResults();
-                Vector2f click2d = BuildingSimulator.getBuildingSimulator().getInputManager()
-                        .getCursorPosition().clone();
+                Vector2f click2d = game.getInputManager().getCursorPosition().clone();
                 Vector3f click3d = cam.getWorldCoordinates(click2d, 0f).clone();
                 game.getRootNode().getChild(ElementName.SCENE).collideWith(new Ray(click3d, 
                         cam.getWorldCoordinates(click2d, 1f).subtractLocal(click3d)
@@ -75,8 +74,7 @@ public class BirdsEyeView implements ActionListener{
                     GameManager.getUser().addPoints(shop.getCostForMaterials()); 
                     HUD.updatePoints();
                     Shop.removeDisplayedShop();
-                    BuildingSimulator.getBuildingSimulator().getBulletAppState()
-                            .getPhysicsSpace().removeCollisionGroupListener(6);
+                    BuildingSimulator.getPhysicsSpace().removeCollisionGroupListener(6);
                 }
                 HUD.changeShopButtonVisibility(true);
                 setOff();
@@ -89,7 +87,7 @@ public class BirdsEyeView implements ActionListener{
      */
     public void setOff() {
         Control.removeListener(this);
-        FlyByCamera camera = BuildingSimulator.getBuildingSimulator().getFlyByCamera();
+        FlyByCamera camera = BuildingSimulator.getGameFlyByCamera();
         camera.setEnabled(true);
         camera.setDragToRotate(false);
         camera.setRotationSpeed(1);
@@ -146,16 +144,17 @@ public class BirdsEyeView implements ActionListener{
     public static boolean isMovingAvailable() { return movingAvailable; }
     
     private void changeViewMode() {
-        Camera cam = GameManager.getCamera();
+        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
+        Camera cam = game.getCamera();
         Vector3f actualUnitLocation = GameManager.getActualUnit().getArmControl()
                 .getCrane().getWorldTranslation();
         cam.setLocation(actualUnitLocation.add(0, 100, 0));
         cam.lookAt(actualUnitLocation, Vector3f.UNIT_Z);
         if(movingAvailable) {
-            GameManager.getFlyByCamera().setRotationSpeed(0);
-            GameManager.getInputManager().setCursorVisible(true);
+            game.getFlyByCamera().setRotationSpeed(0);
+            game.getInputManager().setCursorVisible(true);
             displayMovingModeHUD();
-        } else GameManager.getFlyByCamera().setEnabled(false);
+        } else game.getFlyByCamera().setEnabled(false);
         Control.removeListener(Control.getActualListener());
     }
 }

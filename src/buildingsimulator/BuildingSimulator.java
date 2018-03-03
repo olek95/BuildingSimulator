@@ -4,38 +4,28 @@ import settings.Control;
 import eyeview.VisibleFromAbove;
 import eyeview.BirdsEyeView;
 import listeners.DummyCollisionListener;
-import building.BuildingValidator;
 import building.Construction;
 import building.BuildingCreator;
-import building.Wall;
-import building.WallType;
-import building.WallsFactory;
-import com.jme3.app.FlyCamAppState;
 import cranes.mobileCrane.MobileCraneArmControl;
 import cranes.mobileCrane.MobileCrane;
 import cranes.crane.Crane;
-import cranes.CraneAbstract;
 import com.jme3.app.SimpleApplication;
+import com.jme3.app.state.AppStateManager;
+import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.bullet.PhysicsSpace;
 import com.jme3.input.FlyByCamera;
+import com.jme3.input.InputManager;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
+import com.jme3.renderer.Renderer;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.system.AppSettings;
-import com.jme3.system.Timer;
-import com.jme3.texture.Texture;
-import com.jme3.util.SkyFactory;
-import cranes.Hook;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import javax.swing.ImageIcon;
 import menu.CleaningDialogWindow;
 import menu.HUD;
 import menu.MainMenu;
@@ -43,10 +33,7 @@ import menu.MenuFactory;
 import menu.MenuTypes;
 import menu.Options;
 import menu.Shop;
-import org.lwjgl.opengl.Display;
 import texts.Translator;
-import tonegod.gui.controls.windows.Window;
-import tonegod.gui.core.Screen;
         
 public class BuildingSimulator extends SimpleApplication implements ActionListener{
     private static BuildingSimulator game;
@@ -128,20 +115,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     public void simpleRender(RenderManager rm) {
         //TODO: add render code
     }
-    /** 
-     * Metoda zwracająca aktualną grę. 
-     * @return aktualna gra
-     */
-    public static BuildingSimulator getBuildingSimulator(){
-        return game;
-    }
-    /**
-     * Zwraca obiekt do symulowania fizyki. 
-     * @return obiekt do symulowania fizyki
-     */
-    public BulletAppState getBulletAppState(){
-        return bulletAppState;
-    }
+    
+    @Override
     public void onAction(String name, boolean isPressed, float tpf){
         MobileCrane mobileCrane = GameManager.getMobileCrane();
         Crane crane = GameManager.getCrane();
@@ -244,15 +219,73 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
      * Pobiera tekstową reprezentację liczby klatek na sekundę. 
      * @return FPS w postaci tekstu 
      */
-    public static String getFPSString(){
-        return BuildingSimulator.game.fpsText.getText();
-    }
+    public static String getFPSString(){ return game.fpsText.getText(); }
     
     /**
      * Ustawia poruszającą się kamerę. 
      * @param camera poruszająca się kamera
      */
-    public static void setFlyByCamera(FlyByCamera camera) {
-        BuildingSimulator.game.flyCam = camera;
+    public static void setFlyByCamera(FlyByCamera camera) { game.flyCam = camera; }
+    
+    /**
+     * Zwraca poruszającą się kamerę. 
+     * @return poruszająca się kamera 
+     */
+    public static FlyByCamera getGameFlyByCamera() {  return game.flyCam; }
+    
+    /** 
+     * Metoda zwracająca aktualną grę. 
+     * @return aktualna gra
+     */
+    public static BuildingSimulator getBuildingSimulator(){ return game; }
+    /**
+     * Zwraca główną przestrzeń fizyki. 
+     * @return główna przestrzeń fizyki
+     */
+    public static PhysicsSpace getPhysicsSpace(){
+        return game.bulletAppState.getPhysicsSpace();
     }
+    
+    /**
+     * Zwraca obiekt zezwalający na stosowanie fizyki w grze. 
+     * @return obiekt zezwalający na stosowanie fizyki w grze 
+     */
+    public BulletAppState getBulletAppState() { return game.bulletAppState; }
+    
+    /**
+     * Zwraca zarządcę zasobami. 
+     * @return zarządca zasobami 
+     */
+    public static AssetManager getGameAssetManager() {  return game.assetManager; }
+    
+    /**
+     * Zwraca korzeń (główny węzeł) gry. Do niego należą wszystkie obiekty świata 
+     * gry. 
+     * @return główny węzeł gry
+     */
+    public static Node getGameRootNode() { return game.rootNode; }
+    
+    /**
+     * Zwraca węzeł przeznaczony na elementy GUI. 
+     * @return węzeł przeznaczony na elementy GUI 
+     */
+    public static Node getGameGuiNode() { return game.guiNode;  }
+    
+    /**
+     * Zwraca zarządcę stanów gry. 
+     * @return zarządca stanów gry 
+     */
+    public static AppStateManager getGameStateManager() { return game.stateManager; }
+    
+    /**
+     * Zwraca obiekt odpowiedzialny za zdarzenia wejścia. 
+     * @return obiekt odpowiedzialny za zdarzenia wejścia
+     */
+    public static InputManager getGameInputManager() { return game.inputManager; }
+    
+    /**
+     * Zwraca kamerę 
+     * @return kamera
+     */
+    public static Camera getCam() { return game.cam; }
 }

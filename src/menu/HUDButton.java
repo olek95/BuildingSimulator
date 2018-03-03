@@ -41,13 +41,13 @@ public class HUDButton extends ButtonAdapter{
                     BirdsEyeView view = shop.getView(); 
                     if(view != null) {
                         view.setOff();
-                        GameManager.getFlyByCamera().setDragToRotate(true);
+                        BuildingSimulator.getGameFlyByCamera().setDragToRotate(true);
                         MenuFactory.showMenu(MenuTypes.SHOP); 
                         HUD.setControlsVisibility(false);
                         HUD.setGeneralControlsLabelVisibility(false);
                     }
                 } else {
-                    GameManager.getFlyByCamera().setDragToRotate(true);
+                    BuildingSimulator.getGameFlyByCamera().setDragToRotate(true);
                     MenuFactory.showMenu(MenuTypes.SHOP); 
                     HUD.setControlsVisibility(false);
                     HUD.setGeneralControlsLabelVisibility(false);
@@ -62,8 +62,7 @@ public class HUDButton extends ButtonAdapter{
                         HUD.setMessage(Translator.MESSAGE_POINTS.getValue()
                                 .replace("x", points + ""));
                     } else {
-                        BuildingSimulator.getBuildingSimulator().getFlyByCamera()
-                                .setDragToRotate(true);
+                        BuildingSimulator.getGameFlyByCamera().setDragToRotate(true);
                         MenuFactory.showMenu(MenuTypes.CLEANING_DIALOG_WINDOW);
                         HUD.setControlsVisibility(false);
                     }

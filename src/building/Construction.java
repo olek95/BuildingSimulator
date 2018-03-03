@@ -1,6 +1,5 @@
 package building;
 
-import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
 import buildingsimulator.PhysicsManager;
@@ -95,8 +94,7 @@ public class Construction extends Node{
      * @return najbliższy element z jakiegokolwiek budynku 
      */
     public static Wall getNearestBuildingWall(Wall wall){
-        List<Spatial> gameObjects = BuildingSimulator.getBuildingSimulator()
-                    .getRootNode().getChildren();
+        List<Spatial> gameObjects = GameManager.getGameObjects();
         float min = -1;
         int objectsNumber = gameObjects.size(); 
         Spatial minWall = null; 
@@ -138,7 +136,7 @@ public class Construction extends Node{
     public void removeWall(Wall wall){
         if(wall.getParent().equals(this)) removeFromParent();
         wall.removeFromParent();
-        BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(wall);
+        GameManager.addToScene(wall);
         lastAddedWall = null;
         wall.setMovable(true);
     }
@@ -176,7 +174,7 @@ public class Construction extends Node{
                 if(object.getName().startsWith("Wall")) {
                     Wall wall = (Wall)object; 
                     wall.removeFromParent();
-                    BuildingSimulator.getBuildingSimulator().getRootNode().attachChild(wall);
+                    GameManager.addToScene(wall);
                     wall.setStale(true);
                 }
             }

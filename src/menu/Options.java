@@ -9,13 +9,11 @@ import com.jme3.system.AppSettings;
 import java.awt.DisplayMode;
 import java.awt.GraphicsEnvironment;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -44,7 +42,8 @@ public class Options extends Menu  {
     private static Properties restoredSettings = new Properties(), 
             storedSettings; 
     public Options(){
-        screen = new Screen(BuildingSimulator.getBuildingSimulator());
+        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
+        screen = new Screen(game);
         screen.parseLayout("Interface/options.gui.xml", this);
         Window window = (Window)screen.getElementById("options");
         window.getDragBar().removeFromParent();
@@ -57,7 +56,7 @@ public class Options extends Menu  {
         loadSettings();
         setTexts();
         setStale(); 
-        BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
+        game.getGuiNode().addControl(screen);
     }
     
     /**
@@ -106,7 +105,7 @@ public class Options extends Menu  {
      * Odświeża menu opcji, aby widoczne były np. zmiany rozdzielczości. 
      */
     public static void refresh(){
-        BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
+        GameManager.removeControlFromGui(screen);
         stale = false;
         newHeight = 0; 
         newWidth = 0;

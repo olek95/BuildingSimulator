@@ -7,7 +7,6 @@ import buildingsimulator.GameManager;
 import buildingsimulator.SavedData;
 import com.jme3.audio.AudioNode;
 import com.jme3.export.binary.BinaryImporter;
-import com.jme3.input.event.MouseButtonEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -26,7 +25,8 @@ import tonegod.gui.core.Screen;
 public abstract class MainMenu extends Menu {
     private static Screen screen;
     public MainMenu(String layoutName){
-        screen = new Screen(BuildingSimulator.getBuildingSimulator());
+        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
+        screen = new Screen(game);
         screen.parseLayout(layoutName, this);
         Window window = (Window)screen.getElementById("main_menu");
         window.getDragBar().removeFromParent();
@@ -36,7 +36,7 @@ public abstract class MainMenu extends Menu {
             new Translator[]{Translator.LOAD_GAME, Translator.STATISTICS,
                 Translator.SETTINGS, Translator.QUIT_GAME}, screen);
         screen.setUseCustomCursors(true);
-        BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
+        game.getGuiNode().addControl(screen);
         startBackgroundSound();
         User user = GameManager.getUser(); 
         if(user != null) {
@@ -76,7 +76,7 @@ public abstract class MainMenu extends Menu {
      */
     protected void load() {
         BinaryImporter importer = BinaryImporter.getInstance();
-        importer.setAssetManager(BuildingSimulator.getBuildingSimulator().getAssetManager());
+        importer.setAssetManager(BuildingSimulator.getGameAssetManager());
         User user = GameManager.getUser();
         GameManager.setUser(DBManager.getUser(user.getLogin()));
         File file = new File("./game saves/" + user.getLogin() + "/save.j3o");

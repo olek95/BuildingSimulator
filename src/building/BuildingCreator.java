@@ -1,15 +1,12 @@
 package building;
 
 import authorization.User;
-import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
 import buildingsimulator.PhysicsManager;
-import com.jme3.bounding.BoundingBox;
 import com.jme3.bounding.BoundingVolume;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.collision.CollisionResults;
-import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -84,8 +81,7 @@ public class BuildingCreator implements VisibleFromAbove{
      * false gdy dana przestrzeń jest pusta 
      */
     public static boolean checkIntersection(BoundingVolume bounding) {
-        List<Spatial> gameObjects = BuildingSimulator.getBuildingSimulator().getRootNode()
-                .getChildren();
+        List<Spatial> gameObjects = GameManager.getGameObjects();
         int gameObjectsNumber = gameObjects.size();
         for(int i = 0; i < gameObjectsNumber; i++) {
             Spatial gameObject = gameObjects.get(i); 
@@ -103,8 +99,7 @@ public class BuildingCreator implements VisibleFromAbove{
     }
     
     private Construction getSelectedConstruction(final Vector3f location) {
-        List<Spatial> gameObjects = BuildingSimulator.getBuildingSimulator()
-                .getRootNode().getChildren();
+        List<Spatial> gameObjects = GameManager.getGameObjects();
         int gameObjectsNumber = gameObjects.size();
         for(int i = 0; i < gameObjectsNumber; i++) {
             Spatial object = gameObjects.get(i);
@@ -141,7 +136,6 @@ public class BuildingCreator implements VisibleFromAbove{
         final Vector3f distance = location.subtract(locations.get(0));
         Construction clonedConstruction = (Construction)selectedConstruction.clone();
         clonedConstruction.setName(createUniqueName(clonedConstruction.getName()));
-        System.out.println(clonedConstruction.getName());
         final List<Wall> clonedWalls = new ArrayList();
         clonedConstruction.breadthFirstTraversal(new SceneGraphVisitorAdapter() {
             private int i = 0;

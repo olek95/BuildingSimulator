@@ -46,7 +46,8 @@ public class Shop extends Menu implements VisibleFromAbove{
             GameManager.getUser().addPoints(displayedShop.costForMaterials); 
             HUD.updatePoints();
         }
-        screen = new Screen(BuildingSimulator.getBuildingSimulator());
+        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
+        screen = new Screen(game);
         screen.parseLayout("Interface/shop.gui.xml", this);
         Window window = (Window)screen.getElementById("shop");
         window.setWindowTitle(Translator.SHOP.getValue());
@@ -70,7 +71,7 @@ public class Shop extends Menu implements VisibleFromAbove{
         ((Spinner)screen.getElementById("crane_height_spinner"))
                 .setSelectedIndex(craneHeight);
         boolean settingCostCompleted = setCost();
-        BuildingSimulator.getBuildingSimulator().getGuiNode().addControl(screen);
+        game.getGuiNode().addControl(screen);
         displayedShop = this; 
         view = new BirdsEyeView(this, false);
         view.setMouseDisabled(true);
@@ -112,7 +113,7 @@ public class Shop extends Menu implements VisibleFromAbove{
         displayedShop = null; 
         hidePreview(true);
         view.setOff();
-        BuildingSimulator.getBuildingSimulator().getFlyByCamera().setDragToRotate(false);
+        BuildingSimulator.getGameFlyByCamera().setDragToRotate(false);
         goNextMenu(screen, null);
         HUD.setControlsVisibility(HUD.isControlsLabelVisibilityBeforeHiding());
         HUD.setGeneralControlsLabelVisibility(true);
@@ -175,17 +176,17 @@ public class Shop extends Menu implements VisibleFromAbove{
         Vector3f dimensions = getWallDimensions();
         Vector3f tempDimensions = dimensions.clone(); 
         tempDimensions.multLocal(1, amount, 1);
+        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         for(int i = 0; i < amount; i++) {
             Wall wall = (Wall)WallsFactory.createWall(type, dischargingLocation,
                     dimensions, 0.00001f, false, (ColorRGBA)((Slider)screen
                 .getElementById("color_slider")).getSelectedValue());
-            GameManager.addToScene(wall);
+            game.getRootNode().attachChild(wall);
             dischargingLocation.y += 0.4f; 
         }
         view.setOff();
         displayedShop = null; 
-        BuildingSimulator.getBuildingSimulator().getBulletAppState()
-                .getPhysicsSpace().removeCollisionGroupListener(6);
+        game.getBulletAppState().getPhysicsSpace().removeCollisionGroupListener(6);
     }
     
     /**
@@ -332,8 +333,9 @@ public class Shop extends Menu implements VisibleFromAbove{
     private void showPreview() {
         wallPreview = createWallPreview();
         if(wallPreview != null) {
-            GameManager.addToScene(wallPreview);
-            Vector3f location = GameManager.getCamera().getLocation().clone();
+            BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
+            game.getRootNode().attachChild(wallPreview);
+            Vector3f location = game.getCamera().getLocation().clone();
             wallPreview.setLocalTranslation(location.add(0, -1.7f, 0.35f));
             wallPreview.setOffPhysics();
             startPreviewAnimation();
@@ -352,8 +354,8 @@ public class Shop extends Menu implements VisibleFromAbove{
     
     private void startPreviewAnimation() {
         if(previewAnimationStop) {
-            previewAnimation = new Cinematic(BuildingSimulator.getBuildingSimulator()
-                    .getRootNode(), 90, LoopMode.DontLoop);
+            previewAnimation = new Cinematic(BuildingSimulator.getGameRootNode(),
+                    90, LoopMode.DontLoop);
             previewAnimation.addCinematicEvent(0, new AbstractCinematicEvent() {
                 @Override
                 protected void onPlay() {

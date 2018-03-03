@@ -46,7 +46,7 @@ public class Billboard {
      * @param path ścieżka do teksury reklamy 
      */
     public void changeAdvertisement(String path) {
-        AssetManager manager = BuildingSimulator.getBuildingSimulator().getAssetManager();
+        AssetManager manager = BuildingSimulator.getGameAssetManager();
         Material material = new Material(manager, "Common/MatDefs/Misc/Unshaded.j3md");
         Texture advertisement = manager.loadTexture(path);
         material.setTexture("ColorMap", advertisement);
@@ -74,8 +74,8 @@ public class Billboard {
     public Spatial getBillboard() { return billboard; }
     
     private Cinematic createAnimation() {
-        Cinematic cinematic = new Cinematic(BuildingSimulator.getBuildingSimulator()
-                .getRootNode(), 30, LoopMode.Loop);
+        Cinematic cinematic = new Cinematic(BuildingSimulator.getGameRootNode(),
+                30, LoopMode.Loop);
         cinematic.addCinematicEvent(0, new AdvertisementEvent(this, "Textures/advertisements/advertisement1.jpeg"));
         cinematic.addCinematicEvent(10, new AdvertisementEvent(this, "Textures/advertisements/advertisement2.jpeg"));
         cinematic.addCinematicEvent(20, new AdvertisementEvent(this, "Textures/advertisements/advertisement3.jpeg"));

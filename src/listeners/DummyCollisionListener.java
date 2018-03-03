@@ -65,8 +65,7 @@ public class DummyCollisionListener implements PhysicsCollisionGroupListener {
         collisionOwner = (DummyWall)WallsFactory.createWall(WallType.WALL, location,
                     dimensions, 0.00001f, true, null);
         collisionOwner.getControl(RigidBodyControl.class).setCollisionGroup(6);
-        BuildingSimulator.getBuildingSimulator().getBulletAppState()
-                .getPhysicsSpace().addCollisionGroupListener(this, 6);
+        BuildingSimulator.getPhysicsSpace().addCollisionGroupListener(this, 6);
     }
     
     /**
@@ -76,8 +75,7 @@ public class DummyCollisionListener implements PhysicsCollisionGroupListener {
         Control control = collisionOwner.getControl(RigidBodyControl.class);
         if(control != null) {
             collisionOwner.removeControl(control);
-            BuildingSimulator.getBuildingSimulator().getBulletAppState()
-                    .getPhysicsSpace().remove(control);
+            BuildingSimulator.getPhysicsSpace().remove(control);
         }
     }
     

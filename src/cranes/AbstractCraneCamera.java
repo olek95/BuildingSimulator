@@ -1,6 +1,6 @@
 package cranes;
 
-import buildingsimulator.GameManager;
+import buildingsimulator.BuildingSimulator;
 import com.jme3.scene.CameraNode;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -17,7 +17,7 @@ public abstract class AbstractCraneCamera{
     public AbstractCraneCamera(Node crane) {
         this.crane = crane; 
         this.type = CameraType.CABIN;
-        craneCamera = new CameraNode("Camera", GameManager.getCamera());
+        craneCamera = new CameraNode("Camera", BuildingSimulator.getCam());
         setPosition();
     }
     
@@ -37,7 +37,7 @@ public abstract class AbstractCraneCamera{
     public void restore() {
         if(!type.equals(CameraType.LOOSE)) {
             if(craneCamera == null) {
-                craneCamera = new CameraNode("Camera", GameManager.getCamera());
+                craneCamera = new CameraNode("Camera", BuildingSimulator.getCam());
                 cameraOwner.attachChild(craneCamera);
             }
             setPosition();
@@ -85,7 +85,7 @@ public abstract class AbstractCraneCamera{
      * Wyłącza luźną kamerę. 
      */
     protected void setOffLoose() {
-        craneCamera = new CameraNode("Camera", GameManager.getCamera());
+        craneCamera = new CameraNode("Camera", BuildingSimulator.getCam());
         cameraOwner.attachChild(craneCamera);
     }
     

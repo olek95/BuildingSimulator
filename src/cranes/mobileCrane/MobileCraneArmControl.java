@@ -3,7 +3,6 @@ package cranes.mobileCrane;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
 import settings.Control;
-import buildingsimulator.GameManager;
 import cranes.ArmControl;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -13,10 +12,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import static buildingsimulator.GameManager.*;
 import buildingsimulator.PhysicsManager;
-import com.jme3.bullet.collision.PhysicsCollisionEvent;
-import com.jme3.bullet.collision.PhysicsCollisionListener;
 import menu.HUD;
 import texts.Translator;
 
@@ -206,8 +202,7 @@ public class MobileCraneArmControl extends ArmControl{
     public void setYCraneOffset(float y) { yCraneOffset = y; }
     
     private void createCranePhysics(){
-        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
-                .getBulletAppState().getPhysicsSpace();
+        PhysicsSpace physics = BuildingSimulator.getPhysicsSpace();
         physics.add(getHookHandle().getControl(0));
         Node craneControlNode = getCraneControl();
         PhysicsManager.createObjectPhysics(craneControlNode, 1f, true, 

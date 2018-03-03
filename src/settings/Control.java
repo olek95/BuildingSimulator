@@ -26,8 +26,7 @@ import texts.Translator;
  * @author AleksanderSklorz
  */
 public class Control {
-    private static InputManager inputManager = BuildingSimulator.getBuildingSimulator()
-            .getInputManager();
+    private static InputManager inputManager = BuildingSimulator.getGameInputManager();
     private static InputListener actualListener;
     /**
      * Typ wyliczeniowy zawierający wszystkie możliwe akcje, które może wykonać 

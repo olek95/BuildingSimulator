@@ -1,6 +1,6 @@
 package menu;
 
-import buildingsimulator.BuildingSimulator;
+import buildingsimulator.GameManager;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.audio.AudioNode;
 import com.jme3.input.event.MouseButtonEvent;
@@ -97,7 +97,7 @@ public abstract class Menu extends AbstractAppState{
      */
     protected void goNextMenu(Screen screen, MenuTypes menuType) {
         window.hide();
-        BuildingSimulator.getBuildingSimulator().getGuiNode().removeControl(screen);
+        GameManager.removeControlFromGui(screen);
         if(menuType != null) MenuFactory.showMenu(menuType);
     }
 }

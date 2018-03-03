@@ -159,8 +159,7 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
         if(collisionListener == null){
             collisionListener = new BottomCollisionListener(this, name, 
                     ElementName.ROPE_HOOK);
-            BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace()
-                    .addCollisionGroupListener(collisionListener, 5);
+            BuildingSimulator.getPhysicsSpace().addCollisionGroupListener(collisionListener, 5);
         }
     }
     
@@ -386,8 +385,9 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
                 new Vector3f(0f, 0f, height + 1) : new Vector3f(0f, 1f, 0f)),
                 start = getProperPoint(0, vertical);
         Vector3f[] ropesLocations = new Vector3f[ropes.length];
-        Material ropeMaterial = new Material(BuildingSimulator.getBuildingSimulator()
-                .getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
+        Material ropeMaterial = new Material(game.getAssetManager(),
+                "Common/MatDefs/Misc/Unshaded.j3md");
         ropeMaterial.setColor("Color", ColorRGBA.Black); 
         float ropeLength = start.distance(end);
         if(!vertical) distanceToHandle = end.y - getWorldTranslation().y; 
@@ -395,8 +395,7 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
         CompoundCollisionShape wallRopesShape = PhysicsManager.createCompound(this, "Box");
         RigidBodyControl controlAttaching = new RigidBodyControl(wallRopesShape, 0.00001f);
         addControl(controlAttaching); 
-        BuildingSimulator.getBuildingSimulator().getBulletAppState()
-                .getPhysicsSpace().add(controlAttaching);
+        game.getBulletAppState().getPhysicsSpace().add(controlAttaching);
         controlAttaching.setAngularFactor(0);
         controlAttaching.setCollisionGroup(5);
         Vector3f physicsLocation = controlAttaching.getPhysicsLocation();

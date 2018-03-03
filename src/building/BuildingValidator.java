@@ -25,8 +25,7 @@ public class BuildingValidator {
      */
     public static int validate(){
         points = 0;
-        List<Spatial> gameObjects = BuildingSimulator.getBuildingSimulator().getRootNode()
-                .getChildren();
+        List<Spatial> gameObjects = GameManager.getGameObjects();
         int objectsNumber = gameObjects.size(); 
         User user = GameManager.getUser();
         for(int i = 0; i < objectsNumber; i++){

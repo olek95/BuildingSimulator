@@ -43,8 +43,7 @@ public class Map {
         scene = GameManager.loadModel("Scenes/gameMap.j3o");
         // -z * 4 to przesunięcie planszy 
         int z = TERRAIN_PART_SIZE, end = size - 1, offset = -z * 4, x = offset; 
-        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
-                .getBulletAppState().getPhysicsSpace();
+        PhysicsSpace physics = BuildingSimulator.getPhysicsSpace();
         Spatial firstPart = scene.getChild(ElementName.MAP_FIELD_PART_NAME);
         float positiveBorder = calculateBorderLocation(false),
                 negativeBorder = calculateBorderLocation(true);  

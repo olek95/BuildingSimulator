@@ -135,7 +135,7 @@ public class PhysicsManager {
      * ma wartość null
      */
     public static void createPhysics(CompoundCollisionShape compound, Spatial controlOwner, float mass, boolean kinematic) {
-        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace();
+        PhysicsSpace physics = BuildingSimulator.getPhysicsSpace();
         RigidBodyControl oldControl = controlOwner.getControl(RigidBodyControl.class);
         if (oldControl != null) {
             physics.remove(oldControl);
@@ -160,7 +160,7 @@ public class PhysicsManager {
      * @return połaczenie obiektów
      */
     public static HingeJoint joinsElementToOtherElement(HingeJoint joint, Spatial nodeA, Spatial nodeB, Vector3f pivotA, Vector3f pivotB) {
-        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator().getBulletAppState().getPhysicsSpace();
+        PhysicsSpace physics = BuildingSimulator.getPhysicsSpace();
         if (joint != null) {
             physics.remove(joint);
         }
@@ -170,15 +170,13 @@ public class PhysicsManager {
     }
     
     public static void addPhysicsToGame(Spatial... objects) {
-        PhysicsSpace physics = BuildingSimulator.getBuildingSimulator()
-                .getBulletAppState().getPhysicsSpace();
+        PhysicsSpace physics = BuildingSimulator.getPhysicsSpace();
         for(int i = 0; i < objects.length; i++)
             physics.add(objects[i].getControl(RigidBodyControl.class));
     }
     
     public static void addPhysicsToGame(Spatial object, int i) {
-        BuildingSimulator.getBuildingSimulator().getBulletAppState()
-                .getPhysicsSpace().add(object.getControl(i));
+        BuildingSimulator.getPhysicsSpace().add(object.getControl(i));
     }
     
     /**
@@ -188,8 +186,7 @@ public class PhysicsManager {
     public static void removeFromScene(Node object) {
         RigidBodyControl control = object.getControl(RigidBodyControl.class);
         object.removeControl(control);
-        BuildingSimulator.getBuildingSimulator().getBulletAppState()
-                .getPhysicsSpace().remove(control);
+        BuildingSimulator.getPhysicsSpace().remove(control);
     }
     
     private static void moveDynamicObject(Spatial element, Vector3f displacement){

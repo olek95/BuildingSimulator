@@ -14,101 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import net.wcomohundro.jme3.csg.CSGGeometry;
 
-
-/**
- * Klasa <code>WallData</code> reprezentuje dane potrzebne do postawienia danej 
- * ściany podczas tworzenia gotowego budynku. 
- * @author AleksanderSklorz 
- */
-class WallData {
-    private WallType type;
-    private boolean perpendicularity = false;
-    private CatchNode catchNode; 
-    private WallMode mode; 
-    private Vector3f dimensions;
-    private boolean protruding; 
-    private boolean ceiling = false; 
-    private Wall additionalHitWall; 
-    public WallData(WallType type, CatchNode catchNode, WallMode mode, Vector3f dimensions,
-            boolean protruding) {
-        this.type = type; 
-        this.catchNode = catchNode; 
-        this.mode = mode;
-        this.dimensions = dimensions;
-        this.protruding = protruding;
-    }
-    
-    public WallData(WallType type, boolean perpendicularity, CatchNode catchNode,
-            WallMode mode, Vector3f dimensions, boolean protruding) {
-        this.type = type; 
-        this.catchNode = catchNode; 
-        this.mode = mode;
-        this.protruding = protruding;
-        this.dimensions = dimensions;
-        this.perpendicularity = perpendicularity; 
-    }
-    
-    public WallData(WallType type, CatchNode catchNode,
-            Vector3f dimensions, boolean protruding, boolean ceiling, Wall additionalHitWall) {
-        this.type = type; 
-        this.catchNode = catchNode; 
-        this.mode = WallMode.HORIZONTAL;
-        this.protruding = protruding;
-        this.dimensions = dimensions;
-        this.ceiling = ceiling;
-        this.additionalHitWall = additionalHitWall; 
-    }
-    
-    /**
-     * Zwraca typ ściany. 
-     * @return typ ściany 
-     */
-    public WallType getType() { return type; }
-    
-    /**
-     * Określa czy jest prostopadła do krawędzi.
-     * @return prostopadłość 
-     */
-    public boolean isPerpendicularity() { return perpendicularity; }
-    
-    /**
-     * Zwraca węzeł zaczepu. 
-     * @return węzeł zaczepu 
-     */
-    public CatchNode getCatchNode() { return catchNode; }
-    
-    /**
-     * Zwraca tryb w którym jest ściana np. HORIZONTAL
-     * @return tryb 
-     */
-    public WallMode getMode() { return mode; }
-    
-    /**
-     * Określa czy znajduje się na krawędzi, pomiędzy dwoma podłogami 
-     * @return informacja czy znajduje się na krawędzi 
-     */
-    public boolean isProtruding() { return protruding; }
-    
-    /**
-     * Rozmiar ściany 
-     * @return rozmiar ściany 
-     */
-    public Vector3f getDimensions() { return dimensions; }
-    
-    /**
-     * Określa czy jest to sufit 
-     * @return informacja czy jest to sufit 
-     */
-    public boolean isCeiling() { return ceiling; }
-    
-    /**
-     * Dodatkowo uderzona ściana (używane gdy stawia się sufit bo wtedy są dwie 
-     * ściany)
-     * @return dodatkowo uderzona śćiana  
-     */
-    public Wall getAdditionalHitWall() { return additionalHitWall; }
-}
-
 /**
  * Klasa <code>BuildingSample</code> reprezentuje przykładowy (gotowy) budynek. 
  * Pozwala na automatycznie postawenie całego budynku. 
@@ -128,10 +33,12 @@ public class BuildingSample extends Construction{
      * @return true jeśli udało sie umieścić budynek, false jeśli zabrakło dla
      * niego miejsca 
      */
-    public boolean drop(Vector3f location) {
+    public boolean drop(Vector3f location, int sampleIndex) {
         location.setY(0.2f);
         setLocalTranslation(location);
-        List<Wall> walls = createThirdSample(location);
+        List<Wall> walls; 
+        if(sampleIndex == 0) walls = createFirstSample(location);
+        else walls = sampleIndex == 1 ? createSecondSample(location) : createThirdSample(location);
         if(!BuildingCreator.checkIntersection(getWorldBound())) {
             int wallsNumber = walls.size(); 
             for(int i = 0; i < wallsNumber; i++) {

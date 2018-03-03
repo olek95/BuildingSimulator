@@ -7,6 +7,7 @@ import buildingsimulator.PhysicsManager;
 import com.jme3.bounding.BoundingVolume;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.collision.CollisionResults;
+import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -179,7 +180,7 @@ public class BuildingCreator implements VisibleFromAbove{
     
     private void buyBuilding(Vector3f location) {
         BuildingSample building = new BuildingSample();
-        if(building.drop(location)) {
+        if(building.drop(location, FastMath.rand.nextInt(3))) {
             building.setSold(true);
             User user = GameManager.getUser();
             user.setBuildingsNumber(user.getBuildingsNumber() + 1);

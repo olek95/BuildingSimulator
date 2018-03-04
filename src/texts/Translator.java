@@ -54,6 +54,8 @@ public enum Translator {
     FLYCAM_Backward,
     FLYCAM_StrafeLeft,
     FLYCAM_StrafeRight,
+    FLYCAM_Rise,
+    FLYCAM_Lower,
     CHANGING_CONTROLS_HUD_VISIBILITY,
     ACTIVITY,
     KEY,

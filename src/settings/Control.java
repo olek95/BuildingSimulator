@@ -9,7 +9,6 @@ import com.jme3.input.awt.AwtKeyInput;
 import com.jme3.input.controls.InputListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
-import cranes.CraneAbstract;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -61,6 +60,8 @@ public class Control {
         FLYCAM_Backward,
         FLYCAM_StrafeLeft,
         FLYCAM_StrafeRight,
+        FLYCAM_Rise, 
+        FLYCAM_Lower,
         CHANGING_CONTROLS_HUD_VISIBILITY,
         SELECT_WAREHOUSE(MouseInput.BUTTON_LEFT),
         CANCEL_BIRDS_EYE_VIEW(MouseInput.BUTTON_RIGHT);
@@ -92,8 +93,8 @@ public class Control {
                                 "DOWN", "PAUSE", "MERGE", "ATTACH", "LOWER_HOOK",
                                 "FIRST", "DETACH", "CHANGE_CAMERA", "COPY_BUILDING", 
                                 "BUY_BUILDING", "FLYCAM_Forward", "FLYCAM_Backward",
-                                "FLYCAM_StrafeLeft", "FLYCAM_StrafeRight",
-                                "CHANGING_CONTROLS_HUD_VISIBILITY"},
+                                "FLYCAM_StrafeLeft", "FLYCAM_StrafeRight", "FLYCAM_Rise",
+                                "FLYCAM_Lower", "CHANGING_CONTROLS_HUD_VISIBILITY"},
                             new String[]{"T", "O", "L", "U", "2", "V", "K", "E", "H",
                                 "SPACE", "LSHIFT", "P", "F", "J", "ESC", "N", "Y",
                                 "R", "1", "B", "C", "5", "6", "W", "S", "A", "D", "7"}, 
@@ -188,8 +189,10 @@ public class Control {
     /**
      * Dodaje nowego słuchacza klawiszy. 
      * @param o słuchacz 
+     * @param setAsActualListener true jeśli ten słuchacz ma być zapamiętany jako 
+     * aktualny, false jeśli ma zostać tylko ustawiony bez zapamiętywania
      */
-    public static void addListener(InputListener o){
+    public static void addListener(InputListener o, boolean setAsActualListener){
         if(o instanceof Controllable){
             Actions[] names = ((Controllable)o).getAvailableActions();
             for(int i = 0; i < names.length; i++) {
@@ -200,7 +203,7 @@ public class Control {
                 inputManager.addListener(o, names[i].toString());
                 
             }
-            if(o instanceof CraneAbstract) actualListener = o;
+            if(setAsActualListener) actualListener = o;
         }else{
                 if(o instanceof BuildingSimulator) {
                     inputManager.addListener(o, Actions.PHYSICS.toString());

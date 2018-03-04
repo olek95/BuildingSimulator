@@ -59,7 +59,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         MobileCraneArmControl arm = (MobileCraneArmControl)getArmControl();
         if(propsLowering >= MAX_PROP_PROTRUSION) {
            arm.setUsing(true);
-           Control.addListener(arm);
+           Control.addListener(arm, true);
         }
         arm.setHookHandleDisplacement(state.getHookHandleDisplacement());
         arm.setStretchingOut(state.getArmStretchingOut());
@@ -297,7 +297,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
             controlProps(true);
         }else{
             if(Control.getActualListener().equals(this)){
-                Control.addListener(getArmControl());
+                Control.addListener(getArmControl(), true);
                 HUD.setMessage(Translator.LOWERED_PROPS.getValue());
                 ((MobileCraneCamera)getCamera()).changeCamera(true);
                 HUD.fillControlInformation(getArmControl().getAvailableActions(),
@@ -313,7 +313,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
             controlProps(false);
         else{
             if(Control.getActualListener().equals(getArmControl())){
-                Control.addListener(this);
+                Control.addListener(this, true);
                 HUD.setMessage(Translator.HEIGHTENED_PROPS.getValue());
                 ((MobileCraneCamera)getCamera()).changeCamera(false);
                 HUD.fillControlInformation(availableActions, hasLooseCamera() 

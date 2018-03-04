@@ -84,7 +84,7 @@ public class GameManager {
                 MobileCraneArmControl armControl = (MobileCraneArmControl)mobileCrane
                         .getArmControl();
                 if(!armControl.isUsing()) {
-                    Control.addListener(mobileCrane);
+                    Control.addListener(mobileCrane, true);
                     HUD.changeHUDColor(!mobileCraneCam.getType().equals(CameraType.CABIN));
                 } else {
                     HUD.changeHUDColor(!armControl.getCamera().getType()
@@ -94,7 +94,7 @@ public class GameManager {
                 mobileCraneCam.restore();
             } else {
                 actualUnit = crane;
-                Control.addListener(crane.getArmControl());
+                Control.addListener(crane.getArmControl(), true);
                 crane.setUsing(true);
                 mobileCrane.getCamera().setOff();
                 crane.getCamera().restore();
@@ -108,7 +108,7 @@ public class GameManager {
             MobileCraneArmControl armControl = (MobileCraneArmControl)mobileCrane
                     .getArmControl();
             if(!armControl.isUsing()) {
-                Control.addListener(mobileCrane);
+                Control.addListener(mobileCrane, true);
                 HUD.changeHUDColor(!mobileCrane.getCamera().getType().equals(CameraType.CABIN));
             } else {
                 HUD.changeHUDColor(!armControl.getCamera().getType()
@@ -119,13 +119,13 @@ public class GameManager {
         addToScene(crane.getCrane());
         //billboard = new Billboard(80, 0);
         //addToScene(billboard.getBillboard());
-        Control.addListener(game);
+        Control.addListener(game, false);
         PhysicsSpace physics = BuildingSimulator.getPhysicsSpace();
         physics.addCollisionListener(ArmCollisionListener.createRotateAfterImpactListener());
         physics.addCollisionListener(BuildingCollisionListener.createBuildingCollisionListener());
         displayActualUnitControlsInHUD();
         HUD.fillGeneralControlsLabel(false);
-        Control.addListener(limitedCamera);
+        Control.addListener(limitedCamera, false);
         startedGame = true; 
     }
     
@@ -138,7 +138,7 @@ public class GameManager {
             BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
             game.getFlyByCamera().setDragToRotate(false);
             game.getInputManager().setCursorVisible(false);
-            Control.addListener(Control.getActualListener());
+            Control.addListener(Control.getActualListener(), true);
         } else {
             HUD.changeShopButtonVisibility(false);
         }
@@ -416,7 +416,7 @@ public class GameManager {
     private static void resetGameControls() {
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         Control.removeListener(game);
-        Control.addListener(game);
-        Control.addListener(game.getFlyByCamera());
+        Control.addListener(game, false);
+        Control.addListener(game.getFlyByCamera(), false);
     }
 }

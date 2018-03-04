@@ -34,7 +34,7 @@ public class BirdsEyeView implements ActionListener{
     private boolean mouseDisabled = false;
     public BirdsEyeView(VisibleFromAbove viewOwner, boolean movingAvailable) {
         BirdsEyeView.viewOwner = viewOwner;
-        Control.addListener(this);
+        Control.addListener(this, false);
         BirdsEyeView.movingAvailable = movingAvailable; 
         changeViewMode();
     }
@@ -98,18 +98,18 @@ public class BirdsEyeView implements ActionListener{
         boolean isMobileCrane = crane.equals(mobileCrane);
         if(isMobileCrane) {
             if(!mobileCrane.isDuringStateChanging())
-                Control.addListener(Control.getActualListener());
+                Control.addListener(Control.getActualListener(), true);
             MobileCraneArmControl armControl = (MobileCraneArmControl)mobileCrane
                     .getArmControl();
             if(!armControl.isUsing()) {
-                Control.addListener(mobileCrane);
+                Control.addListener(mobileCrane, true);
                 HUD.changeHUDColor(!mobileCrane.getCamera().getType().equals(CameraType.CABIN));
             } else {
                 HUD.changeHUDColor(!armControl.getCamera().getType()
                         .equals(CameraType.ARM_CABIN));
             }
         } else {
-            Control.addListener(Control.getActualListener());
+            Control.addListener(Control.getActualListener(), true);
         }
         GameManager.getCrane().setView(null);
         viewOwner = null;

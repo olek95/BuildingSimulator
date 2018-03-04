@@ -12,7 +12,8 @@ import settings.Control.Actions;
  */
 public class LimitedFlyByCamera extends FlyByCamera implements Controllable{
     private Actions[] availableActions = new Actions[]{Actions.FLYCAM_Backward, 
-        Actions.FLYCAM_Forward, Actions.FLYCAM_StrafeLeft, Actions.FLYCAM_StrafeRight}; 
+        Actions.FLYCAM_Forward, Actions.FLYCAM_StrafeLeft, Actions.FLYCAM_StrafeRight,
+        Actions.FLYCAM_Rise, Actions.FLYCAM_Lower}; 
     
     public LimitedFlyByCamera(Camera cam) {
         super(cam);
@@ -23,6 +24,8 @@ public class LimitedFlyByCamera extends FlyByCamera implements Controllable{
     public void onAnalog(String name, float value, float tpf) {
         Vector3f location = cam.getLocation();
         if(location.y <= 0) cam.setLocation(location.setY(1));
+        /* zmienia zachowanie sterowania - gdy widok z lotu ptaka, W i S sterują
+           w górę/w dół ekranu, zamiast w górę/dół mapy */
         if(rotationSpeed == 0) {
             if(name.equals("FLYCAM_Forward")) {
                 cam.setLocation(cam.getLocation().addLocal(0, 0, value * moveSpeed));

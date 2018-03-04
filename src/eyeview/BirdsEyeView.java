@@ -1,6 +1,7 @@
 package eyeview;
 
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.Controllable;
 import buildingsimulator.ElementName;
 import settings.Control;
 import buildingsimulator.GameManager;
@@ -28,10 +29,12 @@ import texts.Translator;
  * patrząć od góry). 
  * @author Aleksander Sklorz
  */
-public class BirdsEyeView implements ActionListener{
+public class BirdsEyeView implements ActionListener, Controllable{
     private static VisibleFromAbove viewOwner;
     private static boolean movingAvailable;
     private boolean mouseDisabled = false;
+    private Actions[] availableActions = new Actions[]{Actions.SELECT_WAREHOUSE, 
+        Actions.CANCEL_BIRDS_EYE_VIEW};
     public BirdsEyeView(VisibleFromAbove viewOwner, boolean movingAvailable) {
         BirdsEyeView.viewOwner = viewOwner;
         Control.addListener(this, false);
@@ -122,8 +125,9 @@ public class BirdsEyeView implements ActionListener{
      */
     public static void displayMovingModeHUD(boolean cloning) {
         HUD.fillControlInformation(new Actions[] {Actions.FLYCAM_Forward, 
-                Actions.FLYCAM_Backward, Actions.FLYCAM_StrafeLeft, Actions.FLYCAM_StrafeRight},
-                    new String[]{Translator.RIGHT_CLICK_CANCELLATION.getValue(),
+                Actions.FLYCAM_Backward, Actions.FLYCAM_StrafeLeft, Actions.FLYCAM_StrafeRight,
+                Actions.FLYCAM_Rise, Actions.FLYCAM_Lower}, 
+                new String[]{Translator.RIGHT_CLICK_CANCELLATION.getValue(), 
                     (cloning ? Translator.LEFT_CLICK_CLONE : Translator.LEFT_CLICK_DROPPING)
                 .getValue()});
     }
@@ -164,6 +168,9 @@ public class BirdsEyeView implements ActionListener{
      * jest zabronione 
      */
     public static boolean isMovingAvailable() { return movingAvailable; }
+    
+    @Override
+    public Actions[] getAvailableActions() { return availableActions; }
     
     private void changeViewMode() {
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();

@@ -193,33 +193,16 @@ public class Control {
      * aktualny, false jeśli ma zostać tylko ustawiony bez zapamiętywania
      */
     public static void addListener(InputListener o, boolean setAsActualListener){
-        if(o instanceof Controllable){
-            Actions[] names = ((Controllable)o).getAvailableActions();
-            for(int i = 0; i < names.length; i++) {
-                if(!inputManager.hasMapping(names[i].toString())) {
-                    inputManager.addMapping(names[i].toString(), 
-                            new KeyTrigger(Actions.getJmeKeyCode(names[i].key)));
-                }
-                inputManager.addListener(o, names[i].toString());
-                
+        Actions[] names = ((Controllable)o).getAvailableActions();
+        for(int i = 0; i < names.length; i++) {
+            if(!inputManager.hasMapping(names[i].toString())) {
+                inputManager.addMapping(names[i].toString(), 
+                        new KeyTrigger(Actions.getJmeKeyCode(names[i].key)));
             }
-            if(setAsActualListener) actualListener = o;
-        }else{
-                if(o instanceof BuildingSimulator) {
-                    inputManager.addListener(o, Actions.PHYSICS.toString());
-                    inputManager.addListener(o, Actions.FIRST.toString());
-                    inputManager.addListener(o, Actions.SECOND.toString());
-                    inputManager.addListener(o, Actions.PAUSE.toString());
-                    inputManager.addListener(o, Actions.SHOW_CURSOR.toString());
-                    inputManager.addListener(o, Actions.MOVE_CRANE.toString());
-                    inputManager.addListener(o, Actions.COPY_BUILDING.toString());
-                    inputManager.addListener(o, Actions.BUY_BUILDING.toString());
-                    inputManager.addListener(o, Actions.CHANGING_CONTROLS_HUD_VISIBILITY.toString());
-                } else {
-                    inputManager.addListener(o, Actions.SELECT_WAREHOUSE.toString());
-                    inputManager.addListener(o, Actions.CANCEL_BIRDS_EYE_VIEW.toString());
-                }
+            inputManager.addListener(o, names[i].toString());
+
         }
+        if(setAsActualListener) actualListener = o;
     }
     
     /**

@@ -22,8 +22,6 @@ public class LimitedFlyByCamera extends FlyByCamera implements Controllable{
     
     @Override
     public void onAnalog(String name, float value, float tpf) {
-        Vector3f location = cam.getLocation();
-        if(location.y <= 0) cam.setLocation(location.setY(1));
         /* zmienia zachowanie sterowania - gdy widok z lotu ptaka, W i S sterują
            w górę/w dół ekranu, zamiast w górę/dół mapy */
         if(rotationSpeed == 0) {
@@ -35,6 +33,8 @@ public class LimitedFlyByCamera extends FlyByCamera implements Controllable{
                 } else super.onAnalog(name, value, tpf);
             }
         } else super.onAnalog(name, value, tpf);
+        Vector3f location = cam.getLocation();
+        if(location.y <= 0) cam.setLocation(location.setY(1));
     }
     
     @Override

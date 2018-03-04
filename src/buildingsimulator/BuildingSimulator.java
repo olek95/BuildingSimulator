@@ -34,9 +34,10 @@ import menu.MenuFactory;
 import menu.MenuTypes;
 import menu.Options;
 import menu.Shop;
+import settings.Control.Actions;
 import texts.Translator;
         
-public class BuildingSimulator extends SimpleApplication implements ActionListener{
+public class BuildingSimulator extends SimpleApplication implements ActionListener, Controllable{
     private static BuildingSimulator game;
     private BulletAppState bulletAppState = new BulletAppState();
     private boolean debug = false;
@@ -300,4 +301,11 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
      * @return kamera
      */
     public static Camera getCam() { return game.cam; }
+
+    @Override
+    public Control.Actions[] getAvailableActions() { 
+        return new Actions[]{Actions.PHYSICS, Actions.FIRST, Actions.SECOND, 
+            Actions.PAUSE, Actions.SHOW_CURSOR, Actions.MOVE_CRANE, Actions.COPY_BUILDING,
+            Actions.BUY_BUILDING, Actions.CHANGING_CONTROLS_HUD_VISIBILITY};
+    }
 }

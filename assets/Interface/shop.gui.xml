@@ -7,15 +7,15 @@
                 <method name="setIsMovable" param0="false"/>
                 <method name="setIsResizable" param0="false"/>
                 <component type="Label" id="type_label" position="25%,12%" dimensions="10%,12%"/>
-                <component type="Slider" id="type_slider" position="35%,15%" dimensions="40%,7%" orientation="HORIZONTAL">
+                <component type="Slider" id="type_slider" position="45%,15%" dimensions="40%,7%" orientation="HORIZONTAL">
                     <eventMethod name="onChange" stateMethodName="prepareOrder"/>
                 </component>
                 <component type="Label" id="color_label" position="25%,23%" dimensions="10%,12%"/>
-                <component type="Slider" id="color_slider" position="35%,27%" dimensions="40%,7%" orientation="HORIZONTAL">
+                <component type="Slider" id="color_slider" position="45%,27%" dimensions="40%,7%" orientation="HORIZONTAL">
                     <eventMethod name="onChange" stateMethodName="prepareOrder"/>
                 </component>
-                <component type="Label" id="amount_label" position="25%,35%" dimensions="10%,12%"/>
-                <component type="Spinner" id="amount_spinner" position="35%,38%" dimensions="20%,7%" orientation="VERTICAL">
+                <component type="Label" id="amount_label" position="25%,35%" dimensions="15%,12%"/>
+                <component type="Spinner" id="amount_spinner" position="45%,38%" dimensions="20%,7%" orientation="VERTICAL">
                     <method name="setStepIntegerRange" param0="0" param1="5" param2="1"/>
                     <eventMethod name="onChange" stateMethodName="prepareOrder"/>
                 </component>

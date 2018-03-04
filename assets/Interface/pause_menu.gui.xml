@@ -29,7 +29,7 @@
             <method name="setWindowTitle" param0="Wyjscie z Gry" />
             <method name="setIsResizable" param0="false" />
             <method name="centerToParent"/>
-            <component type="Label" id="exit_label" position="35%,40%" dimensions="100%,5%" >
+            <component type="Label" id="exit_label" position="32%,40%" dimensions="100%,5%" >
                 <method name="setTextAlign" param0="Left" />
             </component>
             <component type="Button" id="exit_game_button" position="7%,80%" dimensions="27%,15%" >

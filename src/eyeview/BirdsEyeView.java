@@ -121,8 +121,8 @@ public class BirdsEyeView implements ActionListener{
      * Wyświetla sterowanie stosowane w trybie poruszania się. 
      */
     public static void displayMovingModeHUD(boolean cloning) {
-        HUD.fillControlInformation(new Actions[] {Actions.FLYCAM_FORWARD, 
-                Actions.FLYCAM_BACKWARD, Actions.FLYCAM_STRAFE_LEFT, Actions.FLYCAM_STRAFE_RIGHT},
+        HUD.fillControlInformation(new Actions[] {Actions.FLYCAM_Forward, 
+                Actions.FLYCAM_Backward, Actions.FLYCAM_StrafeLeft, Actions.FLYCAM_StrafeRight},
                     new String[]{Translator.RIGHT_CLICK_CANCELLATION.getValue(),
                     (cloning ? Translator.LEFT_CLICK_CLONE : Translator.LEFT_CLICK_DROPPING)
                 .getValue()});

@@ -125,6 +125,7 @@ public class GameManager {
         physics.addCollisionListener(BuildingCollisionListener.createBuildingCollisionListener());
         displayActualUnitControlsInHUD();
         HUD.fillGeneralControlsLabel(false);
+        Control.addListener(limitedCamera);
         startedGame = true; 
     }
     
@@ -416,5 +417,6 @@ public class GameManager {
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         Control.removeListener(game);
         Control.addListener(game);
+        Control.addListener(game.getFlyByCamera());
     }
 }

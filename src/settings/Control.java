@@ -9,6 +9,7 @@ import com.jme3.input.awt.AwtKeyInput;
 import com.jme3.input.controls.InputListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
+import cranes.CraneAbstract;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -56,10 +57,10 @@ public class Control {
         CHANGE_CAMERA,
         COPY_BUILDING,
         BUY_BUILDING,
-        FLYCAM_FORWARD,
-        FLYCAM_BACKWARD,
-        FLYCAM_STRAFE_LEFT,
-        FLYCAM_STRAFE_RIGHT,
+        FLYCAM_Forward,
+        FLYCAM_Backward,
+        FLYCAM_StrafeLeft,
+        FLYCAM_StrafeRight,
         CHANGING_CONTROLS_HUD_VISIBILITY,
         SELECT_WAREHOUSE(MouseInput.BUTTON_LEFT),
         CANCEL_BIRDS_EYE_VIEW(MouseInput.BUTTON_RIGHT);
@@ -68,7 +69,8 @@ public class Control {
         private Actions(){
             createProperties();
             key = getKeyFromPropertiesFile();
-            inputManager.addMapping(toString(), new KeyTrigger(getJmeKeyCode(key)));
+            String mappingName = toString(); 
+            inputManager.addMapping(mappingName, new KeyTrigger(getJmeKeyCode(key)));
         }
         
         private Actions(int mouseKey) {
@@ -89,8 +91,8 @@ public class Control {
                                 "PULL_IN", "SHOW_CURSOR", "PHYSICS", "ACTION", 
                                 "DOWN", "PAUSE", "MERGE", "ATTACH", "LOWER_HOOK",
                                 "FIRST", "DETACH", "CHANGE_CAMERA", "COPY_BUILDING", 
-                                "BUY_BUILDING", "FLYCAM_FORWARD", "FLYCAM_BACKWARD",
-                                "FLYCAM_STRAFE_LEFT", "FLYCAM_STRAFE_RIGHT",
+                                "BUY_BUILDING", "FLYCAM_Forward", "FLYCAM_Backward",
+                                "FLYCAM_StrafeLeft", "FLYCAM_StrafeRight",
                                 "CHANGING_CONTROLS_HUD_VISIBILITY"},
                             new String[]{"T", "O", "L", "U", "2", "V", "K", "E", "H",
                                 "SPACE", "LSHIFT", "P", "F", "J", "ESC", "N", "Y",
@@ -190,9 +192,15 @@ public class Control {
     public static void addListener(InputListener o){
         if(o instanceof Controllable){
             Actions[] names = ((Controllable)o).getAvailableActions();
-            for(int i = 0; i < names.length; i++)
+            for(int i = 0; i < names.length; i++) {
+                if(!inputManager.hasMapping(names[i].toString())) {
+                    inputManager.addMapping(names[i].toString(), 
+                            new KeyTrigger(Actions.getJmeKeyCode(names[i].key)));
+                }
                 inputManager.addListener(o, names[i].toString());
-            actualListener = o;
+                
+            }
+            if(o instanceof CraneAbstract) actualListener = o;
         }else{
                 if(o instanceof BuildingSimulator) {
                     inputManager.addListener(o, Actions.PHYSICS.toString());

@@ -101,9 +101,9 @@ public enum CatchNode {
                         }
                     }
                     if(!Construction.getWholeConstruction(wall1).getName().contains("sample")) {
-                        z = wall1.getHeight();
+                        z = wall1.getHeight() + wall2.getWidth();
                     } else {
-                        y = wall1.getHeight(); 
+                        y = wall1.getHeight() + wall2.getWidth(); 
                     }
                 } else {
                     y = 0;

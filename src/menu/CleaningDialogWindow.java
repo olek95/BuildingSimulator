@@ -1,6 +1,7 @@
 package menu;
 
 import building.CatchNode;
+import building.Construction;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
@@ -89,16 +90,15 @@ public class CleaningDialogWindow extends Menu{
         for(int i = 0; i < objectsCount; i++) {
             Spatial object = gameObjects.get(i);
             if(object.getName().startsWith(ElementName.BUILDING_BASE_NAME)) {
-                Node firstWall = (Node)((Node)object).getChild(0);
+                Construction building = (Construction)object; 
+                Node firstWall = (Node)building.getChild(0);
                 if(onlyInfiniteBuildings) {
-                    if(firstWall.getControl(RigidBodyControl.class).getMass() != 0) {
-                        //                deleteMainPartsControls((Node)object);
-                        deleteWallsControl((Node)((Node)object).getChild(0));
+                    if(!building.isSold()) {
+                        deleteWallsControl(firstWall);
                         object.removeFromParent();
                     }
                 } else {
-                    //                deleteMainPartsControls((Node)object);
-                    deleteWallsControl((Node)((Node)object).getChild(0));
+                    deleteWallsControl(firstWall);
                     object.removeFromParent();
                 }
             }
@@ -119,17 +119,6 @@ public class CleaningDialogWindow extends Menu{
         deleteWallControl(element);
         return points;
     }
-    
-//    private static int deleteMainPartsControls(Node building) {
-//        List<Spatial> parts = building.getChildren(); 
-//        int partsAmount = parts.size(), points = 0; 
-//        for(int i = 0; i < partsAmount; i++) {
-//            Node part = (Node)parts.get(i);
-//            deleteWallsControl(part);
-//            deleteWallControl(part);
-//        }
-//        return points; 
-//    }
     
     private static void deleteWallControl(Node wall) {
         PhysicsSpace physics = BuildingSimulator.getPhysicsSpace();

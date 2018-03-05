@@ -80,11 +80,10 @@ public class Control {
         
         private void createProperties() {
             if(keysProperties == null) {
-                try {
+                try(FileReader file = new FileReader("settings/control.properties")) {
                     keysProperties = new Properties();
-                    keysProperties.load(new BufferedReader(new FileReader("settings/control.properties")));
+                    keysProperties.load(new BufferedReader(file));
                 } catch (IOException ex) {
-                    Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
                     keysProperties = CreatorMockSettings
                             .createDefaultProperties(new String[]{"HEIGHTEN_HOOK",
                                 "MOVE_CRANE", "MERGE_PROTRUDING", "UP", "SECOND",
@@ -97,8 +96,8 @@ public class Control {
                                 "FLYCAM_Lower", "CHANGING_CONTROLS_HUD_VISIBILITY"},
                             new String[]{"T", "O", "L", "U", "2", "V", "K", "E", "H",
                                 "SPACE", "LSHIFT", "P", "F", "J", "ESC", "N", "Y",
-                                "R", "1", "B", "C", "5", "6", "W", "S", "A", "D", "7"}, 
-                                "settings/control.properties"); 
+                                "R", "1", "B", "C", "5", "6", "W", "S", "A", "D",
+                                "Q", "Z", "7"}, "settings/control.properties"); 
                 }
             }
         }

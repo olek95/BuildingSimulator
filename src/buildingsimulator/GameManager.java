@@ -81,15 +81,7 @@ public class GameManager {
                 actualUnit = mobileCrane;
                 mobileCrane.setUsing(true);
                 AbstractCraneCamera mobileCraneCam = mobileCrane.getCamera();
-                MobileCraneArmControl armControl = (MobileCraneArmControl)mobileCrane
-                        .getArmControl();
-                if(!armControl.isUsing()) {
-                    Control.addListener(mobileCrane, true);
-                    HUD.changeHUDColor(!mobileCraneCam.getType().equals(CameraType.CABIN));
-                } else {
-                    HUD.changeHUDColor(!armControl.getCamera().getType()
-                            .equals(CameraType.ARM_CABIN));
-                }
+                changeHUDColorDependingOnMobileCraneState();
                 crane.getCamera().setOff();
                 mobileCraneCam.restore();
             } else {
@@ -105,15 +97,7 @@ public class GameManager {
             crane = new Crane();
             actualUnit = mobileCrane;
             crane.getCamera().setOff();
-            MobileCraneArmControl armControl = (MobileCraneArmControl)mobileCrane
-                    .getArmControl();
-            if(!armControl.isUsing()) {
-                Control.addListener(mobileCrane, true);
-                HUD.changeHUDColor(!mobileCrane.getCamera().getType().equals(CameraType.CABIN));
-            } else {
-                HUD.changeHUDColor(!armControl.getCamera().getType()
-                        .equals(CameraType.ARM_CABIN));
-            }
+            changeHUDColorDependingOnMobileCraneState();
         }
         addToScene(mobileCrane.getCrane());
         addToScene(crane.getCrane());
@@ -139,6 +123,9 @@ public class GameManager {
             game.getFlyByCamera().setDragToRotate(false);
             game.getInputManager().setCursorVisible(false);
             Control.addListener(Control.getActualListener(), true);
+            if(actualUnit.equals(mobileCrane)) {
+                changeHUDColorDependingOnMobileCraneState();
+            }
         } else {
             HUD.changeShopButtonVisibility(false);
         }
@@ -348,6 +335,18 @@ public class GameManager {
             HUD.fillControlInformation(Arrays.copyOf(actions, actions.length - 3),
                     actualUnit.hasLooseCamera() ? new String[] {Translator.MOUSE_MOVEMENT
                     .getValue()} : null, 1, 1);
+        }
+    }
+    
+    public static void changeHUDColorDependingOnMobileCraneState() {
+        MobileCraneArmControl armControl = (MobileCraneArmControl)mobileCrane
+                    .getArmControl();
+        if(!armControl.isUsing()) {
+            Control.addListener(mobileCrane, true);
+            HUD.changeHUDColor(!mobileCrane.getCamera().getType().equals(CameraType.CABIN));
+        } else {
+            HUD.changeHUDColor(!armControl.getCamera().getType()
+                    .equals(CameraType.ARM_CABIN));
         }
     }
     

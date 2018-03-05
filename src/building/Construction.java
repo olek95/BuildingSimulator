@@ -147,13 +147,14 @@ public class Construction extends Node{
      * się budynku.
      */
     public void updateState() {
-        depthFirstTraversal(new SceneGraphVisitorAdapter() {
+        final boolean isSample = name.contains("sample");
+        breadthFirstTraversal(new SceneGraphVisitorAdapter() {
             @Override
             public void visit(Node object) {
                 if(object.getName().startsWith("Wall") && object.getWorldTranslation().y >= 0.4f) {
                     Wall wall = (Wall)object;
                     wall.setMovable(true);
-                    if(3 < wall.getWorldTranslation()
+                    if((isSample ? 5 : 3) < (isSample ? wall.getLocalTranslation() : wall.getWorldTranslation())
                             .distance(wall.getCatchingLocation())){ 
                         boolean wallStateChanged = false; 
                         if(!wall.isStale()){
@@ -161,7 +162,10 @@ public class Construction extends Node{
                             detachWall(wall);
                         }
                         if(wallStateChanged) resetWalls = true; 
-                    } else wall.setMovable(false);
+                    } else {
+                        if(!wall.isStale())
+                        wall.setMovable(false);
+                    }
                 }
             }
         });
@@ -176,6 +180,7 @@ public class Construction extends Node{
                     wall.removeFromParent();
                     GameManager.addToScene(wall);
                     wall.setStale(true);
+                    wall.setMovable(true);
                 }
             }
         });

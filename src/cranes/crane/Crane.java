@@ -26,22 +26,21 @@ import menu.HUD;
  * @author AleksanderSklorz
  */
 public class Crane extends CraneAbstract implements VisibleFromAbove{
-    private Node crane;
     private Spatial rack, entrancePlatform, penultimateRack, lastRack;
     private Vector3f craneLocation, newLocation;
     private int heightLevel = 0;
     private DummyCollisionListener listener;
     private BirdsEyeView view; 
     public Crane(){
-        crane = GameManager.loadModel("Models/zuraw/zuraw.j3o");
-        crane.setShadowMode(RenderQueue.ShadowMode.Cast);
+        setCrane(GameManager.loadModel("Models/zuraw/zuraw.j3o"));
         craneLocation = new Vector3f(10f, 0f, 0f);
         initCraneElements();
         initCranePhysics();
     }
     
     public Crane(CraneState state) {
-        crane = state.getCraneNode();
+        Node crane = state.getCraneNode(); 
+        setCrane(crane);
         craneLocation = crane.getLocalTranslation();
         initCraneElements();
         getCamera().setType(state.getCameraType());
@@ -81,7 +80,7 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
     public void raiseHeight(int height){
         boolean initial = false; 
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-        Node rootNode = game.getRootNode();
+        Node rootNode = game.getRootNode(), crane = getCrane();
         if(rootNode.hasChild(crane)) {
             initial = true; 
             rootNode.detachChild(crane);
@@ -117,7 +116,7 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
      * @param height wysokość żurawia 
      */
     public void decreaseHeight(int height) {
-        Node rootNode = BuildingSimulator.getGameRootNode();
+        Node rootNode = BuildingSimulator.getGameRootNode(), crane = getCrane();
         rootNode.detachChild(crane);
         List<Spatial> rackElements = crane.getChildren();
         int lastIndex = rackElements.size() - 1, difference = heightLevel - height; 
@@ -152,6 +151,7 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
     @Override
     public void unload() {
         craneLocation = newLocation; 
+        Node crane = getCrane();
         crane.setLocalTranslation(craneLocation);
         List<Spatial> craneElements = crane.getChildren(); 
         int elementsCount = craneElements.size();
@@ -174,7 +174,7 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
      public void setListener(DummyCollisionListener listener) {
          this.listener = listener; 
          if(listener != null) {
-            BoundingBox bounding = (BoundingBox)crane.getChild(ElementName.PROP0)
+            BoundingBox bounding = (BoundingBox)getCrane().getChild(ElementName.PROP0)
                     .getWorldBound();
             listener.createDummyWall(newLocation, bounding.getExtent(null));
          }
@@ -210,13 +210,6 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
      */
     public int getHeightLevel() { return heightLevel; }
     
-    /**
-     * Zwraca dźwig. 
-     * @return dźwig
-     */
-    @Override
-    public Node getCrane() { return crane; }
-    
     private RigidBodyControl setProperControlLocation(Spatial object, Vector3f displacement){
         RigidBodyControl control = object.getControl(RigidBodyControl.class);
         control.setPhysicsLocation(object.getLocalTranslation().add(displacement));
@@ -224,7 +217,8 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
     }
     
     private void initCraneElements() {
-        setCamera(new CraneCamera(getCrane()));
+        Node crane = getCrane(); 
+        setCamera(new CraneCamera(crane));
         rack = crane.getChild(ElementName.RACK0);
         entrancePlatform = crane.getChild(ElementName.ENTRANCE_PLATFORM);
         penultimateRack = crane.getChild(ElementName.RACK1); 
@@ -233,6 +227,7 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
     }
     
     private void initCranePhysics(){
+        Node crane = getCrane();
         crane.setLocalTranslation(craneLocation);
         PhysicsSpace physics = BuildingSimulator.getPhysicsSpace();
         physics.add(setProperControlLocation(crane.getChild(ElementName.PROP0), craneLocation));

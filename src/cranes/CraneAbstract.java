@@ -67,7 +67,7 @@ public abstract class CraneAbstract {
      * Ustawia model dźwigu. 
      * @param crane model dźwigu 
      */
-    public void setCrane(Node crane) { this.crane = crane; crane.setShadowMode(RenderQueue.ShadowMode.Cast);}
+    public void setCrane(Node crane) { this.crane = crane; }
     
     /**
      * Zwraca kamerę dźwigu. 

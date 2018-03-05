@@ -27,6 +27,8 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
+import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import cranes.CraneAbstract;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -74,6 +76,7 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
         createAttachingControl(location, true); 
         swapControl(WallMode.LOOSE);
         counter++;
+        setShadowMode(ShadowMode.Cast);
     }
     
     /**

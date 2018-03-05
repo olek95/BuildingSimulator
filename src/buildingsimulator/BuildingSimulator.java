@@ -23,6 +23,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.shadow.DirectionalLightShadowFilter;
@@ -57,22 +58,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         inputManager.deleteMapping(INPUT_MAPPING_EXIT);
         flyCam.setMoveSpeed(100);
         flyCam.setDragToRotate(true);
-        DirectionalLight sun = new DirectionalLight();
-        sun.setColor(ColorRGBA.White);
-        sun.setDirection(new Vector3f(-.5f,-.5f,-.5f).normalizeLocal());
-        rootNode.addLight(sun);
+        initLight();
         MenuFactory.showMenu(MenuTypes.STARTING_MENU);
-        final int SHADOWMAP_SIZE=1024;
-        DirectionalLightShadowRenderer dlsr = new DirectionalLightShadowRenderer(assetManager, SHADOWMAP_SIZE, 3);
-        dlsr.setLight(sun);
-        viewPort.addProcessor(dlsr);
-
-        DirectionalLightShadowFilter dlsf = new DirectionalLightShadowFilter(assetManager, SHADOWMAP_SIZE, 3);
-        dlsf.setLight(sun);
-        dlsf.setEnabled(true);
-        FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
-        fpp.addFilter(dlsf);
-        viewPort.addProcessor(fpp);
     }
 
     @Override
@@ -320,5 +307,22 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         return new Actions[]{Actions.PHYSICS, Actions.FIRST, Actions.SECOND, 
             Actions.PAUSE, Actions.SHOW_CURSOR, Actions.MOVE_CRANE, Actions.COPY_BUILDING,
             Actions.BUY_BUILDING, Actions.CHANGING_CONTROLS_HUD_VISIBILITY};
+    }
+    
+    private void initLight() {
+        DirectionalLight sun = new DirectionalLight();
+        sun.setColor(ColorRGBA.White);
+        sun.setDirection(new Vector3f(.5f,-.5f,-.5f).normalizeLocal());
+        rootNode.addLight(sun);
+        final int SHADOWMAP_SIZE=1024;
+        DirectionalLightShadowRenderer dlsr = new DirectionalLightShadowRenderer(assetManager, SHADOWMAP_SIZE, 3);
+        dlsr.setLight(sun);
+        viewPort.addProcessor(dlsr);
+        DirectionalLightShadowFilter dlsf = new DirectionalLightShadowFilter(assetManager, SHADOWMAP_SIZE, 3);
+        dlsf.setLight(sun);
+        dlsf.setEnabled(true);
+        FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
+        fpp.addFilter(dlsf);
+        viewPort.addProcessor(fpp);
     }
 }

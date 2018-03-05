@@ -7,7 +7,7 @@ import settings.Control.Actions;
 
 /**
  * Klasa <code>LimitedFlyByCamera</code> reprezentuje rozszerzoną, ograniczoną przez 
- * dolną granicę wersję poruszającej się kamery. 
+ * granicę mapy oraz podłogę wersję poruszającej się kamery. 
  * @author AleksanderSklorz
  */
 public class LimitedFlyByCamera extends FlyByCamera implements Controllable{
@@ -34,7 +34,14 @@ public class LimitedFlyByCamera extends FlyByCamera implements Controllable{
             }
         } else super.onAnalog(name, value, tpf);
         Vector3f location = cam.getLocation();
-        if(location.y <= 0) cam.setLocation(location.setY(1));
+        if(location.y <= 0) location.y = 1;
+        else {
+            float positiveLocation = Map.calculateBorderLocation(false);
+            if(positiveLocation < location.x) location.x = positiveLocation;
+            else if(-positiveLocation > location.x) location.x = -positiveLocation;
+            if(positiveLocation < location.z) location.z = positiveLocation;
+            else if(-positiveLocation > location.z) location.z = -positiveLocation;
+        }
     }
     
     @Override

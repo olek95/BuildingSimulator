@@ -5,6 +5,7 @@ import building.WallsFactory;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
@@ -45,12 +46,14 @@ public class Map {
         int z = TERRAIN_PART_SIZE, end = size - 1, offset = -z * 4, x = offset; 
         PhysicsSpace physics = BuildingSimulator.getPhysicsSpace();
         Spatial firstPart = scene.getChild(ElementName.MAP_FIELD_PART_NAME);
+        firstPart.setShadowMode(RenderQueue.ShadowMode.Receive);
         float positiveBorder = calculateBorderLocation(false),
                 negativeBorder = calculateBorderLocation(true);  
         z += offset; 
         for(int i = 0; i < size; i++){
             for(int k = 0; k < end; k++){
                 Spatial scenePart = firstPart.clone(true);
+                scenePart.setShadowMode(RenderQueue.ShadowMode.Receive);
                 scene.attachChild(scenePart);
                 if(x < positiveBorder && x > negativeBorder && z < positiveBorder 
                         && z > negativeBorder) {

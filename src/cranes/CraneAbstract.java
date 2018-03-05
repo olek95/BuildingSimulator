@@ -1,5 +1,6 @@
 package cranes;
 
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import cranes.mobileCrane.MobileCraneCamera;
 
@@ -66,7 +67,7 @@ public abstract class CraneAbstract {
      * Ustawia model dźwigu. 
      * @param crane model dźwigu 
      */
-    public void setCrane(Node crane) { this.crane = crane; }
+    public void setCrane(Node crane) { this.crane = crane; crane.setShadowMode(RenderQueue.ShadowMode.Cast);}
     
     /**
      * Zwraca kamerę dźwigu. 

@@ -12,6 +12,7 @@ import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import cranes.ArmControl;
@@ -33,6 +34,7 @@ public class Crane extends CraneAbstract implements VisibleFromAbove{
     private BirdsEyeView view; 
     public Crane(){
         crane = GameManager.loadModel("Models/zuraw/zuraw.j3o");
+        crane.setShadowMode(RenderQueue.ShadowMode.Cast);
         craneLocation = new Vector3f(10f, 0f, 0f);
         initCraneElements();
         initCranePhysics();

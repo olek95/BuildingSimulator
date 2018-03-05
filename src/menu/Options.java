@@ -147,11 +147,10 @@ public class Options extends Menu  {
      */
     public static Properties loadProperties(){
         Properties loadedProperties = new Properties();
-        try {
-            loadedProperties.load(new BufferedReader(new FileReader("settings/settings.properties")));
+        try(FileReader file = new FileReader("settings/settings.properties")){
+            loadedProperties.load(new BufferedReader(file));
             return loadedProperties; 
         } catch (IOException ex) {
-            Logger.getLogger(Options.class.getName()).log(Level.SEVERE, null, ex);
             return CreatorMockSettings.createDefaultProperties(new String[]{"BITS_PER_PIXEL",
                 "SAMPLES", "VOLUME", "LANGUAGE", "FREQUENCY", "RESOLUTION", "FULLSCREEN"},
                     new String[]{"32", "6", "0.4", "pl", "60", "800x600", "false"},
@@ -312,38 +311,33 @@ public class Options extends Menu  {
     
     private static void loadSettings() {
         Properties temp = null; 
-        try {
-            if(storedSettings == null){
-                restoredSettings.load(new BufferedReader(
-                        new FileReader("settings/settings.properties")));
-            }else{
-                temp = restoredSettings; 
-                restoredSettings = storedSettings;
-            }
-            ((SelectBox)screen.getElementById("screen_resolution_select_box"))
-                    .setSelectedByValue(restoredSettings.getProperty("RESOLUTION"), false);
-            ((SelectBox)screen.getElementById("refresh_rate_select_box"))
-                    .setSelectedByValue(Integer.valueOf(restoredSettings.getProperty("FREQUENCY")),
-                    false);
-            ((SelectBox)screen.getElementById("antialiasing_select_box"))
-                    .setSelectedByValue(Integer.valueOf(restoredSettings.getProperty("SAMPLES")),
-                    false);
-            ((SelectBox)screen.getElementById("color_depth_select_box"))
-                    .setSelectedByValue(Integer.valueOf(restoredSettings.getProperty("BITS_PER_PIXEL")),
-                    false);
-            ((CheckBox)screen.getElementById("fullscreen_checkbox"))
-                    .setIsChecked(Boolean.parseBoolean(restoredSettings.getProperty("FULLSCREEN")));
-            ((SelectBox)screen.getElementById("language_select_box"))
-                    .setSelectedByValue(new Locale(restoredSettings.getProperty("LANGUAGE")), false);
-            String volume = restoredSettings.getProperty("VOLUME");
-            Slider volumeSlider = (Slider)screen.getElementById("sound_volume_slider");
-            volumeSlider.setSelectedByValue(volume);
-            volumeSlider.setText(volume);
-            storedSettings = null; 
-            if(temp != null) restoredSettings = temp;
-        } catch (IOException ex) {
-            Logger.getLogger(Options.class.getName()).log(Level.SEVERE, null, ex);
+        if(storedSettings == null){
+            restoredSettings = loadProperties();
+        }else{
+            temp = restoredSettings; 
+            restoredSettings = storedSettings;
         }
+        ((SelectBox)screen.getElementById("screen_resolution_select_box"))
+                .setSelectedByValue(restoredSettings.getProperty("RESOLUTION"), false);
+        ((SelectBox)screen.getElementById("refresh_rate_select_box"))
+                .setSelectedByValue(Integer.valueOf(restoredSettings.getProperty("FREQUENCY")),
+                false);
+        ((SelectBox)screen.getElementById("antialiasing_select_box"))
+                .setSelectedByValue(Integer.valueOf(restoredSettings.getProperty("SAMPLES")),
+                false);
+        ((SelectBox)screen.getElementById("color_depth_select_box"))
+                .setSelectedByValue(Integer.valueOf(restoredSettings.getProperty("BITS_PER_PIXEL")),
+                false);
+        ((CheckBox)screen.getElementById("fullscreen_checkbox"))
+                .setIsChecked(Boolean.parseBoolean(restoredSettings.getProperty("FULLSCREEN")));
+        ((SelectBox)screen.getElementById("language_select_box"))
+                .setSelectedByValue(new Locale(restoredSettings.getProperty("LANGUAGE")), false);
+        String volume = restoredSettings.getProperty("VOLUME");
+        Slider volumeSlider = (Slider)screen.getElementById("sound_volume_slider");
+        volumeSlider.setSelectedByValue(volume);
+        volumeSlider.setText(volume);
+        storedSettings = null; 
+        if(temp != null) restoredSettings = temp;
     }
     
     private boolean isChanged() {

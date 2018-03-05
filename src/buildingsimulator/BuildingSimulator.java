@@ -22,7 +22,6 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
-import com.jme3.renderer.Renderer;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import cranes.CameraType;
@@ -301,7 +300,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
      * @return kamera
      */
     public static Camera getCam() { return game.cam; }
-
+    
     @Override
     public Control.Actions[] getAvailableActions() { 
         return new Actions[]{Actions.PHYSICS, Actions.FIRST, Actions.SECOND, 

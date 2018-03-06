@@ -15,7 +15,6 @@ import java.util.TimerTask;
 import settings.Control.Actions;
 import texts.Translator;
 import tonegod.gui.controls.text.Label;
-import tonegod.gui.controls.windows.Panel;
 import tonegod.gui.core.Element;
 import tonegod.gui.core.Screen;
 import tonegod.gui.effects.Effect;
@@ -281,7 +280,7 @@ public class HUD extends AbstractAppState{
     private static void changeButtonsIcon(boolean black) {
         String color = black ? "black" : "white";
         screen.getElementById("finish_building_button")
-                .setColorMap("Interface/hudIcons/end_building_icon_" + color +".png");
+                .setColorMap("Interface/hudIcons/selling_icon_" + color +".png");
         screen.getElementById("shop_button")
                 .setColorMap("Interface/hudIcons/shop_icon_" + color +".png");
         screen.getElementById("cleaning_button")

@@ -32,40 +32,13 @@ public class HUDButton extends ButtonAdapter{
      */
     @Override
     public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean isToggled) {
-        Shop shop = Shop.getDisplayedShop();
-        CleaningDialogWindow cleaningWindow = CleaningDialogWindow
-                .getDisplayedCleaningDialogWindow();
-        if(cleaningWindow == null) {
-            if(buttonId.equals("shop_button")) {
-                if(shop != null) {
-                    if(!shop.isShopPanelShowed()) {
-                        shop.getView().setOff();
-                        BuildingSimulator.getGameFlyByCamera().setDragToRotate(true);
-                        MenuFactory.showMenu(MenuTypes.SHOP); 
-                        HUD.setControlsVisibility(false);
-                        HUD.setGeneralControlsLabelVisibility(false);
-                    }
-                } else {
-                    BuildingSimulator.getGameFlyByCamera().setDragToRotate(true);
-                    MenuFactory.showMenu(MenuTypes.SHOP); 
-                    HUD.setControlsVisibility(false);
-                    HUD.setGeneralControlsLabelVisibility(false);
-                }
-                GameManager.getActualUnit().getCamera().setOff();
+        if(buttonId.equals("shop_button")) {
+            HUD.showShop();
+        } else {
+            if(buttonId.equals("finish_building_button")) {
+                HUD.sellBuildings();
             } else {
-                if(shop == null) {
-                    if(buttonId.equals("finish_building_button")) {
-                        int points = BuildingValidator.validate();
-                        GameManager.getUser().addPoints(points);
-                        HUD.updatePoints();
-                        HUD.setMessage(Translator.MESSAGE_POINTS.getValue()
-                                .replace("x", points + ""));
-                    } else {
-                        BuildingSimulator.getGameFlyByCamera().setDragToRotate(true);
-                        MenuFactory.showMenu(MenuTypes.CLEANING_DIALOG_WINDOW);
-                        HUD.setControlsVisibility(false);
-                    }
-                }
+                HUD.showCleaningDialogWindow();
             }
         }
     }

@@ -2,6 +2,7 @@ package menu;
 
 import authorization.User;
 import building.BuildingCreator;
+import building.BuildingValidator;
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.GameManager;
 import com.jme3.app.state.AbstractAppState;
@@ -254,6 +255,61 @@ public class HUD extends AbstractAppState{
      */
     public static boolean isControlsLabelVisible() {
         return screen.getElementById("control_label").getIsVisible();
+    }
+    
+    /**
+     * Pokazuje okno dialogowe ze sklepem umożliwiającym zakup materiałów budowlanych. 
+     * Pozwala na drobną modyfikację kupowanej ściany - typ, kolor, ilość, rozmiar. 
+     * Zezwala także na zmianę wysokości żurawia. 
+     */
+    public static void showShop() {
+        if(CleaningDialogWindow.getDisplayedCleaningDialogWindow() == null) {
+            Shop shop = Shop.getDisplayedShop();
+            if(shop != null) {
+                    if(!shop.isShopPanelShowed()) {
+                        shop.getView().setOff();
+                        BuildingSimulator.getGameFlyByCamera().setDragToRotate(true);
+                        MenuFactory.showMenu(MenuTypes.SHOP); 
+                        setControlsVisibility(false);
+                        setGeneralControlsLabelVisibility(false);
+                    }
+                } else {
+                    BuildingSimulator.getGameFlyByCamera().setDragToRotate(true);
+                    MenuFactory.showMenu(MenuTypes.SHOP); 
+                    setControlsVisibility(false);
+                    setGeneralControlsLabelVisibility(false);
+                }
+                GameManager.getActualUnit().getCamera().setOff();
+        }
+    }
+    
+    /**
+     * Wyświetla okno dialogowe umożliwiające oczyszczenie mapy ze wszystkich 
+     * budowli, bądź tylko z tych niezbudowanych. 
+     */
+    public static void showCleaningDialogWindow() {
+        if(CleaningDialogWindow.getDisplayedCleaningDialogWindow() == null) {
+            if(Shop.getDisplayedShop() == null) {
+                BuildingSimulator.getGameFlyByCamera().setDragToRotate(true);
+                MenuFactory.showMenu(MenuTypes.CLEANING_DIALOG_WINDOW);
+                setControlsVisibility(false);
+            }
+        }
+    }
+    
+    /**
+     * Sprzedaje (ocenia) dotychczas zbudowane, nieocenione budowle. Po każdej 
+     * ocenie gracz otrzymuje stosowną liczbę punktów. 
+     */
+    public static void sellBuildings() {
+        if(CleaningDialogWindow.getDisplayedCleaningDialogWindow() == null) {
+            if(Shop.getDisplayedShop() == null) {
+                int points = BuildingValidator.validate();
+                GameManager.getUser().addPoints(points);
+                updatePoints();
+                setMessage(Translator.MESSAGE_POINTS.getValue().replace("x", points + ""));
+            }
+        }
     }
     
     /**

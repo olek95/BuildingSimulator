@@ -16,15 +16,15 @@ import java.util.logging.Logger;
  * @author AleksanderSklorz 
  */
 public class User {
-    private String login;
+    private String login, time, password;
     private int points, buildingsNumber; 
-    private String time;
     private float seconds, stoppedTime = 0;
     private Timer timer; 
     public static final String DEFAULT_LOGIN = "Anonim", TIME_FORMAT = "HH:mm:ss";
     
-    public User(String login, int points, String time, int buildingsNumber) {
+    public User(String login, String password, int points, String time, int buildingsNumber) {
         this.login = login; 
+        this.password = password; 
         this.points = points; 
         this.time = time;
         this.buildingsNumber = buildingsNumber; 
@@ -111,6 +111,8 @@ public class User {
     public void setBuildingsNumber(int buildingsNumber) { 
         this.buildingsNumber = buildingsNumber;
     }
+    
+    public String getPassword() { return password; }
     
     private float getTimeInSeconds(String time) {
         DateFormat dateFormat = new SimpleDateFormat(TIME_FORMAT);

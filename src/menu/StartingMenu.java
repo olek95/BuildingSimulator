@@ -124,6 +124,9 @@ public class StartingMenu extends MainMenu{
                     }
                 }
             }else{
+                User actualUser = GameManager.getUser();
+                DBManager.createDatabaseFile(actualUser, actualUser != null &&
+                        !actualUser.getLogin().equals(User.DEFAULT_LOGIN));
                 User user = DBManager.signIn(login, password);
                 if(user == null){
                     error.setText(Translator.INCORRECT_DATA.getValue());
@@ -171,7 +174,7 @@ public class StartingMenu extends MainMenu{
     @Override
     protected void doWhenAcceptedExit(Screen screen, MenuTypes type) {
         super.doWhenAcceptedExit(screen, null); 
-        GameManager.setUser(new User(User.DEFAULT_LOGIN, 999, "00:00:00", 0));
+        GameManager.setUser(new User(User.DEFAULT_LOGIN, "", 999, "00:00:00", 0));
         super.start(); 
         GameManager.runGame(null);
     }

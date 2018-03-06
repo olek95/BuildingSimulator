@@ -1,6 +1,7 @@
 package authorization;
 
 import com.jme3.app.state.AbstractAppState;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,6 +10,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Klasa <code>DBManager</code> odpowiada za obsługę logowania i rejestracji
@@ -42,12 +45,13 @@ public class DBManager extends AbstractAppState{
      * @return true jeśli użytkownik istnieje, false w przeciwnym przypadku 
      */
     public static boolean checkIfUserExists(String login) throws ClassNotFoundException, SQLException{
-       try(Connection connection = connect()){
-           PreparedStatement statement = connection
-                   .prepareStatement("SELECT COUNT(*) FROM Users WHERE login = ?");
-           statement.setString(1, login);
-           return statement.executeQuery().getInt(1) != 0;
-       }
+        createDatabaseFile(null, false);
+        try(Connection connection = connect()){
+            PreparedStatement statement = connection
+                    .prepareStatement("SELECT COUNT(*) FROM Users WHERE login = ?");
+            statement.setString(1, login);
+            return statement.executeQuery().getInt(1) != 0;
+        }
     }
     
     /**
@@ -56,6 +60,7 @@ public class DBManager extends AbstractAppState{
      * @param password hasło użytkownika 
      */
     public static void signUp(String login, String password) throws ClassNotFoundException, SQLException{
+        createDatabaseFile(null, false);
         try(Connection connection = connect()){
            PreparedStatement statement = connection
                    .prepareStatement("INSERT INTO Users(login, password, points, time, buildings)"
@@ -80,8 +85,8 @@ public class DBManager extends AbstractAppState{
             statement.setString(1, login);
             statement.setString(2, password);
             ResultSet rs = statement.executeQuery();
-            return rs.next() ? new User(login, rs.getInt(1), rs.getString(2), rs.getInt(3))
-                    : null;
+            return rs.next() ? new User(login, password, rs.getInt(1), 
+                    rs.getString(2), rs.getInt(3)) : null;
         }
     }
     
@@ -93,6 +98,7 @@ public class DBManager extends AbstractAppState{
      */
     public static void saveScore(User user) throws SQLException, ClassNotFoundException{
         String login = user.getLogin();
+        createDatabaseFile(user, true);
         try(Connection connection = connect()) {
             PreparedStatement statement = connection
                     .prepareStatement("UPDATE Users SET points = ?, time = ?,"
@@ -109,19 +115,19 @@ public class DBManager extends AbstractAppState{
         List<User> statistics = new ArrayList();
         try(Connection connection = connect()) {
             PreparedStatement statement = connection
-                    .prepareStatement("SELECT login, points, time, buildings FROM Users");
+                    .prepareStatement("SELECT login, password, points, time, buildings FROM Users");
             ResultSet restoredStatistics = statement.executeQuery();
             while(restoredStatistics.next()){
                 statistics.add(new User(restoredStatistics.getString(1), 
-                        restoredStatistics.getInt(2), restoredStatistics.getString(3),
-                        restoredStatistics.getInt(4)));
+                        restoredStatistics.getString(2), restoredStatistics.getInt(3),
+                        restoredStatistics.getString(4), restoredStatistics.getInt(5)));
             }
         }finally{
             return statistics; 
         }
     }
     
-    public static User getUser(String login) {
+    public static User getUser(String login, String password) {
         User user = null;
         try(Connection connection = connect()) {
             PreparedStatement statement = connection
@@ -129,10 +135,35 @@ public class DBManager extends AbstractAppState{
                     + "FROM Users WHERE login = ?");
             statement.setString(1, login);
             ResultSet rs = statement.executeQuery();
-            user = rs.next() ? new User(login, rs.getInt(1), rs.getString(2),
+            user = rs.next() ? new User(login, password, rs.getInt(1), rs.getString(2),
                     rs.getInt(3)) : null;
         } finally{
             return user; 
+        }
+    }
+    
+    public static void createDatabaseFile(User user, boolean insertActualUser) {
+        if(!new File("building_simulator.db").exists()){
+            try(Connection connection = connect()) {
+                PreparedStatement statement = connection.prepareStatement("CREATE TABLE Users "
+                        + "(id_user INTEGER PRIMARY KEY AUTOINCREMENT, login VARCHAR(20),"
+                        + " password VARCHAR(20), points INTEGER, time VARCHAR(20),"
+                        + " buildings INTEGER)");
+                statement.execute();
+                if(insertActualUser) {
+                    statement = connection.prepareStatement("INSERT INTO Users(login,"
+                            + " password, points, time, buildings)" 
+                            + " VALUES(?, ?, ?, ?, ?)");
+                    statement.setString(1, user.getLogin());
+                    statement.setString(2, user.getPassword());
+                    statement.setInt(3, user.getPoints());
+                    statement.setString(4, user.getTime());
+                    statement.setInt(5, user.getBuildingsNumber());
+                    statement.executeUpdate();
+                }
+            } catch (ClassNotFoundException|SQLException ex) {
+                Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+            } 
         }
     }
     

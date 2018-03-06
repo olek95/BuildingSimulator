@@ -3,6 +3,7 @@ package menu;
 import authorization.DBManager;
 import authorization.User;
 import buildingsimulator.GameManager;
+import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -37,6 +38,7 @@ public class Statistics extends TableMenu{
     @Override
     protected void addRows(){
         try{
+            DBManager.createDatabaseFile(GameManager.getUser(), true);
             List<User> statistics = DBManager.getAllStatistics(); 
             int statisticsNumber = statistics.size();
             for(int i = 0; i < statisticsNumber; i++){

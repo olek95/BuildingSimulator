@@ -31,10 +31,9 @@ public class HUD extends AbstractAppState{
     private static boolean controlsLabelVisibilityBeforeHiding;
     public HUD(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
-        addNewButton("finish_building_button", "Interface/hudIcons/end_building_icon.png",
-                0.95f); 
-        addNewButton("shop_button", "Interface/hudIcons/shop_icon.png", 0.9f);
-        addNewButton("cleaning_button", "Interface/hudIcons/cleaning_icon.png", 0.85f);
+        addNewButton("finish_building_button", "F1", 0.95f); 
+        addNewButton("shop_button", "F2", 0.9f);
+        addNewButton("cleaning_button", "F3", 0.85f);
         User user = GameManager.getUser();
         addLabel("points_label", 0, 0, 0.4f, Translator.POINTS.getValue() + ": " 
                 + user.getPoints(), BitmapFont.Align.Left, 40, ColorRGBA.Black);
@@ -269,11 +268,13 @@ public class HUD extends AbstractAppState{
      */
     public static boolean shouldMessageBeDeleted() { return shouldMessageBeDeleted; }
     
-    private void addNewButton(String id, String path, float x) {
+    private void addNewButton(String id, String shortcutKey, float x) {
         HUDButton button = new HUDButton(screen, id, new Vector2f((int)screen.getWidth() * x,
                 0), new  Vector2f(32, 32));
         button.removeEffect(Effect.EffectEvent.Hover);
         button.removeEffect(Effect.EffectEvent.Press);
+        button.setText(shortcutKey);
+        button.setTextPosition(1, 30);
         screen.addElement(button);
     }
     

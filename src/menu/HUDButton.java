@@ -38,9 +38,8 @@ public class HUDButton extends ButtonAdapter{
         if(cleaningWindow == null) {
             if(buttonId.equals("shop_button")) {
                 if(shop != null) {
-                    BirdsEyeView view = shop.getView(); 
-                    if(view != null) {
-                        view.setOff();
+                    if(!shop.isShopPanelShowed()) {
+                        shop.getView().setOff();
                         BuildingSimulator.getGameFlyByCamera().setDragToRotate(true);
                         MenuFactory.showMenu(MenuTypes.SHOP); 
                         HUD.setControlsVisibility(false);

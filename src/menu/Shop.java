@@ -197,6 +197,14 @@ public class Shop extends Menu implements VisibleFromAbove{
         return (int)x * (int)z + type.getPrice();
     }
     
+    /**
+     * Informuje czy panel sklepu jest widoczny. 
+     * @return true jeśli jest widoczny, false w przeciwnym przypadku 
+     */
+    public boolean isShopPanelShowed() {
+        return wallPreview != null;
+    }
+    
     @Override
     public void setListener(DummyCollisionListener listener) {
         this.listener = listener; 

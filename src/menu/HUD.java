@@ -8,6 +8,9 @@ import buildingsimulator.GameManager;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.LineWrapMode;
+import com.jme3.input.KeyInput;
+import com.jme3.input.event.KeyInputEvent;
+import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import eyeview.BirdsEyeView;
@@ -15,6 +18,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import settings.Control.Actions;
 import texts.Translator;
+import tonegod.gui.controls.buttons.Button;
+import tonegod.gui.controls.buttons.ButtonAdapter;
 import tonegod.gui.controls.text.Label;
 import tonegod.gui.core.Element;
 import tonegod.gui.core.Screen;
@@ -32,9 +37,9 @@ public class HUD extends AbstractAppState{
     private static boolean controlsLabelVisibilityBeforeHiding;
     public HUD(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
-        addNewButton("finish_building_button", "F1", 0.95f); 
-        addNewButton("shop_button", "F2", 0.9f);
-        addNewButton("cleaning_button", "F3", 0.85f);
+        addNewButton(createSellingBuildingsButton(), "F1"); 
+        addNewButton(createShopButton(), "F2");
+        addNewButton(createCleaningDialogWindowButton(), "F3");
         User user = GameManager.getUser();
         addLabel("points_label", 0, 0, 0.4f, Translator.POINTS.getValue() + ": " 
                 + user.getPoints(), BitmapFont.Align.Left, 40, ColorRGBA.Black);
@@ -324,9 +329,46 @@ public class HUD extends AbstractAppState{
      */
     public static boolean shouldMessageBeDeleted() { return shouldMessageBeDeleted; }
     
-    private void addNewButton(String id, String shortcutKey, float x) {
-        HUDButton button = new HUDButton(screen, id, new Vector2f((int)screen.getWidth() * x,
-                0), new  Vector2f(32, 32));
+    private ButtonAdapter createShopButton() {
+        return new ButtonAdapter(screen, "shop_button", new Vector2f((int)screen.getWidth() * 0.9f,
+                0), new  Vector2f(32, 32)){
+            @Override
+            public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean isToggled) {
+                showShop();
+            }
+            
+            @Override
+            public void onKeyRelease(KeyInputEvent evt) {}
+        };
+    }
+    
+    private ButtonAdapter createCleaningDialogWindowButton() {
+        return new ButtonAdapter(screen, "cleaning_button", new Vector2f((int)screen.getWidth() * 0.85f,
+                0), new  Vector2f(32, 32)){
+            @Override
+            public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean isToggled) {
+                showCleaningDialogWindow();
+            }
+            
+            @Override
+            public void onKeyRelease(KeyInputEvent evt) {}
+        };
+    }
+    
+    private ButtonAdapter createSellingBuildingsButton() {
+        return new ButtonAdapter(screen, "finish_building_button", new Vector2f((int)screen
+                .getWidth() * 0.95f, 0), new  Vector2f(32, 32)){
+            @Override
+            public void onButtonMouseLeftUp(MouseButtonEvent evt, boolean isToggled) {
+                sellBuildings();
+            }
+            
+            @Override
+            public void onKeyRelease(KeyInputEvent evt) {}
+        };
+    }
+    
+    private void addNewButton(Button button, String shortcutKey) {
         button.removeEffect(Effect.EffectEvent.Hover);
         button.removeEffect(Effect.EffectEvent.Press);
         button.setText(shortcutKey);

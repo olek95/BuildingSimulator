@@ -134,6 +134,9 @@ public class HUD extends AbstractAppState implements ActionListener, Controllabl
         screen.getElementById("message_label").setFontColor(color);
         screen.getElementById("time_label").setFontColor(color);
         screen.getElementById("points_label").setFontColor(color);
+        ((Button)screen.getElementById("cleaning_button")).setFontColor(color, true);
+        ((Button)screen.getElementById("finish_building_button")).setFontColor(color, true);
+        ((Button)screen.getElementById("shop_button")).setFontColor(color, true);
         changeButtonsIcon(black);
     }
     

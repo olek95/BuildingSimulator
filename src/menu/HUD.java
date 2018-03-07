@@ -4,11 +4,13 @@ import authorization.User;
 import building.BuildingCreator;
 import building.BuildingValidator;
 import buildingsimulator.BuildingSimulator;
+import buildingsimulator.Controllable;
 import buildingsimulator.GameManager;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.LineWrapMode;
 import com.jme3.input.KeyInput;
+import com.jme3.input.controls.ActionListener;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.ColorRGBA;
@@ -16,6 +18,7 @@ import com.jme3.math.Vector2f;
 import eyeview.BirdsEyeView;
 import java.util.Timer;
 import java.util.TimerTask;
+import settings.Control;
 import settings.Control.Actions;
 import texts.Translator;
 import tonegod.gui.controls.buttons.Button;
@@ -30,16 +33,18 @@ import tonegod.gui.effects.Effect;
  * albo aktualnie wybrany pojazd. 
  * @author AleksanderSklorz
  */
-public class HUD extends AbstractAppState{
+public class HUD extends AbstractAppState implements ActionListener, Controllable{
     private static Screen screen;
     private static boolean shouldMessageBeDeleted; 
     private static Timer messageTimer; 
     private static boolean controlsLabelVisibilityBeforeHiding;
+    private static Actions[] availableActions = new Actions[]{Actions.SHOW_SHOP, 
+        Actions.SHOW_CLEANING_DIALOG_WINDOW, Actions.SELL_BUILDINGS}; 
     public HUD(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
-        addNewButton(createSellingBuildingsButton(), "F1"); 
+        addNewButton(createCleaningDialogWindowButton(), "F1");
         addNewButton(createShopButton(), "F2");
-        addNewButton(createCleaningDialogWindowButton(), "F3");
+        addNewButton(createSellingBuildingsButton(), "F3"); 
         User user = GameManager.getUser();
         addLabel("points_label", 0, 0, 0.4f, Translator.POINTS.getValue() + ": " 
                 + user.getPoints(), BitmapFont.Align.Left, 40, ColorRGBA.Black);
@@ -51,6 +56,7 @@ public class HUD extends AbstractAppState{
                 20, ColorRGBA.White).hide();
         addLabel("general_controls_label", 0.17f, 0.92f, 0.9f, "", BitmapFont.Align.Center,
                 16, ColorRGBA.White);
+        Control.addListener(this, false);
     }
     
     /**
@@ -317,6 +323,16 @@ public class HUD extends AbstractAppState{
         }
     }
     
+    @Override
+    public void onAction(String name, boolean isPressed, float tpf){
+        if(isPressed) {
+            if(name.equals(Actions.SHOW_SHOP.toString())) showShop();
+            else if(name.equals(Actions.SHOW_CLEANING_DIALOG_WINDOW.toString()))
+                showCleaningDialogWindow(); 
+            else sellBuildings();
+        }
+    }
+    
     /**
      * Zwraca ekran z HUDem.
      * @return ekran 
@@ -328,6 +344,9 @@ public class HUD extends AbstractAppState{
      * @return true jeśli komunikat powinien zostac usunięty, false w przeciwnym przypadku 
      */
     public static boolean shouldMessageBeDeleted() { return shouldMessageBeDeleted; }
+    
+    @Override
+    public Actions[] getAvailableActions() { return availableActions; }
     
     private ButtonAdapter createShopButton() {
         return new ButtonAdapter(screen, "shop_button", new Vector2f((int)screen.getWidth() * 0.9f,

@@ -63,6 +63,9 @@ public class Control {
         FLYCAM_Rise, 
         FLYCAM_Lower,
         CHANGING_CONTROLS_HUD_VISIBILITY,
+        SHOW_SHOP(KeyInput.KEY_F2),
+        SHOW_CLEANING_DIALOG_WINDOW(KeyInput.KEY_F1),
+        SELL_BUILDINGS(KeyInput.KEY_F3),
         SELECT_WAREHOUSE(MouseInput.BUTTON_LEFT),
         CANCEL_BIRDS_EYE_VIEW(MouseInput.BUTTON_RIGHT);
         private String key;
@@ -74,8 +77,11 @@ public class Control {
             inputManager.addMapping(mappingName, new KeyTrigger(getJmeKeyCode(key)));
         }
         
-        private Actions(int mouseKey) {
-            inputManager.addMapping(toString(), new MouseButtonTrigger(mouseKey));
+        private Actions(int key, boolean mouse) {
+            if(mouse) inputManager.addMapping(toString(), new MouseButtonTrigger(key));
+            else {
+                inputManager.addMapping(mappingName, new KeyTrigger(getJmeKeyCode(key)));
+            }
         }
         
         private void createProperties() {

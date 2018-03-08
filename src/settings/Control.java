@@ -48,8 +48,7 @@ public class Control {
         MERGE,
         MERGE_PROTRUDING,
         PHYSICS,
-        FIRST,
-        SECOND,
+        CRANE_CHANGING,
         PAUSE,
         SHOW_CURSOR,
         MOVE_CRANE,
@@ -92,15 +91,15 @@ public class Control {
                 } catch (IOException ex) {
                     keysProperties = CreatorMockSettings
                             .createDefaultProperties(new String[]{"HEIGHTEN_HOOK",
-                                "MOVE_CRANE", "MERGE_PROTRUDING", "UP", "SECOND",
+                                "MOVE_CRANE", "MERGE_PROTRUDING", "UP",
                                 "VERTICAL_ATTACH", "RIGHT", "PULL_OUT", "LEFT", 
                                 "PULL_IN", "SHOW_CURSOR", "PHYSICS", "ACTION", 
                                 "DOWN", "PAUSE", "MERGE", "ATTACH", "LOWER_HOOK",
-                                "FIRST", "DETACH", "CHANGE_CAMERA", "COPY_BUILDING", 
+                                "CRANE_CHANGING", "DETACH", "CHANGE_CAMERA", "COPY_BUILDING", 
                                 "BUY_BUILDING", "FLYCAM_Forward", "FLYCAM_Backward",
                                 "FLYCAM_StrafeLeft", "FLYCAM_StrafeRight", "FLYCAM_Rise",
                                 "FLYCAM_Lower", "CHANGING_CONTROLS_HUD_VISIBILITY"},
-                            new String[]{"T", "O", "L", "U", "2", "V", "K", "E", "H",
+                            new String[]{"T", "O", "L", "U", "V", "K", "E", "H",
                                 "SPACE", "LSHIFT", "P", "F", "J", "ESC", "N", "Y",
                                 "R", "1", "B", "C", "5", "6", "W", "S", "A", "D",
                                 "Q", "Z", "7"}, "settings/control.properties"); 
@@ -163,7 +162,7 @@ public class Control {
         public static void saveSettings(String[] keys){
             try(PrintWriter output = new PrintWriter(new FileWriter("settings/control.properties"))){
                 Actions[] values = values();
-                for(int i = 0; i < values.length - 2; i++){
+                for(int i = 0; i < values.length - 5; i++){
                     values[i].key = keys[i];
                     String actionName = values[i].toString();
                     keysProperties.setProperty(actionName, keys[i]);

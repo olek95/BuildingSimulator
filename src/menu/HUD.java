@@ -18,6 +18,7 @@ import com.jme3.math.Vector2f;
 import eyeview.BirdsEyeView;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.swing.AbstractButton;
 import settings.Control;
 import settings.Control.Actions;
 import texts.Translator;
@@ -37,14 +38,15 @@ public class HUD extends AbstractAppState implements ActionListener, Controllabl
     private static Screen screen;
     private static boolean shouldMessageBeDeleted; 
     private static Timer messageTimer; 
-    private static boolean controlsLabelVisibilityBeforeHiding;
+    private static boolean controlsLabelVisibilityBeforeHiding, rememberedCranePreviewVisibility;
     private static Actions[] availableActions = new Actions[]{Actions.SHOW_SHOP, 
         Actions.SHOW_CLEANING_DIALOG_WINDOW, Actions.SELL_BUILDINGS}; 
     public HUD(){
         screen = new Screen(BuildingSimulator.getBuildingSimulator());
-        addNewButton(createCleaningDialogWindowButton(), "F1");
-        addNewButton(createShopButton(), "F2");
-        addNewButton(createSellingBuildingsButton(), "F3"); 
+        addNewButton(createCleaningDialogWindowButton(), "F1", 30);
+        addNewButton(createShopButton(), "F2", 30);
+        addNewButton(createSellingBuildingsButton(), "F3", 30); 
+        addNewButton(createCraneButton(), Actions.CRANE_CHANGING.getKey(), 64);
         User user = GameManager.getUser();
         addLabel("points_label", 0, 0, 0.4f, Translator.POINTS.getValue() + ": " 
                 + user.getPoints(), BitmapFont.Align.Left, 40, ColorRGBA.Black);
@@ -71,6 +73,7 @@ public class HUD extends AbstractAppState implements ActionListener, Controllabl
         screen.getElementById("time_label").hide();
         screen.getElementById("control_label").hide();
         screen.getElementById("general_controls_label").hide();
+        screen.getElementById("crane_button").hide();
     }
     
     /**
@@ -326,6 +329,30 @@ public class HUD extends AbstractAppState implements ActionListener, Controllabl
         }
     }
     
+    /**
+     * Zmienia ikonę podglądu aktualnego dźwigu. 
+     * @param mobileCrane true jeśli aktualny dźwig to dźwig mobilny, false jeśli żuraw 
+     */
+    public static void updateCranePreview(boolean mobileCrane) {
+        screen.getElementById("crane_button").setColorMap(mobileCrane ? 
+                "Interface/hudIcons/mobile_crane.png" : "Interface/hudIcons/crane.png");
+    }
+    
+    /**
+     * Określa widoczność podglądu aktualnego dźwigu. 
+     * @param visible true jeśli podgląd ma być widoczny, false w przeciwnym przypadku 
+     */
+    public static void setCranePreviewVisibility(boolean visible) {
+        screen.getElementById("crane_button").setIsVisible(visible);
+    }
+    
+    /**
+     * Zapamiętuje aktualną widoczność podglądu aktualnego dźwigu. 
+     */
+    public static void rememberCranePreviewVisibility() {
+        rememberedCranePreviewVisibility = screen.getElementById("crane_button").getIsVisible();
+    }
+    
     @Override
     public void onAction(String name, boolean isPressed, float tpf){
         if(isPressed) {
@@ -347,6 +374,14 @@ public class HUD extends AbstractAppState implements ActionListener, Controllabl
      * @return true jeśli komunikat powinien zostac usunięty, false w przeciwnym przypadku 
      */
     public static boolean shouldMessageBeDeleted() { return shouldMessageBeDeleted; }
+    
+    /**
+     * Zwraca zapamiętaną widoczność podglądu ikony aktualnego dźwigu. 
+     * @return widoczność podglądu aktualnego dźwigu 
+     */
+    public static boolean getRememberedCranePreviewVisibility() {
+        return rememberedCranePreviewVisibility; 
+    }
     
     @Override
     public Actions[] getAvailableActions() { return availableActions; }
@@ -390,11 +425,18 @@ public class HUD extends AbstractAppState implements ActionListener, Controllabl
         };
     }
     
-    private void addNewButton(Button button, String shortcutKey) {
+    private Button createCraneButton() {
+        ButtonAdapter button = new ButtonAdapter(screen, "crane_button", new Vector2f((int)screen
+                .getWidth() * 0.01f, (int)screen.getHeight() * 0.5f), new Vector2f(64, 64));
+        button.setColorMap("Interface/hudIcons/mobile_crane.png");
+        return button;
+    }
+    
+    private void addNewButton(Button button, String shortcutKey, int y) {
         button.removeEffect(Effect.EffectEvent.Hover);
         button.removeEffect(Effect.EffectEvent.Press);
         button.setText(shortcutKey);
-        button.setTextPosition(1, 30);
+        button.setTextPosition(1, y);
         screen.addElement(button);
     }
     

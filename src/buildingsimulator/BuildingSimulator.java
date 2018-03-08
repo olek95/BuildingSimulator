@@ -139,6 +139,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                         }
                         GameManager.pauseGame();
                         HUD.setControlsLabelVisibilityBeforeHiding(HUD.isControlsLabelVisible());
+                        HUD.rememberCranePreviewVisibility();
                         GameManager.removeHUD();
                     } else {
                         MainMenu.start();
@@ -171,41 +172,39 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     setDisplayFps(debug);
                     setDisplayStatView(debug);
                     break; 
-                case FIRST:
-                    if(BirdsEyeView.isActive() || GameManager.getActualUnit().equals(mobileCrane))
-                        break;
-                    inputManager.removeListener(crane.getArmControl());
-                    crane.setUsing(false);
-                    MobileCraneArmControl armControl = (MobileCraneArmControl)mobileCrane
-                            .getArmControl();
-                    if(armControl.isUsing()) {
-                        Control.addListener(armControl, true);
-                        HUD.changeHUDColor(!armControl.getCamera().getType()
-                            .equals(CameraType.ARM_CABIN));
+                case CRANE_CHANGING:
+                    if(BirdsEyeView.isActive()) break;
+                    if(GameManager.getActualUnit().equals(mobileCrane)) {
+                        if(((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing()){
+                            inputManager.removeListener(mobileCrane.getArmControl());
+                        }else{
+                            mobileCrane.setSteeringAngle(0f);
+                            inputManager.removeListener(mobileCrane);
+                        }
+                        mobileCrane.setUsing(false);
+                        Control.addListener(crane.getArmControl(), true);
+                        crane.setUsing(true);
+                        mobileCrane.getCamera().setOff();
+                        GameManager.setActualUnit(crane);
+                        HUD.changeHUDColor(true);
                     } else {
-                        Control.addListener(mobileCrane, true);
-                        HUD.changeHUDColor(!mobileCrane.getCamera().getType()
-                            .equals(CameraType.CABIN));
+                        inputManager.removeListener(crane.getArmControl());
+                        crane.setUsing(false);
+                        MobileCraneArmControl armControl = (MobileCraneArmControl)mobileCrane
+                                .getArmControl();
+                        if(armControl.isUsing()) {
+                            Control.addListener(armControl, true);
+                            HUD.changeHUDColor(!armControl.getCamera().getType()
+                                    .equals(CameraType.ARM_CABIN));
+                        } else {
+                            Control.addListener(mobileCrane, true);
+                            HUD.changeHUDColor(!mobileCrane.getCamera().getType()
+                                .equals(CameraType.CABIN));
+                        }
+                        mobileCrane.setUsing(true);
+                        crane.getCamera().setOff();
+                        GameManager.setActualUnit(mobileCrane);
                     }
-                    mobileCrane.setUsing(true);
-                    crane.getCamera().setOff();
-                    GameManager.setActualUnit(mobileCrane);
-                    break;
-                case SECOND:
-                    if(BirdsEyeView.isActive() || GameManager.getActualUnit().equals(crane))
-                        break;
-                    if(((MobileCraneArmControl)mobileCrane.getArmControl()).isUsing()){
-                        inputManager.removeListener(mobileCrane.getArmControl());
-                    }else{
-                        mobileCrane.setSteeringAngle(0f);
-                        inputManager.removeListener(mobileCrane);
-                    }
-                    mobileCrane.setUsing(false);
-                    Control.addListener(crane.getArmControl(), true);
-                    crane.setUsing(true);
-                    mobileCrane.getCamera().setOff();
-                    GameManager.setActualUnit(crane);
-                    HUD.changeHUDColor(true);
                     break;
                 case COPY_BUILDING: 
                     buildingCloning = true; 
@@ -308,8 +307,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
     
     @Override
     public Control.Actions[] getAvailableActions() { 
-        return new Actions[]{Actions.PHYSICS, Actions.FIRST, Actions.SECOND, 
-            Actions.PAUSE, Actions.SHOW_CURSOR, Actions.MOVE_CRANE, Actions.COPY_BUILDING,
+        return new Actions[]{Actions.PHYSICS, Actions.CRANE_CHANGING,  Actions.PAUSE,
+            Actions.SHOW_CURSOR, Actions.MOVE_CRANE, Actions.COPY_BUILDING,
             Actions.BUY_BUILDING, Actions.CHANGING_CONTROLS_HUD_VISIBILITY};
     }
     

@@ -118,6 +118,7 @@ public class BirdsEyeView implements ActionListener, Controllable{
         viewOwner = null;
         crane.getCamera().restore();
         GameManager.displayActualUnitControlsInHUD();
+        HUD.setCranePreviewVisibility(true);
     }
     
     /**
@@ -184,5 +185,6 @@ public class BirdsEyeView implements ActionListener, Controllable{
             game.getInputManager().setCursorVisible(true);
         } else game.getFlyByCamera().setEnabled(false);
         Control.removeListener(Control.getActualListener());
+        HUD.setCranePreviewVisibility(false);
     }
 }

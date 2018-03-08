@@ -134,6 +134,7 @@ public class GameManager {
         HUD.updateControlsLabel();
         HUD.fillGeneralControlsLabel(HUD.isControlsLabelVisibilityBeforeHiding());
         HUD.setControlsVisibility(HUD.isControlsLabelVisibilityBeforeHiding());
+        HUD.setCranePreviewVisibility(HUD.getRememberedCranePreviewVisibility());
         resetGameControls();
         startedGame = true;
         pausedGame = false; 
@@ -330,11 +331,13 @@ public class GameManager {
     public static void displayActualUnitControlsInHUD() {
         if(actualUnit.getCrane().getName().contains(ElementName.CRANE)) {
             displayProperMobileCraneHUD();
+            HUD.updateCranePreview(true);
         } else {
             Actions[] actions = actualUnit.getArmControl().getAvailableActions();
             HUD.fillControlInformation(Arrays.copyOf(actions, actions.length - 3),
                     actualUnit.hasLooseCamera() ? new String[] {Translator.MOUSE_MOVEMENT
                     .getValue()} : null, 1, 1);
+            HUD.updateCranePreview(false);
         }
     }
     

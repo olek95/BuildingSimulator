@@ -59,6 +59,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         flyCam.setMoveSpeed(100);
         flyCam.setDragToRotate(true);
         initLight();
+        setDisplayFps(debug);
+        setDisplayStatView(debug);
         MenuFactory.showMenu(MenuTypes.STARTING_MENU);
     }
 
@@ -166,6 +168,8 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
                     if(!debug) bulletAppState.getPhysicsSpace().enableDebug(assetManager);
                     else bulletAppState.getPhysicsSpace().disableDebug();
                     debug = !debug;
+                    setDisplayFps(debug);
+                    setDisplayStatView(debug);
                     break; 
                 case FIRST:
                     if(BirdsEyeView.isActive() || GameManager.getActualUnit().equals(mobileCrane))

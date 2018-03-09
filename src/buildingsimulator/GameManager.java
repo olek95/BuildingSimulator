@@ -123,9 +123,8 @@ public class GameManager {
             game.getFlyByCamera().setDragToRotate(false);
             game.getInputManager().setCursorVisible(false);
             Control.addListener(Control.getActualListener(), true);
-            if(actualUnit.equals(mobileCrane)) {
-                changeHUDColorDependingOnMobileCraneState();
-            }
+            if(actualUnit.equals(mobileCrane)) changeHUDColorDependingOnMobileCraneState();
+            else HUD.changeButtonsIcon(true);
         } else {
             HUD.changeShopButtonVisibility(false);
         }

@@ -144,6 +144,20 @@ public class HUD extends AbstractAppState implements ActionListener, Controllabl
     }
     
     /**
+     * Ustawia odpowiedni kolor dla ikon przycisków w HUD. 
+     * @param black true jeśli ikony mają być czarne, false jeśli mają być białe 
+     */
+    public static void changeButtonsIcon(boolean black) {
+        String color = black ? "black" : "white";
+        screen.getElementById("finish_building_button")
+                .setColorMap("Interface/hudIcons/selling_icon_" + color +".png");
+        screen.getElementById("shop_button")
+                .setColorMap("Interface/hudIcons/shop_icon_" + color +".png");
+        screen.getElementById("cleaning_button")
+                .setColorMap("Interface/hudIcons/cleaning_icon_" + color +".png");
+    }
+    
+    /**
      * Uzupełnia informację o aktualnym sterowaniu. Funkcja ta posiada następujące
      * znaki specjalne: tekst w okrągłych nawiasach jest niewyświetlany, natomiast
      * jeśli tekst jest oddzielony ukośnikami (/), brana jest ta część której poda się 
@@ -438,16 +452,6 @@ public class HUD extends AbstractAppState implements ActionListener, Controllabl
         button.setText(shortcutKey);
         button.setTextPosition(1, y);
         screen.addElement(button);
-    }
-    
-    private static void changeButtonsIcon(boolean black) {
-        String color = black ? "black" : "white";
-        screen.getElementById("finish_building_button")
-                .setColorMap("Interface/hudIcons/selling_icon_" + color +".png");
-        screen.getElementById("shop_button")
-                .setColorMap("Interface/hudIcons/shop_icon_" + color +".png");
-        screen.getElementById("cleaning_button")
-                .setColorMap("Interface/hudIcons/cleaning_icon_" + color +".png");
     }
     
     private Label addLabel(String id, float xPosition, float yPosition, float xDimension, String text,

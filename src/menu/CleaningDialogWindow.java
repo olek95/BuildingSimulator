@@ -84,15 +84,15 @@ public class CleaningDialogWindow extends Menu{
         return displayedCleaningDialogWindow; 
     }
     
-    private void deleteBuildings(boolean onlyInfiniteBuildings) {
+    private void deleteBuildings(boolean onlyConstructionsDuringBuilding) {
         List<Spatial> gameObjects = GameManager.getGameObjects(); 
         int objectsCount = gameObjects.size();
-        for(int i = 0; i < objectsCount; i++) {
+        for(int i = objectsCount - 1; i >= 0; i--) {
             Spatial object = gameObjects.get(i);
             if(object.getName().startsWith(ElementName.BUILDING_BASE_NAME)) {
                 Construction building = (Construction)object; 
                 Node firstWall = (Node)building.getChild(0);
-                if(onlyInfiniteBuildings) {
+                if(onlyConstructionsDuringBuilding) {
                     if(!building.isSold()) {
                         deleteWallsControl(firstWall);
                         object.removeFromParent();

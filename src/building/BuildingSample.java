@@ -24,7 +24,7 @@ public class BuildingSample extends Construction{
     private boolean perpendicularity;
     
     public BuildingSample() {
-        setName(ElementName.BUILDING_BASE_NAME + getCounter() + " sample");
+        name = ElementName.BUILDING_BASE_NAME + getCounter() + " sample";
     }
     
     /**

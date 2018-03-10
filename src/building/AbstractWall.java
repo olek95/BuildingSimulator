@@ -23,7 +23,7 @@ public abstract class AbstractWall extends Node{
     
     public AbstractWall(WallType type, CSGShape shape, Vector3f location, 
             float mass, String name, ColorRGBA color, CSGShape... differenceShapes) {
-        setName(name);
+        this.name = name;
         initShape(shape, color, differenceShapes);
         ((CSGGeometry)getChild(0)).regenerate();
         createLooseControl(location, mass); 

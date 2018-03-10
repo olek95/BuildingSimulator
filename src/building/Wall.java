@@ -27,7 +27,6 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
-import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import cranes.CraneAbstract;
 import java.io.IOException;
@@ -421,15 +420,16 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
     
     private void createWallNodes(){
         CatchNode[] nodes = CatchNode.values();
-        for(int i = 0; i < nodes.length; i++)
+        for(int i = 0; i < nodes.length; i++) {
             addNode(nodes[i], CatchNode.calculateTranslation(nodes[i], this, null,
-                    false, false, 0, false), this); 
+                    false, false, 0, false)); 
+        }
     }
     
-    private Node addNode(CatchNode type, Vector3f location, Node parent){
+    private Node addNode(CatchNode type, Vector3f location){
         Node node = new Node(type.toString()); 
         node.setLocalTranslation(location);
-        parent.attachChild(node); 
+        attachChild(node); 
         return node; 
     }
 }

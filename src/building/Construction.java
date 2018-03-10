@@ -31,7 +31,7 @@ public class Construction extends Node{
     private Wall lastAddedWall; 
     private boolean hit = false, resetWalls = false, sold = false; 
     public Construction(){
-        setName(ElementName.BUILDING_BASE_NAME + (++counter));
+        name = ElementName.BUILDING_BASE_NAME + (++counter);
     }
     
     /**
@@ -57,7 +57,7 @@ public class Construction extends Node{
                     else touchedWall = mergeHorizontal(wall1, collisionWithGround ? null :
                             (Wall)recentlyHitObject, false, wallMode);
                 }
-                if(!getChildren().isEmpty()) renovateBuilding();
+                if(!children.isEmpty()) renovateBuilding();
                 if(touchedWall != null){
                     wall1.setMovable(false);
                     touchedWall.attachChild(wall1);
@@ -222,15 +222,13 @@ public class Construction extends Node{
     @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
-        OutputCapsule capsule = ex.getCapsule(this);
-        capsule.write(sold, "SOLD", false);
+        ex.getCapsule(this).write(sold, "SOLD", false);
     }
     
     @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);
-        InputCapsule capsule = im.getCapsule(this);
-        sold = capsule.readBoolean("SOLD", false);
+        sold = im.getCapsule(this).readBoolean("SOLD", false);
     }
     
     /**
@@ -558,27 +556,5 @@ public class Construction extends Node{
         for(int i = 0; i < edges.length; i++)
             if(edges[i].equals(edge)) return edges[i + (i % 2 == 0 ? 1 : -1)];
         return null;
-    }
-    
-    private boolean isEmptyPerpendicularEdge(String catchNodeName, Wall floor, boolean start) {
-        CatchNode catchNodePerpendicular;
-        float maxBusy = 0;
-        if(catchNodeName.equals(CatchNode.UP.toString())) {
-            catchNodePerpendicular = start ? CatchNode.LEFT : CatchNode.RIGHT;
-        } else {
-            if(catchNodeName.equals(CatchNode.RIGHT.toString())) {
-                catchNodePerpendicular =  start ? CatchNode.UP : CatchNode.BOTTOM;
-                maxBusy = (floor.getLength() - floor.getWidth()) * 2;
-            } else {
-                if(catchNodeName.equals(CatchNode.BOTTOM.toString())) {
-                    catchNodePerpendicular = start ? CatchNode.LEFT : CatchNode.RIGHT;
-                    maxBusy = (floor.getHeight() - floor.getWidth()) * 2;
-                } else {
-                    catchNodePerpendicular = start ? CatchNode.UP : CatchNode.BOTTOM;
-                }
-            }
-        }
-        return getBusyPlace((Wall)getChildren().get(0), floor, 
-                catchNodePerpendicular, true) <= maxBusy;
     }
 }

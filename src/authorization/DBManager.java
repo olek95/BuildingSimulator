@@ -1,5 +1,6 @@
 package authorization;
 
+import buildingsimulator.GameManager;
 import com.jme3.app.state.AbstractAppState;
 import java.io.File;
 import java.sql.Connection;
@@ -45,7 +46,7 @@ public class DBManager extends AbstractAppState{
      * @return true jeśli użytkownik istnieje, false w przeciwnym przypadku 
      */
     public static boolean checkIfUserExists(String login) throws ClassNotFoundException, SQLException{
-        createDatabaseFile(null, false);
+        createDatabaseFile(null);
         try(Connection connection = connect()){
             PreparedStatement statement = connection
                     .prepareStatement("SELECT COUNT(*) FROM Users WHERE login = ?");
@@ -60,7 +61,7 @@ public class DBManager extends AbstractAppState{
      * @param password hasło użytkownika 
      */
     public static void signUp(String login, String password) throws ClassNotFoundException, SQLException{
-        createDatabaseFile(null, false);
+        createDatabaseFile(null);
         try(Connection connection = connect()){
            PreparedStatement statement = connection
                    .prepareStatement("INSERT INTO Users(login, password, points, time, buildings)"
@@ -68,7 +69,7 @@ public class DBManager extends AbstractAppState{
            statement.setString(1, login);
            statement.setString(2, password);
            statement.executeUpdate();
-        }
+        } 
     }
     
     /**
@@ -77,7 +78,8 @@ public class DBManager extends AbstractAppState{
      * @param password hasło użytkownika 
      * @return zalogowany użytkownik, jesli taki istnieje, lub null w przeciwnym przypadku 
      */
-    public static User signIn(String login, String password) throws ClassNotFoundException, SQLException{
+    public static User signIn(String login, String password) throws ClassNotFoundException, SQLException {
+        createDatabaseFile(null);
         try(Connection connection = connect()){
             PreparedStatement statement = connection
                     .prepareStatement("SELECT points, time , buildings FROM Users WHERE login = ?"
@@ -96,9 +98,9 @@ public class DBManager extends AbstractAppState{
      * @throws SQLException
      * @throws ClassNotFoundException 
      */
-    public static void saveScore(User user) throws SQLException, ClassNotFoundException{
+    public static void saveScore(User user){
         String login = user.getLogin();
-        createDatabaseFile(user, true);
+        createDatabaseFile(user);
         try(Connection connection = connect()) {
             PreparedStatement statement = connection
                     .prepareStatement("UPDATE Users SET points = ?, time = ?,"
@@ -108,11 +110,14 @@ public class DBManager extends AbstractAppState{
             statement.setInt(3, user.getBuildingsNumber());
             statement.setString(4, login);
             statement.executeUpdate(); 
+        } catch (ClassNotFoundException|SQLException ex) {
+            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    public static List<User> getAllStatistics() throws SQLException, ClassNotFoundException{
+    public static List<User> getAllStatistics(){
         List<User> statistics = new ArrayList();
+        createDatabaseFile(GameManager.getUser());
         try(Connection connection = connect()) {
             PreparedStatement statement = connection
                     .prepareStatement("SELECT login, password, points, time, buildings FROM Users");
@@ -123,7 +128,7 @@ public class DBManager extends AbstractAppState{
                         restoredStatistics.getString(4), restoredStatistics.getInt(5)));
             }
         }finally{
-            return statistics; 
+            return statistics;
         }
     }
     
@@ -137,12 +142,14 @@ public class DBManager extends AbstractAppState{
             ResultSet rs = statement.executeQuery();
             user = rs.next() ? new User(login, password, rs.getInt(1), rs.getString(2),
                     rs.getInt(3)) : null;
-        } finally{
-            return user; 
+        } catch (ClassNotFoundException|SQLException ex) {
+                Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            return user;
         }
     }
     
-    public static void createDatabaseFile(User user, boolean insertActualUser) {
+    public static void createDatabaseFile(User user) {
         if(!new File("building_simulator.db").exists()){
             try(Connection connection = connect()) {
                 PreparedStatement statement = connection.prepareStatement("CREATE TABLE Users "
@@ -150,16 +157,19 @@ public class DBManager extends AbstractAppState{
                         + " password VARCHAR(20), points INTEGER, time VARCHAR(20),"
                         + " buildings INTEGER)");
                 statement.execute();
-                if(insertActualUser) {
-                    statement = connection.prepareStatement("INSERT INTO Users(login,"
-                            + " password, points, time, buildings)" 
-                            + " VALUES(?, ?, ?, ?, ?)");
-                    statement.setString(1, user.getLogin());
-                    statement.setString(2, user.getPassword());
-                    statement.setInt(3, user.getPoints());
-                    statement.setString(4, user.getTime());
-                    statement.setInt(5, user.getBuildingsNumber());
-                    statement.executeUpdate();
+                if(user != null) {
+                    String login = user.getLogin();
+                    if(!login.equals(User.DEFAULT_LOGIN)) {
+                        statement = connection.prepareStatement("INSERT INTO Users(login,"
+                                + " password, points, time, buildings)" 
+                                + " VALUES(?, ?, ?, ?, ?)");
+                        statement.setString(1, login);
+                        statement.setString(2, user.getPassword());
+                        statement.setInt(3, user.getPoints());
+                        statement.setString(4, user.getTime());
+                        statement.setInt(5, user.getBuildingsNumber());
+                        statement.executeUpdate();
+                    }
                 }
             } catch (ClassNotFoundException|SQLException ex) {
                 Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);

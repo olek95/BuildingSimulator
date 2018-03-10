@@ -124,9 +124,6 @@ public class StartingMenu extends MainMenu{
                     }
                 }
             }else{
-                User actualUser = GameManager.getUser();
-                DBManager.createDatabaseFile(actualUser, actualUser != null &&
-                        !actualUser.getLogin().equals(User.DEFAULT_LOGIN));
                 User user = DBManager.signIn(login, password);
                 if(user == null){
                     error.setText(Translator.INCORRECT_DATA.getValue());

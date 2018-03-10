@@ -37,19 +37,14 @@ public class Statistics extends TableMenu{
     
     @Override
     protected void addRows(){
-        try{
-            DBManager.createDatabaseFile(GameManager.getUser(), true);
-            List<User> statistics = DBManager.getAllStatistics(); 
-            int statisticsNumber = statistics.size();
-            for(int i = 0; i < statisticsNumber; i++){
-                User user = statistics.get(i);
-                String login = user.getLogin(), time = user.getTime();
-                int points = user.getPoints(), buildingsNumber = user.getBuildingsNumber(); 
-                addRow(new String[]{login, points + "", time, buildingsNumber + ""},
-                        login, points, time, buildingsNumber);
-            }
-        }catch(SQLException|ClassNotFoundException ex){
-            Logger.getLogger(Statistics.class.getName()).log(Level.SEVERE, null, ex);
+        List<User> statistics = DBManager.getAllStatistics(); 
+        int statisticsNumber = statistics.size();
+        for(int i = 0; i < statisticsNumber; i++){
+            User user = statistics.get(i);
+            String login = user.getLogin(), time = user.getTime();
+            int points = user.getPoints(), buildingsNumber = user.getBuildingsNumber(); 
+            addRow(new String[]{login, points + "", time, buildingsNumber + ""},
+                    login, points, time, buildingsNumber);
         }
     }
 }

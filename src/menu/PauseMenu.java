@@ -134,12 +134,7 @@ public class PauseMenu extends MainMenu{
     
     private void saveScore() {
         User user = GameManager.getUser(); 
-        if(!user.getLogin().equals(User.DEFAULT_LOGIN)) {
-            try {
-                DBManager.saveScore(user);
-            }catch(SQLException|ClassNotFoundException ex) {
-                ex.printStackTrace();
-            }
-        } 
+        if(!user.getLogin().equals(User.DEFAULT_LOGIN)) 
+            DBManager.saveScore(user);
     }
 }

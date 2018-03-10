@@ -8,7 +8,6 @@ import com.jme3.export.binary.BinaryExporter;
 import com.jme3.input.event.MouseButtonEvent;
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import texts.Translator;
@@ -46,10 +45,15 @@ public class PauseMenu extends MainMenu{
      * @param isToggled 
      */
     public void start(MouseButtonEvent evt, boolean isToggled) {
-        super.start(); 
+        start(); 
         GameManager.continueGame();
     }
     
+    /**
+     * Zapisuje grę. 
+     * @param evt
+     * @param isToggled 
+     */
     public void save(MouseButtonEvent evt, boolean isToggled) {
         BinaryExporter exporter = BinaryExporter.getInstance();
         File file = new File("./game saves/" + GameManager.getUser().getLogin() 
@@ -63,6 +67,11 @@ public class PauseMenu extends MainMenu{
         } 
     }
     
+    /**
+     * Wczytuje grę. 
+     * @param evt
+     * @param isToggled 
+     */
     public void load(MouseButtonEvent evt, boolean isToggled) {
         GameManager.deleteGame();
         load();
@@ -74,7 +83,7 @@ public class PauseMenu extends MainMenu{
      * @param isToggled 
      */
     public void showStatistics(MouseButtonEvent evt, boolean isToggled) {
-        goNextMenu(MainMenu.getScreen(), MenuTypes.STATISTICS);
+        goNextMenu(MenuTypes.STATISTICS);
     }
     
     /**
@@ -83,7 +92,7 @@ public class PauseMenu extends MainMenu{
      * @param isToggled 
      */
     public void showOptions(MouseButtonEvent evt, boolean isToggled){ 
-        goNextMenu(MainMenu.getScreen(), MenuTypes.OPTIONS);
+        goNextMenu(MenuTypes.OPTIONS);
     }
     
     /**
@@ -91,9 +100,7 @@ public class PauseMenu extends MainMenu{
      * @param evt
      * @param isToggled 
      */
-    public void exit(MouseButtonEvent evt, boolean isToggled){ 
-        exit(); 
-    }
+    public void exit(MouseButtonEvent evt, boolean isToggled){ exit(); }
     
     /**
      * Wyświetla okienko ostrzegające przed wyjściem z gry. Umożliwia wyjście 

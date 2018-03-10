@@ -9,7 +9,6 @@ import buildingsimulator.GameManager;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.LineWrapMode;
-import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.input.event.MouseButtonEvent;
@@ -18,7 +17,6 @@ import com.jme3.math.Vector2f;
 import eyeview.BirdsEyeView;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.swing.AbstractButton;
 import settings.Control;
 import settings.Control.Actions;
 import texts.Translator;
@@ -30,8 +28,8 @@ import tonegod.gui.core.Screen;
 import tonegod.gui.effects.Effect;
 
 /**
- * Klasa <code>HUD</code> reprezentuje wyświetlacz z takimi elementami jak przyciski
- * albo aktualnie wybrany pojazd. 
+ * Klasa <code>HUD</code> reprezentuje wyświetlacz z takimi elementami jak przyciski,
+ * aktualnie wybrany pojazd, statystyki, sterowanie czy wiadomości. 
  * @author AleksanderSklorz
  */
 public class HUD extends AbstractAppState implements ActionListener, Controllable{
@@ -58,7 +56,7 @@ public class HUD extends AbstractAppState implements ActionListener, Controllabl
                 20, ColorRGBA.White).hide();
         addLabel("general_controls_label", 0.17f, 0.92f, 0.9f, "", BitmapFont.Align.Center,
                 16, ColorRGBA.White);
-        Control.addListener(this, false);
+        addListener(); 
     }
     
     /**
@@ -217,6 +215,12 @@ public class HUD extends AbstractAppState implements ActionListener, Controllabl
         }
     }
     
+    /**
+     * Wypełnia etykietę przeznaczoną dla ogólnie (zawsze) dostępnego sterowania
+     * np. wyświetlanie kursora, zmiana widoczności sterowania itd. 
+     * @param showedAll true jeśli mają być pokazane wszystkie informacje, 
+     * false jeśli ma być widoczna tylko informacja o zmiane widoczności sterowania 
+     */
     public static void fillGeneralControlsLabel(boolean showedAll) {
         Actions[] actions = showedAll ? new Actions[]{Actions.CHANGING_CONTROLS_HUD_VISIBILITY, 
             Actions.COPY_BUILDING, Actions.BUY_BUILDING, Actions.SHOW_CURSOR}
@@ -225,8 +229,7 @@ public class HUD extends AbstractAppState implements ActionListener, Controllabl
         for(int i = 0; i < actions.length; i++) {
             controls += actions[i].getKey() + " - "  + actions[i].getValue() + "   ";
         }
-        screen.getElementById("general_controls_label")
-                .setText(controls);
+        screen.getElementById("general_controls_label").setText(controls);
     }
     
     /**
@@ -256,6 +259,11 @@ public class HUD extends AbstractAppState implements ActionListener, Controllabl
         }
     }
     
+    /**
+     * Ustawia widoczność etykiety z ogólnodostępnym sterowaniem.
+     * @param visible true jeśli etykieta z ogólnodostępnym sterowaniem ma 
+     * być widoczna, false w przeciwnym przypadku 
+     */
     public static void setGeneralControlsLabelVisibility(boolean visible) {
         if(visible) screen.getElementById("general_controls_label").show();
         else screen.getElementById("general_controls_label").hide();
@@ -379,7 +387,7 @@ public class HUD extends AbstractAppState implements ActionListener, Controllabl
     
     /**
      * Zwraca ekran z HUDem.
-     * @return ekran 
+     * @return ekran z HUDem
      */
     public static Screen getScreen() { return screen; }
     
@@ -456,9 +464,9 @@ public class HUD extends AbstractAppState implements ActionListener, Controllabl
     
     private Label addLabel(String id, float xPosition, float yPosition, float xDimension, String text,
             BitmapFont.Align alignment, float fontSize, ColorRGBA color) {
-        int width = (int)screen.getWidth(), height = (int)screen.getHeight(); 
+        int width = (int)screen.getWidth(); 
         Label label = new Label(screen, id, new Vector2f(width * xPosition, 
-                height * yPosition), new Vector2f(width * xDimension, 40));
+                (int)screen.getHeight() * yPosition), new Vector2f(width * xDimension, 40));
         label.setFontSize(fontSize);
         label.setText(text);
         label.setFontColor(color);
@@ -467,4 +475,6 @@ public class HUD extends AbstractAppState implements ActionListener, Controllabl
         screen.addElement(label);
         return label;
     }
+    
+    private void addListener() { Control.addListener(this, false); }
 }

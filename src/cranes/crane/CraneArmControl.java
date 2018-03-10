@@ -93,8 +93,8 @@ public class CraneArmControl extends ArmControl{
     
     private void createHookAndHandle(Node craneControlNode, Node craneNode) {
         hookHandleControl = (Node)craneControlNode.getChild(ElementName.HOOK_HANDLE_CONTROL);
-            Spatial hookHandle = hookHandleControl.getChild(ElementName.HOOK_HANDLE);
-            setHookHandle(hookHandle);
+        Spatial hookHandle = hookHandleControl.getChild(ElementName.HOOK_HANDLE);
+        setHookHandle(hookHandle);
         setHook(new FourRopesHook((Node)craneNode.getChild(ElementName.ROPE_HOOK),
                 hookHandle, 0.1f));
     }

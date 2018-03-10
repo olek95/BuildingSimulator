@@ -15,17 +15,17 @@ import tonegod.gui.core.Screen;
  * @author AleksanderSklorz
  */
 public abstract class TableMenu extends Menu{
-    private static Screen screen;
     private static Table table;
     public TableMenu(String id) {
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
-        screen = new Screen(game);
-        Window window = new Window(screen, id, new Vector2f(0, 0),
-                new Vector2f(screen.getWidth(), screen.getHeight()));
+        Screen menuScreen = new Screen(game); 
+        setScreen(menuScreen);
+        Window window = new Window(menuScreen, id, new Vector2f(0, 0),
+                new Vector2f(menuScreen.getWidth(), menuScreen.getHeight()));
         setWindow(window); 
-        screen.addElement(window);
+        menuScreen.addElement(window);
         window.centerToParent();
-        game.getGuiNode().addControl(screen);
+        game.getGuiNode().addControl(menuScreen);
     }
     
     /**
@@ -35,6 +35,7 @@ public abstract class TableMenu extends Menu{
      * @return stworzona tabelka
      */
     protected Table createTable(String[] ids, Translator[] labels, int... margins) {
+        Screen screen = getScreen(); 
         float width = screen.getWidth();
         table = new Table(screen, new Vector2f(0, 0), new Vector2f(width,
                 screen.getHeight() * 0.87f)) {
@@ -58,6 +59,7 @@ public abstract class TableMenu extends Menu{
      * @param x położenie poziome przycisku 
      */
     protected void createReturnButton(float x){
+        Screen screen = getScreen(); 
         ButtonAdapter button = new ButtonAdapter(screen, "return_button", 
                 new Vector2f(x, screen.getHeight() * 0.9f),
                 new Vector2f(100, 30)) {
@@ -75,7 +77,7 @@ public abstract class TableMenu extends Menu{
      * @param values tablica wartości jakie posiada dana komórka 
      */
     protected void addRow(String[] columnLabels, Object... values) {
-        Table.TableRow row = new Table.TableRow(screen, table);
+        Table.TableRow row = new Table.TableRow(getScreen(), table);
         for(int i = 0; i < values.length; i++) {
             row.addCell(columnLabels[i], values[i]);
         }
@@ -91,12 +93,6 @@ public abstract class TableMenu extends Menu{
      * Dodaje wszystkie wiersze do tabelki. 
      */
     protected abstract void addRows(); 
-    
-    /**
-     * Zwraca ekran.
-     * @return ekran 
-     */
-    protected Screen getScreen() { return screen; }
     
     /**
      * Zwraca tabelkę

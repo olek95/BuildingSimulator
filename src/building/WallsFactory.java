@@ -22,6 +22,7 @@ public class WallsFactory {
      * @param mass waga ściany 
      * @param dummy true jeśli sciana sztuczna (nie stosowana do budowy), false 
      * w przeciwnym przypadku 
+     * @param color kolor 
      * @return materiał budowlany 
      */
     public static AbstractWall createWall(WallType type, Vector3f location, Vector3f dimensions,

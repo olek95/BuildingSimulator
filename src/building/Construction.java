@@ -4,10 +4,8 @@ import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
 import buildingsimulator.PhysicsManager;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
-import com.jme3.export.OutputCapsule;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -20,10 +18,10 @@ import menu.HUD;
 import texts.Translator;
 
 /**
- * Obiekt klasy <code>Construction</code> reprezentuje budowaną konstrukcję. 
+ * Klasa <code>Construction</code> reprezentuje budowaną konstrukcję. 
  * Jest to węzeł składajacy się z różnych rodzajów ścian połaczonych ze sobą. 
  * Konstrukcja budynku jest stworzona na zasadzie drzewa, tzn. każda ściana 
- * posiada połączone z nią dzieci. 
+ * posiada połączone z nią dzieci, czyli inne ściany. 
  * @author AleksanderSklorz 
  */
 public class Construction extends Node{
@@ -40,6 +38,9 @@ public class Construction extends Node{
      * @param wall2 najbliższy element do którego można dołaczyć nową ścianę.
      * Jeśli null, to element jest łaczony z ostatnio dotkniętym elementem. 
      * @param wallMode tryb fizyki dla dodawanego elementu w chwili dodawania 
+     * @param protruding true jeśli ściana ma łączyć dwie sąsiednie ściany (ma być 
+     * umieszczona na krawędzi), false w przeciwnym przypadku (ściana kończąca)
+     * @return true jeśli uda się umieścić nową ścianę, false w przeciwnym przypadku 
      */
     public boolean add(Wall wall1, Wall wall2, WallMode wallMode, boolean protruding){
         Spatial recentlyHitObject = wall1.getRecentlyHitObject();
@@ -53,9 +54,9 @@ public class Construction extends Node{
                         : (Wall)recentlyHitObject, false, wallMode, protruding, 0, 4);
                 }else{
                     if(wall2 != null) 
-                        touchedWall = mergeHorizontal(wall1, wall2, true, wallMode); 
+                        touchedWall = mergeHorizontal(wall1, wall2, true); 
                     else touchedWall = mergeHorizontal(wall1, collisionWithGround ? null :
-                            (Wall)recentlyHitObject, false, wallMode);
+                            (Wall)recentlyHitObject, false);
                 }
                 if(!children.isEmpty()) renovateBuilding();
                 if(touchedWall != null){
@@ -90,7 +91,7 @@ public class Construction extends Node{
     
     /**
      * Zwraca najbliższą ścianę z jakiegokolwiek budynku. 
-     * @param measurableObject obiekt dla którego szukamy najbliższy element z jakiegoś budynku. 
+     * @param wall obiekt dla którego szukamy najbliższy element z jakiegoś budynku. 
      * @return najbliższy element z jakiegokolwiek budynku 
      */
     public static Wall getNearestBuildingWall(Wall wall){
@@ -171,21 +172,6 @@ public class Construction extends Node{
         });
     }
     
-    public void detachWall(Wall wall) {
-        wall.depthFirstTraversal(new SceneGraphVisitorAdapter() {
-            @Override
-            public void visit(Node object) {
-                if(object.getName().startsWith("Wall")) {
-                    Wall wall = (Wall)object; 
-                    wall.removeFromParent();
-                    GameManager.addToScene(wall);
-                    wall.setStale(true);
-                    wall.setMovable(true);
-                }
-            }
-        });
-    }
-    
     /**
      * Odnawia budynek. 
      */
@@ -193,7 +179,7 @@ public class Construction extends Node{
         depthFirstTraversal(new SceneGraphVisitorAdapter() {
             @Override
             public void visit(Node object) {
-                if(object.getName().startsWith("Wall")) {
+                if(object.getName().startsWith(ElementName.WALL_BASE_NAME)) {
                     Wall wall = (Wall)object; 
                     if(!wall.isStale()) {
                         wall.setLocalRotation(wall.getCatchingRotation().clone());
@@ -286,10 +272,24 @@ public class Construction extends Node{
      */
     public static void setCounter(int counter) { Construction.counter = counter; }
     
+    /**
+     * Łączy dwie śćiany ze sobą. 
+     * @param wall1 dodawana śćiana 
+     * @param wall2 ściana do której mocuje się nową ścianę 
+     * @param ceiling true jeśli sufit, false w przeciwnym przypadku 
+     * @param mode tryb w którym znajduje się ściana (HORIZONTAL bądź VERTICAL)
+     * @param protruding true jeśli śćiana łączy dwie sąsiednie podłogi, false w przeciwnym przypadku
+     * @param start początkowy indeks od którego sprawdzane są odległości do 
+     * pomocniczych węzłów (0 dla pionowych ścian, 4 dla poziomych)
+     * @param end końcowy indeks od którego sprawdzane są odległości do 
+     * pomocniczych węzłów (4 dla pionowych ścian, 8 dla poziomych)
+     * @return pomocniczy węzeł do którego przyczepiono ścianę 
+     */
     protected Node merge(Wall wall1, Wall wall2, boolean ceiling, WallMode mode,
             boolean protruding, int start, int end){
         if(wall2 != null){ 
-            Vector3f location = ((RigidBodyControl)wall1.getControl(mode.ordinal())).getPhysicsLocation();
+            Vector3f location = ((RigidBodyControl)wall1.getControl(mode.ordinal()))
+                    .getPhysicsLocation();
             List<Spatial> wallChildren = wall2.getChildren(); 
             Node[] catchNodes = new Node[4];
             Vector3f[] catchNodesLocations = new Vector3f[4];
@@ -310,8 +310,14 @@ public class Construction extends Node{
         return this;
     }
     
-    protected Node mergeHorizontal(Wall wall1, Wall wall2, boolean foundations,
-            WallMode mode){
+    /**
+     * łączy dwie ściany poziomo (podłoga bądź sufit). 
+     * @param wall1 dodawana śćiana 
+     * @param wall2 ściana do której mocuje się nową ścianę 
+     * @param foundations true jeśli jest to fundament, false w przeciwnym przypadku 
+     * @return pomocniczy węzeł do którego przyczepiono nową ścianę
+     */
+    protected Node mergeHorizontal(Wall wall1, Wall wall2, boolean foundations){
         if(!foundations){
             if(wall2 != null){
                 // sprawdza czy na przeciwko jest druga ściana 
@@ -319,8 +325,8 @@ public class Construction extends Node{
                 if(oppositeWall) {
                     boolean ceiling = (int)(wall1.getWorldTranslation().y 
                             - wall2.getWorldTranslation().y) > 0;
-                    Node catchNode = merge(wall1, wall2, ceiling, mode, false,
-                            4, 8);
+                    Node catchNode = merge(wall1, wall2, ceiling, WallMode.HORIZONTAL,
+                            false, 4, 8);
                     if(ceiling) {
                         Hook hook = GameManager.getActualUnit().getHook(); 
                         hook.heighten();
@@ -330,15 +336,28 @@ public class Construction extends Node{
                 }
                 return oppositeWall ? 
                         merge(wall1, wall2, (int)(wall1.getWorldTranslation()
-                        .y - wall2.getWorldTranslation().y) > 0, mode, false, 4, 8)
-                        : null;
+                        .y - wall2.getWorldTranslation().y) > 0, WallMode.HORIZONTAL,
+                        false, 4, 8) : null;
             }
         }else{
-            return merge(wall1, wall2, false, mode, false, 4, 8); 
+            return merge(wall1, wall2, false, WallMode.HORIZONTAL, false, 4, 8); 
         }
         return this; 
     }
     
+    /**
+     * Oblicza odpowiednie położenie (translację i rotację) dla dodawanej ściany. 
+     * @param wall1 dodawana śćiana 
+     * @param wall2 ściana do której mocuje się nową ścianę 
+     * @param catchNode pomocniczy węzeł 
+     * @param perpendicularity true jeśli ściany są prostopadłe względem siebie, 
+     * false w przeciwnym przypadku 
+     * @param ceiling true jeśli jest to sufit, false w przeciwnym przypadku 
+     * @param horizontal true jeśli jest układane poziomo, false w przeciwnym przypadku 
+     * @param protruding true jeśli łączy dwie sąsiadujące podłogi, false w przeciwnym przypadku 
+     * @return true jeśli było wystarczająco miejsca na umieszczenie nowej ściany, 
+     * false w przeciwnym przypadku 
+     */
     protected boolean setWallInProperPosition(Wall wall1, Wall wall2, Node catchNode,
             boolean perpendicularity, boolean ceiling, boolean horizontal, 
             boolean protruding) {
@@ -361,6 +380,34 @@ public class Construction extends Node{
         }
         HUD.setMessage(Translator.NO_ENOUGH_PLACE.getValue());
         return false;
+    }
+    
+    protected Node getWallFromOpposite(Wall wall, Wall recentlyHitWall){
+        List<Spatial> hitObjects = wall.getHitObjects();
+        int numberHitObjects = hitObjects.size(); 
+        for(int i = 0; i < numberHitObjects; i++){
+            Spatial hitObject = hitObjects.get(i); 
+            if(hitObject.getName().startsWith(ElementName.WALL_BASE_NAME) && !recentlyHitWall
+                    .checkPerpendicularity((Wall)hitObject) && (int)(recentlyHitWall
+                    .getWorldTranslation().y - hitObject.getWorldTranslation().y) == 0)
+                return (Node)hitObject; 
+        }
+        return null; 
+    }
+    
+    private void detachWall(Wall wall) {
+        wall.depthFirstTraversal(new SceneGraphVisitorAdapter() {
+            @Override
+            public void visit(Node object) {
+                if(object.getName().startsWith(ElementName.WALL_BASE_NAME)) {
+                    Wall wall = (Wall)object; 
+                    wall.removeFromParent();
+                    GameManager.addToScene(wall);
+                    wall.setStale(true);
+                    wall.setMovable(true);
+                }
+            }
+        });
     }
     
     private int getMin(float[] distances){
@@ -470,19 +517,6 @@ public class Construction extends Node{
                 ? nearestWall : null;
     }
     
-    protected Node getWallFromOpposite(Wall wall, Wall recentlyHitWall){
-        List<Spatial> hitObjects = wall.getHitObjects();
-        int numberHitObjects = hitObjects.size(); 
-        for(int i = 0; i < numberHitObjects; i++){
-            Spatial hitObject = hitObjects.get(i); 
-            if(hitObject.getName().startsWith(ElementName.WALL_BASE_NAME) && !recentlyHitWall
-                    .checkPerpendicularity((Wall)hitObject) && (int)(recentlyHitWall
-                    .getWorldTranslation().y - hitObject.getWorldTranslation().y) == 0)
-                return (Node)hitObject; 
-        }
-        return null; 
-    }
-    
     private float getBusyPlace(EdgeInformation information) {
         List<Spatial> edgeWalls = information.getEdgeWalls(), 
                 neighborFloorWalls = information.getNeighborFloorWalls(); 
@@ -501,60 +535,5 @@ public class Construction extends Node{
             } 
         }
         return sum;
-    }
-    
-    private float getBusyPlace(Wall wall2, Wall floor, CatchNode edge,
-            boolean firstWall) {
-        float innerSum = 0;
-        // sprawdzanie dla dotknietego catch node 
-        if(firstWall) {
-            List<Spatial> floorEdgeChildren = ((Node)floor.getChild(edge.toString()))
-                    .getChildren();
-            int floorEdgeChildrenCount = floorEdgeChildren.size();
-            for(int i = 0; i < floorEdgeChildrenCount; i++) {
-                innerSum += ((Wall)floorEdgeChildren.get(i)).getLength() * 2;
-            } 
-            edge = getEdgeFromOpposite(edge);
-        }
-        List<Spatial> wallElements = wall2.getChildren(); 
-        int end = CatchNode.values().length;
-        // poruszanie się po wszystkich ścianach 
-        for(int i = 1; i <= end; i++) {
-            List<Spatial> catchNodeChildren = ((Node)wallElements.get(i)).getChildren(); 
-            int childrenCount = catchNodeChildren.size(); 
-            for(int k = 0; k < childrenCount; k++) { 
-                float busyPlace = getBusyPlace((Wall)catchNodeChildren.get(k), floor,
-                        edge, false);
-                if(busyPlace != -1) return innerSum + busyPlace;
-            }
-        }
-        Vector3f floorLocation = floor.getWorldTranslation(), 
-                wall2Location = wall2.getWorldTranslation();
-        float width = floor.getWidth();
-        if(wall2.equals(floor)) return innerSum;
-        boolean soughtFloor = wall2Location.y < floorLocation.y + width && wall2Location.y >
-                floorLocation.y - width && floorLocation.distance(wall2Location)
-                <= floor.getHeight() + wall2.getHeight() + 0.1f; 
-        /* znalezienie podłogi sąsiadującej z dotkniętą krawędzią i sprawdzenie 
-        zajętego miejsca po przeciwnej stronie */
-        if(soughtFloor) {
-            float sum = innerSum;
-            List<Spatial> edgeChildren = ((Node)wall2.getChild(edge.toString()))
-                    .getChildren();
-            int edgeChildrenCount = edgeChildren.size();
-            for(int i = 0; i < edgeChildrenCount; i++) {
-                sum += ((Wall)edgeChildren.get(i)).getLength() * 2;
-            }
-            return sum; 
-        }
-        return -1;
-    }
-    
-    private CatchNode getEdgeFromOpposite(CatchNode edge) {
-        CatchNode[] edges = {CatchNode.BOTTOM, CatchNode.UP, CatchNode.RIGHT, 
-            CatchNode.LEFT};
-        for(int i = 0; i < edges.length; i++)
-            if(edges[i].equals(edge)) return edges[i + (i % 2 == 0 ? 1 : -1)];
-        return null;
     }
 }

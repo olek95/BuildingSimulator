@@ -6,6 +6,8 @@ import buildingsimulator.GameManager;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.math.ColorRGBA;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static menu.MainMenu.getScreen;
 import texts.Translator;
 import tonegod.gui.controls.buttons.CheckBox;
@@ -47,16 +49,21 @@ public class StartingMenu extends MainMenu{
         Screen screen = MainMenu.getScreen(); 
         User user = GameManager.getUser();
         if(user == null) {
-            screen.addElement(createNotSavedChangesAlert(MainMenu.getScreen(),
-                    Translator.NOT_LOGGED_IN_ALERT.getValue(), null));
+            screen.addElement(createNotSavedChangesAlert(Translator.NOT_LOGGED_IN_ALERT.getValue(),
+                    null));
         } else {
-            super.start(); 
+            start(); 
             user.setPoints(999);
             user.resetAllTime();
             GameManager.runGame(null);
         }
     }
     
+    /**
+     * Wczytuje grę. 
+     * @param evt
+     * @param isToggled 
+     */
     public void load(MouseButtonEvent evt, boolean isToggled) {
         load();
     }
@@ -67,7 +74,7 @@ public class StartingMenu extends MainMenu{
      * @param isToggled 
      */
     public void showOptions(MouseButtonEvent evt, boolean isToggled){ 
-        goNextMenu(MainMenu.getScreen(), MenuTypes.OPTIONS);
+        goNextMenu(MenuTypes.OPTIONS);
     }
     
     /**
@@ -76,7 +83,7 @@ public class StartingMenu extends MainMenu{
      * @param isToggled 
      */
     public void showStatistics(MouseButtonEvent evt, boolean isToggled) {
-        goNextMenu(MainMenu.getScreen(), MenuTypes.STATISTICS); 
+        goNextMenu(MenuTypes.STATISTICS); 
     }
     
     /**
@@ -136,10 +143,10 @@ public class StartingMenu extends MainMenu{
                         setLoadingButtonState(false);
                 }
             }
-        }catch(ClassNotFoundException | SQLException ex){
+        } catch (ClassNotFoundException|SQLException ex) {
             error.setText(Translator.DB_EXCEPTION.getValue());
-            ex.printStackTrace();
-        }
+            Logger.getLogger(StartingMenu.class.getName()).log(Level.SEVERE, null, ex);
+        } 
     }
     
     /**
@@ -169,10 +176,10 @@ public class StartingMenu extends MainMenu{
     public void exit(MouseButtonEvent evt, boolean isToggled){ exit(); }
     
     @Override
-    protected void doWhenAcceptedExit(Screen screen, MenuTypes type) {
-        super.doWhenAcceptedExit(screen, null); 
+    protected void doWhenAcceptedExit(MenuTypes type) {
+        super.doWhenAcceptedExit(null); 
         GameManager.setUser(new User(User.DEFAULT_LOGIN, "", 999, "00:00:00", 0));
-        super.start(); 
+        start(); 
         GameManager.runGame(null);
     }
     

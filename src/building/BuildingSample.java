@@ -16,7 +16,7 @@ import net.wcomohundro.jme3.csg.CSGGeometry;
 
 /**
  * Klasa <code>BuildingSample</code> reprezentuje przykładowy (gotowy) budynek. 
- * Pozwala na automatycznie postawenie całego budynku. 
+ * Pozwala na automatycznie postawenie całego budynku. Dostępne są 3 typy budynków.
  * @author AleksanderSklorz
  */
 public class BuildingSample extends Construction{
@@ -28,8 +28,10 @@ public class BuildingSample extends Construction{
     }
     
     /**
-     * Umieszcza przykładowy budynek w podanej lokalizacji. 
-     * @param location
+     * Umieszcza przykładowy budynek o danym indeksie w podanej lokalizacji. 
+     * @param location lokalizacja budynku 
+     * @param sampleIndex indeks przykładowego budynku - 1 budynek mieszany, 
+     * 2 - budynek szeroki, 3 - budynek wysoki 
      * @return true jeśli udało sie umieścić budynek, false jeśli zabrakło dla
      * niego miejsca 
      */
@@ -66,24 +68,23 @@ public class BuildingSample extends Construction{
     }
     
     @Override
-    protected Node mergeHorizontal(Wall wall1, Wall wall2, boolean foundations,
-            WallMode mode){
+    protected Node mergeHorizontal(Wall wall1, Wall wall2, boolean foundations){
         if(!foundations){
             if(wall2 != null){
                 // sprawdza czy na przeciwko jest druga ściana 
                 boolean oppositeWall = getWallFromOpposite(wall1, wall2) != null;
                 if(oppositeWall) {
-                    Node ceilingCatchNode = merge(wall1, wall2, true, mode, false,
-                            4, 8);
+                    Node ceilingCatchNode = merge(wall1, wall2, true, WallMode.HORIZONTAL,
+                            false, 4, 8);
                     return ceilingCatchNode;
                 }
                 return oppositeWall ? 
                         merge(wall1, wall2, (int)(wall1.getWorldTranslation()
-                        .y - wall2.getWorldTranslation().y) > 0, mode, false, 4, 8)
-                        : null;
+                        .y - wall2.getWorldTranslation().y) > 0, WallMode.HORIZONTAL,
+                        false, 4, 8) : null;
             }
         }else{
-            return merge(wall1, wall2, false, mode, false, 4, 8); 
+            return merge(wall1, wall2, false, WallMode.HORIZONTAL, false, 4, 8); 
         }
         return this; 
     }
@@ -126,13 +127,13 @@ public class BuildingSample extends Construction{
             }
             game.getBulletAppState().getPhysicsSpace()
                     .remove(wall.getControl(RigidBodyControl.class));
-            randomColor(wall);
+            setRandomColor(wall);
             if(i == 0) owner = wall;
         }
         return walls; 
     }
     
-    private void randomColor(Wall wall) {
+    private void setRandomColor(Wall wall) {
         ColorRGBA[] colors = new ColorRGBA[] {ColorRGBA.White, ColorRGBA.Black,
             ColorRGBA.BlackNoAlpha, ColorRGBA.Blue, ColorRGBA.Brown, ColorRGBA.Cyan,
             ColorRGBA.DarkGray, ColorRGBA.Green, ColorRGBA.LightGray, ColorRGBA.Magenta,

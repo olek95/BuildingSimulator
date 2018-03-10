@@ -21,6 +21,7 @@ import texts.Translator;
 
 /**
  * Klasa <code>Hook</code> jest klasą abstrakcji dla wszystkich haków w grze. 
+ * Umożliwia podnoszenie ścian. 
  * @author AleksanderSklorz
  */
 public abstract class Hook implements RememberingRecentlyHitObject{
@@ -89,6 +90,10 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     
     /**
      * Odłącza od haka przyczepiony obiekt. 
+     * @param merging true jeśli ma nastąpić połaczenie z inną ścianą, false 
+     * gdy ma spaść swobodnie 
+     * @param protruding true jeśli ściana ma połączyć dwie sąsiadujące ze sobą 
+     * podłogi, false w przeciwnym przypadku 
      */
     public void detach(boolean merging, boolean protruding){
         if(attachedObject != null){
@@ -126,112 +131,6 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 } else confirmDetaching();
             } else confirmDetaching();
         }
-    }
-    
-    @Override
-    public Spatial getRecentlyHitObject(){ return recentlyHitObject; }
-    
-    @Override
-    public void setRecentlyHitObject(Spatial object){ recentlyHitObject = object; }
-    
-    /**
-     * Zwraca wartość określającą jak bardzo opuszczony jest hak. 
-     * @return wartość opuszczenia haka 
-     */
-    public float getActualLowering(){ return actualLowering; }
-    
-    public void setActualLowering(float actualLowering) { 
-        this.actualLowering = actualLowering; 
-    }
-    
-    /**
-     * Zwraca uchwyt do jakiego przyczepiona jest lina. 
-     * @return uchwyt liny
-     */
-    public Spatial getHookHandle(){ return hookHandle; }
-    
-    /**
-     * Zwraca węzeł z hakiem z liniami. 
-     * @return węzeł z hakiem z liniami 
-     */
-    public Node getRopeHook(){ return ropeHook; }
-    
-    /**
-     * Zwraca zaczepiony obiekt. 
-     * @return zaczepiony obiekt 
-     */
-    public Wall getAttachedObject() { return attachedObject; }
-    
-    /**
-     * Zwraca przesunięcie haka po opuszczeniu liny. 
-     * @return przesunięcie haka 
-     */
-    public Vector3f getHookDisplacement() { return hookDisplacement; }
-    
-    /**
-     * Ustawia przesunięcie haka po opuszczeniu liny. 
-     * @param displacement przesunięcie haka 
-     */
-    public void setHookDisplacement(Vector3f displacement){
-        this.hookDisplacement = displacement;
-    }
-    
-    /**
-     * Zwraca hak. 
-     * @return hak 
-     */
-    public Spatial getHook() { return hook; }
-    
-    /**
-     * Zwraca słuchacza dla sprawdzający kolizje z hakiem od dołu. 
-     * @return słuchacz dla kolizji od dołu 
-     */
-    public BottomCollisionListener getCollisionListener(){ return collisionListener; }
-    
-    @Override
-    public Vector3f getWorldTranslation(){ return hook.getWorldTranslation(); }
-    
-    /**
-     * Dołącza do podanego złożonego kształtu kolizji kształty kolizji innych 
-     * elementów haka, wspólnych dla wszystkich haków. Ponadto dołącza fizykę 
-     * dla tego obiektu do gry, ustawia odpowiednie grupy kolizji, a także 
-     * łączy hak z uchwytem na hak. 
-     * @param ropeHookCompound złożony kształt kolizji do którego dołącza się 
-     * kształty kolizji dla haka. 
-     * @param distanceHookHandleAndRopeHook wektor decydujący w jakiej odległości 
-     * ma być zawieszony hak od uchwytu na hak. 
-     */
-    protected  void addHookPhysics(CompoundCollisionShape ropeHookCompound,
-            Vector3f distanceHookHandleAndRopeHook){
-        PhysicsManager.addNewCollisionShapeToCompound(ropeHookCompound, (Node)hook, ((Node)hook).getChild(0).getName(),
-                hook.getLocalTranslation(), hook.getLocalRotation());
-        PhysicsManager.createPhysics(ropeHookCompound, ropeHook, 4f, false);
-        RigidBodyControl ropeHookControl = ropeHook.getControl(RigidBodyControl.class);
-        ropeHookControl.setCollisionGroup(2); 
-        lineAndHookHandleJoint = PhysicsManager.joinsElementToOtherElement(lineAndHookHandleJoint,
-                hookHandle, ropeHook, Vector3f.ZERO, distanceHookHandleAndRopeHook);
-    }
-    
-    protected void restoreHookPhysics(Vector3f distanceHookHandleAndRopeHook) {
-        PhysicsManager.addPhysicsToGame(ropeHook);
-        lineAndHookHandleJoint = PhysicsManager.joinsElementToOtherElement(lineAndHookHandleJoint,
-                hookHandle, ropeHook, Vector3f.ZERO, distanceHookHandleAndRopeHook);
-    }
-    
-    /**
-     * Podnosi lub opuszcza hak. 
-     * @param scallingVector wektor o jaki ma być przesunięty hak 
-     * @param heightening true jeśli podnosimy hak, false w przeciwnym przypadku 
-     */
-    protected void changeHookPosition(Vector3f scallingVector, boolean heightening){
-        if(attachedObject != null){
-            PhysicsManager.moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
-                    getRopes(), hook, attachedObject);
-        }else{
-            PhysicsManager.moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
-                    getRopes(), hook);
-        }
-        createRopeHookPhysics();
     }
     
     /**
@@ -279,6 +178,113 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 selectedControl, Vector3f.ZERO, distanceBetweenHookAndObjectCenter,
                 Vector3f.ZERO, Vector3f.ZERO);
         BuildingSimulator.getPhysicsSpace().add(buildingMaterialJoint);
+    }
+    
+    @Override
+    public Spatial getRecentlyHitObject(){ return recentlyHitObject; }
+    
+    @Override
+    public void setRecentlyHitObject(Spatial object){ recentlyHitObject = object; }
+    
+    /**
+     * Zwraca wartość określającą jak bardzo opuszczony jest hak. 
+     * @return wartość opuszczenia haka 
+     */
+    public float getActualLowering(){ return actualLowering; }
+    
+    /**
+     * Ustawia wartość aktualnego opuszczenia haka. 
+     * @param actualLowering wartość aktualnego opuszczenia haka
+     */
+    public void setActualLowering(float actualLowering) { 
+        this.actualLowering = actualLowering; 
+    }
+    
+    /**
+     * Zwraca uchwyt do jakiego przyczepiony jest hak. 
+     * @return uchwyt haka
+     */
+    public Spatial getHookHandle(){ return hookHandle; }
+    
+    /**
+     * Zwraca węzeł z hakiem z liniami. 
+     * @return węzeł z hakiem z liniami 
+     */
+    public Node getRopeHook(){ return ropeHook; }
+    
+    /**
+     * Zwraca zaczepiony obiekt. 
+     * @return zaczepiony obiekt 
+     */
+    public Wall getAttachedObject() { return attachedObject; }
+    
+    /**
+     * Zwraca przesunięcie haka po opuszczeniu liny. 
+     * @return przesunięcie haka 
+     */
+    public Vector3f getHookDisplacement() { return hookDisplacement; }
+    
+    /**
+     * Ustawia przesunięcie haka po opuszczeniu liny. 
+     * @param displacement przesunięcie haka 
+     */
+    public void setHookDisplacement(Vector3f displacement){
+        this.hookDisplacement = displacement;
+    }
+    
+    /**
+     * Zwraca słuchacza dla sprawdzający kolizje z hakiem od dołu. 
+     * @return słuchacz dla kolizji od dołu 
+     */
+    public BottomCollisionListener getCollisionListener(){ return collisionListener; }
+    
+    @Override
+    public Vector3f getWorldTranslation(){ return hook.getWorldTranslation(); }
+    
+    /**
+     * Dołącza do podanego złożonego kształtu kolizji kształty kolizji innych 
+     * elementów haka, wspólnych dla wszystkich haków. Ponadto dołącza fizykę 
+     * dla tego obiektu do gry, ustawia odpowiednie grupy kolizji, a także 
+     * łączy hak z uchwytem na hak. 
+     * @param ropeHookCompound złożony kształt kolizji do którego dołącza się 
+     * kształty kolizji dla haka. 
+     * @param distanceHookHandleAndRopeHook wektor decydujący w jakiej odległości 
+     * ma być zawieszony hak od uchwytu na hak. 
+     */
+    protected  void addHookPhysics(CompoundCollisionShape ropeHookCompound,
+            Vector3f distanceHookHandleAndRopeHook){
+        PhysicsManager.addNewCollisionShapeToCompound(ropeHookCompound, (Node)hook, ((Node)hook).getChild(0).getName(),
+                hook.getLocalTranslation(), hook.getLocalRotation());
+        PhysicsManager.createPhysics(ropeHookCompound, ropeHook, 4f, false);
+        ropeHook.getControl(RigidBodyControl.class).setCollisionGroup(2); 
+        lineAndHookHandleJoint = PhysicsManager.joinsElementToOtherElement(lineAndHookHandleJoint,
+                hookHandle, ropeHook, Vector3f.ZERO, distanceHookHandleAndRopeHook);
+    }
+    
+    /**
+     * Przywraca fizykę haka oraz połączenie między hakiem a jego uchwytem do świata gry. 
+     * @param distanceHookHandleAndRopeHook odległość między hakiem a jego uchwytem
+     */
+    protected void restoreHookPhysics(Vector3f distanceHookHandleAndRopeHook) {
+        PhysicsManager.addPhysicsToGame(ropeHook);
+        lineAndHookHandleJoint = PhysicsManager.joinsElementToOtherElement(lineAndHookHandleJoint,
+                hookHandle, ropeHook, Vector3f.ZERO, distanceHookHandleAndRopeHook);
+    }
+    
+    /**
+     * Podnosi lub opuszcza hak. 
+     * @param scallingVector wektor o jaki ma być przesunięty hak 
+     * @param heightening true jeśli podnosimy hak, false w przeciwnym przypadku 
+     */
+    protected void changeHookPosition(Vector3f scallingVector, boolean heightening){
+        if(attachedObject != null){
+            PhysicsManager.moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
+                    getRopes(), hook, attachedObject);
+        }else{
+            PhysicsManager.moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
+                    getRopes(), hook);
+        }
+        createRopeHookPhysics();
     }
     
     /**

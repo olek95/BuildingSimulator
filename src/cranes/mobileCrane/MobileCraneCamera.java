@@ -5,7 +5,6 @@ import buildingsimulator.GameManager;
 import com.jme3.scene.Node;
 import cranes.AbstractCraneCamera;
 import cranes.CameraType;
-import menu.HUD;
 
 /**
  * Klasa <code>MobileCraneCamera</code> reprezentuje kamerę dźwigu mobilnego. 
@@ -47,7 +46,7 @@ public class MobileCraneCamera extends AbstractCraneCamera{
                 }
                 setType(CameraType.ARM_CABIN);
                 GameManager.displayProperMobileCraneHUD();
-            };
+            }
         }
         if(getType().equals(CameraType.LOOSE)) {
             setOff();

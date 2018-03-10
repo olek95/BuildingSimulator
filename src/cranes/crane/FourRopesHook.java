@@ -22,8 +22,8 @@ public class FourRopesHook extends Hook{
     public FourRopesHook(Node ropeHook, Spatial hookHandle, float speed){
         super(ropeHook, hookHandle, speed);
         List<Spatial> ropeHookChildren = ropeHook.getChildren();
-        int index = 0;
-        for(int i = 0; i < ropeHookChildren.size(); i++){
+        int index = 0, ropesNumber = ropeHookChildren.size();
+        for(int i = 0; i < ropesNumber; i++){
             Spatial children = ropeHookChildren.get(i);
             if(children.getName().startsWith(ElementName.ROPE)){
                 ropes[index] = (Node)children;
@@ -34,7 +34,7 @@ public class FourRopesHook extends Hook{
         setHookDisplacement(PhysicsManager.calculateDisplacementAfterScaling(ropes[0], 
                 new Vector3f(1f, getActualLowering() + speed, 1f), false, true, false));
         getHookDisplacement().y *= 2;
-        if(getRopeHook().getControl(RigidBodyControl.class) == null)
+        if(ropeHook.getControl(RigidBodyControl.class) == null)
             createRopeHookPhysics();
         else restoreHookPhysics(new Vector3f(0, 0.6f,0));
     }
@@ -52,7 +52,7 @@ public class FourRopesHook extends Hook{
     }
     
     @Override
-    protected void createRopeHookPhysics(){
+    protected final void createRopeHookPhysics(){
         CompoundCollisionShape ropeHookCompound = PhysicsManager.createCompound(getRopeHook(), ropes[0].getChild(0)
                 .getName());
         ropeHookCompound.getChildren().get(0).location = ropes[0].getLocalTranslation();
@@ -65,7 +65,5 @@ public class FourRopesHook extends Hook{
     }
     
     @Override 
-    protected Node[] getRopes(){
-        return ropes; 
-    }
+    protected Node[] getRopes(){ return ropes; }
 }

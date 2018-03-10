@@ -1,8 +1,6 @@
 package cranes;
 
-import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
-import cranes.mobileCrane.MobileCraneCamera;
 
 /**
  * Klasa abstrakcyjna <code>CraneAbstract</code>jest klasą abstrakcyjną dla 
@@ -18,33 +16,19 @@ public abstract class CraneAbstract {
      * Zwraca hak dźwigu. 
      * @return hak 
      */
-    public Hook getHook(){
-        return armControl.getHook();
-    }
+    public Hook getHook() {  return armControl.getHook(); }
     
     /**
      * Zwraca obiekt reprezentujący kontrolę ramienia dźwigu. 
      * @return obiekt kontroli ramienia dźwigu 
      */
-    public ArmControl getArmControl(){
-        return armControl;
-    }
+    public ArmControl getArmControl() { return armControl; }
     
     /**
      * Ustawia obiekt reprezentujący kontrolę ramienia dźwigu. 
      * @param control obiekt kontroli ramienia dźwigu 
      */
-    public void setArmControl(ArmControl control){
-        armControl = control;
-    }
-    
-    /**
-     * Zwraca informację czy dany dźwig jest aktualnie używany. 
-     * @return true jeśli dźwig jest używany, false w przeciwnym razie 
-     */
-    public boolean isUsing(){
-        return using;
-    }
+    public void setArmControl(ArmControl control) { armControl = control; }
     
     /**
      * Określa czy dany dźwig jest aktualnie używany. Jeśli dźwig jest używany, 

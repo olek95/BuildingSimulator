@@ -168,10 +168,6 @@ public class GameManager {
         removeAllUnits();
     }
     
-    private static void addHUD() {
-        GameManager.addControlToGui(new HUD().getScreen());
-    }
-    
     /**
      * Usuwa HUD. 
      */
@@ -189,6 +185,11 @@ public class GameManager {
         animation.play();
     }
     
+    /**
+     * Ładuje model 3D z pliku z rozszerzeniem j3o. 
+     * @param path ściezka do pliku 
+     * @return węzeł reprezentujący załadowany model 
+     */
     public static Node loadModel(String path) {
         return (Node)BuildingSimulator.getGameAssetManager().loadModel(path);
     }
@@ -244,15 +245,6 @@ public class GameManager {
         actualUnit.getCamera().restore();
         displayActualUnitControlsInHUD();
     }
-    
-    /**
-     * Usuwa wszystkie jednostki (dźwigi mobilne i zurawie), które występują w grze. 
-     */
-    public static void removeAllUnits() { 
-        mobileCrane = null; 
-        crane = null;
-    }
-    
     
     /**
      * Dodaje obiekt do świata gry. 
@@ -327,6 +319,9 @@ public class GameManager {
         }
     }
     
+    /**
+     * Wyświetla sterowanie w HUD dla aktualnej jednostki (żuraw lub dźwig mobilny).
+     */
     public static void displayActualUnitControlsInHUD() {
         if(actualUnit.getCrane().getName().contains(ElementName.CRANE)) {
             displayProperMobileCraneHUD();
@@ -340,6 +335,10 @@ public class GameManager {
         }
     }
     
+    /**
+     * Zmiena kolor HUD w zależności od tego w jakim miejscu w dźwigu mobilnym 
+     * znajduje się gracz (HUD jest biały dla przebywania w środku w kabinie). 
+     */
     public static void changeHUDColorDependingOnMobileCraneState() {
         MobileCraneArmControl armControl = (MobileCraneArmControl)mobileCrane
                     .getArmControl();
@@ -369,8 +368,6 @@ public class GameManager {
      * @return true jeśli gra się rozpoczęła, false w przeciwnym przypadku 
      */
     public static boolean isStartedGame() { return startedGame; }
-    
-    public static void setStarted(boolean startedGame) { GameManager.startedGame = startedGame; }
     
     /**
      * Okresla czy gra jest zatrzymana. 
@@ -414,10 +411,19 @@ public class GameManager {
         BuildingSimulator.getGameGuiNode().removeControl(control);
     }
     
+    private static void addHUD() {
+        GameManager.addControlToGui(new HUD().getScreen());
+    }
+    
     private static void resetGameControls() {
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
         Control.removeListener(game);
         Control.addListener(game, false);
         Control.addListener(game.getFlyByCamera(), false);
+    }
+    
+    private static void removeAllUnits() { 
+        mobileCrane = null; 
+        crane = null;
     }
 }

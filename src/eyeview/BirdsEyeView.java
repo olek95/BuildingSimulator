@@ -26,7 +26,7 @@ import texts.Translator;
 
 /**
  * Obiekt klasy <code>BirdsEyeView</code> reprezentuje widok z lotu ptaka (widok 
- * patrząć od góry). 
+ * patrzenia od góry). 
  * @author Aleksander Sklorz
  */
 public class BirdsEyeView implements ActionListener, Controllable{
@@ -37,13 +37,13 @@ public class BirdsEyeView implements ActionListener, Controllable{
         Actions.CANCEL_BIRDS_EYE_VIEW};
     public BirdsEyeView(VisibleFromAbove viewOwner, boolean movingAvailable) {
         BirdsEyeView.viewOwner = viewOwner;
-        Control.addListener(this, false);
+        addListener();
         BirdsEyeView.movingAvailable = movingAvailable; 
         changeViewMode();
     }
     
     /**
-     * Pozwala na ustawienie kliknietego lewym przyciskiem myszy miejsca widzianego 
+     * Pozwala na ustawienie klikniętego lewym przyciskiem myszy miejsca widzianego 
      * z lotu ptaka. 
      * @param name nazwa przycisku 
      * @param isPressed czy kliknięty 
@@ -146,9 +146,7 @@ public class BirdsEyeView implements ActionListener, Controllable{
      * Okresla czy aktualnie tryb widoku z lotu ptaka jest włączony. 
      * @return true jeśli tryb widoku z lotu ptaka jest włączony, false w przeciwnym przypadku 
      */
-    public static boolean isActive() {
-        return viewOwner != null; 
-    }
+    public static boolean isActive() { return viewOwner != null; }
     
     /**
      * Zwraca właściciela widoku z lotu ptaka. 
@@ -172,6 +170,8 @@ public class BirdsEyeView implements ActionListener, Controllable{
     
     @Override
     public Actions[] getAvailableActions() { return availableActions; }
+    
+    private void addListener() { Control.addListener(this, false); }
     
     private void changeViewMode() {
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();

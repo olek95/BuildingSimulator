@@ -16,6 +16,7 @@ import tonegod.gui.core.Screen;
  * @author AleksanderSklorz
  */
 public abstract class Menu extends AbstractAppState{
+    private static Screen screen;
     private static Window window;
     private static AudioNode backgroundSound;
     
@@ -30,6 +31,18 @@ public abstract class Menu extends AbstractAppState{
      * @param window okno 
      */
     protected static void setWindow(Window window) { Menu.window = window; }
+    
+    /**
+     * Zwraca ekran. 
+     * @return ekran
+     */
+    public static Screen getScreen() { return screen; }
+    
+    /**
+     * Ustawia ekran. 
+     * @param screen ekran
+     */
+    protected static void setScreen(Screen screen) { Menu.screen = screen; }
     
     /**
      * Zwraca dźwięk tła. 
@@ -47,26 +60,24 @@ public abstract class Menu extends AbstractAppState{
     
     /**
      * Tworzy okno alarmowe ostrzegające przed daną czynnością. 
-     * @param screen ekran dla którego chce się wyświetlić okienko alarmowe
      * @param message wyświetlana informacja
      * @param nextMenu menu do którego chcemy wyjść 
      * @return okno alarmowe ostrzegające przed niezapisanymi zmianami 
      */
-    protected DialogBox createNotSavedChangesAlert(final Screen ownerScreen, String message,
-            final MenuTypes nextMenu) {
-        DialogBox alert = new DialogBox(ownerScreen, "closing_alert", new Vector2f(0f, 0f), 
+    protected DialogBox createNotSavedChangesAlert(String message, final MenuTypes nextMenu) {
+        DialogBox alert = new DialogBox(screen, "closing_alert", new Vector2f(0f, 0f), 
                 new Vector2f(400, 190)) {
                     @Override
                     public void onButtonCancelPressed(MouseButtonEvent mbe, boolean bln) {
                         hide();
-                        ownerScreen.removeElement(this);
+                        screen.removeElement(this);
                     }
 
                     @Override
                     public void onButtonOkPressed(MouseButtonEvent mbe, boolean bln) {
                         hide();
-                        ownerScreen.removeElement(this);
-                        doWhenAcceptedExit(ownerScreen, nextMenu);
+                        screen.removeElement(this);
+                        doWhenAcceptedExit(nextMenu);
                     }
                 };
         alert.centerToParent();
@@ -82,22 +93,29 @@ public abstract class Menu extends AbstractAppState{
     
     /**
      * Wykonuje się w chwili gdy wyjście z obecnego okna jest potwierdzone. 
-     * @param screen ekran dla którego akceptujemy wyjście 
      * @param menuType typ menu do którego przechodzimy po akceptacji wyjścia. Jesli null, 
      * to po prostu tylko zamyka się obecne okno
      */
-    protected void doWhenAcceptedExit(Screen screen, MenuTypes menuType){
-        goNextMenu(screen, menuType); 
+    protected void doWhenAcceptedExit(MenuTypes menuType){
+        goNextMenu(menuType); 
     }
     
     /**
      * Przechodzi do kolejnego menu. 
-     * @param screen ekran aktualnego menu 
      * @param menuType typ menu do którego przechodzimy 
      */
-    protected void goNextMenu(Screen screen, MenuTypes menuType) {
+    protected void goNextMenu(MenuTypes menuType) {
         window.hide();
         GameManager.removeControlFromGui(screen);
         if(menuType != null) MenuFactory.showMenu(menuType);
+    }
+    
+    /**
+     * Wczytuje układ. 
+     * @param screen ekran dla którego układ jest wczytywany 
+     * @param layoutName nazwa pliku układu 
+     */
+    protected void parseLayout(String layoutName) { 
+        screen.parseLayout(layoutName, this);
     }
 }

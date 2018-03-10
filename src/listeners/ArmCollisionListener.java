@@ -9,9 +9,14 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import cranes.ArmControl;
 
+/**
+ * Klasa <code>ArmCollisionListener</code> reprezentuje słuchacza sprawdzającego 
+ * kolizje ramienia z obiektami otoczenia. Jeśli następuje kolizja, lekko cofa ramię.  
+ * @author AleksanderSklorz
+ */
 public class ArmCollisionListener {
     /**
-     * Dodaje listener sprawdzający kolizję haka z obiektami otoczenia.
+     * Dodaje listener sprawdzający kolizję ramienia z obiektami otoczenia.
      */
     public static PhysicsCollisionListener createRotateAfterImpactListener() {
         return new PhysicsCollisionListener(){

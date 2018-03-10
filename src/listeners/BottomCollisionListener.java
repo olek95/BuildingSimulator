@@ -1,9 +1,7 @@
 package listeners;
 
-import building.Wall;
 import buildingsimulator.ElementName;
 import buildingsimulator.RememberingRecentlyHitObject;
-import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.collision.CollisionResults;
@@ -13,8 +11,8 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
 /**
- * Obiekt klasy <code>BottomCollisionListener</code> reprezentuje obekt będący 
- * słuchaczam kolizji od dołu. 
+ * Obiekt klasy <code>BottomCollisionListener</code> reprezentuje słuchacza 
+ * kolizji od dołu. 
  * @author AleksanderSklorz 
  */
 public class BottomCollisionListener implements PhysicsCollisionGroupListener{
@@ -42,13 +40,9 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
         Object a = nodeA.getUserObject(), b = nodeB.getUserObject();
         Spatial aSpatial = (Spatial)a, bSpatial = (Spatial)b;
         String aName = aSpatial.getName(), bName = bSpatial.getName();
-        //if((aName.startsWith(Wall.BASE_NAME) || aName.startsWith(ElementName.SCENE))
-          //      && (bName.startsWith(Wall.BASE_NAME) || bName.startsWith(ElementName.SCENE)))
         if(aName.equals(hittingObjectName) && !bName.equals(handleName)){
-           // if(!isProperCollisionGroup(bSpatial)) return false;
             hittingObject.setCollision(bSpatial);
         }else if(bName.equals(hittingObjectName) && !aName.equals(handleName)){
-            //if(!isProperCollisionGroup(aSpatial)) return false;
             hittingObject.setCollision(aSpatial);
         }
         return true;
@@ -73,8 +67,7 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
      * Sprawdza czy ostatnio uderzony obiekt znajduje się dokładnie poniżej 
      * danego obiekt czy np. dany obiekt uderzył w tamten obiekt od boku. 
      * @param rayDirection kierunek niewidzialnego promiania, sprawdzającego kolizję
-     * @return false jeśli uderzony obiekt został uderzony dolną częścią obiektu 
-     * podanego jako argument, true w przeciwnym przypadku 
+     * @return false jeśli coś znajduje się poniżej, true w przeciwnym przypadku 
      */
     public boolean isNothingBelow(Vector3f rayDirection){
         if(rayDirection == null) rayDirection = new Vector3f(0, -0.5f, 0);
@@ -94,17 +87,5 @@ public class BottomCollisionListener implements PhysicsCollisionGroupListener{
             }
         }
         return results.size() == 0; 
-    }
-    
-    private static boolean isProperCollisionGroup(Spatial b){
-        // PhysicsCollisionObject bo control nie musi być tylko typu RigidBodyControl
-        int collisionGroup = ((PhysicsCollisionObject)b.getControl(0)).getCollisionGroup();
-        Node parent = b.getParent();
-        do{
-            if(parent.getName().contains(ElementName.CRANE))
-                return collisionGroup != 4; 
-            parent = parent.getParent();
-        }while(parent != null);
-        return true;
     }
 }

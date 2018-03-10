@@ -4,7 +4,8 @@ import com.jme3.math.Vector3f;
 
 /**
  * Klasa <code>WallData</code> reprezentuje dane potrzebne do postawienia danej 
- * ściany podczas tworzenia gotowego budynku. 
+ * ściany podczas tworzenia gotowego budynku. Wykorzystywane w budynkach przykładowych,
+ * tworzonych programowo. 
  * @author AleksanderSklorz 
  */
 public class WallData {

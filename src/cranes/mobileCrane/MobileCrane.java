@@ -135,8 +135,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     /**
      * Aktualizuje stan pojazdu. Możliwe stany to: stop, jazda w przód i jazda
      * w tył. Oprócz tego decyduje czy gracz działa w trybie sterowania pojazdem 
-     * żurawia czy w trybie sterowania jego ramieniem z kabiny sterowania 
-     * remieniem żurawia. 
+     * dźwigu czy w trybie sterowania jego ramieniem
      */
     public void updateState(){
         if(key == null){
@@ -191,7 +190,7 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
     
     /**
      * Zwraca dostępne akcje dla dźwigu, czyli - jazda w przód, do tyłu, skręcanie 
-     * w lewo i w prawo, a także akcja opuszczania podpór.
+     * w lewo i w prawo, akcja opuszczania podpór, a także zmiana kamery.
      * @return tablicę dostępnych akcji dla dźwigu mobilnego 
      */
     @Override

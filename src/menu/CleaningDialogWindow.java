@@ -6,7 +6,6 @@ import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.font.BitmapFont;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.scene.Node;
@@ -24,12 +23,12 @@ import tonegod.gui.core.Screen;
  * @author AleksanderSklorz
  */
 public class CleaningDialogWindow extends Menu{
-    private static Screen screen;
     private static CleaningDialogWindow displayedCleaningDialogWindow = null;
     public CleaningDialogWindow() {
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-        screen = new Screen(game);
-        screen.parseLayout("Interface/cleaning_dialog.gui.xml", this);
+        Screen screen = new Screen(game); 
+        setScreen(screen); 
+        parseLayout("Interface/cleaning_dialog.gui.xml");
         Window window = (Window)screen.getElementById("cleaning_window");
         window.setWindowTitle(Translator.CLEANING_MAP.getValue());
         Element dragBar = window.getDragBar();
@@ -41,7 +40,7 @@ public class CleaningDialogWindow extends Menu{
                 .CLEANING_MAP_MESSAGE, Translator.ENTIRE_MAP, Translator.INFINITE_BUILDINGS,
                 Translator.CANCELLATION}, screen);
         game.getGuiNode().addControl(screen);
-        displayedCleaningDialogWindow = this; 
+        setDisplayedCleaningDialogWindow();
     }
     
     /**
@@ -72,7 +71,7 @@ public class CleaningDialogWindow extends Menu{
     public void cancel(MouseButtonEvent evt, boolean isToggled) {
         displayedCleaningDialogWindow = null; 
         BuildingSimulator.getGameFlyByCamera().setDragToRotate(false);
-        goNextMenu(screen, null);
+        goNextMenu(null);
         HUD.setControlsVisibility(HUD.isControlsLabelVisibilityBeforeHiding());
     }
     
@@ -125,5 +124,9 @@ public class CleaningDialogWindow extends Menu{
         for(int i = 0; i < 3; i++) {
             physics.remove(wall.getControl(0));
         }
+    }
+    
+    private void setDisplayedCleaningDialogWindow() { 
+        CleaningDialogWindow.displayedCleaningDialogWindow = this;
     }
 }

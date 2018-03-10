@@ -39,7 +39,7 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
         getWindow().addChild(table);
         createAcceptingButton(); 
         createReturnButton(screen.getWidth() * 0.6f);
-        BuildingSimulator.getGameInputManager().addRawInputListener(this);
+        addListener();
         Translator.setTexts(new String[]{"accepting_button", "return_button"}, 
                 new Translator[]{Translator.ACCEPTING, Translator.RETURN}, screen);
         table.setEnableKeyboardNavigation(false);
@@ -94,11 +94,10 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
     
     @Override
     protected void clickReturnButton() {
-        Screen screen = getScreen(); 
         if(stale){
-            screen.addElement(createNotSavedChangesAlert(screen,
-                    Translator.NOT_SAVED_CHANGES.getValue(), MenuTypes.OPTIONS));
-        } else doWhenAcceptedExit(screen, MenuTypes.OPTIONS);
+            getScreen().addElement(createNotSavedChangesAlert(Translator.NOT_SAVED_CHANGES.getValue(),
+                    MenuTypes.OPTIONS));
+        } else doWhenAcceptedExit(MenuTypes.OPTIONS);
     }
     
     private boolean existsDuplicate(String key) {
@@ -113,10 +112,10 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
     }
     
     private void createAcceptingButton(){
-        final Screen s = getScreen();
+        final Screen screen = getScreen();
         final Table table = getTable(); 
-        ButtonAdapter button = new ButtonAdapter(s, "accepting_button", 
-                new Vector2f(s.getWidth() * 0.4f, s.getHeight() * 0.9f),
+        ButtonAdapter button = new ButtonAdapter(screen, "accepting_button", 
+                new Vector2f(screen.getWidth() * 0.4f, screen.getHeight() * 0.9f),
                 new Vector2f(100, 30)) {
                     @Override
                     public void onButtonMouseLeftUp(MouseButtonEvent mbe, boolean bln) {
@@ -127,7 +126,7 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
                             keys[i] = ((Table.TableCell)rows.get(i).getChild(2)).getText();
                         }
                         Control.Actions.saveSettings(keys);
-                        doWhenAcceptedExit(s, MenuTypes.OPTIONS);
+                        doWhenAcceptedExit(MenuTypes.OPTIONS);
                     }
                 };
         table.addChild(button);
@@ -157,5 +156,9 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
     private void setStale() {
         stale = isChanged();
         ((Button)getScreen().getElementById("accepting_button")).setIsEnabled(stale);
+    }
+    
+    private void addListener() { 
+        BuildingSimulator.getGameInputManager().addRawInputListener(this);
     }
 }

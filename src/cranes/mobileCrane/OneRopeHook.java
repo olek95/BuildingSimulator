@@ -19,7 +19,7 @@ public class OneRopeHook extends Hook{
         super(ropeHook, hookHandle, speed);
         rope = (Node)ropeHook.getChild(ElementName.ROPE);
         hookHandle.getControl(RigidBodyControl.class).addCollideWithGroup(1);
-       setHookDisplacement(PhysicsManager.calculateDisplacementAfterScaling(rope, 
+        setHookDisplacement(PhysicsManager.calculateDisplacementAfterScaling(rope, 
                 new Vector3f(1f, getActualLowering() + speed, 1f), false, true, false));
         getHookDisplacement().y *= 2; // wyrównuje poruszanie się haka wraz z liną 
         if(getRopeHook().getControl(RigidBodyControl.class) == null)
@@ -28,13 +28,11 @@ public class OneRopeHook extends Hook{
     }
     
     @Override
-    protected void createRopeHookPhysics(){
+    protected final void createRopeHookPhysics(){
         addHookPhysics(PhysicsManager.createCompound(rope, rope.getChild(0).getName()),
                 new Vector3f(0, 0.06f,0));
     }
     
     @Override
-    protected Node[] getRopes(){
-        return new Node[] {rope};
-    }
+    protected Node[] getRopes(){ return new Node[] {rope}; }
 }

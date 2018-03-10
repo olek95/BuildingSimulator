@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Obiekt klasy <code>Wall</code> reprezentuje kawałek ściany. Obiekt ten może 
+ * Obiekt klasy <code>Wall</code> reprezentuje ścianę. Obiekt ten może 
  * służyć do budowy budynków. Każda ściana ma dodatkowe punkty, służące jako miejsca
  * połączeń z innymi ścianami i podłogami. Ściana może zawierać puste miejsca
  * przeznaczone na takie elementy jak np. okna. 
@@ -227,8 +227,8 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
     }
     
     /**
-     * Przełącza stan ściany pomiędzy ścianą połączoną z budynkiem (bez koloru) 
-     * i ścianą po odłączeniu z budynku (czerwoną).
+     * Przełącza stan ściany pomiędzy ścianą połączoną z budynkiem (oryginany kolor) 
+     * i ścianą po odłączeniu z budynku, po zniszczeniu (czerwoną).
      * @param stale true jeśli ściana jest w stanie po zburzeniu budynku, false 
      * w przeciwnym przypadku 
      */
@@ -306,21 +306,30 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
         this.catchingLocation = catchingLocation.clone();
     }
     
+    /**
+     * Zwraca rotację dla przymocowanej ściany. 
+     * @return rotacja przymocowanej ściany 
+     */
     public Quaternion getCatchingRotation() { return this.catchingRotation; }
     
+    /**
+     * Ustawia kopię rotacji dla przymocowanej ściany 
+     * @param catchingRotation rotacja przymocowanej ściany 
+     */
     public void setCatchingRotation(Quaternion catchingRotation) {
         this.catchingRotation = catchingRotation.clone(); 
     }
     
-    
     /**
-     * Określa czy ściana jest przyczepiona do podłogi budynku wystająco. 
+     * Określa czy ściana jest przyczepiona do podłogi budynku wystająco (łączy 
+     * dwie podłogi ze sobą). 
      * @return true jeśli jest przyczepiona wystająco, false w przeciwnym przypadku 
      */
     public boolean isProtrudingCatched() { return protrudingCatched; }
     
     /**
-     * Ustawia czy ściana jest przyczepiona do podłogi budynku wystająco. 
+     * Ustawia czy ściana jest przyczepiona do podłogi budynku wystająco (łączy 
+     * dwie podłogi ze sobą). 
      * @param protrudingCatched true jeśli jest przyczepiona wystająco,
      * false w przeciwnym przypadku 
      */
@@ -352,6 +361,10 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
         return Wall.collisionListener; 
     }
     
+    /**
+     * Zwraca typ ściany. 
+     * @return typ 
+     */
     public WallType getType() { return type; }
     
     /**

@@ -59,12 +59,8 @@ public class BuildingCreator implements VisibleFromAbove{
         if(cloning) {
             if(selectedConstruction == null) {
                 selectedConstruction = getSelectedConstruction(location);
-            } else {
-                copy(location);
-            }
-        } else {
-            buyBuilding(location);
-        }
+            } else copy(location);
+        } else  buyBuilding(location);
     }
 
     @Override
@@ -136,9 +132,9 @@ public class BuildingCreator implements VisibleFromAbove{
             @Override
             public void visit(Node object) {
                 if(object.getName().startsWith(ElementName.WALL_BASE_NAME)) {
-                    Vector3f old = object.getControl(RigidBodyControl.class).getPhysicsLocation();
-                    locations.add(old.clone());
-                    rotations.add(object.getControl(RigidBodyControl.class).getPhysicsRotation().clone());
+                    RigidBodyControl control = object.getControl(RigidBodyControl.class);
+                    locations.add(control.getPhysicsLocation().clone());
+                    rotations.add(control.getPhysicsRotation().clone());
                 }
             }}
         );
@@ -152,9 +148,9 @@ public class BuildingCreator implements VisibleFromAbove{
             public void visit(Node object) {
                 if(object.getName().startsWith(ElementName.WALL_BASE_NAME)) {
                     Wall wall = (Wall)object; 
-                    wall.getControl(RigidBodyControl.class)
-                            .setPhysicsLocation(locations.get(i).add(distance));
-                    wall.getControl(RigidBodyControl.class).setPhysicsRotation(rotations.get(i));
+                    RigidBodyControl control = wall.getControl(RigidBodyControl.class); 
+                    control.setPhysicsLocation(locations.get(i).add(distance));
+                    control.setPhysicsRotation(rotations.get(i));
                     i++;
                     clonedWalls.add(wall);
                 }

@@ -1,7 +1,6 @@
 package cranes;
 
 import building.Wall;
-import listeners.BottomCollisionListener;
 import settings.Control;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.scene.Node;
@@ -9,7 +8,6 @@ import com.jme3.scene.Spatial;
 import settings.Control.Actions;
 import buildingsimulator.Controllable;
 import buildingsimulator.ElementName;
-import buildingsimulator.GameManager;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.input.controls.ActionListener;
 import cranes.crane.CraneCamera;
@@ -17,9 +15,9 @@ import cranes.mobileCrane.MobileCraneCamera;
 import static settings.Control.Actions.CHANGE_CAMERA;
 /**
  * Klasa <code>ArmControl</code> jest klasą abstrakcyjną dla wszystkich klas 
- * reprezentujących sterowanie ramieniem dźwigu w grze. Implementuje ona interfejs
- * AnalogListener, dzięki czemu sterowanie ramieniem dźwigu każdego typu odbywa 
- * się w metodzie onAnalog tej klasy. 
+ * reprezentujących sterowanie ramieniem dźwigu w grze. Implementuje ona interfejsy
+ * AnalogListener oraz ActionListener, dzięki czemu sterowanie ramieniem dźwigu każdego typu odbywa 
+ * się w metodach onAnalog oraz onAction tej klasy. 
  */
 public abstract class ArmControl implements AnalogListener, Controllable, ActionListener{
     private Hook hook;
@@ -36,10 +34,11 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
         Actions.MERGE_PROTRUDING, Actions.CHANGE_CAMERA, Actions.UP, Actions.DOWN,
         Actions.ACTION};
     /**
-     * Konstruktor tworzący kabinę. Używany, gdy wartość maksymalnego i 
+     * Konstruktor tworzący obiekt kontrolujący ramię. Używany, gdy wartość maksymalnego i 
      * minimalnego przesunięcia uchwytu nie jest znana od początku. Należy 
      * pamiętać, aby przed użyciem kabiny ustawić te wartości. 
      * @param crane dźwig będący właścicielem sterowanego ramienia 
+     * @param camera kamera dźwigu 
      */
     public ArmControl(Node crane, CraneCamera camera){ 
         this.crane = crane; 
@@ -47,11 +46,14 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
         initCraneArmElements();
     }
     /**
-     * Konstruktor tworzący kabinę. Używany, gdy wartość maksymalnego i 
+     * Konstruktor tworzący obiekt kontrolujący ramię. Używany, gdy wartość maksymalnego i 
      * minimalnego przesunięcia uchwytu haka jest znana od początku. 
      * @param crane dźwig będący właścicielem sterowanego ramienia 
      * @param maxHandleHookDisplacement maksymalne przesunięcie uchwytu haka 
      * @param minHandleHookDisplacement minimalne przesunięcie uchwytu haka 
+     * @param maxArmHeight maksymalna wysokość ramienia 
+     * @param minArmHeight minimalna wysokość ramienia 
+     * @param camera kamera dźwigu 
      */
     public ArmControl(Node crane, float maxHandleHookDisplacement, float minHandleHookDisplacement,
             float maxArmHeight, float minArmHeight, MobileCraneCamera camera){
@@ -64,7 +66,7 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
         this.camera = camera;
     }
     /**
-     * Zezwala na sterowanie ramieniem żurawia. Żuraw może się obracać, 
+     * Zezwala na sterowanie ramieniem dźwigu. Dźwig może m.in. się obracać, 
      * przesuwać uchwyt haka oraz opuszczać i wciągać hak. Dodatkowo ustawia 
      * ostatnio dotknięty element przez hak, jako null, jeśli istnieje 
      * pradopodobieństwo, że hak już niczego nie dotyka. 
@@ -110,7 +112,7 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
                 }
                 break;
             case ACTION:
-                getOff(name);
+                getOff();
         }
         Spatial attachedObject = hook.getAttachedObject(); 
         if(!usedNotUsingKey){
@@ -203,9 +205,8 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
      * Pozwala na opuszczenie trybu kontroli ramienia dźwigu. Domyślna 
      * implementacja ustawia znacznik usedNotUsingKey, aby akcja nie była liczona
      * podczas sprawdzania kolizji haka. 
-     * @param actionName nazwa akcji wychodząca z trybu kontroli dźwigu 
      */
-    protected void getOff(String actionName){
+    protected void getOff(){
         usedNotUsingKey = true;
     };
     
@@ -251,59 +252,67 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
      * Zwraca maksymalną wysokość, na jaką można podnieść ramię dźwigu. 
      * @return maksymalna wysokość położenia ramienia 
      */
-    public float getMaxArmHeight(){
-        return maxArmHeight;
-    }
+    public float getMaxArmHeight() { return maxArmHeight; }
     
     /**
      * Zwraca minimalną wysokość, na jaką można podnieść ramię dźwigu. 
      * @return minimalną wysokość położenia ramienia 
      */
-    public float getMinArmHeight(){
-        return minArmHeight;
-    }
+    public float getMinArmHeight() {  return minArmHeight; }
     
     /**
      * Zwraca węzeł zawierający wszystkie elementy związane z kontrolą ramienia 
      * dźwigu. Są to wszystkie elementy które poruszają się wraz z ramieniem. 
      * @return węzeł zawierający elementy związane z kontrolą ramienia dźwigu 
      */
-    public Node getCraneControl(){
-        return craneControl;
-    }
+    public Node getCraneControl() { return craneControl; }
     
     /**
      * Zwraca cały dźwig. 
      * @return cały dźwig 
      */
-    public Node getCrane(){
-        return crane;
-    }
+    public Node getCrane(){ return crane; }
     
     /**
      * Zwraca uchwyt na hak. 
      * @return uchwyt na hak
      */
-    public Spatial getHookHandle(){
-        return hookHandle;
-    }
+    public Spatial getHookHandle(){ return hookHandle; }
     
     /**
      * Ustawia uchwyt na hak 
      * @param hookHandle uchwyt na hak 
      */
-    public void setHookHandle(Spatial hookHandle){
-        this.hookHandle = hookHandle;
-    }
+    public void setHookHandle(Spatial hookHandle) { this.hookHandle = hookHandle; }
     
+    /**
+     * Określa czy z lewej strony znajduje się przeszkoda. 
+     * @return true jeśli z lewej strony znajduje się przeszkoda, false w przeciwnym 
+     * przypadku 
+     */
     public boolean isObstacleLeft() { return obstacleLeft; }
     
+    /**
+     * Ustawia czy z lewej strony znajduje się przeszkoda. 
+     * @param obstacleLeft true jeśli z lewej strony znajduje się przeszkoda, false w przeciwnym 
+     * przypadku 
+     */
     public void setObstacleLeft(boolean obstacleLeft) { 
         this.obstacleLeft = obstacleLeft;
     }
     
+    /**
+     * Określa czy z prawej strony znajduje się przeszkoda. 
+     * @return true jeśli z prawej strony znajduje się przeszkoda, false w przeciwnym 
+     * przypadku 
+     */
     public boolean isObstacleRight() { return obstacleRight; }
     
+    /**
+     * Ustawia czy z prawej strony znajduje się przeszkoda. 
+     * @param obstacleRight true jeśli z prawej strony znajduje się przeszkoda,
+     * false w przeciwnym przypadku 
+     */
     public void setObstacleRight(boolean obstacleRight) { 
         this.obstacleRight = obstacleRight;
     }
@@ -313,9 +322,7 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
      * @return wszystkie akcje dźwigu
      */
     @Override
-    public Control.Actions[] getAvailableActions(){
-        return availableActions;
-    }
+    public Control.Actions[] getAvailableActions() { return availableActions; }
     
     /**
      * Zwraca kamerę. 

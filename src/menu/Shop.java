@@ -28,11 +28,10 @@ import tonegod.gui.core.Screen;
 /**
  * Obiekt klasy <code>Shop</code> reprezentuje okienko sklepu. Zawiera ono dwa 
  * panele. Jeden umożliwiający kupowanie materiałów budowlanych a drugi rozwijanie 
- * popjazdów. 
+ * żurawia. 
  * @author AleksanderSklorz
  */
 public class Shop extends Menu implements VisibleFromAbove{
-    private static Screen screen;
     private static Shop displayedShop = null; 
     private int costForMaterials;
     private Vector3f dischargingLocation = null;
@@ -47,7 +46,8 @@ public class Shop extends Menu implements VisibleFromAbove{
             HUD.updatePoints();
         }
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-        screen = new Screen(game);
+        Screen screen = new Screen(game);
+        setScreen(screen);
         screen.parseLayout("Interface/shop.gui.xml", this);
         Window window = (Window)screen.getElementById("shop");
         window.setWindowTitle(Translator.SHOP.getValue());
@@ -72,20 +72,19 @@ public class Shop extends Menu implements VisibleFromAbove{
                 .setSelectedIndex(craneHeight);
         boolean settingCostCompleted = setCost();
         game.getGuiNode().addControl(screen);
-        displayedShop = this; 
+        setDisplayedShop();
         view = new BirdsEyeView(this, false);
         view.setMouseDisabled(true);
         if(settingCostCompleted) showPreview();
     }
     
     /**
-     * Kupuje wybrane elementy. Zamyka automatycznie okno sklepu i włącza tryb 
-     * widoku z lotu ptaka. 
+     * Kupuje wybrane elementy. Zamyka automatycznie okno sklepu. 
      * @param evt
      * @param isToggled 
      */
     public void buy(MouseButtonEvent evt, boolean isToggled) {
-        int cost = Integer.parseInt(screen.getElementById("cost_value_label").getText());
+        int cost = Integer.parseInt(getScreen().getElementById("cost_value_label").getText());
         if(cost <= GameManager.getUser().getPoints()) {
             buyCraneHeight();
             GameManager.getUser().addPoints(-cost);
@@ -97,7 +96,7 @@ public class Shop extends Menu implements VisibleFromAbove{
                 view.setMouseDisabled(false);
                 BirdsEyeView.displayNotMovingModeHUD();
             }
-            goNextMenu(screen, null);
+            goNextMenu(null);
         }
         hidePreview(true);
         HUD.setControlsVisibility(HUD.isControlsLabelVisibilityBeforeHiding());
@@ -114,7 +113,7 @@ public class Shop extends Menu implements VisibleFromAbove{
         hidePreview(true);
         view.setOff();
         BuildingSimulator.getGameFlyByCamera().setDragToRotate(false);
-        goNextMenu(screen, null);
+        goNextMenu(null);
         HUD.setControlsVisibility(HUD.isControlsLabelVisibilityBeforeHiding());
         HUD.setGeneralControlsLabelVisibility(true);
     }
@@ -126,6 +125,7 @@ public class Shop extends Menu implements VisibleFromAbove{
      * @param isToggled 
      */
     public void changePage(MouseButtonEvent evt, boolean isToggled) {
+        Screen screen = getScreen(); 
         Element elementsPanel = screen.getElementById("elements_panel");
         if(elementsPanel.getIsVisible()) {
             screen.getElementById("change_page_button").setText(Translator.PREVIOUS.getValue());
@@ -139,7 +139,7 @@ public class Shop extends Menu implements VisibleFromAbove{
     }
     
     /**
-     * Rozpoczyna obliczanie kosztów zakupów. 
+     * Rozpoczyna obliczanie kosztów zakupów oraz przygotowanie podglądu. 
      * @param selectedIndex
      * @param value 
      */
@@ -149,27 +149,9 @@ public class Shop extends Menu implements VisibleFromAbove{
         if(settingCostCompleted) showPreview();
     }
     
-    /**
-     * Ustawia aktualną cenę za zakupy w odpowiedniej etykiecie. Jeśli podano 
-     * błędne dane to wyświetlony jest stosowny komunikat oraz blokowany jest 
-     * przycisk zakupów. 
-     */
-    public boolean setCost() {
-        int cost = calculateCost(); 
-        if(cost == -1) {
-            hidePreview(true);
-            screen.getElementById("cost_value_label").setText(Translator.BAD_DATA.getValue());
-            screen.getElementById("buying_button").setIsEnabled(false);
-            return false; 
-        } else {
-            screen.getElementById("cost_value_label").setText(cost + "");
-            screen.getElementById("buying_button").setIsEnabled(true);
-            return true;
-        }
-    }
-    
     @Override
     public void unload() {
+        Screen screen = getScreen();
         int amount = ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex();
         WallType type = (WallType)((Slider)screen.getElementById("type_slider"))
                 .getSelectedValue();
@@ -221,12 +203,6 @@ public class Shop extends Menu implements VisibleFromAbove{
     }
     
     /**
-     * Zwraca ekran sklepu. 
-     * @return ekran 
-     */
-    public Screen getScreen() { return screen; }
-    
-    /**
      * Zwraca aktualnie wyświetlany obiekt sklepu. 
      * @return aktualny obiekt sklepu 
      */
@@ -236,7 +212,7 @@ public class Shop extends Menu implements VisibleFromAbove{
      * Zwraca aktualny kosz za zakupy. 
      * @return aktualny koszt za zakupy 
      */
-    public int  getCostForMaterials() { return costForMaterials; } 
+    public int getCostForMaterials() { return costForMaterials; } 
     
     /**
      * Zeruje obiekt przechowujący aktualnie wyświetlony sklep. 
@@ -249,9 +225,29 @@ public class Shop extends Menu implements VisibleFromAbove{
      */
     public BirdsEyeView getView() { return view; }
     
+    /**
+     * Ustawia aktualną cenę za zakupy w odpowiedniej etykiecie. Jeśli podano 
+     * błędne dane to wyświetlony jest stosowny komunikat oraz blokowany jest 
+     * przycisk zakupów. 
+     */
+    private boolean setCost() {
+        Screen screen = getScreen(); 
+        int cost = calculateCost(); 
+        if(cost == -1) {
+            hidePreview(true);
+            screen.getElementById("cost_value_label").setText(Translator.BAD_DATA.getValue());
+            screen.getElementById("buying_button").setIsEnabled(false);
+            return false; 
+        } else {
+            screen.getElementById("cost_value_label").setText(cost + "");
+            screen.getElementById("buying_button").setIsEnabled(true);
+            return true;
+        }
+    }
+    
     private void fillTypeSlider() {
         WallType[] types = WallType.values(); 
-        Slider typeSlider = (Slider)screen.getElementById("type_slider");
+        Slider typeSlider = (Slider)getScreen().getElementById("type_slider");
         for(int i = 0; i < types.length; i++){
             typeSlider.addStepValue(types[i]);
         }
@@ -262,13 +258,14 @@ public class Shop extends Menu implements VisibleFromAbove{
             ColorRGBA.Blue, ColorRGBA.Brown, ColorRGBA.Cyan, ColorRGBA.DarkGray, 
             ColorRGBA.Green, ColorRGBA.LightGray, ColorRGBA.Magenta, ColorRGBA.Orange,
             ColorRGBA.Pink, ColorRGBA.Yellow};
-        Slider colorSlider = (Slider)screen.getElementById("color_slider");
+        Slider colorSlider = (Slider)getScreen().getElementById("color_slider");
         for(int i = 0; i < colors.length; i++){
             colorSlider.addStepValue(colors[i]);
         }
     }
     
     private int calculateCost() {
+        Screen screen = getScreen(); 
         Element xTextField = screen.getElementById("x_text_field"),
                 zTextField = screen.getElementById("z_text_field");
         int result = -1;
@@ -294,7 +291,7 @@ public class Shop extends Menu implements VisibleFromAbove{
     }
     
     private void createTextField(String id, float x, float y) {
-        Element panel = screen.getElementById("elements_panel");
+        Element panel = getScreen().getElementById("elements_panel");
         DimensionTextField textField = new DimensionTextField(this, id,
                 new Vector2f(panel.getWidth() * x, panel.getHeight() * y));
         textField.setType(TextField.Type.NUMERIC);
@@ -303,6 +300,7 @@ public class Shop extends Menu implements VisibleFromAbove{
     }
     
     private void buyCraneHeight() {
+        Screen screen = getScreen(); 
         Element actualHeightLabel = screen.getElementById("actual_height_value");
         int selectedHeight = ((Spinner)screen.getElementById("crane_height_spinner"))
                 .getSelectedIndex(), actualHeight = Integer
@@ -316,13 +314,14 @@ public class Shop extends Menu implements VisibleFromAbove{
     }
     
     private Vector3f getWallDimensions() {
+        Screen screen = getScreen(); 
         float x = ((TextField)screen.getElementById("x_text_field")).parseFloat(),
                 z = ((TextField)screen.getElementById("z_text_field")).parseFloat();
         return new Vector3f(x, 0.2f, z) ; 
     }
     
     private boolean isMaterialsBought() {
-        return ((Spinner)screen.getElementById("amount_spinner")).getSelectedIndex() != 0;
+        return ((Spinner)getScreen().getElementById("amount_spinner")).getSelectedIndex() != 0;
     }
     
     private boolean isProperDimension(String x) {
@@ -331,6 +330,7 @@ public class Shop extends Menu implements VisibleFromAbove{
     
     private DummyWall createWallPreview() { 
         Vector3f dimensions = getWallDimensions();
+        Screen screen = getScreen(); 
         return (DummyWall)WallsFactory.createWall((WallType)((Slider)screen
                 .getElementById("type_slider")).getSelectedValue(),
                 Vector3f.NAN, new Vector3f(dimensions.x * 0.05f, 0.02f,
@@ -390,4 +390,6 @@ public class Shop extends Menu implements VisibleFromAbove{
             GameManager.startAnimation(previewAnimation); 
         }
     }
+    
+    private void setDisplayedShop() { displayedShop = this; }
 }

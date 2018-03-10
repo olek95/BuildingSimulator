@@ -19,16 +19,17 @@ import tonegod.gui.core.Screen;
 /**
  * Klasa <code>MainMenu</code> reprezentuje menu główne gry. Stanowi nadklasę dla 
  * menu startowego i menu podczas pauzy. Posiada możliwość uruchomienia nowej gry,
- * wczytania zapisanej gry, pokazania statystyk, zmiany ustawień gry, wyjscia z gry. 
+ * wczytania zapisanej gry, pokazania statystyk, zmiany ustawień gry, wyjścia z gry. 
  * @author AleksanderSklorz 
  */
 public abstract class MainMenu extends Menu {
-    private static Screen screen;
     public MainMenu(String layoutName){
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-        screen = new Screen(game);
-        screen.parseLayout(layoutName, this);
+        Screen screen = new Screen(game);
+        setScreen(screen);
+        parseLayout(layoutName);
         Window window = (Window)screen.getElementById("main_menu");
+        System.out.println(layoutName + " " + screen.getElementById("main_menu"));
         window.getDragBar().removeFromParent();
         setWindow(window); 
         Translator.setTexts(new String[]{"load_game_button", "statistics_button",
@@ -51,8 +52,6 @@ public abstract class MainMenu extends Menu {
         }
     }
     
-    public static Screen getScreen() { return screen; }
-    
     /** 
      * Uruchamia grę 
      */
@@ -61,15 +60,13 @@ public abstract class MainMenu extends Menu {
         GameManager.stopSound(backgroundSound, true);
         setBackgroundSound(null);
         getWindow().hide();
-        screen.setUseCustomCursors(false);
+        getScreen().setUseCustomCursors(false);
     }
     
     /**
      * Wychodzi z gry. 
      */
-    protected void exit(){
-        System.exit(0);
-    }
+    protected void exit(){ System.exit(0); }
     
     /**
      * Wczytuje zapisaną grę. 
@@ -93,7 +90,7 @@ public abstract class MainMenu extends Menu {
      * Ustawia (blokuje bądź odblokowuje) stan przycisku ładowania zapisanej gry. 
      * @param state false jeśli przycisk ma być odblokowany, true w przeciwnym przypadku 
      */
-    protected void setLoadingButtonState(boolean state) {
+    protected final void setLoadingButtonState(boolean state) {
         ((Button)MainMenu.getScreen().getElementById("load_game_button")).setIgnoreMouse(state);
     }
     

@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Typ wyliczeniowy <code>CatchNode</code> zawiera nazwy wszystkich możliwych 
  * pomocniczych węzłów dla ścian budynków. Są to węzły zarówno znajdujące się 
- * na ścianie, jak i poza nią. 
+ * na ścianie, jak i poza nią. Każdy węzeł symbolizuje inną stronę ściany (kierunek świata). 
  * @author AleksanderSklorz 
  */
 public enum CatchNode {
@@ -22,11 +22,11 @@ public enum CatchNode {
     WEST;
     
     /**
-     * Oblicza położenie pomocniczych węzłów dla pierwszej ściany. Jeśli podana jest 
-     * też ściana druga to bierzemy pod uwagę również jej dane. 
+     * Oblicza położenie pomocniczych węzłów. Jeśli podana jest też ściana druga
+     * to brane są pod uwagę również jej dane. 
      * @param type typ węzła 
-     * @param wall1 ściana dla której liczymy węzeł 
-     * @param wall2 ściana z której dostajemy dodatkowe dane 
+     * @param wall1 ściana dla której tworzony jest węzeł 
+     * @param wall2 ściana z której dostaje się dodatkowe dane 
      * @perpendicularity true jeśli ściany są położone prostopadle względem siebie, 
      * false w przeciwnym razie
      * @return lokalizacja węzła 
@@ -65,30 +65,32 @@ public enum CatchNode {
             case NORTH: 
                 float y = 0, z = 0;
                 if(ceiling) {
+                    boolean sample = Construction.getWholeConstruction(wall1)
+                            .getName().contains("sample");
                     switch(valueOf(wall1.getParent().getName())) {
                         case UP: 
-                            if(!Construction.getWholeConstruction(wall1).getName().contains("sample")) {
+                            if(!sample) {
                                 y = wall2.getHeight() - getProperOffsetForCeiling(wall1);
                             } else {
                                 z = wall2.getHeight() - getProperOffsetForCeiling(wall1);
                             }
                             break; 
                         case BOTTOM:
-                            if(!Construction.getWholeConstruction(wall1).getName().contains("sample")) {
+                            if(!sample) {
                                 y = -wall2.getHeight() + getProperOffsetForCeiling(wall1);
                             } else {
                                 z = wall2.getHeight() - getProperOffsetForCeiling(wall1);
                             }
                             break; 
                         case EAST: 
-                            if(!Construction.getWholeConstruction(wall1).getName().contains("sample")) {
+                            if(!sample) {
                                 y = wall2.getLength() - getProperOffsetForCeiling(wall1);
                             } else {
                                 z = wall2.getLength() - getProperOffsetForCeiling(wall1);
                             }
                             break; 
                         default: 
-                            if(!Construction.getWholeConstruction(wall1).getName().contains("sample")) {
+                            if(!sample) {
                                 y = -wall2.getLength() + getProperOffsetForCeiling(wall1);
                             } else {
                                 z = -wall2.getLength() + getProperOffsetForCeiling(wall1);
@@ -96,15 +98,10 @@ public enum CatchNode {
                             
                     }
                     if(isOnTheOtherSide(wall1, wall2)) { 
-                        if(!Construction.getWholeConstruction(wall1).getName().contains("sample")) {
-                            y = -y;
-                        }
+                        if(!sample) y = -y;
                     }
-                    if(!Construction.getWholeConstruction(wall1).getName().contains("sample")) {
-                        z = wall1.getHeight() + wall2.getWidth();
-                    } else {
-                        y = wall1.getHeight() + wall2.getWidth(); 
-                    }
+                    if(!sample) z = wall1.getHeight() + wall2.getWidth();
+                    else y = wall1.getHeight() + wall2.getWidth(); 
                 } else {
                     y = 0;
                     z = wall1.getHeight() + CatchNode
@@ -125,29 +122,6 @@ public enum CatchNode {
     }
     
     /**
-     * Poprawia położenie dla elementu sufitu. 
-     * @param hitWall dotknięta ściana, do której dołączamy kawałek sufitu  
-     * @param wall kawałek sufitu 
-     * @param location aktualne położenie pomocniczego węzła 
-     */
-    public static void correctLocationForCeiling(Wall hitWall, Wall wall, Vector3f location) {
-        switch(CatchNode.valueOf(hitWall.getParent().getName())){
-            case UP:
-                location.addLocal(0, wall.getHeight(), 0);
-                break;
-            case BOTTOM: 
-                location.addLocal(0, -wall.getHeight(), 0);
-                break;
-            case LEFT: 
-                location.addLocal(0, -wall.getLength(), 0);
-                break;
-            case RIGHT: 
-                location.addLocal(0, wall.getLength(), 0);
-                break;
-        }
-    }
-    
-    /**
      * Zwraca odpowiedni wymiar w przypadku, gdy możliwe jest połączenie dwóch 
      * elementów w sposób równoległy bądź prostopadły np. podczas łączenia fundamentów.
      * @param wall ściana którą dołącza się 
@@ -161,12 +135,6 @@ public enum CatchNode {
         if(init) return 0;
         if(z) return perpendicularity ? wall.getLength() : wall.getHeight();
         return perpendicularity ? wall.getHeight() : wall.getLength();
-    }
-    
-    private static boolean isNearlyMatchedSize(Wall wall1, Wall wall2) {
-        float difference = ((Wall)wall1.getParent().getParent()).getHeight()
-                - wall2.getHeight(), width = wall1.getWidth(); 
-        return difference > width - 0.1f && difference < width + 0.1f;
     }
     
     private static boolean isOnTheOtherSide(Wall wall1, Wall wall2) {

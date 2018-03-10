@@ -29,13 +29,12 @@ import tonegod.gui.core.Screen;
 
 /**
  * Klasa <code>Options</code> reprezentuje menu opcji gry. Pozwala ono na zmianę 
- * ustawień gry, graficznych oraz sterowania. W przypadku checi opuszczenia menu 
- * bez wykonania uprzedniego zapisu, zostanie wyswietlone ostrzezenie. Jezeli 
- * uzytkownik nie wykonal zadnych zmian. 
+ * ustawień gry, graficznych oraz sterowania. W przypadku chęci opuszczenia menu 
+ * bez wykonania uprzedniego zapisu, zostanie wyswietlone ostrzeżenie. Jeżeli 
+ * użytkownik nie wykonał żadnych zmian. 
  * @author AleksanderSklorz 
  */
 public class Options extends Menu  {
-    private static Screen screen;
     private static boolean stale = false;
     private static int newHeight = 0, newWidth = 0; 
     private int counter = 0; 
@@ -43,8 +42,9 @@ public class Options extends Menu  {
             storedSettings; 
     public Options(){
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();
-        screen = new Screen(game);
-        screen.parseLayout("Interface/options.gui.xml", this);
+        Screen screen = new Screen(game);
+        setScreen(screen);
+        parseLayout("Interface/options.gui.xml");
         Window window = (Window)screen.getElementById("options");
         window.getDragBar().removeFromParent();
         setWindow(window); 
@@ -66,7 +66,7 @@ public class Options extends Menu  {
      */
     public void accept(MouseButtonEvent evt, boolean isToggled) {
         Properties settings = getSelectedSettings(); 
-        Translator.translate((Locale)((SelectBox)screen.getElementById("language_select_box"))
+        Translator.translate((Locale)((SelectBox)getScreen().getElementById("language_select_box"))
                 .getSelectedListItem().getValue());
         setTexts();
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator(); 
@@ -84,11 +84,12 @@ public class Options extends Menu  {
      */
     public void back(MouseButtonEvent evt, boolean isToggled) {
         if(stale){
-            screen.addElement(createNotSavedChangesAlert(screen, 
-                    Translator.NOT_SAVED_CHANGES.getValue(), GameManager.isPausedGame()
-                    ? MenuTypes.PAUSE_MENU : MenuTypes.STARTING_MENU));
-        } else doWhenAcceptedExit(screen, GameManager.isPausedGame()
-                    ? MenuTypes.PAUSE_MENU : MenuTypes.STARTING_MENU); 
+            getScreen().addElement(createNotSavedChangesAlert(Translator.NOT_SAVED_CHANGES.getValue(),
+                    GameManager.isPausedGame() ? MenuTypes.PAUSE_MENU : MenuTypes.STARTING_MENU));
+        } else {
+            doWhenAcceptedExit(GameManager.isPausedGame() ? MenuTypes.PAUSE_MENU 
+                    : MenuTypes.STARTING_MENU);
+        }
     }
     
     /**
@@ -98,14 +99,14 @@ public class Options extends Menu  {
      */
     public void showControlConfiguration(MouseButtonEvent evt, boolean isToggled) {
         storedSettings = getSelectedSettings();
-        goNextMenu(screen, MenuTypes.CONTROL_CONFIGURATION);
+        goNextMenu(MenuTypes.CONTROL_CONFIGURATION);
     }
     
     /**
      * Odświeża menu opcji, aby widoczne były np. zmiany rozdzielczości. 
      */
     public static void refresh(){
-        GameManager.removeControlFromGui(screen);
+        GameManager.removeControlFromGui(getScreen());
         stale = false;
         newHeight = 0; 
         newWidth = 0;
@@ -158,8 +159,13 @@ public class Options extends Menu  {
         }
     }
     
+    /**
+     * Zmienia głosność dźwięku aplikacji. 
+     * @param selectedIndex
+     * @param value 
+     */
     public void changeVolume(int selectedIndex, Object value) { 
-        Slider volumeSlider = (Slider)screen.getElementById("sound_volume_slider");
+        Slider volumeSlider = (Slider)getScreen().getElementById("sound_volume_slider");
         if(volumeSlider != null) {
             volumeSlider.setText((Math.round((float)volumeSlider.getSelectedValue() * 10) / 10.0)
                     + "");
@@ -172,6 +178,7 @@ public class Options extends Menu  {
      * @return true jesli zmiany są już widoczne, false w przeciwnym przypadku 
      */
     public static boolean isResolutionChanged(){
+        Screen screen = getScreen(); 
         return screen.getWidth() == newWidth && screen.getHeight() == newHeight; 
     }
     
@@ -197,12 +204,6 @@ public class Options extends Menu  {
     public void changeFullscreen(MouseButtonEvent evt, boolean isToggled) { setStale(); }
     
     /**
-     * Zwraca widoczny ekran opcji. 
-     * @return ekran 
-     */
-    public static Screen getScreen () { return screen; }
-    
-    /**
      * Sprawdza czy stan opcji jest nieświeży (został zmieniony). Jeśli tak to 
      * ustawia true, w przeciwnym przypadku false. Dodatkowo blokuje przycisk 
      * akceptacji, jeśli nic nie zostało zmienione. 
@@ -210,7 +211,7 @@ public class Options extends Menu  {
     private void setStale() {
         if(counter > 5){
             stale = isChanged(); 
-            ((Button)screen.getElementById("accepting_button")).setIsEnabled(stale);
+            ((Button)getScreen().getElementById("accepting_button")).setIsEnabled(stale);
         }else counter++;
     }
     
@@ -218,7 +219,8 @@ public class Options extends Menu  {
          DisplayMode[] modes = GraphicsEnvironment.getLocalGraphicsEnvironment()
                 .getDefaultScreenDevice().getDisplayModes();
          ArrayList<String> elements = new ArrayList(); 
-         SelectBox screenResolutions = (SelectBox)screen.getElementById("screen_resolution_select_box");
+         SelectBox screenResolutions = (SelectBox)getScreen()
+                 .getElementById("screen_resolution_select_box");
          for(int i = 0; i < modes.length; i++){
              String resolution = modes[i].getWidth() + "x" + modes[i].getHeight();
              if(!elements.contains(resolution))
@@ -231,7 +233,7 @@ public class Options extends Menu  {
         DisplayMode[] modes = GraphicsEnvironment.getLocalGraphicsEnvironment()
                 .getDefaultScreenDevice().getDisplayModes();
         ArrayList<Integer> elements = new ArrayList(); 
-        SelectBox colorDepths = (SelectBox)screen.getElementById(selectBoxId);
+        SelectBox colorDepths = (SelectBox)getScreen().getElementById(selectBoxId);
         String suffix;
         int value; 
         for(int i = 0; i < modes.length; i++){
@@ -250,14 +252,14 @@ public class Options extends Menu  {
     }
     
     private void fillLanguageSelectBox(){
-        SelectBox languages = (SelectBox)screen.getElementById("language_select_box");
+        SelectBox languages = (SelectBox)getScreen().getElementById("language_select_box");
         languages.addListItem(Translator.ENGLISH.getValue(), Locale.ENGLISH);
         languages.addListItem(Translator.POLISH.getValue(), new Locale("pl"));
     }
     
     private void fillAntialiasingSelectBox() { 
         int[] values = {0, 2, 4, 6, 8, 16};
-        SelectBox antialiasingSelectBox = (SelectBox)screen
+        SelectBox antialiasingSelectBox = (SelectBox)getScreen()
                 .getElementById("antialiasing_select_box");
         antialiasingSelectBox.addListItem(Translator.DISABLED_ANTIALIASING.getValue(),
                 values[0]);
@@ -273,11 +275,12 @@ public class Options extends Menu  {
             new Translator[]{Translator.GAME_SETTINGS, Translator.LANGUAGE, Translator.GRAPHICS,
             Translator.SCREEN_RESOLUTION, Translator.COLOR_DEPTH, Translator.ANTIALIASING, 
             Translator.FULLSCREEN, Translator.REFRESH_RATE, Translator.ACCEPTING, Translator.RETURN,
-            Translator.CONTROL_CONFIGURATION, Translator.SOUND_VOLUME}, screen);
+            Translator.CONTROL_CONFIGURATION, Translator.SOUND_VOLUME}, getScreen());
     }
     
     private Properties getSelectedSettings() {
         Properties settings = new Properties();
+        Screen screen = getScreen();
         settings.setProperty("RESOLUTION", (String)((SelectBox)screen
                 .getElementById("screen_resolution_select_box")).getSelectedListItem().getValue());
         int frequency = (int)((SelectBox)screen.getElementById("refresh_rate_select_box"))
@@ -304,8 +307,8 @@ public class Options extends Menu  {
     private static void saveSettings(Properties settings){
         try(PrintWriter output = new PrintWriter(new FileWriter("settings/settings.properties"))){
             settings.store(output, null);
-        }catch(IOException ex){
-            ex.printStackTrace();
+        } catch (IOException ex) {
+            Logger.getLogger(Options.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -317,6 +320,7 @@ public class Options extends Menu  {
             temp = restoredSettings; 
             restoredSettings = storedSettings;
         }
+        Screen screen = getScreen();
         ((SelectBox)screen.getElementById("screen_resolution_select_box"))
                 .setSelectedByValue(restoredSettings.getProperty("RESOLUTION"), false);
         ((SelectBox)screen.getElementById("refresh_rate_select_box"))

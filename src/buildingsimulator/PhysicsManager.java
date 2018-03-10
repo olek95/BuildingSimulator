@@ -30,7 +30,8 @@ public class PhysicsManager {
      * @param z true jeśli skaluje się według osi Z, false w przeciwnym razie
      * @return wektor przesunięcia elementów połączonych ze skalowanym węzłem
      */
-    public static Vector3f calculateDisplacementAfterScaling(Node parentScallingElement, Vector3f scale, boolean x, boolean y, boolean z) {
+    public static Vector3f calculateDisplacementAfterScaling(Node parentScallingElement,
+            Vector3f scale, boolean x, boolean y, boolean z) {
         Geometry parentGeometry = (Geometry) ((Node) parentScallingElement.clone()).getChild(0);
         Vector3f displacement = new Vector3f();
         Vector3f initialSize = ((BoundingBox) parentGeometry.getWorldBound()).getExtent(null);
@@ -51,7 +52,8 @@ public class PhysicsManager {
      * @param scallingElements skalowane elementy
      * @param movingElements przesuwane elementy
      */
-    public static void moveWithScallingObject(boolean direction, Vector3f elementDisplacement, Vector3f scallingVector, Node[] scallingElements, Spatial... movingElements) {
+    public static void moveWithScallingObject(boolean direction, Vector3f elementDisplacement,
+            Vector3f scallingVector, Node[] scallingElements, Spatial... movingElements) {
         for (int i = 0; i < scallingElements.length; i++) {
             ((Geometry) scallingElements[i].getChild(0)).setLocalScale(scallingVector);
         }
@@ -78,7 +80,8 @@ public class PhysicsManager {
      * @param children nazwy elementów podrzędnych węzła parent, które tworzą
      * obiekt fizyczny
      */
-    public static void createObjectPhysics(Node parent, float mass, boolean kinematic, String... children) {
+    public static void createObjectPhysics(Node parent, float mass, boolean kinematic,
+            String... children) {
         CompoundCollisionShape compound = createCompound(parent, children);
         createPhysics(compound, parent, mass, kinematic);
     }
@@ -93,7 +96,8 @@ public class PhysicsManager {
      * @param rotation obrót dodawanej kolizji w złożonym obiekcie kolizji.
      * Może mieć wartość null, wtedy pozostaje bez obrotu.
      */
-    public static void addNewCollisionShapeToCompound(CompoundCollisionShape compound, Node parent, String child, Vector3f location, Quaternion rotation) {
+    public static void addNewCollisionShapeToCompound(CompoundCollisionShape compound,
+            Node parent, String child, Vector3f location, Quaternion rotation) {
         Geometry parentGeometry = (Geometry) parent.getChild(child);
         CollisionShape elementCollisionShape;
         if (!(parentGeometry instanceof CSGGeometry)) {
@@ -115,7 +119,7 @@ public class PhysicsManager {
      * dla których tworzona jest siatka kolizji
      * @param children nazwy elementów podrzędnych węzła parent, z których
      * powstanie siatka kolizji
-     * @return obiekty typu CompoundCollisionShape reprezentujący siatkę kolizji
+     * @return obiekt typu CompoundCollisionShape reprezentujący siatkę kolizji
      * dla podanych elementów
      */
     public static CompoundCollisionShape createCompound(Node parent, String... children) {
@@ -134,7 +138,8 @@ public class PhysicsManager {
      * @param kinematic true jeśli używamy fizyki kinematycznej, false jeśli dynamicznej
      * ma wartość null
      */
-    public static void createPhysics(CompoundCollisionShape compound, Spatial controlOwner, float mass, boolean kinematic) {
+    public static void createPhysics(CompoundCollisionShape compound, Spatial controlOwner,
+            float mass, boolean kinematic) {
         PhysicsSpace physics = BuildingSimulator.getPhysicsSpace();
         RigidBodyControl oldControl = controlOwner.getControl(RigidBodyControl.class);
         if (oldControl != null) {
@@ -159,7 +164,8 @@ public class PhysicsManager {
      * @param pivotB punkt połaczenia dla drugiego obiektu
      * @return połaczenie obiektów
      */
-    public static HingeJoint joinsElementToOtherElement(HingeJoint joint, Spatial nodeA, Spatial nodeB, Vector3f pivotA, Vector3f pivotB) {
+    public static HingeJoint joinsElementToOtherElement(HingeJoint joint, Spatial nodeA,
+            Spatial nodeB, Vector3f pivotA, Vector3f pivotB) {
         PhysicsSpace physics = BuildingSimulator.getPhysicsSpace();
         if (joint != null) {
             physics.remove(joint);

@@ -3,17 +3,14 @@ package menu;
 import authorization.DBManager;
 import authorization.User;
 import buildingsimulator.GameManager;
-import java.io.File;
-import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import texts.Translator;
 import tonegod.gui.core.Screen;
 
 /**
  * Klasa <code>Statistics</code> reprezentuje okno wyświetlające statystyki 
- * wszystkich graczy. 
+ * wszystkich graczy. Wyświetla inofmrację o punktach, czasie oraz ilości 
+ * zbudowanych budynków.
  * @author AleksanderSklorz
  */
 public class Statistics extends TableMenu{
@@ -31,13 +28,13 @@ public class Statistics extends TableMenu{
     
     @Override
     protected void clickReturnButton() {
-        doWhenAcceptedExit(getScreen(), GameManager.isPausedGame()
-                ? MenuTypes.PAUSE_MENU : MenuTypes.STARTING_MENU);
+        doWhenAcceptedExit(GameManager.isPausedGame() ? MenuTypes.PAUSE_MENU 
+                : MenuTypes.STARTING_MENU);
     }
     
     @Override
     protected void addRows(){
-        List<User> statistics = DBManager.getAllStatistics(); 
+        List<User> statistics = DBManager.getAllUsers(); 
         int statisticsNumber = statistics.size();
         for(int i = 0; i < statisticsNumber; i++){
             User user = statistics.get(i);

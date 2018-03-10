@@ -33,7 +33,7 @@ public class User {
     }
     
     /**
-     * Oblicza czas gry w formacie HH:mm:ss. 
+     * Oblicza czas gry w postaci stringa w formacie HH:mm:ss. 
      * @return czas gry 
      */
     public String calculateActualTime() {
@@ -45,15 +45,14 @@ public class User {
     }
     
     /**
-     * Zatrzymuje  
-     * @return 
+     * Resetuje licznik czasu.  
      */
     public void resetTimer() {
         timer.reset();
     }
     
     /**
-     * Resetuje wszystkie zmienne związane z czasem. 
+     * Resetuje licznik czasu oraz wszystkie zmienne związane z czasem. 
      */
     public void resetAllTime() {
         resetTimer(); 
@@ -112,6 +111,10 @@ public class User {
         this.buildingsNumber = buildingsNumber;
     }
     
+    /**
+     * Zwraca hasło użytkownika. 
+     * @return hasło 
+     */
     public String getPassword() { return password; }
     
     private float getTimeInSeconds(String time) {

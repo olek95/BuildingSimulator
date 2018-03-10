@@ -12,7 +12,6 @@ import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import cranes.ArmControl;
@@ -22,7 +21,8 @@ import java.util.List;
 import menu.HUD;
 
 /**
- * Obiekt klasy <code>Crane</code> reprezentuje żuraw. 
+ * Obiekt klasy <code>Crane</code> reprezentuje żuraw. Potrafi on podnosić ściany,
+ * zmieniać swoją pozycję z widoku z lotu ptaka, a także obniżać i podwyższać się. 
  * @author AleksanderSklorz
  */
 public class Crane extends CraneAbstract implements VisibleFromAbove{

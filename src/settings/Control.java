@@ -83,34 +83,6 @@ public class Control {
             }
         }
         
-        private void createProperties() {
-            if(keysProperties == null) {
-                try(FileReader file = new FileReader("settings/control.properties")) {
-                    keysProperties = new Properties();
-                    keysProperties.load(new BufferedReader(file));
-                } catch (IOException ex) {
-                    keysProperties = CreatorMockSettings
-                            .createDefaultProperties(new String[]{"HEIGHTEN_HOOK",
-                                "MOVE_CRANE", "MERGE_PROTRUDING", "UP",
-                                "VERTICAL_ATTACH", "RIGHT", "PULL_OUT", "LEFT", 
-                                "PULL_IN", "SHOW_CURSOR", "PHYSICS", "ACTION", 
-                                "DOWN", "PAUSE", "MERGE", "ATTACH", "LOWER_HOOK",
-                                "CRANE_CHANGING", "DETACH", "CHANGE_CAMERA", "COPY_BUILDING", 
-                                "BUY_BUILDING", "FLYCAM_Forward", "FLYCAM_Backward",
-                                "FLYCAM_StrafeLeft", "FLYCAM_StrafeRight", "FLYCAM_Rise",
-                                "FLYCAM_Lower", "CHANGING_CONTROLS_HUD_VISIBILITY"},
-                            new String[]{"T", "O", "L", "U", "V", "K", "E", "H",
-                                "SPACE", "LSHIFT", "P", "F", "J", "ESC", "N", "Y",
-                                "R", "1", "B", "C", "5", "6", "W", "S", "A", "D",
-                                "Q", "Z", "7"}, "settings/control.properties"); 
-                }
-            }
-        }
-        
-        private String getKeyFromPropertiesFile() {
-            return keysProperties.getProperty(toString());
-        }
-        
         /**
          * Zwraca odpowiednią dla użytkownika nazwę akcji, w aktualnym języku. 
          * @return odpowiednia dla użytkownika nazwa akcji  
@@ -123,9 +95,7 @@ public class Control {
          * Zwraca przycisk przypisany do danej czynności. 
          * @return przycisk dla danej czynności 
          */
-        public String getKey() {
-            return key; 
-        }
+        public String getKey() { return key; }
         
         /**
          * Zamienia kod przycisku na nazwę przycisku. W AWT znaki są kodowane według ASCII.
@@ -170,8 +140,8 @@ public class Control {
                     inputManager.addMapping(actionName, new KeyTrigger(getJmeKeyCode(keys[i])));
                 }
                 keysProperties.store(output, null);
-            }catch(IOException ex){
-                ex.printStackTrace();
+            } catch (IOException ex) {
+                Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         
@@ -188,25 +158,53 @@ public class Control {
             }
             return AwtKeyInput.convertAwtKey(keyName.charAt(0)); 
         }
+        
+        private void createProperties() {
+            if(keysProperties == null) {
+                try(FileReader file = new FileReader("settings/control.properties")) {
+                    keysProperties = new Properties();
+                    keysProperties.load(new BufferedReader(file));
+                } catch (IOException ex) {
+                    keysProperties = CreatorMockSettings
+                            .createDefaultProperties(new String[]{"HEIGHTEN_HOOK",
+                                "MOVE_CRANE", "MERGE_PROTRUDING", "UP",
+                                "VERTICAL_ATTACH", "RIGHT", "PULL_OUT", "LEFT", 
+                                "PULL_IN", "SHOW_CURSOR", "PHYSICS", "ACTION", 
+                                "DOWN", "PAUSE", "MERGE", "ATTACH", "LOWER_HOOK",
+                                "CRANE_CHANGING", "DETACH", "CHANGE_CAMERA", "COPY_BUILDING", 
+                                "BUY_BUILDING", "FLYCAM_Forward", "FLYCAM_Backward",
+                                "FLYCAM_StrafeLeft", "FLYCAM_StrafeRight", "FLYCAM_Rise",
+                                "FLYCAM_Lower", "CHANGING_CONTROLS_HUD_VISIBILITY"},
+                            new String[]{"T", "O", "L", "U", "V", "K", "E", "H",
+                                "SPACE", "LSHIFT", "P", "F", "J", "ESC", "N", "Y",
+                                "R", "1", "B", "C", "5", "6", "W", "S", "A", "D",
+                                "Q", "Z", "7"}, "settings/control.properties"); 
+                }
+            }
+        }
+        
+        private String getKeyFromPropertiesFile() {
+            return keysProperties.getProperty(toString());
+        }
     }
     
     /**
      * Dodaje nowego słuchacza klawiszy. 
-     * @param o słuchacz 
+     * @param listener słuchacz 
      * @param setAsActualListener true jeśli ten słuchacz ma być zapamiętany jako 
      * aktualny, false jeśli ma zostać tylko ustawiony bez zapamiętywania
      */
-    public static void addListener(InputListener o, boolean setAsActualListener){
-        Actions[] names = ((Controllable)o).getAvailableActions();
+    public static void addListener(InputListener listener, boolean setAsActualListener){
+        Actions[] names = ((Controllable)listener).getAvailableActions();
         for(int i = 0; i < names.length; i++) {
             if(!inputManager.hasMapping(names[i].toString())) {
                 inputManager.addMapping(names[i].toString(), 
                         new KeyTrigger(Actions.getJmeKeyCode(names[i].key)));
             }
-            inputManager.addListener(o, names[i].toString());
+            inputManager.addListener(listener, names[i].toString());
 
         }
-        if(setAsActualListener) actualListener = o;
+        if(setAsActualListener) actualListener = listener;
     }
     
     /**
@@ -221,7 +219,5 @@ public class Control {
      * Zwraca słuchacza dla aktualnie używanej jednostki. 
      * @return aktualny słuchacz 
      */
-    public static InputListener getActualListener(){
-        return actualListener; 
-    }
+    public static InputListener getActualListener(){ return actualListener; }
 }

@@ -1,7 +1,6 @@
 package building;
 
 import authorization.User;
-import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
 import com.jme3.math.ColorRGBA;
@@ -30,8 +29,7 @@ public class BuildingValidator {
         User user = GameManager.getUser();
         for(int i = 0; i < objectsNumber; i++){
             Spatial object = gameObjects.get(i); 
-            String objectName = object.getName(); 
-            if(objectName.startsWith(ElementName.BUILDING_BASE_NAME)) {
+            if(object.getName().startsWith(ElementName.BUILDING_BASE_NAME)) {
                 Construction building = (Construction)object; 
                 if(!building.isSold()) {
                     building.breadthFirstTraversal(new SceneGraphVisitorAdapter() {

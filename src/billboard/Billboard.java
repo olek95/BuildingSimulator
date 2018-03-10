@@ -15,7 +15,6 @@ import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.texture.Texture;
 
 /**
  * Klasa <code>Billboard</code> reprezentuje billboard wyświetlający reklamy. 
@@ -48,8 +47,7 @@ public class Billboard {
     public void changeAdvertisement(String path) {
         AssetManager manager = BuildingSimulator.getGameAssetManager();
         Material material = new Material(manager, "Common/MatDefs/Misc/Unshaded.j3md");
-        Texture advertisement = manager.loadTexture(path);
-        material.setTexture("ColorMap", advertisement);
+        material.setTexture("ColorMap", manager.loadTexture(path));
         billboard.getChild(ElementName.BOARD).setMaterial(material);
     }
     

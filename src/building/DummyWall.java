@@ -17,8 +17,7 @@ public class DummyWall extends AbstractWall{
     public DummyWall(WallType type, CSGShape shape, Vector3f location, 
             float mass, ColorRGBA color, CSGShape... differenceShapes) {
         super(type, shape, location, mass, ElementName.DUMMY_WALL, color, differenceShapes);
-        dropSound = GameManager.createSound("Sounds/drop.wav", GameManager.getGameSoundVolume(),
-                false, this);
+        addDropSound();
     }
     
     /**
@@ -33,5 +32,10 @@ public class DummyWall extends AbstractWall{
      */
     public void setOffPhysics() {
         PhysicsManager.removeFromScene(this);
+    }
+    
+    private void addDropSound() {
+        dropSound = GameManager.createSound("Sounds/drop.wav", GameManager.getGameSoundVolume(),
+                false, this);
     }
 }

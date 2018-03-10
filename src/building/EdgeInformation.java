@@ -11,8 +11,8 @@ import java.util.List;
 /**
  * Klasa <code>EdgeInformation</code> reprezentuje wszystkie najważniejsze 
  * informacje o wybranej krawędzi. Udostępnia takie informacje jak ściany położone 
- * przy tej krawędzi (lub na połączeniu tej z sąsiadującą krawędzią), sąsiadująca
- * podłoga czy ściany prostopadłe do tej krawędzi. 
+ * przy tej krawędzi (lub na połączeniu tej z sąsiadującą krawędzią), sąsiadujące
+ * podłogi czy ściany prostopadłe do tej krawędzi. 
  * @author AleksanderSklorz 
  */
 public class EdgeInformation {
@@ -23,10 +23,11 @@ public class EdgeInformation {
     private List<Node> neighborFloors;
     public EdgeInformation(Construction building, Wall floor, CatchNode edge) {
         this.building = building;
-        edgeWalls = ((Node)floor.getChild(edge.toString())).getChildren();
+        Node floorEdge = (Node)floor.getChild(edge.toString());
+        edgeWalls = floorEdge.getChildren();
         neighborFloors = findNeighborFloors((Wall)building.getChild(0), floor, edge);
         neighborFloorWalls = getNeighborFloorsWalls(neighborFloors, edge); 
-        Vector3f edgeLocation = floor.getChild(edge.toString()).getWorldTranslation();
+        Vector3f edgeLocation = floorEdge.getWorldTranslation();
         boolean upLeft = edge.equals(CatchNode.LEFT) || edge.equals(CatchNode.UP);
         perpendicularToStart = findWallFromPerpendicularEnd(floor, edgeLocation,
                 getPerpendicularEdge(edge, true), upLeft); 
@@ -35,14 +36,14 @@ public class EdgeInformation {
     }
     
     /**
-     * Zwraca wszystkie ściany położone przy tej krawędzi. 
-     * @return ściany dla tej krawędzi 
+     * Zwraca listę ścian położonych przy tej krawędzi. 
+     * @return lista ścian dla tej krawędzi 
      */
     public List<Spatial> getEdgeWalls() { return edgeWalls; }
     
     /**
-     * Zwraca wszystkie ściany położone przy sąsiadującej krawędzi. 
-     * @return ściany dla sąsiadującej krawędzi 
+     * Zwraca listę ścian położonych przy sąsiadującej krawędzi. 
+     * @return lista ścian dla sąsiadującej krawędzi 
      */
     public List<Spatial> getNeighborFloorWalls() { return neighborFloorWalls; }
     
@@ -98,16 +99,16 @@ public class EdgeInformation {
     private boolean checkIfAchievedEnd(List<Spatial> neighborFloorWallList, 
             List<Spatial> perpendicularNeighborFloorWalls, Node edge, Wall floor) {
         String edgeName = edge.getName(); 
-        float max = edgeName.equals(CatchNode.UP.toString()) || edgeName
-                .equals(CatchNode.BOTTOM.toString()) ? floor.getLength()
-                : floor.getHeight(), sum = 0;
+        float sum = 0;
         int listSize = neighborFloorWallList.size(); 
         for(int i = 0; i < listSize; i++) 
             sum += ((Wall)neighborFloorWallList.get(i)).getLength();
         listSize = perpendicularNeighborFloorWalls.size();
         for(int i = 0; i < listSize; i++) 
             sum += ((Wall)perpendicularNeighborFloorWalls.get(i)).getLength();
-        return sum >= max; 
+        return sum >= (edgeName.equals(CatchNode.UP.toString()) || edgeName
+                .equals(CatchNode.BOTTOM.toString()) ? floor.getLength()
+                : floor.getHeight()); 
     }
     
     private List<Node> findNeighborFloors(final Wall wall, final Wall floor, final CatchNode edge) {
@@ -136,11 +137,12 @@ public class EdgeInformation {
     }
     
     private CatchNode getPerpendicularEdge(CatchNode edge, boolean start) {
-        boolean upBottom = edge.equals(CatchNode.UP) || edge.equals(CatchNode.BOTTOM);
         if(start) {
-            return upBottom ? CatchNode.LEFT : CatchNode.UP;
+            return edge.equals(CatchNode.UP) || edge.equals(CatchNode.BOTTOM) 
+                    ? CatchNode.LEFT : CatchNode.UP;
         } else {
-            return upBottom ? CatchNode.RIGHT : CatchNode.BOTTOM;
+            return edge.equals(CatchNode.UP) || edge.equals(CatchNode.BOTTOM) 
+                    ? CatchNode.RIGHT : CatchNode.BOTTOM;
         }
     }
     

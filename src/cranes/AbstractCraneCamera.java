@@ -61,7 +61,7 @@ public abstract class AbstractCraneCamera{
     /**
      * Ustawia pozycję kamery.
      */
-    protected void setPosition() {
+    protected final void setPosition() {
         Spatial start = crane.getChild(type.getStart());
         craneCamera.setLocalTranslation(start.getLocalTranslation());
         craneCamera.setLocalRotation(start.getLocalRotation());

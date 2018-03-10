@@ -15,8 +15,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Klasa <code>DBManager</code> odpowiada za obsługę logowania i rejestracji
- * użytkownika.
+ * Klasa <code>DBManager</code> odpowiada za operacje związane z komunikacją z
+ * bazą danych SQLite. Łączenie się z bazą jest zabezpieczone przed sytuacją 
+ * usunięcia pliku bazy danych. 
  * @author AleksanderSklorz 
  */
 public class DBManager extends AbstractAppState{
@@ -34,7 +35,9 @@ public class DBManager extends AbstractAppState{
     }
     
     /**
-     * Tworzy bazę danych wraz z tabelkami. 
+     * Tworzy bazę danych wraz z tabelką. 
+     * @thrwos ClassNotFoundException
+     * @throws SQLException 
      */
     public static void createDatabase() throws ClassNotFoundException, SQLException{
         if(authorization == null) authorization = new DBManager(); 
@@ -59,6 +62,8 @@ public class DBManager extends AbstractAppState{
      * Pozwala na rejestrację nowego użytkownika. 
      * @param login nazwa użytkownika 
      * @param password hasło użytkownika 
+     * @thrwos ClassNotFoundException
+     * @throws SQLException 
      */
     public static void signUp(String login, String password) throws ClassNotFoundException, SQLException{
         createDatabaseFile(null);
@@ -77,6 +82,8 @@ public class DBManager extends AbstractAppState{
      * @param login nazwa użytkownika 
      * @param password hasło użytkownika 
      * @return zalogowany użytkownik, jesli taki istnieje, lub null w przeciwnym przypadku 
+     * @thrwos ClassNotFoundException
+     * @throws SQLException 
      */
     public static User signIn(String login, String password) throws ClassNotFoundException, SQLException {
         createDatabaseFile(null);
@@ -93,10 +100,8 @@ public class DBManager extends AbstractAppState{
     }
     
     /**
-     * Zapisuje wynik (punkty i czas) dla danego użytkownika. 
+     * Zapisuje wynik (punkty, czas i liczba zbudowanych budynków) dla danego użytkownika. 
      * @param user użytkownik dla którego zapisuje się wynik  
-     * @throws SQLException
-     * @throws ClassNotFoundException 
      */
     public static void saveScore(User user){
         String login = user.getLogin();
@@ -115,23 +120,35 @@ public class DBManager extends AbstractAppState{
         }
     }
     
-    public static List<User> getAllStatistics(){
-        List<User> statistics = new ArrayList();
+    /**
+     * Zwraca listę zapisanych użytkowników, bądź pustą tablicę, jeśli w bazie 
+     * nie ma zapisanych użytkowników.
+     * @return lista użytkowników 
+     */
+    public static List<User> getAllUsers(){
+        List<User> users = new ArrayList();
         createDatabaseFile(GameManager.getUser());
         try(Connection connection = connect()) {
             PreparedStatement statement = connection
                     .prepareStatement("SELECT login, password, points, time, buildings FROM Users");
-            ResultSet restoredStatistics = statement.executeQuery();
-            while(restoredStatistics.next()){
-                statistics.add(new User(restoredStatistics.getString(1), 
-                        restoredStatistics.getString(2), restoredStatistics.getInt(3),
-                        restoredStatistics.getString(4), restoredStatistics.getInt(5)));
+            ResultSet restoredUsers = statement.executeQuery();
+            while(restoredUsers.next()){
+                users.add(new User(restoredUsers.getString(1), 
+                        restoredUsers.getString(2), restoredUsers.getInt(3),
+                        restoredUsers.getString(4), restoredUsers.getInt(5)));
             }
         }finally{
-            return statistics;
+            return users;
         }
     }
     
+    /**
+     * Zwraca użytkownika o podanym loginie i haśle, bądź null, jeśli taki użytkownik 
+     * nie istnieje. 
+     * @param login login użytkownika 
+     * @param password hasło użytkownika
+     * @return użytkownik, bądź null, jeśli taki użytkownik nie istnieje 
+     */
     public static User getUser(String login, String password) {
         User user = null;
         try(Connection connection = connect()) {
@@ -149,7 +166,7 @@ public class DBManager extends AbstractAppState{
         }
     }
     
-    public static void createDatabaseFile(User user) {
+    private static void createDatabaseFile(User user) {
         if(!new File("building_simulator.db").exists()){
             try(Connection connection = connect()) {
                 PreparedStatement statement = connection.prepareStatement("CREATE TABLE Users "

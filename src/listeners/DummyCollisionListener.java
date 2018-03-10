@@ -57,9 +57,9 @@ public class DummyCollisionListener implements PhysicsCollisionGroupListener {
     }
     
     /**
-     * Tworzy sztuczny obiekt z którym są sprawdzane kolizje. 
-     * @param shop właściciel słuchacza 
+     * Tworzy sztuczny obiekt z którym są sprawdzane kolizje.
      * @param location położenie sztucznego obiektu 
+     * @param dimensions wymiary sztucznego obiektu 
      */
     public void createDummyWall(Vector3f location, Vector3f dimensions) {
         collisionOwner = (DummyWall)WallsFactory.createWall(WallType.WALL, location,

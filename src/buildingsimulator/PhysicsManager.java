@@ -175,19 +175,28 @@ public class PhysicsManager {
         return joint;
     }
     
+    /**
+     * Dodaje fizykę podanych obiektów do świata gry. 
+     * @param objects tablica obiektów których fizyka jest dodawana 
+     */
     public static void addPhysicsToGame(Spatial... objects) {
         PhysicsSpace physics = BuildingSimulator.getPhysicsSpace();
         for(int i = 0; i < objects.length; i++)
             physics.add(objects[i].getControl(RigidBodyControl.class));
     }
     
+    /**
+     * Dodaje fizykę o podanym indeksie podanego obiektu do świata gry. 
+     * @param object obiekt którego fizyka jest dodawana 
+     * @param i indeks dodawanej fizyki 
+     */
     public static void addPhysicsToGame(Spatial object, int i) {
         BuildingSimulator.getPhysicsSpace().add(object.getControl(i));
     }
     
     /**
      * Usuwa fizykę dla danego obiektu z gry. 
-     * @param control usuwa fizykę dla obiektu z gry 
+     * @param object obiekt dla którego jest usuwana fizyka  
      */
     public static void removeFromScene(Node object) {
         RigidBodyControl control = object.getControl(RigidBodyControl.class);

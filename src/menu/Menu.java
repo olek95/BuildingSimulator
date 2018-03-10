@@ -52,7 +52,7 @@ public abstract class Menu extends AbstractAppState{
     
     /**
      * Ustawia dźwięk tła. 
-     * @param sound dźwięk tła
+     * @param backgroundSound dźwięk tła
      */
     protected static void setBackgroundSound(AudioNode backgroundSound) { 
         Menu.backgroundSound = backgroundSound;
@@ -112,7 +112,6 @@ public abstract class Menu extends AbstractAppState{
     
     /**
      * Wczytuje układ. 
-     * @param screen ekran dla którego układ jest wczytywany 
      * @param layoutName nazwa pliku układu 
      */
     protected void parseLayout(String layoutName) { 

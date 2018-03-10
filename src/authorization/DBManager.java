@@ -36,7 +36,7 @@ public class DBManager extends AbstractAppState{
     
     /**
      * Tworzy bazę danych wraz z tabelką. 
-     * @thrwos ClassNotFoundException
+     * @throws ClassNotFoundException
      * @throws SQLException 
      */
     public static void createDatabase() throws ClassNotFoundException, SQLException{
@@ -62,7 +62,7 @@ public class DBManager extends AbstractAppState{
      * Pozwala na rejestrację nowego użytkownika. 
      * @param login nazwa użytkownika 
      * @param password hasło użytkownika 
-     * @thrwos ClassNotFoundException
+     * @throws ClassNotFoundException
      * @throws SQLException 
      */
     public static void signUp(String login, String password) throws ClassNotFoundException, SQLException{
@@ -82,7 +82,7 @@ public class DBManager extends AbstractAppState{
      * @param login nazwa użytkownika 
      * @param password hasło użytkownika 
      * @return zalogowany użytkownik, jesli taki istnieje, lub null w przeciwnym przypadku 
-     * @thrwos ClassNotFoundException
+     * @throws ClassNotFoundException
      * @throws SQLException 
      */
     public static User signIn(String login, String password) throws ClassNotFoundException, SQLException {

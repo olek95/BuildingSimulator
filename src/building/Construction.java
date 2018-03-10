@@ -192,7 +192,7 @@ public class Construction extends Node{
     
     /**
      * Przywraca zapisany budynek. 
-     * @param wall pierwszy element budynku 
+     * @param building przywracany budynek 
      */
     public static void restoreConstruction(Construction building) {
         building.breadthFirstTraversal(new SceneGraphVisitorAdapter() {

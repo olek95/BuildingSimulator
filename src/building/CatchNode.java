@@ -27,8 +27,11 @@ public enum CatchNode {
      * @param type typ węzła 
      * @param wall1 ściana dla której tworzony jest węzeł 
      * @param wall2 ściana z której dostaje się dodatkowe dane 
-     * @perpendicularity true jeśli ściany są położone prostopadle względem siebie, 
+     * @param perpendicularity true jeśli ściany są położone prostopadle względem siebie, 
      * false w przeciwnym razie
+     * @param ceiling true jeśli sufit, false w przeciwnym przypadku 
+     * @param translate dodatkowe przesunięcie 
+     * @param protruding true jeśli łączy dwie podłogi ze sobą, false w przeciwnym przypadku 
      * @return lokalizacja węzła 
      */
     public static Vector3f calculateTranslation(CatchNode type, Wall wall1, Wall wall2,

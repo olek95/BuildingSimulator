@@ -2,8 +2,6 @@ package building;
 
 import buildingsimulator.BuildingSimulator;
 import buildingsimulator.ElementName;
-import buildingsimulator.GameManager;
-import buildingsimulator.PhysicsManager;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -12,7 +10,6 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.ArrayList;
 import java.util.List;
-import menu.Shop;
 import net.wcomohundro.jme3.csg.CSGGeometry;
 
 /**

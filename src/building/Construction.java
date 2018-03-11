@@ -152,7 +152,8 @@ public class Construction extends Node{
         breadthFirstTraversal(new SceneGraphVisitorAdapter() {
             @Override
             public void visit(Node object) {
-                if(object.getName().startsWith("Wall") && object.getWorldTranslation().y >= 0.4f) {
+                if(object.getName().startsWith(ElementName.WALL_BASE_NAME) 
+                        && !object.getParent().getName().startsWith(ElementName.BUILDING_BASE_NAME)) {
                     Wall wall = (Wall)object;
                     wall.setMovable(true);
                     if((isSample ? 5 : 3) < (isSample ? wall.getLocalTranslation() : wall.getWorldTranslation())
@@ -160,7 +161,10 @@ public class Construction extends Node{
                         boolean wallStateChanged = false; 
                         if(!wall.isStale()){
                             wallStateChanged = true; 
-                            detachWall(wall);
+                            Node parent = wall.getParent().getParent(); 
+                            if(parent.getParent().getName().startsWith(ElementName.BUILDING_BASE_NAME))
+                                detachWallOverFloor((Wall)parent);
+                            detachWallChildren(wall);
                         }
                         if(wallStateChanged) resetWalls = true; 
                     } else {
@@ -395,16 +399,37 @@ public class Construction extends Node{
         return null; 
     }
     
-    private void detachWall(Wall wall) {
+    private void detachWallChildren(Wall wall) {
         wall.depthFirstTraversal(new SceneGraphVisitorAdapter() {
             @Override
             public void visit(Node object) {
-                if(object.getName().startsWith(ElementName.WALL_BASE_NAME)) {
+                if(object.getName().startsWith(ElementName.WALL_BASE_NAME) 
+                        && !object.getParent().getName().startsWith(ElementName.BUILDING_BASE_NAME)) {
                     Wall wall = (Wall)object; 
-                    wall.removeFromParent();
-                    GameManager.addToScene(wall);
-                    wall.setStale(true);
-                    wall.setMovable(true);
+                    if(!wall.isStale()) {
+                        wall.removeFromParent();
+                        GameManager.addToScene(wall);
+                        wall.setStale(true);
+                        wall.setMovable(true);
+                    }
+                }
+            }
+        });
+    }
+    
+    private void detachWallOverFloor(Wall floor) {
+        final Vector3f floorLocation = floor.getWorldTranslation();
+        final float length = floor.getLength(), height = floor.getHeight();
+        floor.depthFirstTraversal(new SceneGraphVisitorAdapter() {
+            @Override
+            public void visit(Node object) {
+                if(object.getName().startsWith(ElementName.WALL_BASE_NAME)) {
+                    Vector3f wallLocation = object.getWorldTranslation();
+                    if(Math.abs(floorLocation.x - wallLocation.x) <= length
+                            && Math.abs(floorLocation.z - wallLocation.z) <= height
+                            && !object.getParent().getName().startsWith(ElementName.BUILDING_BASE_NAME)) {
+                        detachWallChildren((Wall)object);
+                    }
                 }
             }
         });

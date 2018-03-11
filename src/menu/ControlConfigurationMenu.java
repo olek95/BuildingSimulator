@@ -135,8 +135,8 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
     private Properties getSelectedSettings() {
         Properties settings = new Properties(); 
         List<TableRow> rows = getTable().getRows();
-        int rowsCount = rows.size(); 
-        for(int i = 0; i < rowsCount; i++){
+        int rowsNumber = rows.size(); 
+        for(int i = 0; i < rowsNumber; i++){
             TableRow row = rows.get(i);
             settings.setProperty(((Table.TableCell)row.getChild(1)).getText(), ((Table.TableCell)row
                     .getChild(2)).getText());
@@ -154,7 +154,14 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
     }
     
     private void setStale() {
-        stale = isChanged();
+        List<TableRow> rows = getTable().getRows();
+        int rowsNumber = rows.size();
+        boolean empty = false; 
+        for(int i = 0; i < rowsNumber && !empty; i++) {
+            if(((Table.TableCell)rows.get(i).getChild(2)).getText().trim().equals(""))
+                empty = true;
+        }
+        stale = isChanged() && !empty;
         ((Button)getScreen().getElementById("accepting_button")).setIsEnabled(stale);
     }
     

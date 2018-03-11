@@ -21,6 +21,7 @@ import java.util.List;
 import listeners.DummyCollisionListener;
 import menu.HUD;
 import menu.Shop;
+import texts.Translator;
 
 /**
  * Klasa <code>BuildingCreator</code> umożliwia kupowanie gotowego budynku bądź 
@@ -33,6 +34,7 @@ public class BuildingCreator implements VisibleFromAbove{
     private boolean foundSelectedConstruction = false;
     private Construction selectedConstruction; 
     private boolean cloning; 
+    private int cost = 0; 
     
     public BuildingCreator(boolean cloning) {
         this.cloning = cloning; 
@@ -56,6 +58,7 @@ public class BuildingCreator implements VisibleFromAbove{
 
     @Override
     public void setDischargingLocation(Vector3f location) {
+        cost = 0;
         if(cloning) {
             if(selectedConstruction == null) {
                 selectedConstruction = getSelectedConstruction(location);
@@ -153,25 +156,34 @@ public class BuildingCreator implements VisibleFromAbove{
                     control.setPhysicsRotation(rotations.get(i));
                     i++;
                     clonedWalls.add(wall);
+                    cost += Shop.calculateWallCost(wall.getLength(), wall.getHeight(),
+                            wall.getType());
                 }
             }}
         );
         BoundingVolume bounding = clonedConstruction.getWorldBound();
         bounding.setCenter(location);
-        if(!checkIntersection(bounding)) {
-            int clonedWallsNumber = clonedWalls.size(); 
-            for(int i = 0; i < clonedWallsNumber; i++) {
-                Wall wall = clonedWalls.get(i);
-                PhysicsManager.addPhysicsToGame(wall);
-                GameManager.getUser().addPoints(-Shop.calculateWallCost(wall.getLength(),
-                            wall.getHeight(), wall.getType()));
+        if(cost <= GameManager.getUser().getPoints()) {
+            if(!checkIntersection(bounding)) {
+                int clonedWallsNumber = clonedWalls.size(); 
+                for(int i = 0; i < clonedWallsNumber; i++) {
+                    Wall wall = clonedWalls.get(i);
+                    PhysicsManager.addPhysicsToGame(wall);
+                }
+                GameManager.getUser().addPoints(-cost); 
+                GameManager.addToScene(clonedConstruction);
+                HUD.updatePoints();
+                if(clonedConstruction.isSold()) {
+                    User user = GameManager.getUser();
+                    user.setBuildingsNumber(user.getBuildingsNumber() + 1);
+                }
+            } else {
+                Construction.setCounter(Construction.getCounter() - 1);
+                HUD.setMessage(Translator.NO_ENOUGH_PLACE.getValue());
             }
-            GameManager.addToScene(clonedConstruction);
-            HUD.updatePoints();
-            if(clonedConstruction.isSold()) {
-                User user = GameManager.getUser();
-                user.setBuildingsNumber(user.getBuildingsNumber() + 1);
-            }
+        } else {
+            Construction.setCounter(Construction.getCounter() - 1);
+            HUD.setMessage(Translator.NOT_ENOUGH_MONEY.getValue() + " (" + cost + ")");
         }
     }
     
@@ -184,21 +196,47 @@ public class BuildingCreator implements VisibleFromAbove{
     
     private void buyBuilding(Vector3f location) {
         BuildingSample building = new BuildingSample();
-        if(building.drop(location, FastMath.rand.nextInt(3))) {
-            building.setSold(true);
-            User user = GameManager.getUser();
-            user.setBuildingsNumber(user.getBuildingsNumber() + 1);
-            building.breadthFirstTraversal(new SceneGraphVisitorAdapter() {
-                @Override
-                public void visit(Node object) {
-                    if(object.getName().startsWith(ElementName.WALL_BASE_NAME)) {
-                        Wall wall = (Wall)object;
-                        GameManager.getUser().addPoints(-Shop.calculateWallCost(wall.getLength(),
-                                wall.getHeight(), wall.getType()));
-                    }
+        List<Integer> samples = new ArrayList();
+        boolean leaveLoop;
+        do {
+            int sample;
+            do {
+                sample = FastMath.nextRandomInt(0, BuildingSample.SAMPLES_NUMBER - 1);
+            } while(samples.contains(sample));
+            samples.add(sample);
+            List<Wall> walls = building.create(location, sample);
+            leaveLoop = samples.size() == BuildingSample.SAMPLES_NUMBER;
+            if(walls != null) {
+                cost = 0;
+                int wallsNumber = walls.size(); 
+                for(int i = 0; i < wallsNumber; i++) {
+                    Wall wall = walls.get(i);
+                    cost += Shop.calculateWallCost(wall.getLength(), wall.getHeight(),
+                                wall.getType());
                 }
-            });
-            HUD.updatePoints();
-        } else Construction.setCounter(Construction.getCounter() - 1);
+                User user = GameManager.getUser();
+                if(cost <= user.getPoints()) {
+                    user.addPoints(-cost);
+                    for(int i = 0; i < wallsNumber; i++) {
+                        Wall wall = walls.get(i);
+                        PhysicsManager.addPhysicsToGame(wall);
+                    }
+                    GameManager.addToScene(building);
+                    building.renovateBuilding();
+                    building.setSold(true);
+                    user.setBuildingsNumber(user.getBuildingsNumber() + 1);
+                    HUD.updatePoints();
+                    leaveLoop = true;
+                } else {
+                    Construction.setCounter(Construction.getCounter() - 1);
+                    if(leaveLoop)
+                        HUD.setMessage(Translator.NOT_ENOUGH_MONEY.getValue() + " (" + cost + ")");
+                }
+            } else {
+                Construction.setCounter(Construction.getCounter() - 1);
+                HUD.setMessage(Translator.NO_ENOUGH_PLACE.getValue());
+                leaveLoop = true;
+            }
+        } while(!leaveLoop);
     }
 }

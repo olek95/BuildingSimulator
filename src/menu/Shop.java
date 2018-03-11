@@ -97,7 +97,7 @@ public class Shop extends Menu implements VisibleFromAbove{
                 BirdsEyeView.displayNotMovingModeHUD();
             }
             goNextMenu(null);
-        }
+        } 
         hidePreview(true);
         HUD.setControlsVisibility(HUD.isControlsLabelVisibilityBeforeHiding());
         HUD.setGeneralControlsLabelVisibility(true);
@@ -229,6 +229,8 @@ public class Shop extends Menu implements VisibleFromAbove{
      * Ustawia aktualną cenę za zakupy w odpowiedniej etykiecie. Jeśli podano 
      * błędne dane to wyświetlony jest stosowny komunikat oraz blokowany jest 
      * przycisk zakupów. 
+     * return true jeśli udało się obliczyć koszt (podano poprawne dane) i da się kupić 
+     * lub false w przeciwnym przypadku 
      */
     private boolean setCost() {
         Screen screen = getScreen(); 
@@ -240,7 +242,8 @@ public class Shop extends Menu implements VisibleFromAbove{
             return false; 
         } else {
             screen.getElementById("cost_value_label").setText(cost + "");
-            screen.getElementById("buying_button").setIsEnabled(true);
+            screen.getElementById("buying_button").setIsEnabled(cost 
+                    <= GameManager.getUser().getPoints());
             return true;
         }
     }

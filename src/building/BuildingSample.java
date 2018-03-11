@@ -12,6 +12,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.ArrayList;
 import java.util.List;
+import menu.Shop;
 import net.wcomohundro.jme3.csg.CSGGeometry;
 
 /**
@@ -22,6 +23,7 @@ import net.wcomohundro.jme3.csg.CSGGeometry;
 public class BuildingSample extends Construction{
     private Node catchNode; 
     private boolean perpendicularity;
+    public final static int SAMPLES_NUMBER = 3;
     
     public BuildingSample() {
         name = ElementName.BUILDING_BASE_NAME + getCounter() + " sample";
@@ -35,23 +37,13 @@ public class BuildingSample extends Construction{
      * @return true jeśli udało sie umieścić budynek, false jeśli zabrakło dla
      * niego miejsca 
      */
-    public boolean drop(Vector3f location, int sampleIndex) {
+    public List<Wall> create(Vector3f location, int sampleIndex) {
         location.setY(0.2f);
         setLocalTranslation(location);
         List<Wall> walls; 
         if(sampleIndex == 0) walls = createFirstSample(location);
         else walls = sampleIndex == 1 ? createSecondSample(location) : createThirdSample(location);
-        if(!BuildingCreator.checkIntersection(getWorldBound())) {
-            int wallsNumber = walls.size(); 
-            for(int i = 0; i < wallsNumber; i++) {
-                Wall wall = walls.get(i);
-                PhysicsManager.addPhysicsToGame(wall);
-            }
-            GameManager.addToScene(this);
-            renovateBuilding();
-            return true; 
-        }
-        return false; 
+        return BuildingCreator.checkIntersection(getWorldBound()) ? null : walls;
     }
     
     @Override

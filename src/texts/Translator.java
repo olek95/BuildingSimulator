@@ -103,6 +103,7 @@ public enum Translator {
     ACTUAL_HEIGHT,
     NEW_HEIGHT,
     BAD_DATA,
+    NOT_ENOUGH_MONEY,
     MESSAGE_POINTS,
     MESSAGE_NO_FREE_SPACE,
     LOWERED_PROPS,

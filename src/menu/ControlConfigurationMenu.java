@@ -72,7 +72,8 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
     public void onKeyEvent(KeyInputEvent evt) {
         String key = Actions.getKey(evt.getKeyCode());
         Table table = getTable(); 
-        if(table.isAnythingSelected() && !existsDuplicate(key)){
+        if(table.isAnythingSelected()){
+            clearDuplicate(key);
             ((Table.TableCell)table.getSelectedRows().get(0).getChild(2)).setText(key);
             setStale();
         }
@@ -100,15 +101,17 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
         } else doWhenAcceptedExit(MenuTypes.OPTIONS);
     }
     
-    private boolean existsDuplicate(String key) {
+    private void clearDuplicate(String key) {
         List<TableRow> rows = getTable().getRows();
         int rowsNumber = rows.size();
-        for(int i = 0; i < rowsNumber; i++){
-            if(((Table.TableCell)rows.get(i).getChild(2)).getText().equals(key)){
-                return true; 
+        boolean foundDuplicated = false; 
+        for(int i = 0; i < rowsNumber && !foundDuplicated; i++){
+            Table.TableCell cell = (Table.TableCell)rows.get(i).getChild(2);
+            if(cell.getText().equals(key)){
+                foundDuplicated = true; 
+                cell.setText("");
             }
         }
-        return false; 
     }
     
     private void createAcceptingButton(){

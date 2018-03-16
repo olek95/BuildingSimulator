@@ -154,8 +154,8 @@ public class Options extends Menu  {
         } catch (IOException ex) {
             return CreatorMockSettings.createDefaultProperties(new String[]{"BITS_PER_PIXEL",
                 "SAMPLES", "VOLUME", "LANGUAGE", "FREQUENCY", "RESOLUTION", "FULLSCREEN"},
-                    new String[]{"32", "6", "0.4", "pl", "60", "800x600", "false"},
-                    "settings/settings.properties");
+                    new String[]{"32", "6", "0.4", Locale.getDefault().getLanguage(),
+                        "60", "800x600", "false"}, "settings/settings.properties");
         }
     }
     

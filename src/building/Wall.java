@@ -368,6 +368,12 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
     public WallType getType() { return type; }
     
     /**
+     * Ustawia stan licznika ścian. 
+     * @param counter stan licznika ścian
+     */
+    public static void setCounter(int counter) { Wall.counter = counter; }
+    
+    /**
      * Zwraca współrzędną wybranego rogu tego obiektu. Możliwe punkty do pobrania, 
      * to tylko te tworzące górną podstawę. Numeracja: 0 - lewy dolny róg (lub 
      * lewy brzeg pionowo), 1 - lewy górny róg (lub prawy brzeg pionowo),

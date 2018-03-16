@@ -127,6 +127,7 @@ public class GameManager {
             else HUD.changeButtonsIcon(true);
         } else {
             HUD.changeShopButtonVisibility(false);
+            HUD.changeButtonsIcon(true);
         }
         user.resetTimer();
         //billboard.resumeAdvertisement();
@@ -166,6 +167,8 @@ public class GameManager {
         rootNode.detachAllChildren();
         pausedGame = false; 
         removeAllUnits();
+        Construction.setCounter(0);
+        Wall.setCounter(0);
     }
     
     /**

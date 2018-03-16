@@ -98,7 +98,10 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
         if(stale){
             getScreen().addElement(createNotSavedChangesAlert(Translator.NOT_SAVED_CHANGES.getValue(),
                     MenuTypes.OPTIONS));
-        } else doWhenAcceptedExit(MenuTypes.OPTIONS);
+        } else {
+            doWhenAcceptedExit(MenuTypes.OPTIONS); 
+            removeListener();
+        }
     }
     
     private void clearDuplicate(String key) {
@@ -129,6 +132,7 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
                             keys[i] = ((Table.TableCell)rows.get(i).getChild(2)).getText();
                         }
                         Control.Actions.saveSettings(keys);
+                        removeListener();
                         doWhenAcceptedExit(MenuTypes.OPTIONS);
                     }
                 };
@@ -170,5 +174,9 @@ public class ControlConfigurationMenu extends TableMenu implements RawInputListe
     
     private void addListener() { 
         BuildingSimulator.getGameInputManager().addRawInputListener(this);
+    }
+    
+    private void removeListener() {
+        BuildingSimulator.getGameInputManager().removeRawInputListener(this);
     }
 }

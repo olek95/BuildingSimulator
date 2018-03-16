@@ -29,7 +29,6 @@ public abstract class MainMenu extends Menu {
         setScreen(screen);
         parseLayout(layoutName);
         Window window = (Window)screen.getElementById("main_menu");
-        System.out.println(layoutName + " " + screen.getElementById("main_menu"));
         window.getDragBar().removeFromParent();
         setWindow(window); 
         Translator.setTexts(new String[]{"load_game_button", "statistics_button",

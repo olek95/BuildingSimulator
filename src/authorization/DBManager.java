@@ -167,7 +167,7 @@ public class DBManager extends AbstractAppState{
     }
     
     private static void createDatabaseFile(User user) {
-        if(!new File("building_simulator.db").exists()){
+        if(!GameManager.checkIfFileExists("building_simulator.db")){
             try(Connection connection = connect()) {
                 PreparedStatement statement = connection.prepareStatement("CREATE TABLE Users "
                         + "(id_user INTEGER PRIMARY KEY AUTOINCREMENT, login VARCHAR(20),"

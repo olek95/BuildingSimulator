@@ -103,7 +103,7 @@ public enum CatchNode {
                     if(isOnTheOtherSide(wall1, wall2)) { 
                         if(!sample) y = -y;
                     }
-                    if(!sample) z = wall1.getHeight() + wall2.getWidth();
+                    if(!sample) z = wall1.getHeight();
                     else y = wall1.getHeight() + wall2.getWidth(); 
                 } else {
                     y = 0;

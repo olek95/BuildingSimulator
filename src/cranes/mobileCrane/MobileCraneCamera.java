@@ -50,6 +50,7 @@ public class MobileCraneCamera extends AbstractCraneCamera{
         }
         if(getType().equals(CameraType.LOOSE)) {
             setOff();
+            setLooseCameraPosition();
             GameManager.displayProperMobileCraneHUD();
         } else setPosition();
     }

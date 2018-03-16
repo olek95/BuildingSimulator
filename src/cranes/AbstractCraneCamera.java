@@ -1,6 +1,7 @@
 package cranes;
 
 import buildingsimulator.BuildingSimulator;
+import com.jme3.renderer.Camera;
 import com.jme3.scene.CameraNode;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -43,6 +44,7 @@ public abstract class AbstractCraneCamera{
             setPosition();
         } else {
             setOff();
+            setLooseCameraPosition();
         }
     }
     
@@ -87,6 +89,13 @@ public abstract class AbstractCraneCamera{
     protected void setOffLoose() {
         craneCamera = new CameraNode("Camera", BuildingSimulator.getCam());
         cameraOwner.attachChild(craneCamera);
+    }
+    
+    protected void setLooseCameraPosition() {
+        Spatial behind = crane.getChild(CameraType.BEHIND_ARM.getStart());
+        Camera cam = BuildingSimulator.getCam();
+        cam.setLocation(behind.getLocalTranslation());
+        cam.setRotation(behind.getLocalRotation());
     }
     
     /**

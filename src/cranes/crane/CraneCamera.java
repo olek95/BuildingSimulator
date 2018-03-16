@@ -54,6 +54,7 @@ public class CraneCamera extends AbstractCraneCamera {
                         .getAvailableActions();
             HUD.fillControlInformation(Arrays.copyOf(actions, actions.length - 3),
                     new String[] {Translator.MOUSE_MOVEMENT.getValue()}, 1, 1);
+            setLooseCameraPosition();
         } else setPosition();
     }
 }

@@ -204,6 +204,28 @@ public class PhysicsManager {
         BuildingSimulator.getPhysicsSpace().remove(control);
     }
     
+    /**
+     * Tworzy fizykę dla obiektu z typem kolizji Box. 
+     * @param parent właściciel fizyki
+     * @param parentLocation lokalizacja właściciela fizyki po jej stworzeniu 
+     * @param children dzieci właściciela dla których tworzona jest kolizja 
+     * @param locations położenie dzieci właściciela 
+     */
+    public static void createBoxPhysics(Node parent, Vector3f parentLocation, 
+            Spatial[] children, Vector3f... locations) {
+        CompoundCollisionShape compound = new CompoundCollisionShape();
+        for(int i = 0; i < children.length; i++) {
+            CollisionShape elementCollisionShape = CollisionShapeFactory
+                    .createBoxShape(children[i]);
+            compound.addChildShape(elementCollisionShape, locations[i]);
+        }
+        RigidBodyControl control = new RigidBodyControl(compound, 0f);
+        parent.addControl(control);
+        parent.setLocalTranslation(parentLocation);
+        PhysicsManager.addPhysicsToGame(parent);
+        
+    }
+    
     private static void moveDynamicObject(Spatial element, Vector3f displacement){
         RigidBodyControl elementControl = element.getControl(RigidBodyControl.class);
         elementControl.setPhysicsLocation(elementControl.getPhysicsLocation()

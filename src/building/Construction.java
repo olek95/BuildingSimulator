@@ -419,7 +419,7 @@ public class Construction extends Node{
     
     private void detachWallOverFloor(Wall floor) {
         final Vector3f floorLocation = floor.getWorldTranslation();
-        final float length = floor.getLength(), height = floor.getHeight();
+        final float length = floor.getXExtend(), height = floor.getZExtend();
         floor.depthFirstTraversal(new SceneGraphVisitorAdapter() {
             @Override
             public void visit(Node object) {
@@ -463,12 +463,12 @@ public class Construction extends Node{
             EdgeInformation information = new EdgeInformation(this, wall2,
                     CatchNode.valueOf(parentName)); 
             sum -= getBusyPlace(information);
-            float busyPlaceAfterMerged = -sum + wall1.getLength() * 2,
-                    checkingDimension = (bottomUp ? wall2.getLength() : wall2.getHeight()) * 2,
+            float busyPlaceAfterMerged = -sum + wall1.getXExtend() * 2,
+                    checkingDimension = (bottomUp ? wall2.getXExtend() : wall2.getZExtend()) * 2,
                     busyPlaceOfPerpendicularToEnd = 0;
             Wall perpendicularToEnd = information.getPerpendicularToEnd();
             if(perpendicularToEnd != null) {
-                busyPlaceOfPerpendicularToEnd = perpendicularToEnd.getWidth();
+                busyPlaceOfPerpendicularToEnd = perpendicularToEnd.getYExtend();
                 if(!perpendicularToEnd.isProtrudingCatched()) 
                     busyPlaceOfPerpendicularToEnd *= 2; 
             }
@@ -479,20 +479,20 @@ public class Construction extends Node{
             for(int i = 0; i < childrenCount; i++) {
                 Wall wall = ((Wall)parentChildren.get(i));
                 if(wall.checkPerpendicularity(wall2)) 
-                    sum -= (southOrNorth ? wall.getHeight() : wall.getLength()) * 2;
-                else sum -= (southOrNorth ? wall.getLength() : wall.getHeight()) * 2;
+                    sum -= (southOrNorth ? wall.getZExtend() : wall.getXExtend()) * 2;
+                else sum -= (southOrNorth ? wall.getXExtend() : wall.getZExtend()) * 2;
             }
         }
         if(bottom || up) {
-            coordinate = sum + wall2.getLength() - wall1.getLength();
+            coordinate = sum + wall2.getXExtend() - wall1.getXExtend();
         } else {
             if(left || right){
-                coordinate = sum + wall2.getHeight() - wall1.getLength();
+                coordinate = sum + wall2.getZExtend() - wall1.getXExtend();
             } else {
                 boolean southOrNorth = south || north; 
                 coordinate = sum - CatchNode.getProperFoundationsDimension(wall1, 
                         perpendicularity, !southOrNorth, false) + (southOrNorth 
-                        ? wall2.getLength() : wall2.getHeight());
+                        ? wall2.getXExtend() : wall2.getZExtend());
             }
         }
         node.setLocalTranslation(CatchNode.calculateTranslation(CatchNode
@@ -549,13 +549,13 @@ public class Construction extends Node{
                 neighborFloorWallsNumber = neighborFloorWalls.size();
         float sum = 0; 
         for(int i = 0; i < edgeWallsNumber; i++) 
-            sum += ((Wall)edgeWalls.get(i)).getLength() * 2; 
+            sum += ((Wall)edgeWalls.get(i)).getXExtend() * 2; 
         for(int i = 0; i < neighborFloorWallsNumber; i++)
-            sum += ((Wall)neighborFloorWalls.get(i)).getLength() * 2; 
+            sum += ((Wall)neighborFloorWalls.get(i)).getXExtend() * 2; 
         if(sum == 0) {
             Wall wall = information.getPerpendicularToStart(); 
             if(wall != null) {
-                sum += wall.getWidth();
+                sum += wall.getYExtend();
                 if(!wall.isProtrudingCatched()) sum *= 2; 
             } 
         }

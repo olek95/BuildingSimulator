@@ -43,7 +43,7 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
     private Spatial recentlyHitObject;
     private static BottomCollisionListener collisionListener = null; 
     private Geometry[] ropesHorizontal = new Geometry[4], ropesVertical = new Geometry[2];
-    private float width, height, length, distanceToHandle, distanceToHandleVertical; 
+    private float yExtend, zExtend, xExtend, distanceToHandle, distanceToHandleVertical; 
     private static int counter = 0; 
     private WallMode actualMode;
     private List<Spatial> hitObjects = new ArrayList();
@@ -66,9 +66,9 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
         this.type = type; 
         this.initialColor = color;
         BoundingBox bounding = (BoundingBox)shape.getWorldBound();
-        width = bounding.getYExtent(); 
-        height = bounding.getZExtent(); 
-        length = bounding.getXExtent(); 
+        yExtend = bounding.getYExtent(); 
+        zExtend = bounding.getZExtent(); 
+        xExtend = bounding.getXExtent(); 
         initCollisionListener(); 
         createWallNodes(); 
         createAttachingControl(location, false); 
@@ -178,9 +178,9 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
         capsule.write(catchingLocation, "CATCHING_LOCATION", null);
         capsule.write(catchingRotation, "CATCHING_ROTATION", null);
         capsule.write(actualMode, "ACTUAL_MODE", null);
-        capsule.write(length, "LENGTH", 0f);
-        capsule.write(height, "HEIGHT", 0f);
-        capsule.write(width, "WIDTH", 0f);
+        capsule.write(xExtend, "LENGTH", 0f);
+        capsule.write(zExtend, "HEIGHT", 0f);
+        capsule.write(yExtend, "WIDTH", 0f);
         capsule.write(protrudingCatched, "PROTRUDING_CATCHED", false);
         capsule.write(type, "TYPE", null);
      }
@@ -202,9 +202,9 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
         catchingLocation = (Vector3f)capsule.readSavable("CATCHING_LOCATION", null);
         catchingRotation = (Quaternion)capsule.readSavable("CATCHING_ROTATION", null);
         actualMode = capsule.readEnum("ACTUAL_MODE", WallMode.class, null);
-        length = capsule.readFloat("LENGTH", 0f);
-        height = capsule.readFloat("HEIGHT", 0f);
-        width = capsule.readFloat("WIDTH", 0f);
+        xExtend = capsule.readFloat("LENGTH", 0f);
+        zExtend = capsule.readFloat("HEIGHT", 0f);
+        yExtend = capsule.readFloat("WIDTH", 0f);
         protrudingCatched = capsule.readBoolean("PROTRUDING_CATCHED", false);
         type = capsule.readEnum("TYPE", WallType.class, null);
         initialColor = (ColorRGBA)((CSGGeometry)getChild(ElementName.WALL_GEOMETRY))
@@ -249,25 +249,25 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
      * Zwraca największy wymiar (długość lub wysokość). 
      * @return największy wymiar 
      */
-    public float getMaxSize(){ return length > height ? length : height; }
+    public float getMaxSize(){ return xExtend > zExtend ? xExtend : zExtend; }
     
     /**
      * Zwraca szerokość ściany (mierzona od środka). 
      * @return szerokość 
      */
-    public float getWidth(){ return width; }
+    public float getYExtend(){ return yExtend; }
     
     /**
      * Zwraca wysokość ściany (mierzona od środka). 
      * @return wysokość 
      */
-    public float getHeight(){ return height; }
+    public float getZExtend(){ return zExtend; }
     
     /**
      * Zwraca długość ściany (mierzona od środka).
      * @return długość 
      */
-    public float getLength() { return length; }
+    public float getXExtend() { return xExtend; }
     
     /**
      * Zwraca aktualny tryb obiektu (LOOSE - nieprzyczepiony, HORIZONTAL -
@@ -384,17 +384,17 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
      * @return współrzędne wybranego rogu 
      */
     private Vector3f getProperPoint(int pointNumber, boolean vertical){
-        Vector3f leftBottom = getWorldTranslation().subtract(-length, -width, -height);
+        Vector3f leftBottom = getWorldTranslation().subtract(-xExtend, -yExtend, -zExtend);
         switch(pointNumber){
             case 0:
                 return vertical ? leftBottom.subtract(0f, leftBottom.y, 0f) : leftBottom;
             case 1: 
-                return vertical ? leftBottom.subtract(length * 2, leftBottom.y, 0f)
-                        : leftBottom.subtract(length * 2, 0f, 0);
+                return vertical ? leftBottom.subtract(xExtend * 2, leftBottom.y, 0f)
+                        : leftBottom.subtract(xExtend * 2, 0f, 0);
             case 2:
-                return leftBottom.subtract(0f, 0f, height * 2);
+                return leftBottom.subtract(0f, 0f, zExtend * 2);
             case 3: 
-                return leftBottom.subtract(length * 2, 0f, height * 2); 
+                return leftBottom.subtract(xExtend * 2, 0f, zExtend * 2); 
             default: return null;
         }
     }
@@ -407,7 +407,7 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
     private void createAttachingControl(Vector3f location, boolean vertical){
         Geometry[] ropes = vertical ? ropesVertical : ropesHorizontal; 
         Vector3f end = getWorldTranslation().clone().add(vertical ? 
-                new Vector3f(0f, 0f, height + 1) : new Vector3f(0f, 1f, 0f)),
+                new Vector3f(0f, 0f, zExtend + 1) : new Vector3f(0f, 1f, 0f)),
                 start = getProperPoint(0, vertical);
         Vector3f[] ropesLocations = new Vector3f[ropes.length];
         BuildingSimulator game = BuildingSimulator.getBuildingSimulator();

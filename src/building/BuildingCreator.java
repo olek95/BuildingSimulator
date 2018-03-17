@@ -156,7 +156,7 @@ public class BuildingCreator implements VisibleFromAbove{
                     control.setPhysicsRotation(rotations.get(i));
                     i++;
                     clonedWalls.add(wall);
-                    cost += Shop.calculateWallCost(wall.getLength(), wall.getHeight(),
+                    cost += Shop.calculateWallCost(wall.getXExtend(), wall.getZExtend(),
                             wall.getType());
                 }
             }}
@@ -211,7 +211,7 @@ public class BuildingCreator implements VisibleFromAbove{
                 int wallsNumber = walls.size(); 
                 for(int i = 0; i < wallsNumber; i++) {
                     Wall wall = walls.get(i);
-                    cost += Shop.calculateWallCost(wall.getLength(), wall.getHeight(),
+                    cost += Shop.calculateWallCost(wall.getXExtend(), wall.getZExtend(),
                                 wall.getType());
                 }
                 User user = GameManager.getUser();

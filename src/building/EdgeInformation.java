@@ -102,20 +102,20 @@ public class EdgeInformation {
         float sum = 0;
         int listSize = neighborFloorWallList.size(); 
         for(int i = 0; i < listSize; i++) 
-            sum += ((Wall)neighborFloorWallList.get(i)).getLength();
+            sum += ((Wall)neighborFloorWallList.get(i)).getXExtend();
         listSize = perpendicularNeighborFloorWalls.size();
         for(int i = 0; i < listSize; i++) 
-            sum += ((Wall)perpendicularNeighborFloorWalls.get(i)).getLength();
+            sum += ((Wall)perpendicularNeighborFloorWalls.get(i)).getXExtend();
         return sum >= (edgeName.equals(CatchNode.UP.toString()) || edgeName
-                .equals(CatchNode.BOTTOM.toString()) ? floor.getLength()
-                : floor.getHeight()); 
+                .equals(CatchNode.BOTTOM.toString()) ? floor.getXExtend()
+                : floor.getZExtend()); 
     }
     
     private List<Node> findNeighborFloors(final Wall wall, final Wall floor, final CatchNode edge) {
         final List<Node> allFloors = new ArrayList(); 
         final Vector3f floorLocation = floor.getWorldTranslation(),
                 edgeLocation = floor.getChild(edge.toString()).getWorldTranslation();
-        final float width = floor.getWidth();
+        final float width = floor.getYExtend();
         wall.breadthFirstTraversal(new SceneGraphVisitorAdapter() {
             @Override
             public void visit(Node object) {

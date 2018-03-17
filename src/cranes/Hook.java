@@ -81,8 +81,8 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 } 
                 if(mayBeAttached){
                     if(!vertical) 
-                        joinObject(WallMode.HORIZONTAL, attachedObject.getWidth());
-                    else joinObject(WallMode.VERTICAL, attachedObject.getHeight());
+                        joinObject(WallMode.HORIZONTAL, attachedObject.getYExtend());
+                    else joinObject(WallMode.VERTICAL, attachedObject.getZExtend());
                 }else attachedObject = null; 
             } else attachedObject = null;
         }
@@ -302,7 +302,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
         boolean vertical = mode.equals(WallMode.VERTICAL);
         // +0.1 w przypadku żurawia, aby nie było kolizji z obiektami pod tym obiektem
         float height = attachedObject.getDistanceToHandle(vertical) + attachedObject.getWorldTranslation().y
-                + (vertical ? attachedObject.getHeight() + 0.1f : attachedObject.getWidth()),
+                + (vertical ? attachedObject.getZExtend() + 0.1f : attachedObject.getYExtend()),
                 yHook = hook.getWorldTranslation().y;
         int i = 0;
         while(yHook <= height){

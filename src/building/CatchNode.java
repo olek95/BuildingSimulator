@@ -44,25 +44,25 @@ public enum CatchNode {
         float width1;
         switch(type){
             case BOTTOM: 
-                width1 = wall1.getWidth();
+                width1 = wall1.getYExtend();
                 return new Vector3f(translate, init ? width1 : width1 + wall2
-                        .getHeight(), -wall1.getHeight() + (protruding ? 0 :
-                        wall2.getWidth()));
+                        .getZExtend(), -wall1.getZExtend() + (protruding ? 0 :
+                        wall2.getYExtend()));
             case UP:
-                width1 = wall1.getWidth(); 
+                width1 = wall1.getYExtend(); 
                 return new Vector3f(translate, init ? width1 : width1 + wall2
-                        .getHeight(), wall1.getHeight() - (protruding ? 0 :
-                        wall2.getWidth()));
+                        .getZExtend(), wall1.getZExtend() - (protruding ? 0 :
+                        wall2.getYExtend()));
             case RIGHT: 
-                width1 = wall1.getWidth(); 
-                return new Vector3f((protruding ? 0 : wall2.getWidth()) - wall1.getLength(), init ? width1 :
-                        width1 + wall2.getHeight(), translate);
+                width1 = wall1.getYExtend(); 
+                return new Vector3f((protruding ? 0 : wall2.getYExtend()) - wall1.getXExtend(), init ? width1 :
+                        width1 + wall2.getZExtend(), translate);
             case LEFT: 
-                width1 = wall1.getWidth(); 
-                return new Vector3f(-(protruding ? 0 : wall2.getWidth()) + wall1.getLength(), init ? width1 :
-                        width1 + wall2.getHeight(), translate);
+                width1 = wall1.getYExtend(); 
+                return new Vector3f(-(protruding ? 0 : wall2.getYExtend()) + wall1.getXExtend(), init ? width1 :
+                        width1 + wall2.getZExtend(), translate);
             case SOUTH: 
-                return new Vector3f(translate, 0, -wall1.getHeight() - CatchNode
+                return new Vector3f(translate, 0, -wall1.getZExtend() - CatchNode
                         .getProperFoundationsDimension(wall2, perpendicularity,
                         true, init));
             case NORTH: 
@@ -73,51 +73,51 @@ public enum CatchNode {
                     switch(valueOf(wall1.getParent().getName())) {
                         case UP: 
                             if(!sample) {
-                                y = wall2.getHeight() - getProperOffsetForCeiling(wall1);
+                                y = wall2.getZExtend() - getProperOffsetForCeiling(wall1);
                             } else {
-                                z = wall2.getHeight() - getProperOffsetForCeiling(wall1);
+                                z = wall2.getZExtend() - getProperOffsetForCeiling(wall1);
                             }
                             break; 
                         case BOTTOM:
                             if(!sample) {
-                                y = -wall2.getHeight() + getProperOffsetForCeiling(wall1);
+                                y = -wall2.getZExtend() + getProperOffsetForCeiling(wall1);
                             } else {
-                                z = wall2.getHeight() - getProperOffsetForCeiling(wall1);
+                                z = wall2.getZExtend() - getProperOffsetForCeiling(wall1);
                             }
                             break; 
                         case EAST: 
                             if(!sample) {
-                                y = wall2.getLength() - getProperOffsetForCeiling(wall1);
+                                y = wall2.getXExtend() - getProperOffsetForCeiling(wall1);
                             } else {
-                                z = wall2.getLength() - getProperOffsetForCeiling(wall1);
+                                z = wall2.getXExtend() - getProperOffsetForCeiling(wall1);
                             }
                             break; 
                         default: 
                             if(!sample) {
-                                y = -wall2.getLength() + getProperOffsetForCeiling(wall1);
+                                y = -wall2.getXExtend() + getProperOffsetForCeiling(wall1);
                             } else {
-                                z = -wall2.getLength() + getProperOffsetForCeiling(wall1);
+                                z = -wall2.getXExtend() + getProperOffsetForCeiling(wall1);
                             }
                             
                     }
                     if(isOnTheOtherSide(wall1, wall2)) { 
                         if(!sample) y = -y;
                     }
-                    if(!sample) z = wall1.getHeight();
-                    else y = wall1.getHeight() + wall2.getWidth(); 
+                    if(!sample) z = wall1.getZExtend();
+                    else y = wall1.getZExtend() + wall2.getYExtend(); 
                 } else {
                     y = 0;
-                    z = wall1.getHeight() + CatchNode
+                    z = wall1.getZExtend() + CatchNode
                             .getProperFoundationsDimension(wall2, perpendicularity,
                             true, init);
                 }
                 return new Vector3f(translate, y, z);
             case EAST: 
-                return new Vector3f(-wall1.getLength() - CatchNode
+                return new Vector3f(-wall1.getXExtend() - CatchNode
                         .getProperFoundationsDimension(wall2, perpendicularity, false,
                         init), 0, translate); 
             case WEST: 
-                return new Vector3f(wall1.getLength() + CatchNode
+                return new Vector3f(wall1.getXExtend() + CatchNode
                         .getProperFoundationsDimension(wall2, perpendicularity, false,
                         init), 0, translate); 
         }
@@ -136,14 +136,14 @@ public enum CatchNode {
     public static float getProperFoundationsDimension(Wall wall, 
             boolean perpendicularity, boolean z, boolean init){
         if(init) return 0;
-        if(z) return perpendicularity ? wall.getLength() : wall.getHeight();
-        return perpendicularity ? wall.getHeight() : wall.getLength();
+        if(z) return perpendicularity ? wall.getXExtend() : wall.getZExtend();
+        return perpendicularity ? wall.getZExtend() : wall.getXExtend();
     }
     
     private static boolean isOnTheOtherSide(Wall wall1, Wall wall2) {
         Vector3f wall2Location = wall2.getWorldTranslation();
         return wall2Location.distance(wall1.getWorldTranslation().subtract(0, 
-                wall1.getHeight() + wall2.getWidth(), 0)) < 
+                wall1.getZExtend() + wall2.getYExtend(), 0)) < 
                 wall2Location.distance(wall1.getParent().getParent()
                 .getWorldTranslation());
     }
@@ -156,6 +156,6 @@ public enum CatchNode {
                 .indexOf(catchNode) + 4).getWorldTranslation();
         return wallLocation.distance(catchNode.getWorldTranslation().clone()
                 .setY(outerCatchNodeLocation.y)) < wallLocation.
-                distance(outerCatchNodeLocation) ? wall.getWidth() : 0; 
+                distance(outerCatchNodeLocation) ? wall.getYExtend() : 0; 
     } 
 }

@@ -64,10 +64,6 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
 
     @Override
     public void simpleUpdate(float tpf) {
-        if(Options.getScreen() != null && Options.isResolutionChanged()
-                && Options.getStale()){
-            Options.refresh(); 
-        }
         if(GameManager.isStartedGame()){
             HUD.updateTime();
             MobileCrane unit = GameManager.getMobileCrane();
@@ -110,6 +106,11 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
             }
             if(HUD.shouldMessageBeDeleted()) HUD.removeMessage();
             if(updateLoopCounter >= 1) updateLoopCounter++;
+        } else {
+            if(Options.getScreen() != null && Options.isResolutionChanged()
+                && Options.getStale()){
+                Options.refresh(); 
+            }
         }
     }
 

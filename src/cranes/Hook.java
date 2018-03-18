@@ -280,7 +280,6 @@ public abstract class Hook implements RememberingRecentlyHitObject{
      */
     protected void changeHookPosition(Vector3f scallingVector, boolean heightening,
             float tpf){
-        System.out.println(tpf);
         if(attachedObject != null){
             PhysicsManager.moveWithScallingObject(heightening, hookDisplacement.clone()
                     .mult(new Vector3f(1, tpf, 1)), scallingVector,  getRopes(), hook, attachedObject);

@@ -2,45 +2,50 @@
 <root>
     <screen>
         <component type="Window" id="options" position="0%,0%" dimensions="100%,100%">
-            <component type="Label" id="settings_label" position="16%,8%" dimensions="25%,12%" >
+            <component type="Label" id="settings_label" position="16%,1%" dimensions="25%,12%" >
             </component>
-            <component type="Label" id="language_label" position="16%,16%" dimensions="25%,12%" >
+            <component type="Label" id="language_label" position="16%,9%" dimensions="25%,12%" >
             </component>
-            <component type="SelectBox" id="language_select_box" position="40%,20%" dimensions="115,24">
+            <component type="SelectBox" id="language_select_box" position="40%,13%" dimensions="115,24">
                 <eventMethod name="onChange" stateMethodName="checkIfChanged"/>
             </component>
-            <component type="Label" id="graphics_label" position="16%,24%" dimensions="25%,12%" >
+            <component type="Label" id="sound_volume_label" position="16%,16%" dimensions="25%,12%">
             </component>
-            <component type="Label" id="screen_resolution_label" position="16%,32%" dimensions="25%,12%" >
-            </component>
-            <component type="SelectBox" id="screen_resolution_select_box" position="40%,36%" dimensions="115,24">
-                <eventMethod name="onChange" stateMethodName="checkIfChanged"/>
-            </component>
-            <component type="Label" id="color_depth_label" position="16%,39%" dimensions="25%,12%" >
-            </component>
-            <component type="SelectBox" id="color_depth_select_box" position="40%,43%" dimensions="115,24">
-                <eventMethod name="onChange" stateMethodName="checkIfChanged"/>
-            </component>
-            <component type="Label" id="antialiasing_label" position="16%,46%" dimensions="25%,12%" >
-            </component>
-            <component type="SelectBox" id="antialiasing_select_box" position="40%,50%" dimensions="115,24">
-                <eventMethod name="onChange" stateMethodName="checkIfChanged"/>
-            </component>
-            <component type="Label" id="fullscreen_label" position="16%,53%" dimensions="25%,12%" >
-            </component>
-            <component type="CheckBox" id="fullscreen_checkbox" position="40%,57%">
-                <eventMethod name="onButtonMouseLeftUp" stateMethodName="changeFullscreen"/>
-            </component>
-            <component type="Label" id="refresh_rate_label" position="16%,60%" dimensions="25%,12%" >
-            </component>
-            <component type="SelectBox" id="refresh_rate_select_box" position="40%,64%" dimensions="115,24">
-                <eventMethod name="onChange" stateMethodName="checkIfChanged"/>
-            </component>
-            <component type="Label" id="sound_volume_label" position="16%,67%" dimensions="25%,12%">
-            </component>
-            <component type="Slider" id="sound_volume_slider" position="40%,71%" dimentions="115,24" orientation="HORIZONTAL">
+            <component type="Slider" id="sound_volume_slider" position="40%,20%" dimentions="115,24" orientation="HORIZONTAL">
                 <method name="setStepFloatRange" param0="0" param1="1.1" param2="0.1"/>
                 <eventMethod name="onChange" stateMethodName="changeVolume"/>
+            </component>
+            <component type="Label" id="godmode_label" position="16%,23%" dimensions="25%,12%" >
+            </component>
+            <component type="CheckBox" id="godmode_checkbox" position="40%,27%">
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="changeGodmode"/>
+            </component>
+            <component type="Label" id="graphics_label" position="16%,31%" dimensions="25%,12%" >
+            </component>
+            <component type="Label" id="screen_resolution_label" position="16%,39%" dimensions="25%,12%" >
+            </component>
+            <component type="SelectBox" id="screen_resolution_select_box" position="40%,43%" dimensions="115,24">
+                <eventMethod name="onChange" stateMethodName="checkIfChanged"/>
+            </component>
+            <component type="Label" id="color_depth_label" position="16%,46%" dimensions="25%,12%" >
+            </component>
+            <component type="SelectBox" id="color_depth_select_box" position="40%,50%" dimensions="115,24">
+                <eventMethod name="onChange" stateMethodName="checkIfChanged"/>
+            </component>
+            <component type="Label" id="antialiasing_label" position="16%,53%" dimensions="25%,12%" >
+            </component>
+            <component type="SelectBox" id="antialiasing_select_box" position="40%,57%" dimensions="115,24">
+                <eventMethod name="onChange" stateMethodName="checkIfChanged"/>
+            </component>
+            <component type="Label" id="fullscreen_label" position="16%,60%" dimensions="25%,12%" >
+            </component>
+            <component type="CheckBox" id="fullscreen_checkbox" position="40%,64%">
+                <eventMethod name="onButtonMouseLeftUp" stateMethodName="changeFullscreen"/>
+            </component>
+            <component type="Label" id="refresh_rate_label" position="16%,67%" dimensions="25%,12%" >
+            </component>
+            <component type="SelectBox" id="refresh_rate_select_box" position="40%,71%" dimensions="115,24">
+                <eventMethod name="onChange" stateMethodName="checkIfChanged"/>
             </component>
             <component type="Button" id="control_configuration_button" position="16%,80%" dimensions="25%,6%">
                 <eventMethod name="onButtonMouseLeftUp" stateMethodName="showControlConfiguration"/>

@@ -14,6 +14,7 @@ public enum Translator {
     LANGUAGE,
     POLISH,
     ENGLISH,
+    GODMODE,
     GRAPHICS,
     SCREEN_RESOLUTION,
     COLOR_DEPTH,

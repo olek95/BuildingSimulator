@@ -1,5 +1,6 @@
 package menu;
 
+import authorization.User;
 import buildingsimulator.BuildingSimulator;
 import settings.CreatorMockSettings;
 import buildingsimulator.GameManager;
@@ -134,6 +135,9 @@ public class Options extends Menu  {
         appSettings.setSamples(Integer.valueOf(settings.getProperty("SAMPLES")));
         appSettings.setBitsPerPixel(Integer.valueOf(settings.getProperty("BITS_PER_PIXEL")));
         appSettings.setFullscreen(Boolean.valueOf(settings.getProperty("FULLSCREEN")));
+        User user = GameManager.getUser(); 
+        if(user != null) 
+            user.setGodmode(Boolean.valueOf(settings.getProperty("GODMODE")));
         Translator.translate(new Locale(settings.getProperty("LANGUAGE")));
         float volume = Float.valueOf(settings.getProperty("VOLUME"));
         GameManager.setGameSoundVolume(volume);
@@ -153,9 +157,9 @@ public class Options extends Menu  {
             return loadedProperties; 
         } catch (IOException ex) {
             return CreatorMockSettings.createDefaultProperties(new String[]{"BITS_PER_PIXEL",
-                "SAMPLES", "VOLUME", "LANGUAGE", "FREQUENCY", "RESOLUTION", "FULLSCREEN"},
-                    new String[]{"32", "6", "0.4", Locale.getDefault().getLanguage(),
-                        "60", "800x600", "false"}, "settings/settings.properties");
+                "SAMPLES", "VOLUME", "LANGUAGE", "FREQUENCY", "RESOLUTION", "FULLSCREEN",
+                "GODMODE"}, new String[]{"32", "6", "0.4", Locale.getDefault().getLanguage(), 
+                    "60", "800x600", "false", "false"}, "settings/settings.properties");
         }
     }
     
@@ -204,12 +208,21 @@ public class Options extends Menu  {
     public void changeFullscreen(MouseButtonEvent evt, boolean isToggled) { setStale(); }
     
     /**
+     * Ustawia opcje jako zmienione w przypadku gdy następuje zmiana trybu Godmode.
+     * @param evt
+     * @param isToggled 
+     */
+    public void changeGodmode(MouseButtonEvent evt, boolean isToggled) {
+        setStale(); 
+    }
+    
+    /**
      * Sprawdza czy stan opcji jest nieświeży (został zmieniony). Jeśli tak to 
      * ustawia true, w przeciwnym przypadku false. Dodatkowo blokuje przycisk 
      * akceptacji, jeśli nic nie zostało zmienione. 
      */
     private void setStale() {
-        if(counter > 5){
+        if(counter > 8){
             stale = isChanged(); 
             ((Button)getScreen().getElementById("accepting_button")).setIsEnabled(stale);
         }else counter++;
@@ -271,11 +284,12 @@ public class Options extends Menu  {
         Translator.setTexts(new String[]{"settings_label", "language_label", "graphics_label",
             "screen_resolution_label", "color_depth_label", "antialiasing_label",
             "fullscreen_label", "refresh_rate_label", "accepting_button", 
-            "return_button", "control_configuration_button", "sound_volume_label"},
-            new Translator[]{Translator.GAME_SETTINGS, Translator.LANGUAGE, Translator.GRAPHICS,
-            Translator.SCREEN_RESOLUTION, Translator.COLOR_DEPTH, Translator.ANTIALIASING, 
-            Translator.FULLSCREEN, Translator.REFRESH_RATE, Translator.ACCEPTING, Translator.RETURN,
-            Translator.CONTROL_CONFIGURATION, Translator.SOUND_VOLUME}, getScreen());
+            "return_button", "control_configuration_button", "sound_volume_label",
+            "godmode_label"}, new Translator[]{Translator.GAME_SETTINGS, Translator.LANGUAGE,
+                Translator.GRAPHICS, Translator.SCREEN_RESOLUTION, Translator.COLOR_DEPTH,
+                Translator.ANTIALIASING, Translator.FULLSCREEN, Translator.REFRESH_RATE,
+                Translator.ACCEPTING, Translator.RETURN, Translator.CONTROL_CONFIGURATION,
+                Translator.SOUND_VOLUME, Translator.GODMODE}, getScreen());
     }
     
     private Properties getSelectedSettings() {
@@ -295,6 +309,9 @@ public class Options extends Menu  {
         boolean fullscreen = ((CheckBox)screen.getElementById("fullscreen_checkbox"))
                 .getIsChecked();
         settings.setProperty("FULLSCREEN", fullscreen + "");
+        boolean godmode = ((CheckBox)screen.getElementById("godmode_checkbox"))
+                .getIsChecked();
+        settings.setProperty("GODMODE", godmode + "");
         Locale locale = (Locale)((SelectBox)screen.getElementById("language_select_box"))
                 .getSelectedListItem().getValue();
         settings.setProperty("LANGUAGE", locale.getLanguage());
@@ -334,6 +351,8 @@ public class Options extends Menu  {
                 false);
         ((CheckBox)screen.getElementById("fullscreen_checkbox"))
                 .setIsChecked(Boolean.parseBoolean(restoredSettings.getProperty("FULLSCREEN")));
+        ((CheckBox)screen.getElementById("godmode_checkbox"))
+                .setIsChecked(Boolean.parseBoolean(restoredSettings.getProperty("GODMODE")));
         ((SelectBox)screen.getElementById("language_select_box"))
                 .setSelectedByValue(new Locale(restoredSettings.getProperty("LANGUAGE")), false);
         String volume = restoredSettings.getProperty("VOLUME");

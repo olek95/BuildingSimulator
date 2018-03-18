@@ -331,11 +331,6 @@ public class Construction extends Node{
                             - wall2.getWorldTranslation().y) > 0;
                     Node catchNode = merge(wall1, wall2, ceiling, WallMode.HORIZONTAL,
                             false, 4, 8);
-                    if(ceiling) {
-                        Hook hook = GameManager.getActualUnit().getHook(); 
-                        hook.heighten();
-                        hook.heighten(); 
-                    }
                     return catchNode;
                 }
                 return oppositeWall ? 

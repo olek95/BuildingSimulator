@@ -195,7 +195,7 @@ public class MobileCraneArmControl extends ArmControl{
         Spatial hookHandle = lift.getChild(ElementName.HOOK_HANDLE);
         setHookHandle(hookHandle);
         setHook(new OneRopeHook((Node)getCrane().getChild(ElementName.ROPE_HOOK),
-                hookHandle, 0.05f));
+                hookHandle, 1f));
         if(rectractableCranePart.getControl(RigidBodyControl.class) == null)
             createCranePhysics();
         else {

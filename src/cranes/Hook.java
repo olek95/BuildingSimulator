@@ -52,14 +52,14 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 .getWorldBound()).getMax(null).y > ((BoundingBox)b.getWorldBound())
                 .getMax(null).y) && attachedObject == null)
             recentlyHitObject = b;
-        //if(b.getName().startsWith(Wall.BASE_NAME)) ((Wall)b).setMovable(false);
     }
     
     /**
      * Podnosi hak. 
+     * @param tpf umożliwia uzależnienie prędkości podnoszenia haka od ilości klatek 
      */
-    public void heighten(){
-        changeHookPosition(new Vector3f(1f, actualLowering -= speed, 1f),  true);
+    public void heighten(float tpf){
+        changeHookPosition(new Vector3f(1f, actualLowering -= speed * tpf, 1f),  true, tpf);
     }
     
     /**
@@ -81,8 +81,8 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 } 
                 if(mayBeAttached){
                     if(!vertical) 
-                        joinObject(WallMode.HORIZONTAL, attachedObject.getYExtend());
-                    else joinObject(WallMode.VERTICAL, attachedObject.getZExtend());
+                        joinObject(WallMode.HORIZONTAL);
+                    else joinObject(WallMode.VERTICAL);
                 }else attachedObject = null; 
             } else attachedObject = null;
         }
@@ -135,8 +135,9 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     
     /**
      * Opuszcza hak do momentu wykrycia przeszkody. 
+     * @param tpf umożiwia uzależnienie opuszczania haka od ilości klatek 
      */
-    public void lower(){
+    public void lower(float tpf){
         boolean hookNoCollision = collisionListener.isNothingBelow(null);
         boolean attachedObjectNoCollision = true;
         if(recentlyHitObject == null){
@@ -147,8 +148,8 @@ public abstract class Hook implements RememberingRecentlyHitObject{
             }
         }
         if(hookNoCollision && attachedObjectNoCollision) {
-            changeHookPosition(new Vector3f(1f, actualLowering += speed, 1f),
-                    false);
+            changeHookPosition(new Vector3f(1f, actualLowering += speed * tpf, 1f),
+                    false, tpf);
             recentlyHitObject = null;
         }
     }
@@ -274,15 +275,18 @@ public abstract class Hook implements RememberingRecentlyHitObject{
     /**
      * Podnosi lub opuszcza hak. 
      * @param scallingVector wektor o jaki ma być przesunięty hak 
-     * @param heightening true jeśli podnosimy hak, false w przeciwnym przypadku 
+     * @param heightening true jeśli podnosimy hak, false w przeciwnym przypadku
+     * @param tpf umożliwia uzależnienie prędkości zmiany pozycji haka od ilości klatek 
      */
-    protected void changeHookPosition(Vector3f scallingVector, boolean heightening){
+    protected void changeHookPosition(Vector3f scallingVector, boolean heightening,
+            float tpf){
+        System.out.println(tpf);
         if(attachedObject != null){
-            PhysicsManager.moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
-                    getRopes(), hook, attachedObject);
+            PhysicsManager.moveWithScallingObject(heightening, hookDisplacement.clone()
+                    .mult(new Vector3f(1, tpf, 1)), scallingVector,  getRopes(), hook, attachedObject);
         }else{
-            PhysicsManager.moveWithScallingObject(heightening, hookDisplacement, scallingVector, 
-                    getRopes(), hook);
+            PhysicsManager.moveWithScallingObject(heightening, hookDisplacement.clone()
+                    .mult(new Vector3f(1, tpf, 1)), scallingVector, getRopes(), hook);
         }
         createRopeHookPhysics();
     }
@@ -298,7 +302,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
      */
     protected abstract Node[] getRopes();
     
-    private void joinObject(WallMode mode, float y){
+    private void joinObject(WallMode mode){
         boolean vertical = mode.equals(WallMode.VERTICAL);
         // +0.1 w przypadku żurawia, aby nie było kolizji z obiektami pod tym obiektem
         float height = attachedObject.getDistanceToHandle(vertical) + attachedObject.getWorldTranslation().y
@@ -306,14 +310,14 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                 yHook = hook.getWorldTranslation().y;
         int i = 0;
         while(yHook <= height){
-            heighten();
+            heighten(1);
             yHook += hookDisplacement.y;
             i++;
-        };
+        }
         if(actualLowering < 1) {
             for(; i > 0; i--)  {
                 changeHookPosition(new Vector3f(1f, actualLowering += speed, 1f), 
-                        false);
+                        false, 1);
             }
             attachedObject = null;
             HUD.setMessage(Translator.NO_ENOUGH_PLACE.getValue());

@@ -43,12 +43,14 @@ public class FourRopesHook extends Hook{
      * Opuszcza lub podnosi hak.  
      * @param scallingVector wektor wskazujacy o ile ma się przesunąć hak 
      * @param heightening true jeśli podnosimy hak, false w przeciwnym razie 
+     * @param tpf uzależnia prędkość zmiany pozycji haka od ilości klatek 
      */
     @Override
-    protected void changeHookPosition(Vector3f scallingVector, boolean heightening){
+    protected void changeHookPosition(Vector3f scallingVector, boolean heightening, float tpf){
         littleHookHandle.getLocalTranslation().addLocal(!heightening ? 
-                getHookDisplacement().clone().negateLocal() : getHookDisplacement().clone());
-        super.changeHookPosition(scallingVector, heightening);
+                getHookDisplacement().clone().multLocal(1, tpf, 1).negateLocal() 
+                : getHookDisplacement().clone().multLocal(1, tpf, 1));
+        super.changeHookPosition(scallingVector, heightening, tpf);
     }
     
     @Override

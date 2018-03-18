@@ -92,11 +92,11 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
                     moveHandleHook(minHandleHookDisplacement, false, tpf / 2);
                 break;
             case LOWER_HOOK:
-                if(!changingArmLocation) hook.lower();
+                if(!changingArmLocation) hook.lower(tpf);
                 break;
             case HEIGHTEN_HOOK:
                 if(hook.getActualLowering() > 1f && !changingArmLocation)
-                    hook.heighten();
+                    hook.heighten(tpf);
                 break;
             case UP:
                 if(!changingHookLocation) changeArmHeight(maxArmHeight, false);

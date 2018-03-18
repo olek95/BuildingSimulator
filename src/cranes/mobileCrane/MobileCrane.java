@@ -21,7 +21,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.texture.Texture;
-import com.jme3.water.SimpleWaterProcessor;
 import cranes.CameraType;
 import cranes.Hook;
 import java.util.Arrays;
@@ -221,7 +220,6 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         setCamera(new MobileCraneCamera(crane));
         craneControl = crane.getControl(VehicleControl.class);
         scaleTiresTexture();
-        // createMirrors();
         PhysicsSpace physics = BuildingSimulator.getPhysicsSpace();
         physics.add(craneControl);
         setArmControl(new MobileCraneArmControl(crane, (MobileCraneCamera)getCamera()));

@@ -43,8 +43,7 @@ public class GameManager {
     private static Crane crane; 
     private static MobileCrane mobileCrane;
     private static User user; 
-    private static boolean startedGame = false;
-    private static boolean pausedGame = false; 
+    private static boolean startedGame = false, pausedGame = false, godmode; 
     private static float gameSoundVolume;
     private static Billboard billboard; 
     private static CraneAbstract actualUnit;
@@ -377,6 +376,18 @@ public class GameManager {
      * @return true jesli gra jest zatrzymana, false w przeciwnym przypadku 
      */
     public static boolean isPausedGame() { return pausedGame; }
+    
+    /**
+     * Ustawia czy gracz posiada tryb godmode (nieskończoną liczbę funduszy). 
+     * @return true włącza tryb godmode, false wyłącza 
+     */
+    public static void setGodmode(boolean godmode) { GameManager.godmode = godmode; }
+    
+    /**
+     * Określa czy gracz posiada tryb godmode (nieskończoną liczbę funduszy). 
+     * @return true jeśli tryb godmode jest włączaony, false w przeciwnym przypadku 
+     */
+    public static boolean isGodmode() { return godmode; }
     
     /**
      * Ustawia głośność dźwięków w grze.

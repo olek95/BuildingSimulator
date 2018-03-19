@@ -1,5 +1,6 @@
 package authorization;
 
+import buildingsimulator.GameManager;
 import com.jme3.system.NanoTimer;
 import com.jme3.system.Timer;
 import java.text.DateFormat;
@@ -20,7 +21,6 @@ public class User {
     private int points, buildingsNumber; 
     private float seconds, stoppedTime = 0;
     private Timer timer; 
-    private boolean godmode;
     public static final String DEFAULT_LOGIN = "Anonim", TIME_FORMAT = "HH:mm:ss";
     
     public User(String login, String password, int points, String time, int buildingsNumber) {
@@ -79,7 +79,7 @@ public class User {
      * @param points punkty 
      */
     public void addPoints(int points) { 
-        if(!godmode) this.points += points;
+        if(!GameManager.isGodmode()) this.points += points;
     }
     
     /**
@@ -119,12 +119,6 @@ public class User {
      * @return hasło 
      */
     public String getPassword() { return password; }
-    
-    /**
-     * Ustawia czy gracz posiada tryb godmode (nieskończoną liczbę funduszy). 
-     * @return true włącza tryb godmode, false wyłącza 
-     */
-    public void setGodmode(boolean godmode) { this.godmode = godmode; }
     
     private float getTimeInSeconds(String time) {
         DateFormat dateFormat = new SimpleDateFormat(TIME_FORMAT);

@@ -19,7 +19,7 @@ public abstract class Menu extends AbstractAppState{
     private static Screen screen;
     private static Window window;
     private static AudioNode backgroundSound;
-    
+        
     /**
      * Zwraca okno aktualnie wybranego menu. 
      * @return okno menu 

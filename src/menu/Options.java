@@ -1,6 +1,5 @@
 package menu;
 
-import authorization.User;
 import buildingsimulator.BuildingSimulator;
 import settings.CreatorMockSettings;
 import buildingsimulator.GameManager;
@@ -135,9 +134,7 @@ public class Options extends Menu  {
         appSettings.setSamples(Integer.valueOf(settings.getProperty("SAMPLES")));
         appSettings.setBitsPerPixel(Integer.valueOf(settings.getProperty("BITS_PER_PIXEL")));
         appSettings.setFullscreen(Boolean.valueOf(settings.getProperty("FULLSCREEN")));
-        User user = GameManager.getUser(); 
-        if(user != null) 
-            user.setGodmode(Boolean.valueOf(settings.getProperty("GODMODE")));
+        GameManager.setGodmode(Boolean.valueOf(settings.getProperty("GODMODE")));
         Translator.translate(new Locale(settings.getProperty("LANGUAGE")));
         float volume = Float.valueOf(settings.getProperty("VOLUME"));
         GameManager.setGameSoundVolume(volume);

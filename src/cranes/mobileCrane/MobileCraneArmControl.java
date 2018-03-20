@@ -27,7 +27,7 @@ public class MobileCraneArmControl extends ArmControl{
     private Node lift, rectractableCranePart, craneProps;
     private float yCraneOffset = 0f, stretchingOut = 1f, cranePropsProtrusion = 1f;
     private Vector3f hookHandleDisplacement;
-    private static final float LIFTING_SPEED = 0.005f, STRETCHING_OUT_SPEED = 0.05f,
+    private static final float LIFTING_SPEED = 0.005f, STRETCHING_OUT_SPEED = 1f,
             CRANE_PROP_GOING_OUT_SPEED = 0.07f,
             MIN_CRANE_PROP_PROTRUSION = 1f;
     private Geometry leftProtractilePropGeometry, rightProtractilePropGeometry;
@@ -133,13 +133,14 @@ public class MobileCraneArmControl extends ArmControl{
      */
     @Override
     protected void moveHandleHook(float limit, boolean movingForward, float speed){
+        float tpf = speed * 2;
         if(movingForward){
             if(stretchingOut <= limit)
                 changeHandleHookPosition(rectractableCranePart, new Vector3f(1f, 1f, 
-                        stretchingOut += STRETCHING_OUT_SPEED), movingForward);
+                        stretchingOut += STRETCHING_OUT_SPEED * -tpf), movingForward, -tpf);
         }else if(stretchingOut > limit)
             changeHandleHookPosition(rectractableCranePart, new Vector3f(1f, 1f, 
-                    stretchingOut -= STRETCHING_OUT_SPEED), movingForward);
+                    stretchingOut -= STRETCHING_OUT_SPEED * tpf), movingForward, tpf);
     }
     
     /**
@@ -222,9 +223,9 @@ public class MobileCraneArmControl extends ArmControl{
     }
     
     private void changeHandleHookPosition(Node scallingGeometryParent, 
-            Vector3f scallingVector, boolean pullingOut){
+            Vector3f scallingVector, boolean pullingOut, float tpf){
         Geometry rectractableCranePartGeometry = (Geometry)scallingGeometryParent.getChild(0);
-        PhysicsManager.moveWithScallingObject(pullingOut, hookHandleDisplacement, scallingVector,
+        PhysicsManager.moveWithScallingObject(pullingOut, hookHandleDisplacement.clone().mult(tpf), scallingVector,
                 new Node[] { scallingGeometryParent }, getHook().getHookHandle());
         PhysicsManager.createObjectPhysics(rectractableCranePart, 1f, true, rectractableCranePartGeometry
                 .getName());

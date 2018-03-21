@@ -99,7 +99,7 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
                     hook.heighten(tpf);
                 break;
             case UP:
-                if(!changingHookLocation) changeArmHeight(maxArmHeight, false);
+                if(!changingHookLocation) changeArmHeight(maxArmHeight, false, tpf);
                 break;
             case DOWN:
                 Wall attachedObject = (Wall)hook.getAttachedObject();
@@ -107,7 +107,7 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
                         || (attachedObject != null && attachedObject
                         .getCollisionListener().isNothingBelow(null)) 
                         && !changingHookLocation){
-                    changeArmHeight(minArmHeight, true); 
+                    changeArmHeight(minArmHeight, true, tpf); 
                     hook.setRecentlyHitObject(null);
                 }
                 break;
@@ -196,8 +196,10 @@ public abstract class ArmControl implements AnalogListener, Controllable, Action
      * haka. 
      * @param limit ograniczenie decydujące na jaką wysokość można podnieść lub opuścić ramię
      * @param lowering true jeśli opuszczamy ramię, false w przeciwnym wypadku 
+     * @param tpf umożliwia uzależnienie prędkości podnoszenia i opuszczenia ramienia 
+     * dźwigu w zależności od ilości klatek 
      */
-    protected void changeArmHeight(float limit, boolean lowering){
+    protected void changeArmHeight(float limit, boolean lowering, float tpf){
         usedNotUsingKey = true;
     } 
     

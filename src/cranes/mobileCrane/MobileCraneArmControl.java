@@ -27,8 +27,8 @@ public class MobileCraneArmControl extends ArmControl{
     private Node lift, rectractableCranePart, craneProps;
     private float yCraneOffset = 0f, stretchingOut = 1f, cranePropsProtrusion = 1f;
     private Vector3f hookHandleDisplacement;
-    private static final float LIFTING_SPEED = 0.005f, STRETCHING_OUT_SPEED = 1f,
-            CRANE_PROP_GOING_OUT_SPEED = 0.07f,
+    private static final float LIFTING_SPEED = 0.2f, STRETCHING_OUT_SPEED = 1f,
+            CRANE_PROP_GOING_OUT_SPEED = 2.8f,
             MIN_CRANE_PROP_PROTRUSION = 1f;
     private Geometry leftProtractilePropGeometry, rightProtractilePropGeometry;
     private boolean using = false;
@@ -149,10 +149,10 @@ public class MobileCraneArmControl extends ArmControl{
      * @param lowering true jeśli opuszczamy, false jeśli podnosimy ramię 
      */
     @Override 
-    protected void changeArmHeight(float limit, boolean lowering){
-        if(limit == getMaxArmHeight() && yCraneOffset + LIFTING_SPEED < limit
-                || limit == getMinArmHeight() && yCraneOffset - LIFTING_SPEED >= limit){
-            controlCrane(lowering);
+    protected void changeArmHeight(float limit, boolean lowering, float tpf){
+        if(limit == getMaxArmHeight() && yCraneOffset + LIFTING_SPEED * tpf < limit
+                || limit == getMinArmHeight() && yCraneOffset - LIFTING_SPEED * tpf >= limit){
+            controlCrane(lowering, tpf);
             rotateHook();
         }
     }
@@ -232,18 +232,19 @@ public class MobileCraneArmControl extends ArmControl{
         rectractableCranePart.getControl(RigidBodyControl.class).setCollisionGroup(3);
     }
     
-    private void controlCrane(boolean lowering){
+    private void controlCrane(boolean lowering, float tpf){
+        float liftingSpeedDependOnTpf = LIFTING_SPEED * tpf;
         if(lowering){
-            yCraneOffset -= LIFTING_SPEED;
-            cranePropsProtrusion -= CRANE_PROP_GOING_OUT_SPEED;
+            yCraneOffset -= liftingSpeedDependOnTpf;
+            cranePropsProtrusion -= CRANE_PROP_GOING_OUT_SPEED * tpf;
             if(cranePropsProtrusion >= MIN_CRANE_PROP_PROTRUSION)
-                craneProps.rotate(LIFTING_SPEED, 0, 0);
-            lift.rotate(LIFTING_SPEED, 0, 0);
+                craneProps.rotate(liftingSpeedDependOnTpf, 0, 0);
+            lift.rotate(liftingSpeedDependOnTpf, 0, 0);
         }else{
-            yCraneOffset += LIFTING_SPEED;
-            cranePropsProtrusion += CRANE_PROP_GOING_OUT_SPEED;
-            craneProps.rotate(-LIFTING_SPEED, 0, 0);
-            lift.rotate(-LIFTING_SPEED, 0, 0);
+            yCraneOffset += liftingSpeedDependOnTpf;
+            cranePropsProtrusion += CRANE_PROP_GOING_OUT_SPEED * tpf;
+            craneProps.rotate(-liftingSpeedDependOnTpf, 0, 0);
+            lift.rotate(-liftingSpeedDependOnTpf, 0, 0);
         }
         leftProtractilePropGeometry.setLocalScale(1f, cranePropsProtrusion, 1f);
         rightProtractilePropGeometry.setLocalScale(1f, cranePropsProtrusion, 1f);

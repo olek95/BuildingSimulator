@@ -36,7 +36,7 @@ import texts.Translator;
 public class MobileCrane extends CraneAbstract implements ActionListener, Controllable{
     private VehicleControl craneControl;
     private static final float ACCELERATION_FORCE = 100.0f, BRAKE_FORCE = 20.0f,
-            FRICTION_FORCE = 10.0f, PROP_LOWERING_SPEED = 0.05f;
+            FRICTION_FORCE = 10.0f, PROP_LOWERING_SPEED = 1.4f;
     public static final float MAX_PROP_PROTRUSION = 6.35f, MIN_PROP_PROTRUSION = 1f;
     private float propsLowering = 1f;
     private String key = "";
@@ -135,8 +135,9 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
      * Aktualizuje stan pojazdu. Możliwe stany to: stop, jazda w przód i jazda
      * w tył. Oprócz tego decyduje czy gracz działa w trybie sterowania pojazdem 
      * dźwigu czy w trybie sterowania jego ramieniem
+     * @tpf czas między klatkami
      */
-    public void updateState(){
+    public void updateState(float tpf){
         if(key == null){
             if(craneControl.getCurrentVehicleSpeedKmHour() < 1 
                     && craneControl.getCurrentVehicleSpeedKmHour() > -1)
@@ -161,8 +162,8 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                     }
                 }
             }else{
-                if(((MobileCraneArmControl)getArmControl()).isUsing()) getInCabin();
-                else getInMobileCrane();
+                if(((MobileCraneArmControl)getArmControl()).isUsing()) getInCabin(tpf);
+                else getInMobileCrane(tpf);
             }
         }
     }
@@ -261,19 +262,19 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
                 .getCollisionShape(),crane, ElementName.BOLLARDS, Vector3f.ZERO, null);
     }
     
-    private void controlProps(boolean lowering){
+    private void controlProps(boolean lowering, float tpf){
         List<Spatial> mobileCraneChildren = getCrane().getChildren();
         int i = 0, changed = 0;
         String[] props = {ElementName.PROP_PARTS1, ElementName.PROP_PARTS2,
             ElementName.PROP_PARTS3, ElementName.PROP_PARTS4};
         Vector3f scallingVector = new Vector3f(1f, propsLowering += lowering ? 
-                PROP_LOWERING_SPEED : -PROP_LOWERING_SPEED, 1f);
+                PROP_LOWERING_SPEED * tpf : -PROP_LOWERING_SPEED * tpf, 1f);
         do{
             Node prop = (Node)mobileCraneChildren.get(i);
             if(Arrays.binarySearch(props, prop.getName()) >= 0){
                     changed++;
-                    PhysicsManager.moveWithScallingObject(!lowering, propDisplacement, scallingVector,
-                            new Node[] { (Node)prop.getChild(0) }, prop.getChild(1));
+                    PhysicsManager.moveWithScallingObject(!lowering, propDisplacement.mult(tpf),
+                            scallingVector, new Node[] { (Node)prop.getChild(0) }, prop.getChild(1));
             }
             i++;
         }while(changed < 4);
@@ -289,9 +290,9 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         }
     }
     
-    private void getInCabin(){
+    private void getInCabin(float tpf){
         if(propsLowering <= MAX_PROP_PROTRUSION){
-            controlProps(true);
+            controlProps(true, tpf);
         }else{
             if(Control.getActualListener().equals(this)){
                 Control.addListener(getArmControl(), true);
@@ -305,9 +306,9 @@ public class MobileCrane extends CraneAbstract implements ActionListener, Contro
         }
     }
     
-    private void getInMobileCrane(){
+    private void getInMobileCrane(float tpf){
         if(propsLowering > MIN_PROP_PROTRUSION)
-            controlProps(false);
+            controlProps(false, tpf);
         else{
             if(Control.getActualListener().equals(getArmControl())){
                 Control.addListener(this, true);

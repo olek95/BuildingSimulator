@@ -67,7 +67,7 @@ public class BuildingSimulator extends SimpleApplication implements ActionListen
         if(GameManager.isStartedGame()){
             HUD.updateTime();
             MobileCrane unit = GameManager.getMobileCrane();
-            unit.updateState();
+            unit.updateState(tpf);
             List<Spatial> gameObjects = rootNode.getChildren();
             int gameObjectsNumber = gameObjects.size();
             for(int i = 0; i < gameObjectsNumber; i++){

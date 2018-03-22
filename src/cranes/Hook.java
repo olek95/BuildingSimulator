@@ -127,7 +127,7 @@ public abstract class Hook implements RememberingRecentlyHitObject{
                         if(construction.add(attachedObject, nearestBuildingWall, oldMode, protruding)) {
                             confirmDetaching();
                         } else attachedObject.swapControl(oldMode);
-                    }
+                    } else HUD.setMessage(Translator.CONSTRUCTION_COMPLETED.getValue());
                 } else confirmDetaching();
             } else confirmDetaching();
         }

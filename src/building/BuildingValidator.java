@@ -3,13 +3,11 @@ package building;
 import authorization.User;
 import buildingsimulator.ElementName;
 import buildingsimulator.GameManager;
-import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Node;
 import com.jme3.scene.SceneGraphVisitorAdapter;
 import com.jme3.scene.Spatial;
 import java.util.List;
 import menu.Shop;
-import net.wcomohundro.jme3.csg.CSGGeometry;
 
 /**
  * Klasa <code>BuildingValidator</code> sprawdza i ocenia zbudowany budynek. 

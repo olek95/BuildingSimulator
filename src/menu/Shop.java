@@ -257,7 +257,7 @@ public class Shop extends Menu implements VisibleFromAbove{
     }
     
     private void fillColorSelectBox() {
-        ColorRGBA[] colors = new ColorRGBA[] {ColorRGBA.White, ColorRGBA.Black, ColorRGBA.BlackNoAlpha, 
+        ColorRGBA[] colors = new ColorRGBA[] {ColorRGBA.White, ColorRGBA.Black, 
             ColorRGBA.Blue, ColorRGBA.Brown, ColorRGBA.Cyan, ColorRGBA.DarkGray, 
             ColorRGBA.Green, ColorRGBA.LightGray, ColorRGBA.Magenta, ColorRGBA.Orange,
             ColorRGBA.Pink, ColorRGBA.Yellow};

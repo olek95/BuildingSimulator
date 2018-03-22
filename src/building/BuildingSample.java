@@ -124,11 +124,10 @@ public class BuildingSample extends Construction{
     
     private void setRandomColor(Wall wall) {
         ColorRGBA[] colors = new ColorRGBA[] {ColorRGBA.White, ColorRGBA.Black,
-            ColorRGBA.BlackNoAlpha, ColorRGBA.Blue, ColorRGBA.Brown, ColorRGBA.Cyan,
-            ColorRGBA.DarkGray, ColorRGBA.Green, ColorRGBA.LightGray, ColorRGBA.Magenta,
-            ColorRGBA.Orange, ColorRGBA.Pink, ColorRGBA.Yellow};
-        ((CSGGeometry)wall.getChild(ElementName.WALL_GEOMETRY)).getMaterial().setColor("Color",
-                colors[FastMath.rand.nextInt(colors.length)]);
+            ColorRGBA.Blue, ColorRGBA.Brown, ColorRGBA.Cyan, ColorRGBA.DarkGray,
+            ColorRGBA.Green, ColorRGBA.LightGray, ColorRGBA.Magenta, ColorRGBA.Orange,
+            ColorRGBA.Pink, ColorRGBA.Yellow};
+        wall.setInitialColor(colors[FastMath.rand.nextInt(colors.length)]);
     }
     
     private List<Wall> createFirstSample(Vector3f location) {

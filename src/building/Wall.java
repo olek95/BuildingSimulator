@@ -337,6 +337,16 @@ final public class Wall extends AbstractWall implements RememberingRecentlyHitOb
         this.protrudingCatched = protrudingCatched; 
     }
     
+    /**
+     * Ustawia kolor poczatkowy.
+     * @param initialColor kolor 
+     */
+    public void setInitialColor(ColorRGBA initialColor) {
+        ((CSGGeometry)getChild(ElementName.WALL_GEOMETRY)).getMaterial()
+                .setColor("Color", initialColor);
+        this.initialColor = initialColor;
+    }
+    
     @Override
     public void setCollision(Spatial b){
         if(recentlyHitObject != null && !hitObjects.contains(b)) hitObjects.add(b);

@@ -41,8 +41,6 @@ public class BuildingValidator {
                                     points += wall.getWorldTranslation().y +
                                             Shop.calculateWallCost(wall.getXExtend(),
                                             wall.getZExtend(), wall.getType()) * 2;
-                                    ((CSGGeometry)wall.getChild(ElementName.WALL_GEOMETRY))
-                                            .getMaterial().setColor("Color", ColorRGBA.Gray);
                                 }
                             }
                         }

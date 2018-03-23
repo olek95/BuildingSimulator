@@ -85,7 +85,7 @@ public class Shop extends Menu implements VisibleFromAbove{
      */
     public void buy(MouseButtonEvent evt, boolean isToggled) {
         int cost = Integer.parseInt(getScreen().getElementById("cost_value_label").getText());
-        if(cost <= GameManager.getUser().getPoints()) {
+        if(cost <= GameManager.getUser().getPoints() || GameManager.isGodmode()) {
             buyCraneHeight();
             GameManager.getUser().addPoints(-cost);
             HUD.updatePoints();
@@ -243,7 +243,7 @@ public class Shop extends Menu implements VisibleFromAbove{
         } else {
             screen.getElementById("cost_value_label").setText(cost + "");
             screen.getElementById("buying_button").setIsEnabled(cost 
-                    <= GameManager.getUser().getPoints());
+                    <= GameManager.getUser().getPoints() || GameManager.isGodmode());
             return true;
         }
     }

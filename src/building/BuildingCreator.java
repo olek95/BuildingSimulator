@@ -163,7 +163,7 @@ public class BuildingCreator implements VisibleFromAbove{
         );
         BoundingVolume bounding = clonedConstruction.getWorldBound();
         bounding.setCenter(location);
-        if(cost <= GameManager.getUser().getPoints()) {
+        if(cost <= GameManager.getUser().getPoints() || GameManager.isGodmode()) {
             if(!checkIntersection(bounding)) {
                 int clonedWallsNumber = clonedWalls.size(); 
                 for(int i = 0; i < clonedWallsNumber; i++) {
@@ -215,7 +215,7 @@ public class BuildingCreator implements VisibleFromAbove{
                                 wall.getType());
                 }
                 User user = GameManager.getUser();
-                if(cost <= user.getPoints()) {
+                if(cost <= user.getPoints() || GameManager.isGodmode()) {
                     user.addPoints(-cost);
                     for(int i = 0; i < wallsNumber; i++) {
                         Wall wall = walls.get(i);

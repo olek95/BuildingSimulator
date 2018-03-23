@@ -219,7 +219,7 @@ public class Options extends Menu  {
      * akceptacji, jeśli nic nie zostało zmienione. 
      */
     private void setStale() {
-        if(counter > 8){
+        if(counter > 7){
             stale = isChanged(); 
             ((Button)getScreen().getElementById("accepting_button")).setIsEnabled(stale);
         }else counter++;

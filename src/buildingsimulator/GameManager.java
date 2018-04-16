@@ -100,8 +100,8 @@ public class GameManager {
         }
         addToScene(mobileCrane.getCrane());
         addToScene(crane.getCrane());
-        //billboard = new Billboard(80, 0);
-        //addToScene(billboard.getBillboard());
+        billboard = new Billboard(80, 0);
+        addToScene(billboard.getBillboard());
         Control.addListener(game, false);
         PhysicsSpace physics = BuildingSimulator.getPhysicsSpace();
         physics.addCollisionListener(ArmCollisionListener.createRotateAfterImpactListener());
@@ -129,7 +129,7 @@ public class GameManager {
             HUD.changeButtonsIcon(true);
         }
         user.resetTimer();
-        //billboard.resumeAdvertisement();
+        billboard.resumeAdvertisement();
         HUD.updateControlsLabel();
         HUD.fillGeneralControlsLabel(HUD.isControlsLabelVisibilityBeforeHiding());
         HUD.setControlsVisibility(HUD.isControlsLabelVisibilityBeforeHiding());
@@ -151,7 +151,7 @@ public class GameManager {
         user.rememberTime();
         startedGame = false;
         pausedGame = true; 
-        //billboard.pauseAdvertisement();
+        billboard.pauseAdvertisement();
         MenuFactory.showMenu(MenuTypes.PAUSE_MENU);
     }
     
